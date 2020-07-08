@@ -1,0 +1,27 @@
+{
+  "name": "vue-services",
+  "version": "0.0.1",
+  "description": "Services for Vue SPA App",
+  "main": "dist/index.js",
+  "module": "dist/index.esm.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "build": "rollup src/index.js --file dist/index.js --format iife",
+    "dev": "rollup -c scripts/config.js",
+    "watch": "npm run dev -w"
+  },
+  "author": "Script",
+  "license": "MIT",
+  "devDependencies": {
+    "@rollup/plugin-node-resolve": "^8.1.0",
+    "rollup": "^2.21.0"
+  },
+  "dependencies": {
+    "vue": "2.6.11",
+    "vuex": "3.5.1",
+    "vue-router": "3.3.4"
+  },
+  "publishConfig": {
+    "registry": "https://npm.pkg.github.com/"
+  }
+}
