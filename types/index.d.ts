@@ -1,2 +1,13 @@
-export {Translation} from './services';
-export {TranslatorService} from '../src/services/translator';
+export {
+    routerService,
+    storeService,
+    errorService,
+    loadingService,
+    authService,
+    httpService,
+    eventService,
+    pageCreatorService,
+    translatorService,
+} from '../src/services';
+
+export {BaseController} from '../src/controllers';

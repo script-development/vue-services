@@ -1,4 +1,4 @@
-import MinimalRouterView from '../../components/MinimalRouterView';
+import MinimalRouterView from '../components/MinimalRouterView';
 import {storeService, routerService, pageCreatorService, eventService, translatorService} from '../services';
 
 export class BaseController {

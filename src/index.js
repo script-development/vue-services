@@ -9,3 +9,5 @@ export {
     pageCreatorService,
     translatorService,
 } from './services';
+
+export {BaseController} from './controllers';
