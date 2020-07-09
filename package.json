@@ -4,6 +4,7 @@
   "description": "Services for Vue SPA App",
   "main": "dist/index.js",
   "module": "dist/index.esm.js",
+  "typings": "types/index.d.ts",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
     "build": "rollup src/index.js --file dist/index.js --format iife",

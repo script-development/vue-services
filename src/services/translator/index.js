@@ -4,12 +4,14 @@
  * @property {string} plural the plural translation
  */
 
-const capitalize = value => `${value[0].toUpperCase()}${value.substr(1)}`
+const capitalize = value => `${value[0].toUpperCase()}${value.substr(1)}`;
 
 const printWarning = value => {
     console.warn('Missing translation for', value);
-    console.warn(`Set translation in the controller with this._translationService.setTranslation(${value}, {singular:'',plural:''})`);
-}
+    console.warn(
+        `Set translation in the controller with this._translationService.setTranslation(${value}, {singular:'',plural:''})`
+    );
+};
 
 export class TranslatorService {
     constructor() {
@@ -46,10 +48,10 @@ export class TranslatorService {
     }
 
     /**
-     * @param {string} key 
-     * @param {Translation} translation 
+     * @param {string} key
+     * @param {Translation} translation
      */
     setTranslation(key, translation) {
-        this._translations[key] = translation
+        this._translations[key] = translation;
     }
 }
