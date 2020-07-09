@@ -4,50 +4,52 @@
  * @property {string} plural the plural translation
  */
 
+const capitalize = value => `${value[0].toUpperCase()}${value.substr(1)}`
+
+const printWarning = value => {
+    console.warn('Missing translation for', value);
+    console.warn(`Set translation in the controller with this._translationService.setTranslation(${value}, {singular:'',plural:''})`);
+}
+
 export class TranslatorService {
-    /**
-     * @todo :: make this work
-     * @param {Object.<string, Translation>} translations the translations object
-     */
-    // constructor(translations) {
-    //     this._translations = translations;
-    // }
-
     constructor() {
+        /** @type {Object.<string, Translation>}*/
         this._translations = {};
-    }
-
-    capitalize(value) {
-        return `${value[0].toUpperCase()}${value.substr(1)}`;
     }
 
     getPlural(value) {
         if (!this._translations[value]) {
-            console.warn('Missing translation for', value);
-            return;
+            return printWarning(value);
         }
         return this._translations[value].plural;
     }
 
     getSingular(value) {
         if (!this._translations[value]) {
-            console.warn('Missing translation for', value);
-            return;
+            return printWarning(value);
         }
         return this._translations[value].singular;
     }
 
     getCapitalizedSingular(value) {
-        return this.capitalize(this.getSingular(value));
+        return capitalize(this.getSingular(value));
     }
 
     getCapitalizedPlural(value) {
-        return this.capitalize(this.getPlural(value));
+        return capitalize(this.getPlural(value));
     }
 
     maybePluralize(count, value) {
         const baseString = `${count} `;
         if (count == 1) return baseString + this.getSingular(value);
         return baseString + this.getPlural(value);
+    }
+
+    /**
+     * @param {string} key 
+     * @param {Translation} translation 
+     */
+    setTranslation(key, translation) {
+        this._translations[key] = translation
     }
 }

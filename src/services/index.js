@@ -20,8 +20,6 @@ import {EventService} from './event';
 export const eventService = new EventService(httpService);
 
 import {TranslatorService} from './translator';
-// TODO :: translations should be external, how to implement this?
-// import translations from '../translations';
 export const translatorService = new TranslatorService();
 
 import {RouterService} from './router';
