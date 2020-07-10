@@ -9,11 +9,14 @@ import storeModule from './store';
 import LoginPage from '../../pages/auth/Login';
 import ForgotPasswordPage from '../../pages/auth/ForgotPassword';
 import ResetPasswordPage from '../../pages/auth/ResetPassword';
+import {MissingDefaultLoggedinPageError} from '../../errors/MissingDefaultLoggedinPageError';
 
-// TODO :: is it a service or a controller?
+const LOGIN_ACTION = 'login'
+const LOGOUT_ACTION = 'logout'
+const LOGIN_ROUTE_NAME = 'Login'
+
 export class AuthService {
     /**
-     *
      * @param {RouterService} routerService
      * @param {StoreService} storeService
      * @param {StorageService} storageService
@@ -27,9 +30,11 @@ export class AuthService {
 
         this._storeService.registerModule(this.storeModuleName, storeModule(storageService, httpService, this));
 
+        this._defaultLoggedInPage;
+
         const loginRoute = this._routerService._factory.createConfig(
             '/inloggen',
-            'Login',
+            LOGIN_ROUTE_NAME,
             LoginPage,
             false,
             false,
@@ -37,7 +42,7 @@ export class AuthService {
         );
 
         const forgotPasswordRoute = this._routerService._factory.createConfig(
-            '/wachtwoordvergeten',
+            '/wachtwoord-vergeten',
             'ForgotPassword',
             ForgotPasswordPage,
             false,
@@ -46,7 +51,7 @@ export class AuthService {
         );
 
         const resetPasswordRoute = this._routerService._factory.createConfig(
-            '/wachtwoordresetten',
+            '/wachtwoord-resetten',
             'ResetPassword',
             ResetPasswordPage,
             false,
@@ -61,19 +66,30 @@ export class AuthService {
     }
 
     // prettier-ignore
-    get storeModuleName() {
-        return 'auth'
-    }
+    get storeModuleName() {return 'auth'}
 
     get isLoggedin() {
         // TODO :: where to set isLoggedIn?
         return this._storeService.get(this.storeModuleName, 'isLoggedIn');
     }
 
+    // TODO :: this is not basic usage, how to implement this?
     get isAdmin() {
         // TODO :: where to set isAdmin?
         return this._storeService.get(this.storeModuleName, 'isAdmin');
     }
+
+    get defaultLoggedInPage() {
+        if (!this._defaultLoggedInPage)
+            throw new MissingDefaultLoggedinPageError(
+                'Please set the default logged in page with authService.defaultLoggedInPage = "page"'
+            );
+        return this._defaultLoggedInPage;
+    }
+
+    // prettier-ignore
+    /** @param {string} page */
+    set defaultLoggedInPage(page){this._defaultLoggedInPage = page}
 
     /**
      * Login to the app
@@ -83,21 +99,20 @@ export class AuthService {
      * @param {Boolean} credentials.rememberMe if you want a consistent login
      */
     login(credentials) {
-        // TODO :: where to set login as const?
-        this._storeService.dispatch(this.storeModuleName, 'login', credentials).then(isAdmin => {
-            // TODO :: where to get courses from?
-            if (isAdmin) return this._routerService.goToRoute('courses.edit');
-            this._routerService.goToRoute('courses.show');
+        // TODO :: isAdmin should be something like role
+        this._storeService.dispatch(this.storeModuleName, LOGIN_ACTION, credentials).then(isAdmin => {
+            // TODO :: check roles here somehow?
+            // if (isAdmin) return this._routerService.goToRoute('courses.edit');
+            this.goToStandardLoggedInPage();
         });
     }
 
     logout() {
-        this._storeService.dispatch(this.storeModuleName, 'logout');
+        this._storeService.dispatch(this.storeModuleName, LOGOUT_ACTION);
     }
 
     goToStandardLoggedInPage() {
-        // TODO :: where to get courses from?
-        this._routerService.goToRoute('courses.show');
+        this._routerService.goToRoute(this.defaultLoggedInPage);
     }
 
     sendEmailResetPassword(email) {
@@ -109,8 +124,7 @@ export class AuthService {
     }
 
     goToLoginPage() {
-        // TODO :: where to get Login from?
-        this._routerService.goToRoute('Login');
+        this._routerService.goToRoute(LOGIN_ROUTE_NAME);
     }
 
     get responseErrorMiddleware() {

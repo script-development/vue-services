@@ -168,7 +168,7 @@ class MissingTranslationError extends Error {
 
         // Maintains proper stack trace for where our error was thrown (only available on V8)
         if (Error.captureStackTrace) {
-            Error.captureStackTrace(this, CustomError);
+            Error.captureStackTrace(this, MissingTranslationError);
         }
 
         this.name = 'MissingTranslationError';
@@ -1418,20 +1418,19 @@ class LoadingService {
     }
 }
 
-const IS_LOGGED_IN = 'Leerlab Academie logged in';
-const IS_ADMIN = 'Leerlab Academie admin';
+const IS_LOGGED_IN = 'harry';
 
 var storeModule = (storageService, httpService, authService) => ({
     namespaced: true,
     state: {
         isLoggedIn: !!storageService.getItem(IS_LOGGED_IN),
-        isAdmin: !!storageService.getItem(IS_ADMIN),
+        // isAdmin: !!storageService.getItem(IS_ADMIN),
         pending: false,
         // userToRegister: {}, // move to register service
     },
     getters: {
         isLoggedIn: state => state.isLoggedIn,
-        isAdmin: state => state.isAdmin,
+        // isAdmin: state => state.isAdmin,
         // getUserToRegister: state => state.userToRegister,// move to register service
     },
     mutations: {
@@ -1440,12 +1439,12 @@ var storeModule = (storageService, httpService, authService) => ({
             state.pending = false;
             state.isLoggedIn = true;
             storageService.setItem(IS_LOGGED_IN, state.isLoggedIn);
-            if (isAdmin) {
-                state.isAdmin = isAdmin;
-                storageService.setItem(IS_ADMIN, isAdmin);
-            } else {
-                state.isAdmin = false;
-            }
+            // if (isAdmin) {
+            //     state.isAdmin = isAdmin;
+            //     storageService.setItem(IS_ADMIN, isAdmin);
+            // } else {
+            //     state.isAdmin = false;
+            // }
         },
         LOGOUT: _ => {
             storageService.clear();
@@ -1495,6 +1494,20 @@ var ResetPasswordPage = {
     },
   };
 
+class MissingDefaultLoggedinPageError extends Error {
+    constructor(...params) {
+        // Pass remaining arguments (including vendor specific ones) to parent constructor
+        super(...params);
+
+        // Maintains proper stack trace for where our error was thrown (only available on V8)
+        if (Error.captureStackTrace) {
+            Error.captureStackTrace(this, MissingDefaultLoggedinPageError);
+        }
+
+        this.name = 'MissingDefaultLoggedinPageError';
+    }
+}
+
 /**
  * @typedef {import('../router').RouterService} RouterService
  * @typedef {import('../store').StoreService} StoreService
@@ -1502,10 +1515,12 @@ var ResetPasswordPage = {
  * @typedef {import('../http').HTTPService} HTTPService
  */
 
-// TODO :: is it a service or a controller?
+const LOGIN_ACTION = 'login';
+const LOGOUT_ACTION = 'logout';
+const LOGIN_ROUTE_NAME = 'Login';
+
 class AuthService {
     /**
-     *
      * @param {RouterService} routerService
      * @param {StoreService} storeService
      * @param {StorageService} storageService
@@ -1519,9 +1534,11 @@ class AuthService {
 
         this._storeService.registerModule(this.storeModuleName, storeModule(storageService, httpService, this));
 
+        this._defaultLoggedInPage;
+
         const loginRoute = this._routerService._factory.createConfig(
             '/inloggen',
-            'Login',
+            LOGIN_ROUTE_NAME,
             LoginPage,
             false,
             false,
@@ -1529,7 +1546,7 @@ class AuthService {
         );
 
         const forgotPasswordRoute = this._routerService._factory.createConfig(
-            '/wachtwoordvergeten',
+            '/wachtwoord-vergeten',
             'ForgotPassword',
             ForgotPasswordPage,
             false,
@@ -1538,7 +1555,7 @@ class AuthService {
         );
 
         const resetPasswordRoute = this._routerService._factory.createConfig(
-            '/wachtwoordresetten',
+            '/wachtwoord-resetten',
             'ResetPassword',
             ResetPasswordPage,
             false,
@@ -1553,19 +1570,30 @@ class AuthService {
     }
 
     // prettier-ignore
-    get storeModuleName() {
-        return 'auth'
-    }
+    get storeModuleName() {return 'auth'}
 
     get isLoggedin() {
         // TODO :: where to set isLoggedIn?
         return this._storeService.get(this.storeModuleName, 'isLoggedIn');
     }
 
+    // TODO :: this is not basic usage, how to implement this?
     get isAdmin() {
         // TODO :: where to set isAdmin?
         return this._storeService.get(this.storeModuleName, 'isAdmin');
     }
+
+    get defaultLoggedInPage() {
+        if (!this._defaultLoggedInPage)
+            throw new MissingDefaultLoggedinPageError(
+                'Please set the default logged in page with authService.defaultLoggedInPage = "page"'
+            );
+        return this._defaultLoggedInPage;
+    }
+
+    // prettier-ignore
+    /** @param {string} page */
+    set defaultLoggedInPage(page){this._defaultLoggedInPage = page;}
 
     /**
      * Login to the app
@@ -1575,21 +1603,20 @@ class AuthService {
      * @param {Boolean} credentials.rememberMe if you want a consistent login
      */
     login(credentials) {
-        // TODO :: where to set login as const?
-        this._storeService.dispatch(this.storeModuleName, 'login', credentials).then(isAdmin => {
-            // TODO :: where to get courses from?
-            if (isAdmin) return this._routerService.goToRoute('courses.edit');
-            this._routerService.goToRoute('courses.show');
+        // TODO :: isAdmin should be something like role
+        this._storeService.dispatch(this.storeModuleName, LOGIN_ACTION, credentials).then(isAdmin => {
+            // TODO :: check roles here somehow?
+            // if (isAdmin) return this._routerService.goToRoute('courses.edit');
+            this.goToStandardLoggedInPage();
         });
     }
 
     logout() {
-        this._storeService.dispatch(this.storeModuleName, 'logout');
+        this._storeService.dispatch(this.storeModuleName, LOGOUT_ACTION);
     }
 
     goToStandardLoggedInPage() {
-        // TODO :: where to get courses from?
-        this._routerService.goToRoute('courses.show');
+        this._routerService.goToRoute(this.defaultLoggedInPage);
     }
 
     sendEmailResetPassword(email) {
@@ -1601,8 +1628,7 @@ class AuthService {
     }
 
     goToLoginPage() {
-        // TODO :: where to get Login from?
-        this._routerService.goToRoute('Login');
+        this._routerService.goToRoute(LOGIN_ROUTE_NAME);
     }
 
     get responseErrorMiddleware() {

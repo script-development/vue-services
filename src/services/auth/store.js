@@ -1,17 +1,17 @@
-const IS_LOGGED_IN = 'Leerlab Academie logged in';
+const IS_LOGGED_IN = 'harry';
 const IS_ADMIN = 'Leerlab Academie admin';
 
 export default (storageService, httpService, authService) => ({
     namespaced: true,
     state: {
         isLoggedIn: !!storageService.getItem(IS_LOGGED_IN),
-        isAdmin: !!storageService.getItem(IS_ADMIN),
+        // isAdmin: !!storageService.getItem(IS_ADMIN),
         pending: false,
         // userToRegister: {}, // move to register service
     },
     getters: {
         isLoggedIn: state => state.isLoggedIn,
-        isAdmin: state => state.isAdmin,
+        // isAdmin: state => state.isAdmin,
         // getUserToRegister: state => state.userToRegister,// move to register service
     },
     mutations: {
@@ -20,12 +20,12 @@ export default (storageService, httpService, authService) => ({
             state.pending = false;
             state.isLoggedIn = true;
             storageService.setItem(IS_LOGGED_IN, state.isLoggedIn);
-            if (isAdmin) {
-                state.isAdmin = isAdmin;
-                storageService.setItem(IS_ADMIN, isAdmin);
-            } else {
-                state.isAdmin = false;
-            }
+            // if (isAdmin) {
+            //     state.isAdmin = isAdmin;
+            //     storageService.setItem(IS_ADMIN, isAdmin);
+            // } else {
+            //     state.isAdmin = false;
+            // }
         },
         LOGOUT: _ => {
             storageService.clear();
