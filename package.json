@@ -1,6 +1,6 @@
 {
     "name": "@script-development/vue-services",
-    "version": "0.0.8",
+    "version": "0.0.9",
     "description": "Services for Vue SPA App",
     "main": "dist/index.js",
     "module": "dist/index.esm.js",
@@ -23,6 +23,7 @@
         "rollup": "^2.21.0"
     },
     "dependencies": {
+        "axios": "0.19.2",
         "vue": "2.6.11",
         "vuex": "3.5.1",
         "vue-router": "3.3.4"

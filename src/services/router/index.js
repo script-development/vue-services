@@ -51,13 +51,12 @@ export class RouterService {
         this._routerAfterMiddleware.push(middlewareFunc);
     }
 
+    // prettier-ignore
     /**
      * Add routes to the router
      * @param {RouteConfig[]} routes
      */
-    addRoutes(routes) {
-        this._router.addRoutes(routes);
-    }
+    addRoutes(routes) {this._router.addRoutes(routes);}
 
     /**
      * Go to the give route by name, optional id and query

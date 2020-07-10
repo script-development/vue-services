@@ -4,7 +4,7 @@ Object.defineProperty(exports, '__esModule', { value: true });
 
 function _interopDefault (ex) { return (ex && (typeof ex === 'object') && 'default' in ex) ? ex['default'] : ex; }
 
-var Vue$1 = _interopDefault(require('vue'));
+var Vue = _interopDefault(require('vue'));
 var Vuex = _interopDefault(require('vuex'));
 var VueRouter = _interopDefault(require('vue-router'));
 var axios = _interopDefault(require('axios'));
@@ -291,13 +291,12 @@ class RouterService {
         this._routerAfterMiddleware.push(middlewareFunc);
     }
 
+    // prettier-ignore
     /**
      * Add routes to the router
      * @param {RouteConfig[]} routes
      */
-    addRoutes(routes) {
-        this._router.addRoutes(routes);
-    }
+    addRoutes(routes) {this._router.addRoutes(routes);}
 
     /**
      * Go to the give route by name, optional id and query
@@ -888,10 +887,10 @@ class StoreModuleFactory {
 
                 for (const data of allData) {
                     const idData = state[this.allItemsStateName][data.id];
-    
+
                     // if the data for this id already exists and is larger then the current entry, do nothing
                     if (idData && Object.values(idData).length > Object.values(data).length) continue;
-    
+
                     Vue.set(state[this.allItemsStateName], data.id, data);
                 }
             },
@@ -1519,6 +1518,7 @@ class MissingDefaultLoggedinPageError extends Error {
  * @typedef {import('../store').StoreService} StoreService
  * @typedef {import('../storage').StorageService} StorageService
  * @typedef {import('../http').HTTPService} HTTPService
+ * @typedef {import('vue').Component} Component
  */
 
 const LOGIN_ACTION = 'login';
@@ -1541,35 +1541,7 @@ class AuthService {
         this._storeService.registerModule(this.storeModuleName, storeModule(storageService, httpService, this));
 
         this._defaultLoggedInPage;
-
-        const loginRoute = this._routerService._factory.createConfig(
-            '/inloggen',
-            LOGIN_ROUTE_NAME,
-            LoginPage,
-            false,
-            false,
-            'Login'
-        );
-
-        const forgotPasswordRoute = this._routerService._factory.createConfig(
-            '/wachtwoord-vergeten',
-            'ForgotPassword',
-            ForgotPasswordPage,
-            false,
-            false,
-            'Wachtwoord vergeten'
-        );
-
-        const resetPasswordRoute = this._routerService._factory.createConfig(
-            '/wachtwoord-resetten',
-            'ResetPassword',
-            ResetPasswordPage,
-            false,
-            false,
-            'Wachtwoord resetten'
-        );
-
-        this._routerService.addRoutes([loginRoute, forgotPasswordRoute, resetPasswordRoute]);
+        this._loginPage = LoginPage;
 
         this._httpService.registerResponseErrorMiddleware(this.responseErrorMiddleware);
         this._routerService.registerBeforeMiddleware(this.routeMiddleware);
@@ -1600,6 +1572,13 @@ class AuthService {
     // prettier-ignore
     /** @param {string} page */
     set defaultLoggedInPage(page){this._defaultLoggedInPage = page;}
+
+    // prettier-ignore
+    get loginPage() {return this._loginPage}
+
+    // prettier-ignore
+    /** @param {Component} page*/
+    set loginPage(page) {this._loginPage = page;}
 
     /**
      * Login to the app
@@ -1652,17 +1631,17 @@ class AuthService {
     get routeMiddleware() {
         return (to, from, next) => {
             const isLoggedIn = this.isLoggedin;
-            const isAdmin = this.isAdmin;
+            // const isAdmin = this.isAdmin;
 
             if (isLoggedIn && !to.meta.auth) {
                 this.goToStandardLoggedInPage();
                 return true;
             }
 
-            if (!isAdmin && to.meta.admin) {
-                this.goToStandardLoggedInPage();
-                return true;
-            }
+            // if (!isAdmin && to.meta.admin) {
+            //     this.goToStandardLoggedInPage();
+            //     return true;
+            // }
 
             if (!isLoggedIn && to.meta.auth) {
                 this.goToLoginPage();
@@ -1671,6 +1650,37 @@ class AuthService {
 
             return false;
         };
+    }
+
+    setRoutes() {
+        const loginRoute = this._routerService._factory.createConfig(
+            '/inloggen',
+            LOGIN_ROUTE_NAME,
+            this.loginPage,
+            false,
+            false,
+            'Login'
+        );
+
+        const forgotPasswordRoute = this._routerService._factory.createConfig(
+            '/wachtwoord-vergeten',
+            'ForgotPassword',
+            ForgotPasswordPage,
+            false,
+            false,
+            'Wachtwoord vergeten'
+        );
+
+        const resetPasswordRoute = this._routerService._factory.createConfig(
+            '/wachtwoord-resetten',
+            'ResetPassword',
+            ResetPasswordPage,
+            false,
+            false,
+            'Wachtwoord resetten'
+        );
+
+        this._routerService.addRoutes([loginRoute, forgotPasswordRoute, resetPasswordRoute]);
     }
 }
 
@@ -1834,9 +1844,9 @@ class PageCreatorService {
 }
 
 // Bind the store to Vue and generate empty store
-Vue$1.use(Vuex);
+Vue.use(Vuex);
 const store = new Vuex.Store();
-Vue$1.use(VueRouter);
+Vue.use(VueRouter);
 
 const router = new VueRouter({
     mode: 'history',

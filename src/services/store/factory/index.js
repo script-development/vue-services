@@ -3,6 +3,8 @@
  * @typedef {import('axios').AxiosRequestConfig} AxiosRequestConfig
  */
 
+import Vue from 'vue';
+
 export class StoreModuleFactory {
     /**
      * @param {HTTPService} httpService
@@ -65,10 +67,10 @@ export class StoreModuleFactory {
 
                 for (const data of allData) {
                     const idData = state[this.allItemsStateName][data.id];
-    
+
                     // if the data for this id already exists and is larger then the current entry, do nothing
                     if (idData && Object.values(idData).length > Object.values(data).length) continue;
-    
+
                     Vue.set(state[this.allItemsStateName], data.id, data);
                 }
             },

@@ -3,6 +3,7 @@
  * @typedef {import('../store').StoreService} StoreService
  * @typedef {import('../storage').StorageService} StorageService
  * @typedef {import('../http').HTTPService} HTTPService
+ * @typedef {import('vue').Component} Component
  */
 
 import storeModule from './store';
@@ -11,9 +12,9 @@ import ForgotPasswordPage from '../../pages/auth/ForgotPassword';
 import ResetPasswordPage from '../../pages/auth/ResetPassword';
 import {MissingDefaultLoggedinPageError} from '../../errors/MissingDefaultLoggedinPageError';
 
-const LOGIN_ACTION = 'login'
-const LOGOUT_ACTION = 'logout'
-const LOGIN_ROUTE_NAME = 'Login'
+const LOGIN_ACTION = 'login';
+const LOGOUT_ACTION = 'logout';
+const LOGIN_ROUTE_NAME = 'Login';
 
 export class AuthService {
     /**
@@ -31,35 +32,7 @@ export class AuthService {
         this._storeService.registerModule(this.storeModuleName, storeModule(storageService, httpService, this));
 
         this._defaultLoggedInPage;
-
-        const loginRoute = this._routerService._factory.createConfig(
-            '/inloggen',
-            LOGIN_ROUTE_NAME,
-            LoginPage,
-            false,
-            false,
-            'Login'
-        );
-
-        const forgotPasswordRoute = this._routerService._factory.createConfig(
-            '/wachtwoord-vergeten',
-            'ForgotPassword',
-            ForgotPasswordPage,
-            false,
-            false,
-            'Wachtwoord vergeten'
-        );
-
-        const resetPasswordRoute = this._routerService._factory.createConfig(
-            '/wachtwoord-resetten',
-            'ResetPassword',
-            ResetPasswordPage,
-            false,
-            false,
-            'Wachtwoord resetten'
-        );
-
-        this._routerService.addRoutes([loginRoute, forgotPasswordRoute, resetPasswordRoute]);
+        this._loginPage = LoginPage;
 
         this._httpService.registerResponseErrorMiddleware(this.responseErrorMiddleware);
         this._routerService.registerBeforeMiddleware(this.routeMiddleware);
@@ -90,6 +63,13 @@ export class AuthService {
     // prettier-ignore
     /** @param {string} page */
     set defaultLoggedInPage(page){this._defaultLoggedInPage = page}
+
+    // prettier-ignore
+    get loginPage() {return this._loginPage}
+
+    // prettier-ignore
+    /** @param {Component} page*/
+    set loginPage(page) {this._loginPage = page}
 
     /**
      * Login to the app
@@ -142,17 +122,17 @@ export class AuthService {
     get routeMiddleware() {
         return (to, from, next) => {
             const isLoggedIn = this.isLoggedin;
-            const isAdmin = this.isAdmin;
+            // const isAdmin = this.isAdmin;
 
             if (isLoggedIn && !to.meta.auth) {
                 this.goToStandardLoggedInPage();
                 return true;
             }
 
-            if (!isAdmin && to.meta.admin) {
-                this.goToStandardLoggedInPage();
-                return true;
-            }
+            // if (!isAdmin && to.meta.admin) {
+            //     this.goToStandardLoggedInPage();
+            //     return true;
+            // }
 
             if (!isLoggedIn && to.meta.auth) {
                 this.goToLoginPage();
@@ -161,5 +141,36 @@ export class AuthService {
 
             return false;
         };
+    }
+
+    setRoutes() {
+        const loginRoute = this._routerService._factory.createConfig(
+            '/inloggen',
+            LOGIN_ROUTE_NAME,
+            this.loginPage,
+            false,
+            false,
+            'Login'
+        );
+
+        const forgotPasswordRoute = this._routerService._factory.createConfig(
+            '/wachtwoord-vergeten',
+            'ForgotPassword',
+            ForgotPasswordPage,
+            false,
+            false,
+            'Wachtwoord vergeten'
+        );
+
+        const resetPasswordRoute = this._routerService._factory.createConfig(
+            '/wachtwoord-resetten',
+            'ResetPassword',
+            ResetPasswordPage,
+            false,
+            false,
+            'Wachtwoord resetten'
+        );
+
+        this._routerService.addRoutes([loginRoute, forgotPasswordRoute, resetPasswordRoute]);
     }
 }
