@@ -1,4 +1,4 @@
-import Vue from 'vue';
+import Vue$1 from 'vue';
 import Vuex from 'vuex';
 import VueRouter from 'vue-router';
 import axios from 'axios';
@@ -864,7 +864,19 @@ class StoreModuleFactory {
     /** create default mutations for the store */
     createDefaultMutations() {
         return {
-            [this.setAllMutation]: (state, allData) => (state[this.allItemsStateName] = allData),
+            [this.setAllMutation]: (state, allData) => {
+                const stateData = state[this.allItemsStateName];
+                if (!allData.length) return (stateData = allData);
+
+                for (const data of allData) {
+                    const idData = stateData[data.id];
+    
+                    // if the data for this id already exists and is larger then the current entry, do nothing
+                    if (idData && Object.values(idData).length > Object.values(data).length) continue;
+    
+                    Vue.set(stateData, data.id, data);
+                }
+            },
         };
     }
 
@@ -914,7 +926,7 @@ class StoreModuleFactory {
     createExtraGetAction(actionName, endpoint, options) {
         return {
             actions: {
-                [actionName]: (_, payload) => this._httpService.get(`${endpoint}/${payload}`, options),
+                [actionName]: (_, payload) => this._httpService.get(endpoint + payload ? `/${payload}` : '', options),
             },
         };
     }
@@ -1778,9 +1790,9 @@ class PageCreatorService {
 }
 
 // Bind the store to Vue and generate empty store
-Vue.use(Vuex);
+Vue$1.use(Vuex);
 const store = new Vuex.Store();
-Vue.use(VueRouter);
+Vue$1.use(VueRouter);
 
 const router = new VueRouter({
     mode: 'history',
