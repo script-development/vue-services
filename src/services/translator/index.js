@@ -8,9 +8,7 @@ const capitalize = value => `${value[0].toUpperCase()}${value.substr(1)}`;
 
 const printWarning = value => {
     console.warn('Missing translation for', value);
-    console.warn(
-        `Set translation in the controller with this._translatorService.setTranslation('${value}', {singular:'',plural:''})`
-    );
+    console.warn(`Set translation in the controller with super(API_ENDPOINT, singular, plural);`);
 };
 
 export class TranslatorService {

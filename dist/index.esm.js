@@ -171,9 +171,7 @@ const capitalize = value => `${value[0].toUpperCase()}${value.substr(1)}`;
 
 const printWarning = value => {
     console.warn('Missing translation for', value);
-    console.warn(
-        `Set translation in the controller with this._translationService.setTranslation(${value}, {singular:'',plural:''})`
-    );
+    console.warn(`Set translation in the controller with super(API_ENDPOINT, singular, plural);`);
 };
 
 class TranslatorService {
@@ -1846,13 +1844,16 @@ var MinimalRouterView = {
 class BaseController {
     /**
      * @param {String} APIEndpoint
+     * @param {String} singular
+     * @param {String} plural
      */
-    constructor(APIEndpoint) {
+    constructor(APIEndpoint, singular, plural) {
         this._storeService = storeService;
         this._routerService = routerService;
         this._pageCreatorService = pageCreatorService;
         this._eventService = eventService;
         this._translatorService = translatorService;
+        this._translatorService.setTranslation(APIEndpoint, {singular, plural});
 
         this._APIEndpoint = APIEndpoint;
 

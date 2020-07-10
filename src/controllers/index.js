@@ -4,13 +4,16 @@ import {storeService, routerService, pageCreatorService, eventService, translato
 export class BaseController {
     /**
      * @param {String} APIEndpoint
+     * @param {String} singular
+     * @param {String} plural
      */
-    constructor(APIEndpoint) {
+    constructor(APIEndpoint, singular, plural) {
         this._storeService = storeService;
         this._routerService = routerService;
         this._pageCreatorService = pageCreatorService;
         this._eventService = eventService;
         this._translatorService = translatorService;
+        this._translatorService.setTranslation(APIEndpoint, {singular, plural})
 
         this._APIEndpoint = APIEndpoint;
 
