@@ -865,16 +865,15 @@ class StoreModuleFactory {
     createDefaultMutations() {
         return {
             [this.setAllMutation]: (state, allData) => {
-                const stateData = state[this.allItemsStateName];
-                if (!allData.length) return (stateData = allData);
+                if (!allData.length) return (state[this.allItemsStateName] = allData);
 
                 for (const data of allData) {
-                    const idData = stateData[data.id];
+                    const idData = state[this.allItemsStateName][data.id];
     
                     // if the data for this id already exists and is larger then the current entry, do nothing
                     if (idData && Object.values(idData).length > Object.values(data).length) continue;
     
-                    Vue.set(stateData, data.id, data);
+                    Vue.set(state[this.allItemsStateName], data.id, data);
                 }
             },
         };
