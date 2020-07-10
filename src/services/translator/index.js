@@ -4,12 +4,12 @@
  * @property {string} plural the plural translation
  */
 
-const capitalize = value => `${value[0].toUpperCase()}${value.substr(1)}`;
+import { MissingTranslationError } from "../../errors/MissingTranslationError";
 
-const printWarning = value => {
-    console.warn('Missing translation for', value);
-    console.warn(`Set translation in the controller with super(API_ENDPOINT, singular, plural);`);
-};
+const PLURAL = 'plural'
+const SINGULAR = 'singular'
+
+const capitalize = value => `${value[0].toUpperCase()}${value.substr(1)}`;
 
 export class TranslatorService {
     constructor() {
@@ -17,18 +17,21 @@ export class TranslatorService {
         this._translations = {};
     }
 
+    getTranslation(value, pluralOrSingular) {
+        const translation = this._translations[value]
+
+        if(!translation) throw new MissingTranslationError(`Missing translation for ${value}`)
+        if(!translation[pluralOrSingular]) throw new MissingTranslationError(`Missing ${pluralOrSingular} translation for ${value}`)
+
+        return translation[pluralOrSingular];
+    }
+
     getPlural(value) {
-        if (!this._translations[value]) {
-            return printWarning(value);
-        }
-        return this._translations[value].plural;
+        return this.getTranslation(value, PLURAL);
     }
 
     getSingular(value) {
-        if (!this._translations[value]) {
-            return printWarning(value);
-        }
-        return this._translations[value].singular;
+        return this.getTranslation(value, SINGULAR);
     }
 
     getCapitalizedSingular(value) {

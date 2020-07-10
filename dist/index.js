@@ -167,18 +167,30 @@ class EventService {
     }
 }
 
+class MissingTranslationError extends Error {
+    constructor(...params) {
+        // Pass remaining arguments (including vendor specific ones) to parent constructor
+        super(...params);
+
+        // Maintains proper stack trace for where our error was thrown (only available on V8)
+        if (Error.captureStackTrace) {
+            Error.captureStackTrace(this, CustomError);
+        }
+
+        this.name = 'MissingTranslationError';
+    }
+}
+
 /**
  * @typedef {Object} Translation
  * @property {string} singular the singular translation
  * @property {string} plural the plural translation
  */
 
-const capitalize = value => `${value[0].toUpperCase()}${value.substr(1)}`;
+const PLURAL = 'plural';
+const SINGULAR = 'singular';
 
-const printWarning = value => {
-    console.warn('Missing translation for', value);
-    console.warn(`Set translation in the controller with super(API_ENDPOINT, singular, plural);`);
-};
+const capitalize = value => `${value[0].toUpperCase()}${value.substr(1)}`;
 
 class TranslatorService {
     constructor() {
@@ -186,18 +198,21 @@ class TranslatorService {
         this._translations = {};
     }
 
+    getTranslation(value, pluralOrSingular) {
+        const translation = this._translations[value];
+
+        if(!translation) throw new MissingTranslationError(`Missing translation for ${value}`)
+        if(!translation[pluralOrSingular]) throw new MissingTranslationError(`Missing ${pluralOrSingular} translation for ${value}`)
+
+        return translation[pluralOrSingular];
+    }
+
     getPlural(value) {
-        if (!this._translations[value]) {
-            return printWarning(value);
-        }
-        return this._translations[value].plural;
+        return this.getTranslation(value, PLURAL);
     }
 
     getSingular(value) {
-        if (!this._translations[value]) {
-            return printWarning(value);
-        }
-        return this._translations[value].singular;
+        return this.getTranslation(value, SINGULAR);
     }
 
     getCapitalizedSingular(value) {
