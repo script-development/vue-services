@@ -1979,6 +1979,8 @@ class BaseController {
         return () => this.getById(this._routerService._router.currentRoute.params.id);
     }
 
+    
+
     /** store service action functions */
     get update() {
         return (item, goToRouteName) =>
@@ -2016,6 +2018,10 @@ class BaseController {
         return () => this._storeService.read(this._APIEndpoint);
     }
 
+    get showByCurrentRouteId() {
+            return () => this._storeService.show(this._APIEndpoint, this._routerService._router.currentRoute.params.id);
+    }
+    
     /** base pages */
     get basePage() {
         return {
