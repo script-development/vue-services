@@ -1,23 +1,11 @@
-export {RouterService} from '../src/services/router';
-export {StoreService} from '../src/services/store';
-export {ErrorService} from '../src/services/error';
-export {LoadingService} from '../src/services/loading';
-export {AuthService} from '../src/services/auth';
-export {HTTPService} from '../src/services/http';
-export {EventService} from '../src/services/event';
-export {PageCreatorService} from '../src/services/pageCreator';
-export {TranslatorService} from '../src/services/translator';
-
-export {
-    routerService,
-    storeService,
-    errorService,
-    loadingService,
-    authService,
-    httpService,
-    eventService,
-    pageCreatorService,
-    translatorService,
-} from '../src/services';
+export const routerService: import('../src/services/router').RouterService;
+export const storeService: import('../src/services/store').StoreService;
+export const errorService: import('../src/services/error').ErrorService;
+export const loadingService: import('../src/services/loading').LoadingService;
+export const authService: import('../src/services/auth').AuthService;
+export const httpService: import('../src/services/http').HTTPService;
+export const eventService: import('../src/services/event').EventService;
+export const pageCreatorService: import('../src/services/pageCreator').PageCreatorService;
+export const translatorService: import('../src/services/translator').TranslatorService;
 
 export {BaseController} from '../src/controllers';
