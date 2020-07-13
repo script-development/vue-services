@@ -2,7 +2,6 @@
  * @typedef {import('../../http').HTTPService} HTTPService
  * @typedef {import('axios').AxiosRequestConfig} AxiosRequestConfig
  */
-
 import Vue from 'vue';
 
 export class StoreModuleFactory {
@@ -23,12 +22,14 @@ export class StoreModuleFactory {
 
         // mutation naming
         /** @type {String} */ this._setAllMutation;
+        /** @type {String} */ this._setShowMutation;
 
         // action naming
         /** @type {String} */ this._readAction;
         /** @type {String} */ this._updateAction;
         /** @type {String} */ this._createAction;
         /** @type {String} */ this._deleteAction;
+        /** @type {String} */ this._showAction;
         /** @type {String} */ this._setAllAction;
     }
 
@@ -48,14 +49,14 @@ export class StoreModuleFactory {
 
     /** create default state for the store */
     createDefaultState(allItemsStateName) {
-        return {[this.allItemsStateName]: []};
+        return {[this.allItemsStateName]: {}};
     }
 
     /** create default getters for the store */
     createDefaultGetters() {
         return {
-            [this.readAllGetter]: state => state[this.allItemsStateName],
-            [this.readByIdGetter]: state => idToFind => state[this.allItemsStateName].find(({id}) => id == idToFind),
+            [this.readAllGetter]: state => Object.values(state[this.allItemsStateName]),
+            [this.readByIdGetter]: state => id => state[this.allItemsStateName][id],
         };
     }
 
@@ -91,6 +92,7 @@ export class StoreModuleFactory {
         if (!endpoint) return actions;
 
         actions[this.readAction] = () => this._httpService.get(endpoint);
+        actions[this.showAction] = (_, id) => this._httpService.get(`${endpoint}/${id}`);
         actions[this.createAction] = (_, item) => this._httpService.post(endpoint, item);
         actions[this.updateAction] = (_, item) => this._httpService.post(`${endpoint}/${item.id}`, item);
         actions[this.deleteAction] = (_, id) => this._httpService.delete(`${endpoint}/${id}`);
@@ -177,8 +179,20 @@ export class StoreModuleFactory {
     set deleteAction(value) { this._deleteAction = value; }
 
     // prettier-ignore
+    get showAction() { return this._showAction; }
+
+    // prettier-ignore
+    set showAction(value) { this._showAction = value; }
+
+    // prettier-ignore
     get setAllAction() { return this._setAllAction; }
 
     // prettier-ignore
     set setAllAction(value) { this._setAllAction = value; }
+
+    // prettier-ignore
+    get setShowAction() { return this._setShowAction; }
+
+    // prettier-ignore
+    set setShowAction(value) { this._setShowAction = value; }
 }

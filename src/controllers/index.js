@@ -13,7 +13,7 @@ export class BaseController {
         this._pageCreatorService = pageCreatorService;
         this._eventService = eventService;
         this._translatorService = translatorService;
-        this._translatorService.setTranslation(APIEndpoint, {singular, plural})
+        this._translatorService.setTranslation(APIEndpoint, {singular, plural});
 
         this._APIEndpoint = APIEndpoint;
 
@@ -88,8 +88,6 @@ export class BaseController {
         return () => this.getById(this._routerService._router.currentRoute.params.id);
     }
 
-    
-
     /** store service action functions */
     get update() {
         return (item, goToRouteName) =>
@@ -128,9 +126,9 @@ export class BaseController {
     }
 
     get showByCurrentRouteId() {
-            return () => this._storeService.show(this._APIEndpoint, this._routerService._router.currentRoute.params.id);
+        return () => this._storeService.show(this._APIEndpoint, this._routerService._router.currentRoute.params.id);
     }
-    
+
     /** base pages */
     get basePage() {
         return {

@@ -109,10 +109,20 @@ export class StoreService {
     /**
      * dispatch an action to the store, which reads all items on the server
      *
-     * @param {String} storeModule the store module for which an item must be deleted
+     * @param {String} storeModule the store module for which all items must be read
      */
     read(storeModule) {
         return this._store.dispatch(storeModule + this.getReadAction());
+    }
+
+    /**
+     * dispatch an action to the store, which reads an item on the server
+     *
+     * @param {String} storeModule the store module for which the item must be read
+     * @param {Number} id the id to be read
+     */
+    show(storeModule, id) {
+        return this._store.dispatch(storeModule + this.getShowAction(), id);
     }
 
     /**
@@ -147,6 +157,14 @@ export class StoreService {
      */
     getReadAction(seperator = true) {
         return (seperator ? this.storeSeperator : '') + 'read';
+    }
+
+    /**
+     *  get the read store action with or without seperator
+     * @param {Boolean} seperator with or without seperator, default true
+     */
+    getShowAction(seperator = true) {
+        return (seperator ? this.storeSeperator : '') + 'show';
     }
 
     /**
@@ -197,6 +215,14 @@ export class StoreService {
         return (seperator ? this.storeSeperator : '') + 'SET_ALL';
     }
 
+    /**
+     *  get the all data in store state name with or without seperator
+     * @param {Boolean} seperator with or without seperator, default true
+     */
+    getSetShowMutation(seperator = true) {
+        return (seperator ? this.storeSeperator : '') + 'SET_SHOW';
+    }
+
     /** get the store seperator */
     get storeSeperator() {
         return '/';
@@ -209,6 +235,7 @@ export class StoreService {
         this._factory.createAction = this.getCreateAction(false);
         this._factory.updateAction = this.getUpdateAction(false);
         this._factory.deleteAction = this.getDeleteAction(false);
+        this._factory.showAction = this.getShowAction(false);
         this._factory.setAllAction = this.getSetAllInStoreAction(false);
 
         // set the factory getter names
@@ -220,6 +247,7 @@ export class StoreService {
 
         // set the factory mutation names
         this._factory.setAllMutation = this.getSetAllMutation(false);
+        this._factory._setShowMutation = this.getSetShowMutation(false);
     }
 
     /**
