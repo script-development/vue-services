@@ -924,31 +924,21 @@ class StoreModuleFactory {
     /**
      * create a new action to add to the store which sends a post request
      *
-     * @param {String} actionName name of the new action
      * @param {String} endpoint api endpoint
+     * @param {String} actionName the last part of the url
      */
-    createExtraPostAction(actionName, endpoint) {
-        return {
-            actions: {
-                [actionName]: (_, payload) =>
-                    this._httpService.post(`${endpoint}/${payload.id}/${actionName}`, payload),
-            },
-        };
+    createExtraPostAction(endpoint, actionName) {
+        return (_, payload) => this._httpService.post(`${endpoint}/${payload.id}/${actionName}`, payload);
     }
 
     /**
      * create a new action to add to the store which sends a get request
      *
-     * @param {String} actionName name of the new action
      * @param {String} endpoint api endpoint
      * @param {AxiosRequestConfig} [options] the optional request options
      */
-    createExtraGetAction(actionName, endpoint, options) {
-        return {
-            actions: {
-                [actionName]: (_, payload) => this._httpService.get(endpoint + payload ? `/${payload}` : '', options),
-            },
-        };
+    createExtraGetAction(endpoint, options) {
+        return (_, payload) => this._httpService.get(endpoint + payload ? `/${payload}` : '', options);
     }
 
     // prettier-ignore
@@ -1022,7 +1012,7 @@ class StoreModuleFactory {
  * @typedef {import('./factory').StoreModuleFactory} StoreModuleFactory
  * @typedef {import('../http').HTTPService} HTTPService
  * @typedef {import('vuex').Store} Store
- * @typedef {import('vuex').ModuleOptions} ModuleOptions
+ * @typedef {import('vuex').Module} Module
  * @typedef {import('axios').AxiosRequestConfig} AxiosRequestConfig
  */
 
@@ -1275,7 +1265,7 @@ class StoreService {
      *
      * @param {String} moduleName the name of the module
      * @param {String} [endpoint] the endpoint for the API
-     * @param {ModuleOptions} extraFunctionality extra functionality added to the store
+     * @param {Module} [extraFunctionality] extra functionality added to the store
      */
     generateAndSetDefaultStoreModule(moduleName, endpoint, extraFunctionality) {
         const storeModule = this._factory.createDefaultStore(endpoint);
@@ -1295,7 +1285,7 @@ class StoreService {
      * set the store module in the store
      *
      * @param {String} moduleName the name of the module
-     * @param {ModuleOptions} storeModule the module to add to the store
+     * @param {Module} storeModule the module to add to the store
      */
     registerModule(moduleName, storeModule) {
         this._moduleNames.push(moduleName);
@@ -1305,22 +1295,21 @@ class StoreService {
     /**
      * create a new action to add to the store which sends a post request
      *
-     * @param {String} actionName name of the new action
      * @param {String} endpoint api endpoint
+     * @param {String} actionName the last part of the url
      */
-    createExtraPostAction(actionName, endpoint) {
+    createExtraPostAction(endpoint, actionName) {
         return this._factory.createExtraPostAction(actionName, endpoint);
     }
 
     /**
      * create a new action to add to the store which sends a get request
      *
-     * @param {String} actionName name of the new action
      * @param {String} endpoint api endpoint
      * @param {AxiosRequestConfig} [options] the optional request options
      */
-    createExtraGetAction(actionName, endpoint, options) {
-        return this._factory.createExtraGetAction(actionName, endpoint, options);
+    createExtraGetAction(endpoint, options) {
+        return this._factory.createExtraGetAction(endpoint, options);
     }
 }
 
@@ -1943,12 +1932,17 @@ var MinimalRouterView = {
 
 /**
  * @typedef {import('../services/translator').Translation} Translation
+ * @typedef {import('vuex').Module} Module
+ * @typedef {import('vuex').ActionMethod} ActionMethod
+ * @typedef {import('vuex').Mutation} MutationMethod
+ *
+ * @typedef {(State) => any} GetterMethod
  */
 
 class BaseController {
     /**
      * @param {String} APIEndpoint
-     * @param {Translation} translation
+     * @param {Translation} [translation]
      */
     constructor(APIEndpoint, translation) {
         this._storeService = storeService;
@@ -1956,6 +1950,11 @@ class BaseController {
         this._pageCreatorService = pageCreatorService;
         this._eventService = eventService;
         this._translatorService = translatorService;
+
+        if (!translation) {
+            translation = {singular: APIEndpoint, plural: APIEndpoint};
+        }
+
         this._translatorService.setTranslation(APIEndpoint, translation);
 
         this._APIEndpoint = APIEndpoint;
@@ -1968,8 +1967,11 @@ class BaseController {
         this._goToPageAfterCreateAction = this.goToOverviewPage;
         this._goToPageAfterDeleteAction = this.goToOverviewPage;
 
-        /** Extra store functionality can added through the store service */
-        this._extraStoreFunctionality = false;
+        /**
+         * @type {Module}
+         * Extra store functionality can added through the store service
+         */
+        this._extraStoreFunctionality = {};
 
         /**
          * Initiate basic route settings
@@ -2128,6 +2130,66 @@ class BaseController {
 
     get destroyByIdModal() {
         return id => this._eventService.modal(this.destroyModalMessage, () => this.destroyByIdWithoutRouteChange(id));
+    }
+
+    /**
+     * Add an extra action to this store module
+     *
+     * @param {String} name name of the new action
+     * @param {ActionMethod} action
+     */
+    setExtraStoreAction(name, action) {
+        if (!this._extraStoreFunctionality.actions) {
+            this._extraStoreFunctionality.actions = {};
+        }
+        this._extraStoreFunctionality.actions[name] = action;
+    }
+
+    /**
+     * Add an extra mutation to this store module
+     *
+     * @param {String} name name of the new action
+     * @param {MutationMethod} mutation
+     */
+    setExtraStoreMutation(name, mutation) {
+        if (!this._extraStoreFunctionality.mutations) {
+            this._extraStoreFunctionality.mutations = {};
+        }
+        this._extraStoreFunctionality.mutations[name] = mutation;
+    }
+
+    /**
+     * Add an extra getter to this store module
+     *
+     * @param {String} name name of the new getter
+     * @param {GetterMethod} getter
+     */
+    setExtraStoreGetter(name, getter) {
+        if (!this._extraStoreFunctionality.getters) {
+            this._extraStoreFunctionality.getters = {};
+        }
+        this._extraStoreFunctionality.getters[name] = getter;
+    }
+
+    /**
+     * create a new action to add to the store which sends a get request
+     * url for the new request will be: this.APIEndpoint + payload ? `/${payload}` : ''
+     *
+     * @param {String} name name of the new action
+     * @param {AxiosRequestConfig} [options] the optional request options
+     */
+    createAndSetExtraGetAction(name, options) {
+        this.setExtraStoreAction(name, this._storeService.createExtraGetAction(this.APIEndpoint, options));
+    }
+
+    /**
+     * create a new action to add to the store which sends a post request
+     * url for the post request will be: `${this.APIEndpoint}/${payload.id}/${name}
+     *
+     * @param {String} name name of the new action and the last part of the url
+     */
+    createAndSetExtraPostAction(name) {
+        this.setExtraStoreAction(name, this._storeService.createExtraPostAction(this.APIEndpoint, name));
     }
 }
 

@@ -1,5 +1,10 @@
 /**
  * @typedef {import('../services/translator').Translation} Translation
+ * @typedef {import('vuex').Module} Module
+ * @typedef {import('vuex').ActionMethod} ActionMethod
+ * @typedef {import('vuex').Mutation} MutationMethod
+ *
+ * @typedef {(State) => any} GetterMethod
  */
 
 import MinimalRouterView from '../components/MinimalRouterView';
@@ -33,8 +38,11 @@ export class BaseController {
         this._goToPageAfterCreateAction = this.goToOverviewPage;
         this._goToPageAfterDeleteAction = this.goToOverviewPage;
 
-        /** Extra store functionality can added through the store service */
-        this._extraStoreFunctionality = false;
+        /**
+         * @type {Module}
+         * Extra store functionality can added through the store service
+         */
+        this._extraStoreFunctionality = {};
 
         /**
          * Initiate basic route settings
@@ -193,5 +201,65 @@ export class BaseController {
 
     get destroyByIdModal() {
         return id => this._eventService.modal(this.destroyModalMessage, () => this.destroyByIdWithoutRouteChange(id));
+    }
+
+    /**
+     * Add an extra action to this store module
+     *
+     * @param {String} name name of the new action
+     * @param {ActionMethod} action
+     */
+    setExtraStoreAction(name, action) {
+        if (!this._extraStoreFunctionality.actions) {
+            this._extraStoreFunctionality.actions = {};
+        }
+        this._extraStoreFunctionality.actions[name] = action;
+    }
+
+    /**
+     * Add an extra mutation to this store module
+     *
+     * @param {String} name name of the new action
+     * @param {MutationMethod} mutation
+     */
+    setExtraStoreMutation(name, mutation) {
+        if (!this._extraStoreFunctionality.mutations) {
+            this._extraStoreFunctionality.mutations = {};
+        }
+        this._extraStoreFunctionality.mutations[name] = mutation;
+    }
+
+    /**
+     * Add an extra getter to this store module
+     *
+     * @param {String} name name of the new getter
+     * @param {GetterMethod} getter
+     */
+    setExtraStoreGetter(name, getter) {
+        if (!this._extraStoreFunctionality.getters) {
+            this._extraStoreFunctionality.getters = {};
+        }
+        this._extraStoreFunctionality.getters[name] = getter;
+    }
+
+    /**
+     * create a new action to add to the store which sends a get request
+     * url for the new request will be: this.APIEndpoint + payload ? `/${payload}` : ''
+     *
+     * @param {String} name name of the new action
+     * @param {AxiosRequestConfig} [options] the optional request options
+     */
+    createAndSetExtraGetAction(name, options) {
+        this.setExtraStoreAction(name, this._storeService.createExtraGetAction(this.APIEndpoint, options));
+    }
+
+    /**
+     * create a new action to add to the store which sends a post request
+     * url for the post request will be: `${this.APIEndpoint}/${payload.id}/${name}
+     *
+     * @param {String} name name of the new action and the last part of the url
+     */
+    createAndSetExtraPostAction(name) {
+        this.setExtraStoreAction(name, this._storeService.createExtraPostAction(this.APIEndpoint, name));
     }
 }

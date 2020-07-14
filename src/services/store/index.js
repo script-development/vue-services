@@ -2,7 +2,7 @@
  * @typedef {import('./factory').StoreModuleFactory} StoreModuleFactory
  * @typedef {import('../http').HTTPService} HTTPService
  * @typedef {import('vuex').Store} Store
- * @typedef {import('vuex').ModuleOptions} ModuleOptions
+ * @typedef {import('vuex').Module} Module
  * @typedef {import('axios').AxiosRequestConfig} AxiosRequestConfig
  */
 
@@ -255,7 +255,7 @@ export class StoreService {
      *
      * @param {String} moduleName the name of the module
      * @param {String} [endpoint] the endpoint for the API
-     * @param {ModuleOptions} extraFunctionality extra functionality added to the store
+     * @param {Module} [extraFunctionality] extra functionality added to the store
      */
     generateAndSetDefaultStoreModule(moduleName, endpoint, extraFunctionality) {
         const storeModule = this._factory.createDefaultStore(endpoint);
@@ -275,7 +275,7 @@ export class StoreService {
      * set the store module in the store
      *
      * @param {String} moduleName the name of the module
-     * @param {ModuleOptions} storeModule the module to add to the store
+     * @param {Module} storeModule the module to add to the store
      */
     registerModule(moduleName, storeModule) {
         this._moduleNames.push(moduleName);
@@ -285,21 +285,20 @@ export class StoreService {
     /**
      * create a new action to add to the store which sends a post request
      *
-     * @param {String} actionName name of the new action
      * @param {String} endpoint api endpoint
+     * @param {String} actionName the last part of the url
      */
-    createExtraPostAction(actionName, endpoint) {
+    createExtraPostAction(endpoint, actionName) {
         return this._factory.createExtraPostAction(actionName, endpoint);
     }
 
     /**
      * create a new action to add to the store which sends a get request
      *
-     * @param {String} actionName name of the new action
      * @param {String} endpoint api endpoint
      * @param {AxiosRequestConfig} [options] the optional request options
      */
-    createExtraGetAction(actionName, endpoint, options) {
-        return this._factory.createExtraGetAction(actionName, endpoint, options);
+    createExtraGetAction(endpoint, options) {
+        return this._factory.createExtraGetAction(endpoint, options);
     }
 }

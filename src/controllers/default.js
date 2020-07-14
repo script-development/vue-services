@@ -13,6 +13,13 @@ export class FILL_INController extends BaseController {
             plural: 'FILL_IN',
         };
         super(API_ENDPOINT, translation);
+
+        // if you want to add new actions to the store you can use the following methods:
+        // this.createAndSetExtraGetAction('action name', AxiosRequestConfig)
+        // this.createAndSetExtraPostAction('action name')
+
+        // if you want to add extra mutators you can use the following methods:
+        // this.setExtraStoreMutation('mutation name', MutationMethod)
     }
 
     get overviewPage() {
