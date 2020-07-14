@@ -1,14 +1,13 @@
 import {StoreService} from './storeService';
 import {RouterService, RouteSettings} from './routerService';
-import {PageCreatorService, EventService, TranslatorService} from './services';
+import {PageCreatorService, EventService, TranslatorService, Translation} from './services';
 
 export class BaseController {
     /**
      * @param {String} APIEndpoint
-     * @param {String} singular
-     * @param {String} plural
+     * @param {Translation} translation
      */
-    constructor(APIEndpoint: string, singular: string, plural: string);
+    constructor(APIEndpoint: string, translation: Translation);
     _storeService: StoreService;
     _routerService: RouterService;
     _pageCreatorService: PageCreatorService;

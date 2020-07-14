@@ -1941,19 +1941,22 @@ var MinimalRouterView = {
     },
 };
 
+/**
+ * @typedef {import('../services/translator').Translation} Translation
+ */
+
 class BaseController {
     /**
      * @param {String} APIEndpoint
-     * @param {String} singular
-     * @param {String} plural
+     * @param {Translation} translation
      */
-    constructor(APIEndpoint, singular, plural) {
+    constructor(APIEndpoint, translation) {
         this._storeService = storeService;
         this._routerService = routerService;
         this._pageCreatorService = pageCreatorService;
         this._eventService = eventService;
         this._translatorService = translatorService;
-        this._translatorService.setTranslation(APIEndpoint, {singular, plural});
+        this._translatorService.setTranslation(APIEndpoint, translation);
 
         this._APIEndpoint = APIEndpoint;
 

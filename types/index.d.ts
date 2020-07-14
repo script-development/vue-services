@@ -10,6 +10,8 @@ import {
     PageCreatorService,
 } from './services';
 
+export {Translation} from './services';
+
 import {RouterService} from './routerService';
 
 import {StoreService} from './storeService';
