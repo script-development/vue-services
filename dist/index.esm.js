@@ -1293,7 +1293,7 @@ class StoreService {
      * @param {String} actionName the last part of the url
      */
     createExtraPostAction(endpoint, actionName) {
-        return this._factory.createExtraPostAction(actionName, endpoint);
+        return this._factory.createExtraPostAction(endpoint, actionName);
     }
 
     /**
