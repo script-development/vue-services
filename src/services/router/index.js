@@ -92,12 +92,12 @@ export class RouterService {
             routes.push(this._factory.createOverview(settings));
         }
 
-        if (settings.showComponent) {
-            routes.push(this._factory.createShow(settings));
-        }
-
         if (settings.createComponent) {
             routes.push(this._factory.createCreate(settings));
+        }
+
+        if (settings.showComponent) {
+            routes.push(this._factory.createShow(settings));
         }
 
         if (settings.editComponent) {
