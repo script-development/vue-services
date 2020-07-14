@@ -5,9 +5,9 @@ import {PageCreatorService, EventService, TranslatorService, Translation} from '
 export class BaseController {
     /**
      * @param {String} APIEndpoint
-     * @param {Translation} translation
+     * @param {Translation} [translation]
      */
-    constructor(APIEndpoint: string, translation: Translation);
+    constructor(APIEndpoint: string, translation?: Translation);
     _storeService: StoreService;
     _routerService: RouterService;
     _pageCreatorService: PageCreatorService;
