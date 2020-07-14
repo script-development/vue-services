@@ -1,6 +1,6 @@
 {
     "name": "@script-development/vue-services",
-    "version": "0.0.13",
+    "version": "0.0.14",
     "description": "Services for Vue SPA App",
     "main": "dist/index.js",
     "module": "dist/index.esm.js",
@@ -14,7 +14,8 @@
         "test": "echo \"Error: no test specified\" && exit 1",
         "build": "rollup src/index.js --file dist/index.js --format iife",
         "dev": "rollup -c scripts/config.js",
-        "watch": "npm run dev -w"
+        "watch": "npm run dev -w",
+        "publish": "npm publish"
     },
     "author": "Script",
     "license": "MIT",

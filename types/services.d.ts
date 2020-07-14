@@ -1,0 +1,273 @@
+import {AxiosResponse, AxiosRequestConfig, AxiosInstance} from 'axios';
+import {Vue} from 'vue/types/vue';
+import {RouterService} from './routerService';
+import {StoreService} from './storeService';
+
+import {Component, CreateElement, VNode} from 'vue/types/index';
+import {DefaultData, DefaultMethods, DefaultComputed} from 'vue/types/options';
+
+export type Translation = {
+    /**
+     * the singular translation
+     */
+    singular: string;
+    /**
+     * the plural translation
+     */
+    plural: string;
+};
+
+export class HTTPService {
+    _http: AxiosInstance;
+    _requestMiddleware: any[];
+    _responseMiddleware: any[];
+    _responseErrorMiddleware: any[];
+    /**
+     * send a get request to the given endpoint
+     * @param {String} endpoint the endpoint for the get
+     * @param {AxiosRequestConfig} [options] the optional request options
+     */
+    get(endpoint: string, options?: AxiosRequestConfig): Promise<AxiosResponse>;
+    /**
+     * send a post request to the given endpoint with the given data
+     * @param {String} endpoint the endpoint for the post
+     * @param {Object.<string,*>} data the data to be send to the server
+     */
+    post(
+        endpoint: string,
+        data: {
+            [x: string]: any;
+        }
+    ): Promise<AxiosResponse>;
+    /**
+     * send a delete request to the given endpoint
+     * @param {String} endpoint the endpoint for the get
+     */
+    delete(endpoint: string): Promise<AxiosResponse>;
+    registerRequestMiddleware(middlewareFunc: any): void;
+    registerResponseMiddleware(middlewareFunc: any): void;
+    registerResponseErrorMiddleware(middlewareFunc: any): void;
+}
+
+export class EventService {
+    /**
+     *
+     * @param {HTTPService} httpService the http service for communication with the API
+     */
+    constructor(httpService: HTTPService);
+    _httpService: HTTPService;
+    set app(arg: Vue);
+    get app(): Vue;
+    _app: Vue;
+    get responseMiddleware(): ({data}: {data: any}) => void;
+    get responseErrorMiddleware(): ({response}: {response: any}) => void;
+    toast(message: any, variant: any): void;
+    successToast(message: any): void;
+    dangerToast(message: any): void;
+    modal(message: any, okAction: any, cancelAction: any): void;
+}
+
+export class TranslatorService {
+    /** @type {Object.<string, Translation>}*/
+    _translations: {
+        [x: string]: Translation;
+    };
+    getTranslation(value: any, pluralOrSingular: any): any;
+    getPlural(value: any): any;
+    getSingular(value: any): any;
+    getCapitalizedSingular(value: any): string;
+    getCapitalizedPlural(value: any): string;
+    maybePluralize(count: any, value: any): string;
+    /**
+     * @param {string} key
+     * @param {Translation} translation
+     */
+    setTranslation(key: string, translation: Translation): void;
+}
+
+export class StorageService {
+    set keepALive(arg: any);
+    get keepALive(): any;
+    setItem(key: any, value: any, size: any): void;
+    getItem(key: any): string;
+    clear(): void;
+}
+export class ErrorService {
+    /**
+     * @param {StoreService} storeService
+     * @param {RouterService} routerService
+     * @param {HTTPService} httpService the http service for communication with the API
+     */
+    constructor(storeService: StoreService, routerService: RouterService, httpService: HTTPService);
+    _storeModuleName: string;
+    _storeService: StoreService;
+    _routerService: RouterService;
+    _httpService: HTTPService;
+    getErrors(): any;
+    setErrors(errors: any): void;
+    destroyErrors(): void;
+    get responseErrorMiddleware(): ({response}: {response: any}) => void;
+    get routeMiddleware(): (to: any, from: any) => void;
+}
+export class LoadingService {
+    /**
+     * @param {StoreService} storeService
+     * @param {HTTPService} httpService
+     */
+    constructor(storeService: StoreService, httpService: HTTPService);
+    _storeModuleName: string;
+    _storeService: StoreService;
+    /**
+     * Set the loading state
+     *
+     * @param {Boolean} loading the loading state
+     */
+    set loading(arg: boolean);
+    /**
+     * get the loading state
+     *
+     * @returns {Boolean}
+     */
+    get loading(): boolean;
+    spinnerTimeout: number;
+    minTimeSpinner: number;
+    loadingTimeStart: number;
+    loadingTimeoutId: NodeJS.Timeout;
+    get requestMiddleware(): () => boolean;
+    get responseMiddleware(): () => boolean;
+}
+export class AuthService {
+    /**
+     * @param {RouterService} routerService
+     * @param {StoreService} storeService
+     * @param {StorageService} storageService
+     * @param {HTTPService} httpService
+     */
+    constructor(
+        routerService: RouterService,
+        storeService: StoreService,
+        storageService: StorageService,
+        httpService: HTTPService
+    );
+    _routerService: RouterService;
+    _storeService: StoreService;
+    _storageService: StorageService;
+    _httpService: HTTPService;
+    _loginPage: {
+        render(h: any): void;
+    };
+    get storeModuleName(): string;
+    get isLoggedin(): boolean;
+    /** @param {string} page */
+    set defaultLoggedInPage(arg: string);
+    get defaultLoggedInPage(): string;
+    _defaultLoggedInPage: string;
+    /** @param {Component} page*/
+    set loginPage(arg: Component<DefaultData<never>, DefaultMethods<never>, DefaultComputed, Record<string, any>>);
+    get loginPage(): Component<DefaultData<never>, DefaultMethods<never>, DefaultComputed, Record<string, any>>;
+    /**
+     * Login to the app
+     * @param {Object} credentials the credentials to login with
+     * @param {String} credentials.email the email to login with
+     * @param {String} credentials.password the password to login with
+     * @param {Boolean} credentials.rememberMe if you want a consistent login
+     */
+    login(credentials: {email: string; password: string; rememberMe: boolean}): void;
+    logout(): void;
+    goToStandardLoggedInPage(): void;
+    sendEmailResetPassword(email: any): void;
+    resetPassword(data: any): void;
+    goToLoginPage(): void;
+    get responseErrorMiddleware(): ({response}: {response: any}) => void;
+    get routeMiddleware(): (to: any, from: any, next: any) => boolean;
+    setRoutes(): void;
+}
+export class PageCreatorService {
+    /**
+     * @param {ErrorService} errorService
+     * @param {TranslatorService} translatorService
+     * @param {EventService} eventService
+     * @param {RouterService} routerService
+     */
+    constructor(
+        errorService: ErrorService,
+        translatorService: TranslatorService,
+        eventService: EventService,
+        routerService: RouterService
+    );
+    _errorService: ErrorService;
+    _translatorService: TranslatorService;
+    _eventService: EventService;
+    _routerService: RouterService;
+    createPage(
+        form: any,
+        modelFactory: any,
+        subject: any,
+        createAction: any,
+        title: any
+    ): {
+        name: string;
+        data: () => {
+            editable: any;
+        };
+        render(h: any): VNode;
+        mounted(): void;
+    };
+    editPage(
+        form: any,
+        getter: any,
+        subject: any,
+        updateAction: any,
+        destroyAction: any
+    ): {
+        name: string;
+        computed: {
+            item(): any;
+        };
+        render(h: any): VNode;
+        mounted(): void;
+    };
+    /**
+     * @param {CreateElement} h
+     * @param {VNode[]} children
+     */
+    createContainer(h: CreateElement, children: VNode[]): VNode;
+    /**
+     * @param {CreateElement} h
+     * @param {String} title
+     */
+    createTitle(h: CreateElement, title: string): VNode;
+    /**
+     * @param {CreateElement} h
+     * @param {String} subject
+     */
+    createCreatePageTitle(h: CreateElement, subject: string): VNode;
+    /**
+     * @param {CreateElement} h
+     * @param {Object<string,any>} item
+     */
+    createEditPageTitle(
+        h: CreateElement,
+        item: {
+            [x: string]: any;
+        }
+    ): VNode;
+    /**
+     * @param {CreateElement} h
+     * @param {Component} form
+     * @param {Object<string,any>} editable
+     * @param {(item:Object<string,any) => void} action
+     */
+    createForm(
+        h: CreateElement,
+        form: Component,
+        editable: {
+            [x: string]: any;
+        },
+        action: (item: {[x: string]: any}) => void
+    ): VNode;
+    /**
+     * @param {Object<string,any>} editable
+     */
+    checkQuery(editable: {[x: string]: any}): void;
+}

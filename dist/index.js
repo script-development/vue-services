@@ -1,8 +1,10 @@
 'use strict';
 
-Object.defineProperty(exports, '__esModule', { value: true });
+Object.defineProperty(exports, '__esModule', {value: true});
 
-function _interopDefault (ex) { return (ex && (typeof ex === 'object') && 'default' in ex) ? ex['default'] : ex; }
+function _interopDefault(ex) {
+    return ex && typeof ex === 'object' && 'default' in ex ? ex['default'] : ex;
+}
 
 var Vue = _interopDefault(require('vue'));
 var Vuex = _interopDefault(require('vuex'));
@@ -94,7 +96,7 @@ class HTTPService {
 
 /**
  * @typedef {import("vue/types/vue").Vue} VueInstance
- * @typedef {import('../http').HTTPService} HTTPService
+ * @typedef {import('../http/index').HTTPService} HTTPService
  */
 
 class EventService {
@@ -201,8 +203,9 @@ class TranslatorService {
     getTranslation(value, pluralOrSingular) {
         const translation = this._translations[value];
 
-        if(!translation) throw new MissingTranslationError(`Missing translation for ${value}`)
-        if(!translation[pluralOrSingular]) throw new MissingTranslationError(`Missing ${pluralOrSingular} translation for ${value}`)
+        if (!translation) throw new MissingTranslationError(`Missing translation for ${value}`);
+        if (!translation[pluralOrSingular])
+            throw new MissingTranslationError(`Missing ${pluralOrSingular} translation for ${value}`);
 
         return translation[pluralOrSingular];
     }
@@ -1020,7 +1023,7 @@ class StoreModuleFactory {
 
 /**
  * @typedef {import('./factory').StoreModuleFactory} StoreModuleFactory
- * @typedef {import('../http').HTTPService} HTTPService
+ * @typedef {import('../http/index').HTTPService} HTTPService
  * @typedef {import('vuex').Store} Store
  * @typedef {import('vuex').ModuleOptions} ModuleOptions
  * @typedef {import('axios').AxiosRequestConfig} AxiosRequestConfig
@@ -1325,15 +1328,15 @@ class StoreService {
 }
 
 var NotFoundPage = {
-  render(h) {
-    return h("div", ["ERROR 404"]);
-  },
+    render(h) {
+        return h('div', ['ERROR 404']);
+    },
 };
 
 /**
- * @typedef {import('../store').StoreService} StoreService
- * @typedef {import('../router').RouterService} RouterService
- * @typedef {import('../http').HTTPService} HTTPService
+ * @typedef {import('../store/index').StoreService} StoreService
+ * @typedef {import('../router/index').RouterService} RouterService
+ * @typedef {import('../http/index').HTTPService} HTTPService
  */
 
 class ErrorService {
@@ -1390,8 +1393,8 @@ class ErrorService {
 }
 
 /**
- * @typedef {import('../store').StoreService} StoreService
- * @typedef {import('../http').HTTPService} HTTPService
+ * @typedef {import('../store/index').StoreService} StoreService
+ * @typedef {import('../http/index').HTTPService} HTTPService
  */
 
 class LoadingService {
@@ -1525,22 +1528,22 @@ var storeModule = (storageService, httpService, authService) => ({
 });
 
 var LoginPage = {
-  render(h) {
-    h("div", ["Implement your own login page!"]);
-  },
+    render(h) {
+        h('div', ['Implement your own login page!']);
+    },
 };
 
 var ForgotPasswordPage = {
     render(h) {
-      h("div", ["Implement your own forgot password page!"]);
+        h('div', ['Implement your own forgot password page!']);
     },
-  };
+};
 
 var ResetPasswordPage = {
     render(h) {
-      h("div", ["Implement your own reset password page!"]);
+        h('div', ['Implement your own reset password page!']);
     },
-  };
+};
 
 class MissingDefaultLoggedinPageError extends Error {
     constructor(...params) {
@@ -1557,10 +1560,10 @@ class MissingDefaultLoggedinPageError extends Error {
 }
 
 /**
- * @typedef {import('../router').RouterService} RouterService
- * @typedef {import('../store').StoreService} StoreService
- * @typedef {import('../storage').StorageService} StorageService
- * @typedef {import('../http').HTTPService} HTTPService
+ * @typedef {import('../router/index').RouterService} RouterService
+ * @typedef {import('../store/index').StoreService} StoreService
+ * @typedef {import('../storage/index').StorageService} StorageService
+ * @typedef {import('../http/index').HTTPService} HTTPService
  * @typedef {import('vue').Component} Component
  */
 
@@ -1728,10 +1731,10 @@ class AuthService {
 }
 
 /**
- * @typedef {import('../error').ErrorService} ErrorService
- * @typedef {import('../translator').TranslatorService} TranslatorService
- * @typedef {import('../event').EventService} EventService
- * @typedef {import('../router').RouterService} RouterService
+ * @typedef {import('../error/index').ErrorService} ErrorService
+ * @typedef {import('../translator/index').TranslatorService} TranslatorService
+ * @typedef {import('../event/index').EventService} EventService
+ * @typedef {import('../router/index').RouterService} RouterService
  * @typedef {import('vue').CreateElement} CreateElement
  * @typedef {import('vue').VNode} VNode
  * @typedef {import('vue').Component} Component
@@ -1923,12 +1926,7 @@ var MinimalRouterView = {
             default: 0,
         },
     },
-    render(h, {
-        props,
-        children,
-        parent,
-        data
-    }) {
+    render(h, {props, children, parent, data}) {
         const route = parent.$route;
         const matched = route.matched[props.depth];
         const component = matched && matched.components[name];
