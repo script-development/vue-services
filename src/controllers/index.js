@@ -262,4 +262,23 @@ export class BaseController {
     createAndSetExtraPostAction(name) {
         this.setExtraStoreAction(name, this._storeService.createExtraPostAction(this.APIEndpoint, name));
     }
+
+    /**
+     * dispatch an action to the store
+     * @param {String} action the name of the action being dispatched
+     * @param {*} payload the payload being used by the action
+     */
+    dispatchToStore(action, payload) {
+        this._storeService.dispatch(this.APIEndpoint, action, payload);
+    }
+
+    /**
+     * pops up a modal with the given message
+     * @param {String} message the message being shown by the modal
+     * @param {Function} okAction the function being used when click on ok
+     * @param {Function} [cancelAction] the being used when click on cancel
+     */
+    popModal(message, okAction, cancelAction) {
+        this._eventService.modal(message, okAction, cancelAction);
+    }
 }

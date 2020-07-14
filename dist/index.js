@@ -97,6 +97,7 @@ class HTTPService {
  * @typedef {import('../http').HTTPService} HTTPService
  */
 
+//  TODO :: it's BootstrapVue dependent
 class EventService {
     /**
      *
@@ -131,6 +132,11 @@ class EventService {
         };
     }
 
+    /**
+     * pops up a toast with given message in the given variance
+     * @param {String} message the message being shown by the toast
+     * @param {String} variant the toast variant
+     */
     toast(message, variant) {
         this._app.$bvToast.toast(`${message}`, {
             variant,
@@ -139,14 +145,28 @@ class EventService {
         });
     }
 
+    /**
+     * pops up a success toast
+     * @param {String} message the message being shown by the toast
+     */
     successToast(message) {
         this.toast(message, 'success');
     }
 
+    /**
+     * pops up a danger toast
+     * @param {String} message the message being shown by the toast
+     */
     dangerToast(message) {
         this.toast(message, 'danger');
     }
 
+    /**
+     * pops up a modal with the given message
+     * @param {String} message the message being shown by the modal
+     * @param {Function} okAction the function being used when click on ok
+     * @param {Function} [cancelAction] the being used when click on cancel
+     */
     modal(message, okAction, cancelAction) {
         this._app.$bvModal
             .msgBoxConfirm(message, {
@@ -2190,6 +2210,25 @@ class BaseController {
      */
     createAndSetExtraPostAction(name) {
         this.setExtraStoreAction(name, this._storeService.createExtraPostAction(this.APIEndpoint, name));
+    }
+
+    /**
+     * dispatch an action to the store
+     * @param {String} action the name of the action being dispatched
+     * @param {*} payload the payload being used by the action
+     */
+    dispatchToStore(action, payload) {
+        this._storeService.dispatch(this.APIEndpoint, action, payload);
+    }
+
+    /**
+     * pops up a modal with the given message
+     * @param {String} message the message being shown by the modal
+     * @param {Function} okAction the function being used when click on ok
+     * @param {Function} [cancelAction] the being used when click on cancel
+     */
+    popModal(message, okAction, cancelAction) {
+        this._eventService.modal(message, okAction, cancelAction);
     }
 }
 

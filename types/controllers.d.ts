@@ -4,7 +4,7 @@ import {PageCreatorService, EventService, TranslatorService, Translation} from '
 import {Module, ActionMethod, MutationMethod} from 'vuex';
 import {AxiosRequestConfig} from 'axios';
 
-type GetterMethod = (state: Object<string, any>) => any;
+type GetterMethod = (state: any) => any;
 
 export class BaseController {
     /**
@@ -26,7 +26,7 @@ export class BaseController {
     _goToPageAfterCreateAction: () => void;
     _goToPageAfterDeleteAction: () => void;
     /** Extra store functionality can added through the store service */
-    _extraStoreFunctionality: Module;
+    _extraStoreFunctionality: Module<string, any>;
     /**
      * Initiate basic route settings
      * Settings can be changed in controller
@@ -114,4 +114,18 @@ export class BaseController {
      * @param {String} name name of the new action and the last part of the url
      */
     createAndSetExtraPostAction(name: string): void;
+    /**
+     * dispatch an action to the store
+     * @param {String} action the name of the action being dispatched
+     * @param {*} payload the payload being used by the action
+     */
+    dispatchToStore(action: string, payload: any): void;
+
+    /**
+     * pops up a modal with the given message
+     * @param {String} message the message being shown by the modal
+     * @param {Function} okAction the function being used when click on ok
+     * @param {Function} [cancelAction] the being used when click on cancel
+     */
+    popModal(message: string, okAction: Function, cancelAction?: Function): void;
 }
