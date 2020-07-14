@@ -1,6 +1,6 @@
 import {AxiosResponse, AxiosRequestConfig} from 'axios';
 import {HTTPService} from './services';
-import {Store, ModuleOptions} from 'vuex';
+import {Store, Module} from 'vuex';
 
 export class StoreModuleFactory {
     /**
@@ -84,32 +84,26 @@ export class StoreModuleFactory {
     /**
      * create a new action to add to the store which sends a post request
      *
-     * @param {String} actionName name of the new action
      * @param {String} endpoint api endpoint
+     * @param {String} actionName the last part of the url
      */
     createExtraPostAction(
-        actionName: string,
-        endpoint: string
+        endpoint: string,
+        actionName: string
     ): {
-        actions: {
-            [x: string]: (_: any, payload: any) => Promise<AxiosResponse<any>>;
-        };
+        [x: string]: (_: any, payload: any) => Promise<AxiosResponse<any>>;
     };
     /**
      * create a new action to add to the store which sends a get request
      *
-     * @param {String} actionName name of the new action
      * @param {String} endpoint api endpoint
      * @param {AxiosRequestConfig} [options] the optional request options
      */
     createExtraGetAction(
-        actionName: string,
         endpoint: string,
         options?: AxiosRequestConfig
     ): {
-        actions: {
-            [x: string]: (_: any, payload: any) => Promise<AxiosResponse<any>>;
-        };
+        [x: string]: (_: any, payload: any) => Promise<AxiosResponse<any>>;
     };
     set readAllGetter(arg: string);
     get readAllGetter(): string;
@@ -281,44 +275,38 @@ export class StoreService {
      *
      * @param {String} moduleName the name of the module
      * @param {String} [endpoint] the endpoint for the API
-     * @param {ModuleOptions} extraFunctionality extra functionality added to the store
+     * @param {Module} [extraFunctionality] extra functionality added to the store
      */
-    generateAndSetDefaultStoreModule(moduleName: string, endpoint?: string, extraFunctionality?: ModuleOptions): void;
+    generateAndSetDefaultStoreModule(moduleName: string, endpoint?: string, extraFunctionality?: Module): void;
     /**
      * set the store module in the store
      *
      * @param {String} moduleName the name of the module
-     * @param {ModuleOptions} storeModule the module to add to the store
+     * @param {Module} storeModule the module to add to the store
      */
-    registerModule(moduleName: string, storeModule: ModuleOptions): void;
+    registerModule(moduleName: string, storeModule: Module): void;
     /**
      * create a new action to add to the store which sends a post request
      *
-     * @param {String} actionName name of the new action
      * @param {String} endpoint api endpoint
+     * @param {String} actionName the last part of the url
      */
     createExtraPostAction(
-        actionName: string,
-        endpoint: string
+        endpoint: string,
+        actionName: string
     ): {
-        actions: {
-            [x: string]: (_: any, payload: any) => Promise<AxiosResponse<any>>;
-        };
+        [x: string]: (_: any, payload: any) => Promise<AxiosResponse<any>>;
     };
     /**
      * create a new action to add to the store which sends a get request
      *
-     * @param {String} actionName name of the new action
      * @param {String} endpoint api endpoint
      * @param {AxiosRequestConfig} [options] the optional request options
      */
     createExtraGetAction(
-        actionName: string,
         endpoint: string,
         options?: AxiosRequestConfig
     ): {
-        actions: {
-            [x: string]: (_: any, payload: any) => Promise<AxiosResponse<any>>;
-        };
+        [x: string]: (_: any, payload: any) => Promise<AxiosResponse<any>>;
     };
 }

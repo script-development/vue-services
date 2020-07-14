@@ -103,31 +103,21 @@ export class StoreModuleFactory {
     /**
      * create a new action to add to the store which sends a post request
      *
-     * @param {String} actionName name of the new action
      * @param {String} endpoint api endpoint
+     * @param {String} actionName the last part of the url
      */
-    createExtraPostAction(actionName, endpoint) {
-        return {
-            actions: {
-                [actionName]: (_, payload) =>
-                    this._httpService.post(`${endpoint}/${payload.id}/${actionName}`, payload),
-            },
-        };
+    createExtraPostAction(endpoint, actionName) {
+        return (_, payload) => this._httpService.post(`${endpoint}/${payload.id}/${actionName}`, payload);
     }
 
     /**
      * create a new action to add to the store which sends a get request
      *
-     * @param {String} actionName name of the new action
      * @param {String} endpoint api endpoint
      * @param {AxiosRequestConfig} [options] the optional request options
      */
-    createExtraGetAction(actionName, endpoint, options) {
-        return {
-            actions: {
-                [actionName]: (_, payload) => this._httpService.get(endpoint + payload ? `/${payload}` : '', options),
-            },
-        };
+    createExtraGetAction(endpoint, options) {
+        return (_, payload) => this._httpService.get(endpoint + payload ? `/${payload}` : '', options);
     }
 
     // prettier-ignore

@@ -1,6 +1,10 @@
 import {StoreService} from './storeService';
 import {RouterService, RouteSettings} from './routerService';
 import {PageCreatorService, EventService, TranslatorService, Translation} from './services';
+import {Module, ActionMethod, MutationMethod} from 'vuex';
+import {AxiosRequestConfig} from 'axios';
+
+type GetterMethod = (state: Object<string, any>) => any;
 
 export class BaseController {
     /**
@@ -22,7 +26,7 @@ export class BaseController {
     _goToPageAfterCreateAction: () => void;
     _goToPageAfterDeleteAction: () => void;
     /** Extra store functionality can added through the store service */
-    _extraStoreFunctionality: boolean;
+    _extraStoreFunctionality: Module;
     /**
      * Initiate basic route settings
      * Settings can be changed in controller
@@ -79,4 +83,35 @@ export class BaseController {
     get destroyModalMessage(): string;
     get destroyByCurrentRouteIdModal(): () => void;
     get destroyByIdModal(): (id: any) => void;
+
+    /**
+     * Add an extra action to this store module
+     */
+    setExtraStoreAction(name: string, action: ActionMethod): void;
+
+    /**
+     * Add an extra mutation to this store module
+     */
+    setExtraStoreMutation(name: string, mutation: MutationMethod): void;
+
+    /**
+     * Add an extra getter to this store module
+     */
+    setExtraStoreGetter(name: string, getter: GetterMethod): void;
+    /**
+     * create a new action to add to the store which sends a get request
+     * url for the new request will be: this.APIEndpoint + payload ? `/${payload}` : ''
+     *
+     * @param {String} name name of the new action
+     * @param {AxiosRequestConfig} [options] the optional request options
+     */
+    createAndSetExtraGetAction(name: string, options: AxiosRequestConfig): void;
+
+    /**
+     * create a new action to add to the store which sends a post request
+     * url for the post request will be: `${this.APIEndpoint}/${payload.id}/${name}
+     *
+     * @param {String} name name of the new action and the last part of the url
+     */
+    createAndSetExtraPostAction(name: string): void;
 }
