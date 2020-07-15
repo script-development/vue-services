@@ -1,7 +1,7 @@
 /**
  * @typedef {import('vue').CreateElement} CreateElement
  * @typedef {import('vue').VNode} VNode
- * @typedef {import('../buttonCreator').ButtonCreator} ButtonCreator
+ * @typedef {import('./buttons').ButtonCreator} ButtonCreator
  */
 export class FormCreator {
     /**
