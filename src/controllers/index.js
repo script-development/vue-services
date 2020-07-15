@@ -145,6 +145,10 @@ export class BaseController {
         return () => this._storeService.show(this._APIEndpoint, this._routerService._router.currentRoute.params.id);
     }
 
+    get show() {
+        return id => this._storeService.show(this._APIEndpoint, id);
+    }
+
     /** base pages */
     get basePage() {
         return {

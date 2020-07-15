@@ -55,16 +55,17 @@ export class BaseController {
     goToCreatePage(query?: {[x: string]: string}): void;
     /** store service getter functions */
     getAll(): any;
-    getById(id: any): any;
+    getById(id: number): any;
     get getByCurrentRouteId(): () => any;
     /** store service action functions */
-    get update(): (item: any, goToRouteName: any) => Promise<void>;
-    get create(): (item: any, goToRouteName: any) => Promise<void>;
-    get destroy(): (id: any, goToRouteName: any) => Promise<void>;
-    get destroyByIdWithoutRouteChange(): (id: any) => Promise<any>;
+    get update(): (item: any, goToRouteName: string) => Promise<void>;
+    get create(): (item: any, goToRouteName: string) => Promise<void>;
+    get destroy(): (id: number, goToRouteName: string) => Promise<void>;
+    get destroyByIdWithoutRouteChange(): (id: number) => Promise<any>;
     get destroyByCurrentRouteId(): () => Promise<void>;
     get read(): () => Promise<any>;
     get showByCurrentRouteId(): () => Promise<any>;
+    get show(): (id: number) => Promise<any>;
     /** base pages */
     get basePage(): {
         render: (h: any) => any;

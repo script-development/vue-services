@@ -931,6 +931,7 @@ class StoreModuleFactory {
         if (!endpoint) return actions;
 
         actions[this.readAction] = (_, id) => this._httpService.get(endpoint + id ? `/${id}` : '');
+        // TODO :: create and update could become one
         actions[this.createAction] = (_, item) => this._httpService.post(endpoint, item);
         actions[this.updateAction] = (_, item) => this._httpService.post(`${endpoint}/${item.id}`, item);
         actions[this.deleteAction] = (_, id) => this._httpService.delete(`${endpoint}/${id}`);
@@ -1403,7 +1404,8 @@ class LoadingService {
      * @returns {Boolean}
      */
     get loading() {
-        return this._storeService.getAllFromStore(this._storeModuleName);
+        // TODO :: loading somehow still an array at start, first this fix
+        return !!this._storeService.getAllFromStore(this._storeModuleName);
     }
 
     /**
@@ -2059,6 +2061,10 @@ class BaseController {
 
     get showByCurrentRouteId() {
         return () => this._storeService.show(this._APIEndpoint, this._routerService._router.currentRoute.params.id);
+    }
+
+    get show() {
+        return id => this._storeService.show(this._APIEndpoint, id);
     }
 
     /** base pages */
