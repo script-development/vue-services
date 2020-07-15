@@ -14,12 +14,10 @@ export class StoreModuleFactory {
     /** @type {String} */ _readByIdGetter: string;
     /** @type {String} */ _allItemsStateName: string;
     /** @type {String} */ _setAllMutation: string;
-    /** @type {String} */ _setShowMutation: string;
     /** @type {String} */ _readAction: string;
     /** @type {String} */ _updateAction: string;
     /** @type {String} */ _createAction: string;
     /** @type {String} */ _deleteAction: string;
-    /** @type {String} */ _showAction: string;
     /** @type {String} */ _setAllAction: string;
     /**
      * Generate a default store module
@@ -121,13 +119,8 @@ export class StoreModuleFactory {
     get createAction(): string;
     set deleteAction(arg: string);
     get deleteAction(): string;
-    set showAction(arg: string);
-    get showAction(): string;
     set setAllAction(arg: string);
     get setAllAction(): string;
-    set setShowAction(arg: any);
-    get setShowAction(): any;
-    _setShowAction: any;
 }
 export class StoreService {
     /**
@@ -227,11 +220,6 @@ export class StoreService {
      */
     getReadAction(seperator?: boolean): string;
     /**
-     *  get the read store action with or without seperator
-     * @param {Boolean} seperator with or without seperator, default true
-     */
-    getShowAction(seperator?: boolean): string;
-    /**
      *  get the delete store action with or without seperator
      * @param {Boolean} seperator with or without seperator, default true
      */
@@ -261,11 +249,6 @@ export class StoreService {
      * @param {Boolean} seperator with or without seperator, default true
      */
     getSetAllMutation(seperator?: boolean): string;
-    /**
-     *  get the all data in store state name with or without seperator
-     * @param {Boolean} seperator with or without seperator, default true
-     */
-    getSetShowMutation(seperator?: boolean): string;
     /** get the store seperator */
     get storeSeperator(): string;
     /** Set the factory name */
@@ -277,7 +260,11 @@ export class StoreService {
      * @param {String} [endpoint] the endpoint for the API
      * @param {Module} [extraFunctionality] extra functionality added to the store
      */
-    generateAndSetDefaultStoreModule(moduleName: string, endpoint?: string, extraFunctionality?: Module): void;
+    generateAndSetDefaultStoreModule(
+        moduleName: string,
+        endpoint?: string,
+        extraFunctionality?: Module<string, any>
+    ): void;
     /**
      * set the store module in the store
      *

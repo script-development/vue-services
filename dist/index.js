@@ -863,14 +863,12 @@ class StoreModuleFactory {
 
         // mutation naming
         /** @type {String} */ this._setAllMutation;
-        /** @type {String} */ this._setShowMutation;
 
         // action naming
         /** @type {String} */ this._readAction;
         /** @type {String} */ this._updateAction;
         /** @type {String} */ this._createAction;
         /** @type {String} */ this._deleteAction;
-        /** @type {String} */ this._showAction;
         /** @type {String} */ this._setAllAction;
     }
 
@@ -932,8 +930,7 @@ class StoreModuleFactory {
 
         if (!endpoint) return actions;
 
-        actions[this.readAction] = () => this._httpService.get(endpoint);
-        actions[this.showAction] = (_, id) => this._httpService.get(`${endpoint}/${id}`);
+        actions[this.readAction] = (_, id) => this._httpService.get(endpoint + id ? `/${id}` : '');
         actions[this.createAction] = (_, item) => this._httpService.post(endpoint, item);
         actions[this.updateAction] = (_, item) => this._httpService.post(`${endpoint}/${item.id}`, item);
         actions[this.deleteAction] = (_, id) => this._httpService.delete(`${endpoint}/${id}`);
@@ -1010,22 +1007,10 @@ class StoreModuleFactory {
     set deleteAction(value) { this._deleteAction = value; }
 
     // prettier-ignore
-    get showAction() { return this._showAction; }
-
-    // prettier-ignore
-    set showAction(value) { this._showAction = value; }
-
-    // prettier-ignore
     get setAllAction() { return this._setAllAction; }
 
     // prettier-ignore
     set setAllAction(value) { this._setAllAction = value; }
-
-    // prettier-ignore
-    get setShowAction() { return this._setShowAction; }
-
-    // prettier-ignore
-    set setShowAction(value) { this._setShowAction = value; }
 }
 
 /**
@@ -1152,7 +1137,7 @@ class StoreService {
      * @param {Number} id the id to be read
      */
     show(storeModule, id) {
-        return this._store.dispatch(storeModule + this.getShowAction(), id);
+        return this._store.dispatch(storeModule + this.getReadAction(), id);
     }
 
     /**
@@ -1187,14 +1172,6 @@ class StoreService {
      */
     getReadAction(seperator = true) {
         return (seperator ? this.storeSeperator : '') + 'read';
-    }
-
-    /**
-     *  get the read store action with or without seperator
-     * @param {Boolean} seperator with or without seperator, default true
-     */
-    getShowAction(seperator = true) {
-        return (seperator ? this.storeSeperator : '') + 'show';
     }
 
     /**
@@ -1245,14 +1222,6 @@ class StoreService {
         return (seperator ? this.storeSeperator : '') + 'SET_ALL';
     }
 
-    /**
-     *  get the all data in store state name with or without seperator
-     * @param {Boolean} seperator with or without seperator, default true
-     */
-    getSetShowMutation(seperator = true) {
-        return (seperator ? this.storeSeperator : '') + 'SET_SHOW';
-    }
-
     /** get the store seperator */
     get storeSeperator() {
         return '/';
@@ -1265,7 +1234,6 @@ class StoreService {
         this._factory.createAction = this.getCreateAction(false);
         this._factory.updateAction = this.getUpdateAction(false);
         this._factory.deleteAction = this.getDeleteAction(false);
-        this._factory.showAction = this.getShowAction(false);
         this._factory.setAllAction = this.getSetAllInStoreAction(false);
 
         // set the factory getter names
@@ -1277,7 +1245,6 @@ class StoreService {
 
         // set the factory mutation names
         this._factory.setAllMutation = this.getSetAllMutation(false);
-        this._factory._setShowMutation = this.getSetShowMutation(false);
     }
 
     /**
