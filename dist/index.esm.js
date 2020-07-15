@@ -924,7 +924,7 @@ class StoreModuleFactory {
 
         if (!endpoint) return actions;
 
-        actions[this.readAction] = (_, id) => this._httpService.get(endpoint + id ? `/${id}` : '');
+        actions[this.readAction] = (_, id) => this._httpService.get(endpoint + (id ? `/${id}` : ''));
         // TODO :: create and update could become one
         actions[this.createAction] = (_, item) => this._httpService.post(endpoint, item);
         actions[this.updateAction] = (_, item) => this._httpService.post(`${endpoint}/${item.id}`, item);
