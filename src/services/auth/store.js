@@ -41,10 +41,15 @@ export default (storageService, httpService, authService) => ({
             return httpService.post('/login', payload).then(response => {
                 const isAdmin = response.data.isAdmin;
                 commit('LOGIN_SUCCES', isAdmin);
-                return isAdmin;
+                return response;
             });
         },
-        logout: ({commit}) => commit('LOGOUT'),
+        logout: ({commit}) => {
+            return httpService.post('logout').then(response => {
+                commit('LOGOUT');
+                return response;
+            });
+        },
 
         sendEmailResetPassword: (_, email) => {
             return httpService.post('/sendEmailResetPassword', email).then(response => {

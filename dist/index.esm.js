@@ -1503,10 +1503,15 @@ var storeModule = (storageService, httpService, authService) => ({
             return httpService.post('/login', payload).then(response => {
                 const isAdmin = response.data.isAdmin;
                 commit('LOGIN_SUCCES', isAdmin);
-                return isAdmin;
+                return response;
             });
         },
-        logout: ({commit}) => commit('LOGOUT'),
+        logout: ({commit}) => {
+            return httpService.post('logout').then(response => {
+                commit('LOGOUT');
+                return response;
+            });
+        },
 
         sendEmailResetPassword: (_, email) => {
             return httpService.post('/sendEmailResetPassword', email).then(response => {
@@ -1627,27 +1632,28 @@ class AuthService {
      */
     login(credentials) {
         // TODO :: isAdmin should be something like role
-        this._storeService.dispatch(this.storeModuleName, LOGIN_ACTION, credentials).then(isAdmin => {
+        return this._storeService.dispatch(this.storeModuleName, LOGIN_ACTION, credentials).then(response => {
             // TODO :: check roles here somehow?
             // if (isAdmin) return this._routerService.goToRoute('courses.edit');
             this.goToStandardLoggedInPage();
+            return response;
         });
     }
 
     logout() {
-        this._storeService.dispatch(this.storeModuleName, LOGOUT_ACTION);
+        return this._storeService.dispatch(this.storeModuleName, LOGOUT_ACTION);
+    }
+
+    sendEmailResetPassword(email) {
+        return this._storeService.dispatch(this.storeModuleName, 'sendEmailResetPassword', email);
+    }
+
+    resetPassword(data) {
+        return this._storeService.dispatch(this.storeModuleName, 'resetPassword', data);
     }
 
     goToStandardLoggedInPage() {
         this._routerService.goToRoute(this.defaultLoggedInPage);
-    }
-
-    sendEmailResetPassword(email) {
-        this._storeService.dispatch(this.storeModuleName, 'sendEmailResetPassword', email);
-    }
-
-    resetPassword(data) {
-        this._storeService.dispatch(this.storeModuleName, 'resetPassword', data);
     }
 
     goToLoginPage() {
