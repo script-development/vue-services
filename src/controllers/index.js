@@ -153,6 +153,7 @@ export class BaseController {
     get basePage() {
         return {
             render: h => h(MinimalRouterView, {props: {depth: 1}}),
+            // TODO #9 @Goosterhof
             mounted: () => this.read(),
         };
     }
