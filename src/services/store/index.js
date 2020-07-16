@@ -83,7 +83,10 @@ export class StoreService {
      * @param {String} id the id of the item to be deleted
      */
     destroy(storeModule, id) {
-        return this._store.dispatch(storeModule + this.getDeleteAction(), id);
+        return this._store.dispatch(storeModule + this.getDeleteAction(), id).then(response => {
+            this._store.commit(storeModule + this.getDeleteMutation(), id);
+            return response;
+        });
     }
 
     /**
@@ -137,7 +140,7 @@ export class StoreService {
 
     /**
      *  get the read all from store getter with or without seperator
-     * @param {Boolean} seperator with or without seperator, default true
+     * @param {Boolean} [seperator] with or without seperator, default true
      */
     getReadAllGetter(seperator = true) {
         return (seperator ? this.storeSeperator : '') + 'all';
@@ -145,7 +148,7 @@ export class StoreService {
 
     /**
      *  get the read by id from store getter with or without seperator
-     * @param {Boolean} seperator with or without seperator, default true
+     * @param {Boolean} [seperator] with or without seperator, default true
      */
     getReadByIdGetter(seperator = true) {
         return (seperator ? this.storeSeperator : '') + 'byId';
@@ -153,7 +156,7 @@ export class StoreService {
 
     /**
      *  get the read store action with or without seperator
-     * @param {Boolean} seperator with or without seperator, default true
+     * @param {Boolean} [seperator] with or without seperator, default true
      */
     getReadAction(seperator = true) {
         return (seperator ? this.storeSeperator : '') + 'read';
@@ -161,7 +164,7 @@ export class StoreService {
 
     /**
      *  get the delete store action with or without seperator
-     * @param {Boolean} seperator with or without seperator, default true
+     * @param {Boolean} [seperator] with or without seperator, default true
      */
     getDeleteAction(seperator = true) {
         return (seperator ? this.storeSeperator : '') + 'destroy';
@@ -169,7 +172,7 @@ export class StoreService {
 
     /**
      *  get the update store action with or without seperator
-     * @param {Boolean} seperator with or without seperator, default true
+     * @param {Boolean} [seperator] with or without seperator, default true
      */
     getUpdateAction(seperator = true) {
         return (seperator ? this.storeSeperator : '') + 'update';
@@ -177,7 +180,7 @@ export class StoreService {
 
     /**
      *  get the update store action with or without seperator
-     * @param {Boolean} seperator with or without seperator, default true
+     * @param {Boolean} [seperator] with or without seperator, default true
      */
     getCreateAction(seperator = true) {
         return (seperator ? this.storeSeperator : '') + 'create';
@@ -185,7 +188,7 @@ export class StoreService {
 
     /**
      *  get the set all in store action with or without seperator
-     * @param {Boolean} seperator with or without seperator, default true
+     * @param {Boolean} [seperator] with or without seperator, default true
      */
     getSetAllInStoreAction(seperator = true) {
         return (seperator ? this.storeSeperator : '') + 'setAll';
@@ -193,18 +196,26 @@ export class StoreService {
 
     /**
      *  get the all data in store state name with or without seperator
-     * @param {Boolean} seperator with or without seperator, default true
+     * @param {Boolean} [seperator] with or without seperator, default true
      */
     getAllItemsStateName(seperator = true) {
         return (seperator ? this.storeSeperator : '') + 'data';
     }
 
     /**
-     *  get the all data in store state name with or without seperator
-     * @param {Boolean} seperator with or without seperator, default true
+     *  get the set all mutation name with or without seperator
+     * @param {Boolean} [seperator] with or without seperator, default true
      */
     getSetAllMutation(seperator = true) {
         return (seperator ? this.storeSeperator : '') + 'SET_ALL';
+    }
+
+    /**
+     *  get the delete mutation name with or without seperator
+     * @param {Boolean} [seperator] with or without seperator, default true
+     */
+    getDeleteMutation(seperator = true) {
+        return (seperator ? this.storeSeperator : '') + 'DELETE';
     }
 
     /** get the store seperator */
@@ -230,6 +241,7 @@ export class StoreService {
 
         // set the factory mutation names
         this._factory.setAllMutation = this.getSetAllMutation(false);
+        this._factory.deleteMutation = this.getDeleteMutation(false);
     }
 
     /**

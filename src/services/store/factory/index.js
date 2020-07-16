@@ -22,6 +22,7 @@ export class StoreModuleFactory {
 
         // mutation naming
         /** @type {String} */ this._setAllMutation;
+        /** @type {String} */ this._deleteMutation;
 
         // action naming
         /** @type {String} */ this._readAction;
@@ -73,6 +74,7 @@ export class StoreModuleFactory {
                     Vue.set(state[this.allItemsStateName], data.id, data);
                 }
             },
+            [this.deleteMutation]: (state, id) => Vue.delete(state[this.allItemsStateName], id),
         };
     }
 
@@ -141,6 +143,12 @@ export class StoreModuleFactory {
 
     // prettier-ignore
     set setAllMutation(value) { this._setAllMutation = value; }
+
+    // prettier-ignore
+    get deleteMutation() { return this._deleteMutation; }
+
+    // prettier-ignore
+    set deleteMutation(value) { this._deleteMutation = value; }
 
     // prettier-ignore
     get readAction() { return this._readAction; }
