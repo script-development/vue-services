@@ -863,6 +863,7 @@ class StoreModuleFactory {
 
         // mutation naming
         /** @type {String} */ this._setAllMutation;
+        /** @type {String} */ this._deleteMutation;
 
         // action naming
         /** @type {String} */ this._readAction;
@@ -914,6 +915,7 @@ class StoreModuleFactory {
                     Vue.set(state[this.allItemsStateName], data.id, data);
                 }
             },
+            [this.deleteMutation]: (state, id) => Vue.delete(state[this.allItemsStateName], id),
         };
     }
 
@@ -982,6 +984,12 @@ class StoreModuleFactory {
 
     // prettier-ignore
     set setAllMutation(value) { this._setAllMutation = value; }
+
+    // prettier-ignore
+    get deleteMutation() { return this._deleteMutation; }
+
+    // prettier-ignore
+    set deleteMutation(value) { this._deleteMutation = value; }
 
     // prettier-ignore
     get readAction() { return this._readAction; }
@@ -1099,7 +1107,10 @@ class StoreService {
      * @param {String} id the id of the item to be deleted
      */
     destroy(storeModule, id) {
-        return this._store.dispatch(storeModule + this.getDeleteAction(), id);
+        return this._store.dispatch(storeModule + this.getDeleteAction(), id).then(response => {
+            this._store.commit(storeModule + this.getDeleteMutation(), id);
+            return response;
+        });
     }
 
     /**
@@ -1153,7 +1164,7 @@ class StoreService {
 
     /**
      *  get the read all from store getter with or without seperator
-     * @param {Boolean} seperator with or without seperator, default true
+     * @param {Boolean} [seperator] with or without seperator, default true
      */
     getReadAllGetter(seperator = true) {
         return (seperator ? this.storeSeperator : '') + 'all';
@@ -1161,7 +1172,7 @@ class StoreService {
 
     /**
      *  get the read by id from store getter with or without seperator
-     * @param {Boolean} seperator with or without seperator, default true
+     * @param {Boolean} [seperator] with or without seperator, default true
      */
     getReadByIdGetter(seperator = true) {
         return (seperator ? this.storeSeperator : '') + 'byId';
@@ -1169,7 +1180,7 @@ class StoreService {
 
     /**
      *  get the read store action with or without seperator
-     * @param {Boolean} seperator with or without seperator, default true
+     * @param {Boolean} [seperator] with or without seperator, default true
      */
     getReadAction(seperator = true) {
         return (seperator ? this.storeSeperator : '') + 'read';
@@ -1177,7 +1188,7 @@ class StoreService {
 
     /**
      *  get the delete store action with or without seperator
-     * @param {Boolean} seperator with or without seperator, default true
+     * @param {Boolean} [seperator] with or without seperator, default true
      */
     getDeleteAction(seperator = true) {
         return (seperator ? this.storeSeperator : '') + 'destroy';
@@ -1185,7 +1196,7 @@ class StoreService {
 
     /**
      *  get the update store action with or without seperator
-     * @param {Boolean} seperator with or without seperator, default true
+     * @param {Boolean} [seperator] with or without seperator, default true
      */
     getUpdateAction(seperator = true) {
         return (seperator ? this.storeSeperator : '') + 'update';
@@ -1193,7 +1204,7 @@ class StoreService {
 
     /**
      *  get the update store action with or without seperator
-     * @param {Boolean} seperator with or without seperator, default true
+     * @param {Boolean} [seperator] with or without seperator, default true
      */
     getCreateAction(seperator = true) {
         return (seperator ? this.storeSeperator : '') + 'create';
@@ -1201,7 +1212,7 @@ class StoreService {
 
     /**
      *  get the set all in store action with or without seperator
-     * @param {Boolean} seperator with or without seperator, default true
+     * @param {Boolean} [seperator] with or without seperator, default true
      */
     getSetAllInStoreAction(seperator = true) {
         return (seperator ? this.storeSeperator : '') + 'setAll';
@@ -1209,18 +1220,26 @@ class StoreService {
 
     /**
      *  get the all data in store state name with or without seperator
-     * @param {Boolean} seperator with or without seperator, default true
+     * @param {Boolean} [seperator] with or without seperator, default true
      */
     getAllItemsStateName(seperator = true) {
         return (seperator ? this.storeSeperator : '') + 'data';
     }
 
     /**
-     *  get the all data in store state name with or without seperator
-     * @param {Boolean} seperator with or without seperator, default true
+     *  get the set all mutation name with or without seperator
+     * @param {Boolean} [seperator] with or without seperator, default true
      */
     getSetAllMutation(seperator = true) {
         return (seperator ? this.storeSeperator : '') + 'SET_ALL';
+    }
+
+    /**
+     *  get the delete mutation name with or without seperator
+     * @param {Boolean} [seperator] with or without seperator, default true
+     */
+    getDeleteMutation(seperator = true) {
+        return (seperator ? this.storeSeperator : '') + 'DELETE';
     }
 
     /** get the store seperator */
@@ -1246,6 +1265,7 @@ class StoreService {
 
         // set the factory mutation names
         this._factory.setAllMutation = this.getSetAllMutation(false);
+        this._factory.deleteMutation = this.getDeleteMutation(false);
     }
 
     /**
