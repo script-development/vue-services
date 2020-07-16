@@ -1317,7 +1317,10 @@ class ErrorService {
     constructor(storeService, routerService, httpService) {
         this._storeModuleName = 'errors';
         this._storeService = storeService;
-        this._storeService.generateAndSetDefaultStoreModule(this._storeModuleName);
+
+        this._storeService.generateAndSetDefaultStoreModule(this._storeModuleName, '', {
+            getters: {[this._storeModuleName]: state => state[this._storeService.getAllItemsStateName(false)]},
+        });
 
         this._routerService = routerService;
         this._routerService.addRoutes([
@@ -1338,7 +1341,7 @@ class ErrorService {
     }
 
     getErrors() {
-        return this._storeService.getAllFromStore(this._storeModuleName);
+        return this._storeService.get(this._storeModuleName, this._storeModuleName);
     }
 
     setErrors(errors) {
