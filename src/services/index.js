@@ -36,7 +36,7 @@ const storageService = new StorageService();
 import {StoreModuleFactory} from './store/factory';
 import {StoreService} from './store';
 
-const storeFactory = new StoreModuleFactory(httpService);
+const storeFactory = new StoreModuleFactory(httpService, storageService);
 export const storeService = new StoreService(store, storeFactory, httpService);
 
 import {ErrorService} from './error';

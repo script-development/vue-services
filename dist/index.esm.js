@@ -818,8 +818,9 @@ class StorageService {
         return keepALive;
     }
 
-    setItem(key, value, size) {
+    setItem(key, value) {
         if (!this.keepALive) return;
+        if (typeof value !== 'string') value = JSON.stringify(value);
         localStorage.setItem(key, value);
     }
 
@@ -836,17 +837,20 @@ class StorageService {
 
 /**
  * @typedef {import('../../http').HTTPService} HTTPService
+ * @typedef {import('../../storage').StorageService} StorageService
  * @typedef {import('axios').AxiosRequestConfig} AxiosRequestConfig
  */
 
 class StoreModuleFactory {
     /**
-     * @param {HTTPService} httpService
-     * @param {Boolean} namespaced
+     * @param {HTTPService} httpService the http service for communication with the API
+     * @param {StorageService} storageService the storage service for storing stuff in the browser
+     * @param {Boolean} [namespaced]
      */
-    constructor(httpService, namespaced = true) {
-        this._namespaced = namespaced;
+    constructor(httpService, storageService, namespaced = true) {
         this._httpService = httpService;
+        this._storageService = storageService;
+        this._namespaced = namespaced;
 
         // getter naming
         /** @type {String} */ this._readAllGetter;
@@ -869,21 +873,23 @@ class StoreModuleFactory {
 
     /**
      * Generate a default store module
+     * @param {String} moduleName the name of the module
      * @param {String} [endpoint] the optional endpoint for the API
      */
-    createDefaultStore(endpoint) {
+    createDefaultStore(moduleName, endpoint) {
         return {
             namespaced: this._namespaced,
-            state: this.createDefaultState(),
+            state: this.createDefaultState(moduleName),
             getters: this.createDefaultGetters(),
-            mutations: this.createDefaultMutations(),
+            mutations: this.createDefaultMutations(moduleName),
             actions: this.createDefaultActions(endpoint),
         };
     }
 
     /** create default state for the store */
-    createDefaultState(allItemsStateName) {
-        return {[this.allItemsStateName]: {}};
+    createDefaultState(moduleName) {
+        const stored = this._storageService.getItem(moduleName + this.allItemsStateName);
+        return {[this.allItemsStateName]: stored ? JSON.parse(stored) : {}};
     }
 
     /** create default getters for the store */
@@ -895,10 +901,14 @@ class StoreModuleFactory {
     }
 
     /** create default mutations for the store */
-    createDefaultMutations() {
+    createDefaultMutations(moduleName) {
         return {
             [this.setAllMutation]: (state, allData) => {
-                if (!allData.length) return (state[this.allItemsStateName] = allData);
+                if (!allData.length) {
+                    state[this.allItemsStateName] = allData;
+                    this._storageService.setItem(moduleName + this.allItemsStateName, state[this.allItemsStateName]);
+                    return;
+                }
 
                 for (const data of allData) {
                     const idData = state[this.allItemsStateName][data.id];
@@ -908,6 +918,7 @@ class StoreModuleFactory {
 
                     Vue.set(state[this.allItemsStateName], data.id, data);
                 }
+                this._storageService.setItem(moduleName + this.allItemsStateName, state[this.allItemsStateName]);
             },
             [this.deleteMutation]: (state, id) => Vue.delete(state[this.allItemsStateName], id),
         };
@@ -1026,7 +1037,6 @@ class StoreModuleFactory {
 
 class StoreService {
     /**
-     *
      * @param {Store} store the store being used
      * @param {StoreModuleFactory} factory the factory being used to create store modules
      * @param {HTTPService} httpService the http service for communication with the API
@@ -1270,7 +1280,7 @@ class StoreService {
      * @param {Module} [extraFunctionality] extra functionality added to the store
      */
     generateAndSetDefaultStoreModule(moduleName, endpoint, extraFunctionality) {
-        const storeModule = this._factory.createDefaultStore(endpoint);
+        const storeModule = this._factory.createDefaultStore(moduleName, endpoint);
 
         if (extraFunctionality) {
             for (const key in extraFunctionality) {
@@ -1905,7 +1915,7 @@ const routeSettings = new RouteSettings(translatorService);
 const routerService = new RouterService(router, routeFactory, routeSettings);
 const storageService = new StorageService();
 
-const storeFactory = new StoreModuleFactory(httpService);
+const storeFactory = new StoreModuleFactory(httpService, storageService);
 const storeService = new StoreService(store, storeFactory, httpService);
 const errorService = new ErrorService(storeService, routerService, httpService);
 const loadingService = new LoadingService(storeService, httpService);

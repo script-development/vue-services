@@ -12,8 +12,9 @@ export class StorageService {
         return keepALive;
     }
 
-    setItem(key, value, size) {
+    setItem(key, value) {
         if (!this.keepALive) return;
+        if (typeof value !== 'string') value = JSON.stringify(value);
         localStorage.setItem(key, value);
     }
 

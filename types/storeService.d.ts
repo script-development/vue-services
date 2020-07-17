@@ -1,15 +1,17 @@
 import {AxiosResponse, AxiosRequestConfig} from 'axios';
-import {HTTPService} from './services';
+import {HTTPService, StorageService} from './services';
 import {Store, Module} from 'vuex';
 
 export class StoreModuleFactory {
     /**
      * @param {HTTPService} httpService
+     * @param {StorageService} storageService the storage service for storing stuff in the browser
      * @param {Boolean} namespaced
      */
-    constructor(httpService: HTTPService, namespaced?: boolean);
-    _namespaced: boolean;
+    constructor(httpService: HTTPService, storageService: StorageService, namespaced?: boolean);
     _httpService: HTTPService;
+    _storageService: StorageService;
+    _namespaced: boolean;
     /** @type {String} */ _readAllGetter: string;
     /** @type {String} */ _readByIdGetter: string;
     /** @type {String} */ _allItemsStateName: string;
@@ -22,9 +24,11 @@ export class StoreModuleFactory {
     /** @type {String} */ _setAllAction: string;
     /**
      * Generate a default store module
+     * @param {String} moduleName the name of the module
      * @param {String} [endpoint] the optional endpoint for the API
      */
     createDefaultStore(
+        moduleName: string,
         endpoint?: string
     ): {
         namespaced: boolean;
@@ -50,7 +54,7 @@ export class StoreModuleFactory {
     };
     /** create default state for the store */
     createDefaultState(
-        allItemsStateName: any
+        moduleName: string
     ): {
         [x: string]: {};
     };
@@ -59,7 +63,9 @@ export class StoreModuleFactory {
         [x: string]: ((state: any) => any[]) | ((state: any) => (id: any) => any);
     };
     /** create default mutations for the store */
-    createDefaultMutations(): {
+    createDefaultMutations(
+        moduleName: string
+    ): {
         [x: string]: (state: any, allData: any) => any;
     };
     /**
@@ -279,7 +285,7 @@ export class StoreService {
      * @param {String} moduleName the name of the module
      * @param {Module} storeModule the module to add to the store
      */
-    registerModule(moduleName: string, storeModule: Module): void;
+    registerModule(moduleName: string, storeModule: Module<string, any>): void;
     /**
      * create a new action to add to the store which sends a post request
      *

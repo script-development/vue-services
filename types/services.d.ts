@@ -107,7 +107,7 @@ export class TranslatorService {
 export class StorageService {
     set keepALive(arg: any);
     get keepALive(): any;
-    setItem(key: any, value: any, size: any): void;
+    setItem(key: any, value: any): void;
     getItem(key: any): string;
     clear(): void;
 }

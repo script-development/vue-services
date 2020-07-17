@@ -1,17 +1,20 @@
 /**
  * @typedef {import('../../http').HTTPService} HTTPService
+ * @typedef {import('../../storage').StorageService} StorageService
  * @typedef {import('axios').AxiosRequestConfig} AxiosRequestConfig
  */
 import Vue from 'vue';
 
 export class StoreModuleFactory {
     /**
-     * @param {HTTPService} httpService
-     * @param {Boolean} namespaced
+     * @param {HTTPService} httpService the http service for communication with the API
+     * @param {StorageService} storageService the storage service for storing stuff in the browser
+     * @param {Boolean} [namespaced]
      */
-    constructor(httpService, namespaced = true) {
-        this._namespaced = namespaced;
+    constructor(httpService, storageService, namespaced = true) {
         this._httpService = httpService;
+        this._storageService = storageService;
+        this._namespaced = namespaced;
 
         // getter naming
         /** @type {String} */ this._readAllGetter;
@@ -34,21 +37,23 @@ export class StoreModuleFactory {
 
     /**
      * Generate a default store module
+     * @param {String} moduleName the name of the module
      * @param {String} [endpoint] the optional endpoint for the API
      */
-    createDefaultStore(endpoint) {
+    createDefaultStore(moduleName, endpoint) {
         return {
             namespaced: this._namespaced,
-            state: this.createDefaultState(),
+            state: this.createDefaultState(moduleName),
             getters: this.createDefaultGetters(),
-            mutations: this.createDefaultMutations(),
+            mutations: this.createDefaultMutations(moduleName),
             actions: this.createDefaultActions(endpoint),
         };
     }
 
     /** create default state for the store */
-    createDefaultState(allItemsStateName) {
-        return {[this.allItemsStateName]: {}};
+    createDefaultState(moduleName) {
+        const stored = this._storageService.getItem(moduleName + this.allItemsStateName);
+        return {[this.allItemsStateName]: stored ? JSON.parse(stored) : {}};
     }
 
     /** create default getters for the store */
@@ -60,10 +65,14 @@ export class StoreModuleFactory {
     }
 
     /** create default mutations for the store */
-    createDefaultMutations() {
+    createDefaultMutations(moduleName) {
         return {
             [this.setAllMutation]: (state, allData) => {
-                if (!allData.length) return (state[this.allItemsStateName] = allData);
+                if (!allData.length) {
+                    state[this.allItemsStateName] = allData;
+                    this._storageService.setItem(moduleName + this.allItemsStateName, state[this.allItemsStateName]);
+                    return;
+                }
 
                 for (const data of allData) {
                     const idData = state[this.allItemsStateName][data.id];
@@ -73,6 +82,7 @@ export class StoreModuleFactory {
 
                     Vue.set(state[this.allItemsStateName], data.id, data);
                 }
+                this._storageService.setItem(moduleName + this.allItemsStateName, state[this.allItemsStateName]);
             },
             [this.deleteMutation]: (state, id) => Vue.delete(state[this.allItemsStateName], id),
         };
