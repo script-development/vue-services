@@ -48,6 +48,3 @@ export const loadingService = new LoadingService(storeService, httpService);
 import {AuthService} from './auth';
 
 export const authService = new AuthService(routerService, storeService, storageService, httpService);
-
-import {PageCreatorService} from './pageCreator';
-export const pageCreatorService = new PageCreatorService(errorService, translatorService, eventService, routerService);

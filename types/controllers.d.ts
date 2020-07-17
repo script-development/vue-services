@@ -1,6 +1,7 @@
 import {StoreService} from './storeService';
 import {RouterService, RouteSettings} from './routerService';
-import {PageCreatorService, EventService, TranslatorService, Translation} from './services';
+import {EventService, TranslatorService, Translation} from './services';
+// TODO :: add PageCreator
 import {Module, ActionMethod, MutationMethod} from 'vuex';
 import {AxiosRequestConfig} from 'axios';
 
@@ -14,7 +15,7 @@ export class BaseController {
     constructor(APIEndpoint: string, translation?: Translation);
     _storeService: StoreService;
     _routerService: RouterService;
-    _pageCreatorService: PageCreatorService;
+    _pageCreator: PageCreator;
     _eventService: EventService;
     _translatorService: TranslatorService;
     _APIEndpoint: string;

@@ -8,10 +8,16 @@ export class FormCreator {
      * @param {ButtonCreator} buttonCreator
      */
     constructor(buttonCreator) {
+        /** @type {CreateElement} */
+        this._h;
         this._buttonCreator = buttonCreator;
 
         this._formHTMLElement = 'b-form';
         this._formClass = 'edit-form';
+    }
+
+    init(h) {
+        this._h = h;
     }
 
     /**
