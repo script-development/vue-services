@@ -117,7 +117,7 @@ export class StoreModuleFactory {
      * @param {AxiosRequestConfig} [options] the optional request options
      */
     createExtraGetAction(endpoint, options) {
-        return (_, payload) => this._httpService.get(endpoint + payload ? `/${payload}` : '', options);
+        return (_, payload) => this._httpService.get(endpoint + (payload ? `/${payload}` : ''), options);
     }
 
     // prettier-ignore

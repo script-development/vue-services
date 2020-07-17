@@ -958,7 +958,7 @@ class StoreModuleFactory {
      * @param {AxiosRequestConfig} [options] the optional request options
      */
     createExtraGetAction(endpoint, options) {
-        return (_, payload) => this._httpService.get(endpoint + payload ? `/${payload}` : '', options);
+        return (_, payload) => this._httpService.get(endpoint + (payload ? `/${payload}` : ''), options);
     }
 
     // prettier-ignore
@@ -2100,6 +2100,7 @@ class BaseController {
     get basePage() {
         return {
             render: h => h(MinimalRouterView, {props: {depth: 1}}),
+            // TODO #9 @Goosterhof
             mounted: () => this.read(),
         };
     }
