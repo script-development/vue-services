@@ -191,11 +191,11 @@ export class AuthService {
      * @param {String} credentials.password the password to login with
      * @param {Boolean} credentials.rememberMe if you want a consistent login
      */
-    login(credentials: {email: string; password: string; rememberMe: boolean}): void;
-    logout(): void;
+    login(credentials: {email: string; password: string; rememberMe: boolean}): Promise<AxiosResponse>;
+    logout(): Promise<AxiosResponse>;
     goToStandardLoggedInPage(): void;
-    sendEmailResetPassword(email: any): void;
-    resetPassword(data: any): void;
+    sendEmailResetPassword(email: any): Promise<AxiosResponse>;
+    resetPassword(data: any): Promise<AxiosResponse>;
     goToLoginPage(): void;
     get responseErrorMiddleware(): ({response}: {response: any}) => void;
     get routeMiddleware(): (to: any, from: any, next: any) => boolean;

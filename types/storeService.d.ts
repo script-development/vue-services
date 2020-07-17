@@ -14,12 +14,11 @@ export class StoreModuleFactory {
     /** @type {String} */ _readByIdGetter: string;
     /** @type {String} */ _allItemsStateName: string;
     /** @type {String} */ _setAllMutation: string;
-    /** @type {String} */ _setShowMutation: string;
+    /** @type {String} */ _deleteMutation: string;
     /** @type {String} */ _readAction: string;
     /** @type {String} */ _updateAction: string;
     /** @type {String} */ _createAction: string;
     /** @type {String} */ _deleteAction: string;
-    /** @type {String} */ _showAction: string;
     /** @type {String} */ _setAllAction: string;
     /**
      * Generate a default store module
@@ -113,6 +112,8 @@ export class StoreModuleFactory {
     get allItemsStateName(): string;
     set setAllMutation(arg: string);
     get setAllMutation(): string;
+    set deleteMutation(arg: string);
+    get deleteMutation(): string;
     set readAction(arg: string);
     get readAction(): string;
     set updateAction(arg: string);
@@ -121,13 +122,8 @@ export class StoreModuleFactory {
     get createAction(): string;
     set deleteAction(arg: string);
     get deleteAction(): string;
-    set showAction(arg: string);
-    get showAction(): string;
     set setAllAction(arg: string);
     get setAllAction(): string;
-    set setShowAction(arg: any);
-    get setShowAction(): any;
-    _setShowAction: any;
 }
 export class StoreService {
     /**
@@ -213,59 +209,54 @@ export class StoreService {
     setAllInStore(storeModule: string, data: any): Promise<any>;
     /**
      *  get the read all from store getter with or without seperator
-     * @param {Boolean} seperator with or without seperator, default true
+     * @param {Boolean} [seperator] with or without seperator, default true
      */
     getReadAllGetter(seperator?: boolean): string;
     /**
      *  get the read by id from store getter with or without seperator
-     * @param {Boolean} seperator with or without seperator, default true
+     * @param {Boolean} [seperator] with or without seperator, default true
      */
     getReadByIdGetter(seperator?: boolean): string;
     /**
      *  get the read store action with or without seperator
-     * @param {Boolean} seperator with or without seperator, default true
+     * @param {Boolean} [seperator] with or without seperator, default true
      */
     getReadAction(seperator?: boolean): string;
     /**
-     *  get the read store action with or without seperator
-     * @param {Boolean} seperator with or without seperator, default true
-     */
-    getShowAction(seperator?: boolean): string;
-    /**
      *  get the delete store action with or without seperator
-     * @param {Boolean} seperator with or without seperator, default true
+     * @param {Boolean} [seperator] with or without seperator, default true
      */
     getDeleteAction(seperator?: boolean): string;
     /**
      *  get the update store action with or without seperator
-     * @param {Boolean} seperator with or without seperator, default true
+     * @param {Boolean} [seperator] with or without seperator, default true
      */
     getUpdateAction(seperator?: boolean): string;
     /**
      *  get the update store action with or without seperator
-     * @param {Boolean} seperator with or without seperator, default true
+     * @param {Boolean} [seperator] with or without seperator, default true
      */
     getCreateAction(seperator?: boolean): string;
     /**
      *  get the set all in store action with or without seperator
-     * @param {Boolean} seperator with or without seperator, default true
+     * @param {Boolean} [seperator] with or without seperator, default true
      */
     getSetAllInStoreAction(seperator?: boolean): string;
     /**
      *  get the all data in store state name with or without seperator
-     * @param {Boolean} seperator with or without seperator, default true
+     * @param {Boolean} [seperator] with or without seperator, default true
      */
     getAllItemsStateName(seperator?: boolean): string;
     /**
-     *  get the all data in store state name with or without seperator
-     * @param {Boolean} seperator with or without seperator, default true
+     *  get the set all mutation name with or without seperator
+     * @param {Boolean} [seperator] with or without seperator, default true
      */
     getSetAllMutation(seperator?: boolean): string;
     /**
-     *  get the all data in store state name with or without seperator
-     * @param {Boolean} seperator with or without seperator, default true
+     *  get the delete mutation name with or without seperator
+     * @param {Boolean} [seperator] with or without seperator, default true
      */
-    getSetShowMutation(seperator?: boolean): string;
+    getDeleteMutation(seperator?: boolean): string;
     /** get the store seperator */
     get storeSeperator(): string;
     /** Set the factory name */
@@ -277,7 +268,11 @@ export class StoreService {
      * @param {String} [endpoint] the endpoint for the API
      * @param {Module} [extraFunctionality] extra functionality added to the store
      */
-    generateAndSetDefaultStoreModule(moduleName: string, endpoint?: string, extraFunctionality?: Module): void;
+    generateAndSetDefaultStoreModule(
+        moduleName: string,
+        endpoint?: string,
+        extraFunctionality?: Module<string, any>
+    ): void;
     /**
      * set the store module in the store
      *

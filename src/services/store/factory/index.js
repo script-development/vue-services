@@ -22,14 +22,13 @@ export class StoreModuleFactory {
 
         // mutation naming
         /** @type {String} */ this._setAllMutation;
-        /** @type {String} */ this._setShowMutation;
+        /** @type {String} */ this._deleteMutation;
 
         // action naming
         /** @type {String} */ this._readAction;
         /** @type {String} */ this._updateAction;
         /** @type {String} */ this._createAction;
         /** @type {String} */ this._deleteAction;
-        /** @type {String} */ this._showAction;
         /** @type {String} */ this._setAllAction;
     }
 
@@ -75,6 +74,7 @@ export class StoreModuleFactory {
                     Vue.set(state[this.allItemsStateName], data.id, data);
                 }
             },
+            [this.deleteMutation]: (state, id) => Vue.delete(state[this.allItemsStateName], id),
         };
     }
 
@@ -91,8 +91,8 @@ export class StoreModuleFactory {
 
         if (!endpoint) return actions;
 
-        actions[this.readAction] = () => this._httpService.get(endpoint);
-        actions[this.showAction] = (_, id) => this._httpService.get(`${endpoint}/${id}`);
+        actions[this.readAction] = (_, id) => this._httpService.get(endpoint + (id ? `/${id}` : ''));
+        // TODO :: create and update could become one
         actions[this.createAction] = (_, item) => this._httpService.post(endpoint, item);
         actions[this.updateAction] = (_, item) => this._httpService.post(`${endpoint}/${item.id}`, item);
         actions[this.deleteAction] = (_, id) => this._httpService.delete(`${endpoint}/${id}`);
@@ -145,6 +145,12 @@ export class StoreModuleFactory {
     set setAllMutation(value) { this._setAllMutation = value; }
 
     // prettier-ignore
+    get deleteMutation() { return this._deleteMutation; }
+
+    // prettier-ignore
+    set deleteMutation(value) { this._deleteMutation = value; }
+
+    // prettier-ignore
     get readAction() { return this._readAction; }
 
     // prettier-ignore
@@ -169,20 +175,8 @@ export class StoreModuleFactory {
     set deleteAction(value) { this._deleteAction = value; }
 
     // prettier-ignore
-    get showAction() { return this._showAction; }
-
-    // prettier-ignore
-    set showAction(value) { this._showAction = value; }
-
-    // prettier-ignore
     get setAllAction() { return this._setAllAction; }
 
     // prettier-ignore
     set setAllAction(value) { this._setAllAction = value; }
-
-    // prettier-ignore
-    get setShowAction() { return this._setShowAction; }
-
-    // prettier-ignore
-    set setShowAction(value) { this._setShowAction = value; }
 }

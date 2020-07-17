@@ -863,14 +863,13 @@ class StoreModuleFactory {
 
         // mutation naming
         /** @type {String} */ this._setAllMutation;
-        /** @type {String} */ this._setShowMutation;
+        /** @type {String} */ this._deleteMutation;
 
         // action naming
         /** @type {String} */ this._readAction;
         /** @type {String} */ this._updateAction;
         /** @type {String} */ this._createAction;
         /** @type {String} */ this._deleteAction;
-        /** @type {String} */ this._showAction;
         /** @type {String} */ this._setAllAction;
     }
 
@@ -916,6 +915,7 @@ class StoreModuleFactory {
                     Vue.set(state[this.allItemsStateName], data.id, data);
                 }
             },
+            [this.deleteMutation]: (state, id) => Vue.delete(state[this.allItemsStateName], id),
         };
     }
 
@@ -932,8 +932,8 @@ class StoreModuleFactory {
 
         if (!endpoint) return actions;
 
-        actions[this.readAction] = () => this._httpService.get(endpoint);
-        actions[this.showAction] = (_, id) => this._httpService.get(`${endpoint}/${id}`);
+        actions[this.readAction] = (_, id) => this._httpService.get(endpoint + (id ? `/${id}` : ''));
+        // TODO :: create and update could become one
         actions[this.createAction] = (_, item) => this._httpService.post(endpoint, item);
         actions[this.updateAction] = (_, item) => this._httpService.post(`${endpoint}/${item.id}`, item);
         actions[this.deleteAction] = (_, id) => this._httpService.delete(`${endpoint}/${id}`);
@@ -986,6 +986,12 @@ class StoreModuleFactory {
     set setAllMutation(value) { this._setAllMutation = value; }
 
     // prettier-ignore
+    get deleteMutation() { return this._deleteMutation; }
+
+    // prettier-ignore
+    set deleteMutation(value) { this._deleteMutation = value; }
+
+    // prettier-ignore
     get readAction() { return this._readAction; }
 
     // prettier-ignore
@@ -1010,22 +1016,10 @@ class StoreModuleFactory {
     set deleteAction(value) { this._deleteAction = value; }
 
     // prettier-ignore
-    get showAction() { return this._showAction; }
-
-    // prettier-ignore
-    set showAction(value) { this._showAction = value; }
-
-    // prettier-ignore
     get setAllAction() { return this._setAllAction; }
 
     // prettier-ignore
     set setAllAction(value) { this._setAllAction = value; }
-
-    // prettier-ignore
-    get setShowAction() { return this._setShowAction; }
-
-    // prettier-ignore
-    set setShowAction(value) { this._setShowAction = value; }
 }
 
 /**
@@ -1113,7 +1107,10 @@ class StoreService {
      * @param {String} id the id of the item to be deleted
      */
     destroy(storeModule, id) {
-        return this._store.dispatch(storeModule + this.getDeleteAction(), id);
+        return this._store.dispatch(storeModule + this.getDeleteAction(), id).then(response => {
+            this._store.commit(storeModule + this.getDeleteMutation(), id);
+            return response;
+        });
     }
 
     /**
@@ -1152,7 +1149,7 @@ class StoreService {
      * @param {Number} id the id to be read
      */
     show(storeModule, id) {
-        return this._store.dispatch(storeModule + this.getShowAction(), id);
+        return this._store.dispatch(storeModule + this.getReadAction(), id);
     }
 
     /**
@@ -1167,7 +1164,7 @@ class StoreService {
 
     /**
      *  get the read all from store getter with or without seperator
-     * @param {Boolean} seperator with or without seperator, default true
+     * @param {Boolean} [seperator] with or without seperator, default true
      */
     getReadAllGetter(seperator = true) {
         return (seperator ? this.storeSeperator : '') + 'all';
@@ -1175,7 +1172,7 @@ class StoreService {
 
     /**
      *  get the read by id from store getter with or without seperator
-     * @param {Boolean} seperator with or without seperator, default true
+     * @param {Boolean} [seperator] with or without seperator, default true
      */
     getReadByIdGetter(seperator = true) {
         return (seperator ? this.storeSeperator : '') + 'byId';
@@ -1183,23 +1180,15 @@ class StoreService {
 
     /**
      *  get the read store action with or without seperator
-     * @param {Boolean} seperator with or without seperator, default true
+     * @param {Boolean} [seperator] with or without seperator, default true
      */
     getReadAction(seperator = true) {
         return (seperator ? this.storeSeperator : '') + 'read';
     }
 
     /**
-     *  get the read store action with or without seperator
-     * @param {Boolean} seperator with or without seperator, default true
-     */
-    getShowAction(seperator = true) {
-        return (seperator ? this.storeSeperator : '') + 'show';
-    }
-
-    /**
      *  get the delete store action with or without seperator
-     * @param {Boolean} seperator with or without seperator, default true
+     * @param {Boolean} [seperator] with or without seperator, default true
      */
     getDeleteAction(seperator = true) {
         return (seperator ? this.storeSeperator : '') + 'destroy';
@@ -1207,7 +1196,7 @@ class StoreService {
 
     /**
      *  get the update store action with or without seperator
-     * @param {Boolean} seperator with or without seperator, default true
+     * @param {Boolean} [seperator] with or without seperator, default true
      */
     getUpdateAction(seperator = true) {
         return (seperator ? this.storeSeperator : '') + 'update';
@@ -1215,7 +1204,7 @@ class StoreService {
 
     /**
      *  get the update store action with or without seperator
-     * @param {Boolean} seperator with or without seperator, default true
+     * @param {Boolean} [seperator] with or without seperator, default true
      */
     getCreateAction(seperator = true) {
         return (seperator ? this.storeSeperator : '') + 'create';
@@ -1223,7 +1212,7 @@ class StoreService {
 
     /**
      *  get the set all in store action with or without seperator
-     * @param {Boolean} seperator with or without seperator, default true
+     * @param {Boolean} [seperator] with or without seperator, default true
      */
     getSetAllInStoreAction(seperator = true) {
         return (seperator ? this.storeSeperator : '') + 'setAll';
@@ -1231,26 +1220,26 @@ class StoreService {
 
     /**
      *  get the all data in store state name with or without seperator
-     * @param {Boolean} seperator with or without seperator, default true
+     * @param {Boolean} [seperator] with or without seperator, default true
      */
     getAllItemsStateName(seperator = true) {
         return (seperator ? this.storeSeperator : '') + 'data';
     }
 
     /**
-     *  get the all data in store state name with or without seperator
-     * @param {Boolean} seperator with or without seperator, default true
+     *  get the set all mutation name with or without seperator
+     * @param {Boolean} [seperator] with or without seperator, default true
      */
     getSetAllMutation(seperator = true) {
         return (seperator ? this.storeSeperator : '') + 'SET_ALL';
     }
 
     /**
-     *  get the all data in store state name with or without seperator
-     * @param {Boolean} seperator with or without seperator, default true
+     *  get the delete mutation name with or without seperator
+     * @param {Boolean} [seperator] with or without seperator, default true
      */
-    getSetShowMutation(seperator = true) {
-        return (seperator ? this.storeSeperator : '') + 'SET_SHOW';
+    getDeleteMutation(seperator = true) {
+        return (seperator ? this.storeSeperator : '') + 'DELETE';
     }
 
     /** get the store seperator */
@@ -1265,7 +1254,6 @@ class StoreService {
         this._factory.createAction = this.getCreateAction(false);
         this._factory.updateAction = this.getUpdateAction(false);
         this._factory.deleteAction = this.getDeleteAction(false);
-        this._factory.showAction = this.getShowAction(false);
         this._factory.setAllAction = this.getSetAllInStoreAction(false);
 
         // set the factory getter names
@@ -1277,7 +1265,7 @@ class StoreService {
 
         // set the factory mutation names
         this._factory.setAllMutation = this.getSetAllMutation(false);
-        this._factory._setShowMutation = this.getSetShowMutation(false);
+        this._factory.deleteMutation = this.getDeleteMutation(false);
     }
 
     /**
@@ -1355,7 +1343,10 @@ class ErrorService {
     constructor(storeService, routerService, httpService) {
         this._storeModuleName = 'errors';
         this._storeService = storeService;
-        this._storeService.generateAndSetDefaultStoreModule(this._storeModuleName);
+
+        this._storeService.generateAndSetDefaultStoreModule(this._storeModuleName, '', {
+            getters: {[this._storeModuleName]: state => state[this._storeService.getAllItemsStateName(false)]},
+        });
 
         this._routerService = routerService;
         this._routerService.addRoutes([
@@ -1376,7 +1367,7 @@ class ErrorService {
     }
 
     getErrors() {
-        return this._storeService.getAllFromStore(this._storeModuleName);
+        return this._storeService.get(this._storeModuleName, this._storeModuleName);
     }
 
     setErrors(errors) {
@@ -1436,7 +1427,8 @@ class LoadingService {
      * @returns {Boolean}
      */
     get loading() {
-        return this._storeService.getAllFromStore(this._storeModuleName);
+        // TODO :: loading somehow still an array at start, first this fix
+        return !!this._storeService.getAllFromStore(this._storeModuleName);
     }
 
     /**
@@ -1517,10 +1509,15 @@ var storeModule = (storageService, httpService, authService) => ({
             return httpService.post('/login', payload).then(response => {
                 const isAdmin = response.data.isAdmin;
                 commit('LOGIN_SUCCES', isAdmin);
-                return isAdmin;
+                return response;
             });
         },
-        logout: ({commit}) => commit('LOGOUT'),
+        logout: ({commit}) => {
+            return httpService.post('logout').then(response => {
+                commit('LOGOUT');
+                return response;
+            });
+        },
 
         sendEmailResetPassword: (_, email) => {
             return httpService.post('/sendEmailResetPassword', email).then(response => {
@@ -1641,27 +1638,28 @@ class AuthService {
      */
     login(credentials) {
         // TODO :: isAdmin should be something like role
-        this._storeService.dispatch(this.storeModuleName, LOGIN_ACTION, credentials).then(isAdmin => {
+        return this._storeService.dispatch(this.storeModuleName, LOGIN_ACTION, credentials).then(response => {
             // TODO :: check roles here somehow?
             // if (isAdmin) return this._routerService.goToRoute('courses.edit');
             this.goToStandardLoggedInPage();
+            return response;
         });
     }
 
     logout() {
-        this._storeService.dispatch(this.storeModuleName, LOGOUT_ACTION);
+        return this._storeService.dispatch(this.storeModuleName, LOGOUT_ACTION);
+    }
+
+    sendEmailResetPassword(email) {
+        return this._storeService.dispatch(this.storeModuleName, 'sendEmailResetPassword', email);
+    }
+
+    resetPassword(data) {
+        return this._storeService.dispatch(this.storeModuleName, 'resetPassword', data);
     }
 
     goToStandardLoggedInPage() {
         this._routerService.goToRoute(this.defaultLoggedInPage);
-    }
-
-    sendEmailResetPassword(email) {
-        this._storeService.dispatch(this.storeModuleName, 'sendEmailResetPassword', email);
-    }
-
-    resetPassword(data) {
-        this._storeService.dispatch(this.storeModuleName, 'resetPassword', data);
     }
 
     goToLoginPage() {
@@ -2092,6 +2090,10 @@ class BaseController {
 
     get showByCurrentRouteId() {
         return () => this._storeService.show(this._APIEndpoint, this._routerService._router.currentRoute.params.id);
+    }
+
+    get show() {
+        return id => this._storeService.show(this._APIEndpoint, id);
     }
 
     /** base pages */

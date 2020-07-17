@@ -36,7 +36,8 @@ export class LoadingService {
      * @returns {Boolean}
      */
     get loading() {
-        return this._storeService.getAllFromStore(this._storeModuleName);
+        // TODO :: loading somehow still an array at start, first this fix
+        return !!this._storeService.getAllFromStore(this._storeModuleName);
     }
 
     /**
