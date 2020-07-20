@@ -59,7 +59,12 @@ export class StoreModuleFactory {
     /** create default getters for the store */
     createDefaultGetters() {
         return {
-            [this.readAllGetter]: state => Object.values(state[this.allItemsStateName]),
+            [this.readAllGetter]: state => {
+                const data = state[this.allItemsStateName];
+                // if not all keys are a number, then return as is
+                if (Object.keys(data).some(key => isNaN(key))) return data;
+                return Object.values(data);
+            },
             [this.readByIdGetter]: state => id => state[this.allItemsStateName][id],
         };
     }
