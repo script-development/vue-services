@@ -44,6 +44,14 @@ export class HTTPService {
      * @param {String} endpoint the endpoint for the get
      */
     delete(endpoint: string): Promise<AxiosResponse>;
+    /**
+     * download a file from the backend
+     * type should be resolved automagically, if not, then you can pass the type
+     * @param {String} endpoint the endpoint for the download
+     * @param {String} documentName the name of the document to be downloaded
+     * @param {String} [type] the downloaded document type
+     */
+    download(endpoint: string, documentName: string, type?: string): Promise<AxiosResponse>;
     registerRequestMiddleware(middlewareFunc: any): void;
     registerResponseMiddleware(middlewareFunc: any): void;
     registerResponseErrorMiddleware(middlewareFunc: any): void;

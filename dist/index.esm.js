@@ -8,6 +8,9 @@ import axios from 'axios';
  */
 const API_URL = process.env.MIX_APP_URL ? `${process.env.MIX_APP_URL}/api` : '/api';
 
+const HEADERS_TO_TYPE = {
+    'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet': 'application/xlsx',
+};
 class HTTPService {
     constructor() {
         this._http = axios.create({
@@ -71,6 +74,25 @@ class HTTPService {
      */
     delete(endpoint) {
         return this._http.delete(endpoint);
+    }
+
+    /**
+     * download a file from the backend
+     * type should be resolved automagically, if not, then you can pass the type
+     * @param {String} endpoint the endpoint for the download
+     * @param {String} documentName the name of the document to be downloaded
+     * @param {String} [type] the downloaded document type
+     */
+    download(endpoint, documentName, type) {
+        return this._http.get(endpoint, {responseType: 'blob'}).then(response => {
+            if (!type) type = HEADERS_TO_TYPE[response.headers['content-type']];
+            const blob = new Blob([response.data], {type});
+            const link = document.createElement('a');
+            link.href = window.URL.createObjectURL(blob);
+            link.download = documentName;
+            link.click();
+            return response;
+        });
     }
 
     registerRequestMiddleware(middlewareFunc) {
@@ -895,7 +917,12 @@ class StoreModuleFactory {
     /** create default getters for the store */
     createDefaultGetters() {
         return {
-            [this.readAllGetter]: state => Object.values(state[this.allItemsStateName]),
+            [this.readAllGetter]: state => {
+                const data = state[this.allItemsStateName];
+                // if not all keys are a number, then return as is
+                if (Object.keys(data).some(key => isNaN(key))) return data;
+                return Object.values(data);
+            },
             [this.readByIdGetter]: state => id => state[this.allItemsStateName][id],
         };
     }
