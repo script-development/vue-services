@@ -1,15 +1,28 @@
 /**
  * @typedef {import('axios').AxiosRequestConfig} AxiosRequestConfig
+ * @typedef {import('../storage').StorageService} StorageService
+ * @typedef {Object<string,number>} Cache
  */
 
 import axios from 'axios';
 const API_URL = process.env.MIX_APP_URL ? `${process.env.MIX_APP_URL}/api` : '/api';
-
 const HEADERS_TO_TYPE = {
     'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet': 'application/xlsx',
 };
+
+const CACHE_KEY = 'HTTP_CACHE';
+
 export class HTTPService {
-    constructor() {
+    /**
+     * @param {StorageService} storageService
+     */
+    constructor(storageService) {
+        this._storageService = storageService;
+        const storedCache = this._storageService.getItem(CACHE_KEY);
+        /** @type {Cache} */
+        this._cache = storedCache ? JSON.parse(storedCache) : {};
+        this._cacheDuration = 10;
+
         this._http = axios.create({
             baseURL: API_URL,
             withCredentials: false,
@@ -47,13 +60,30 @@ export class HTTPService {
         );
     }
 
+    // prettier-ignore
+    get cacheDuration() {return this._cacheDuration;}
+
+    // prettier-ignore
+    set cacheDuration(value) {this._cacheDuration = value;}
+
     /**
      * send a get request to the given endpoint
      * @param {String} endpoint the endpoint for the get
      * @param {AxiosRequestConfig} [options] the optional request options
      */
     get(endpoint, options) {
-        return this._http.get(endpoint, options);
+        // get currentTimeStamp in seconds
+        const currentTimeStamp = Math.floor(Date.now() / 1000);
+        if (this._cache[endpoint] && !options) {
+            // if it has been less then the cache duration since last requested this get request, do nothing
+            if (currentTimeStamp - this._cache[endpoint] < this.cacheDuration) return;
+        }
+
+        return this._http.get(endpoint, options).then(response => {
+            this._cache[endpoint] = currentTimeStamp;
+            this._storageService.setItem(CACHE_KEY, this._cache);
+            return response;
+        });
     }
 
     /**

@@ -17,11 +17,19 @@ export type Translation = {
     plural: string;
 };
 
+type Cache = {[key: string]: number};
+
 export class HTTPService {
+    _storageService: StorageService;
+    _cache: Cache;
+    _cahceDuration: number;
     _http: AxiosInstance;
     _requestMiddleware: any[];
     _responseMiddleware: any[];
     _responseErrorMiddleware: any[];
+
+    get cacheDuration(): number;
+    set cacheDuration(value: number);
     /**
      * send a get request to the given endpoint
      * @param {String} endpoint the endpoint for the get

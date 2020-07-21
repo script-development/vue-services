@@ -9,16 +9,60 @@ var Vuex = _interopDefault(require('vuex'));
 var VueRouter = _interopDefault(require('vue-router'));
 var axios = _interopDefault(require('axios'));
 
+const keepALiveKey = 'keepALive';
+/** setting keepALive here so we don't have to Parse it each time we get it */
+let keepALive = JSON.parse(localStorage.getItem(keepALiveKey));
+
+class StorageService {
+    set keepALive(value) {
+        localStorage.setItem(keepALiveKey, value);
+        keepALive = value;
+    }
+
+    get keepALive() {
+        return keepALive;
+    }
+
+    setItem(key, value) {
+        if (!this.keepALive) return;
+        if (typeof value !== 'string') value = JSON.stringify(value);
+        localStorage.setItem(key, value);
+    }
+
+    getItem(key) {
+        if (!this.keepALive) return null;
+        return localStorage.getItem(key);
+    }
+
+    clear() {
+        if (!this.keepALive) return;
+        localStorage.clear();
+    }
+}
+
 /**
  * @typedef {import('axios').AxiosRequestConfig} AxiosRequestConfig
+ * @typedef {import('../storage').StorageService} StorageService
+ * @typedef {Object<string,number>} Cache
  */
 const API_URL = process.env.MIX_APP_URL ? `${process.env.MIX_APP_URL}/api` : '/api';
-
 const HEADERS_TO_TYPE = {
     'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet': 'application/xlsx',
 };
+
+const CACHE_KEY = 'HTTP_CACHE';
+
 class HTTPService {
-    constructor() {
+    /**
+     * @param {StorageService} storageService
+     */
+    constructor(storageService) {
+        this._storageService = storageService;
+        const storedCache = this._storageService.getItem(CACHE_KEY);
+        /** @type {Cache} */
+        this._cache = storedCache ? JSON.parse(storedCache) : {};
+        this._cacheDuration = 10;
+
         this._http = axios.create({
             baseURL: API_URL,
             withCredentials: false,
@@ -56,13 +100,30 @@ class HTTPService {
         );
     }
 
+    // prettier-ignore
+    get cacheDuration() {return this._cacheDuration;}
+
+    // prettier-ignore
+    set cacheDuration(value) {this._cacheDuration = value;}
+
     /**
      * send a get request to the given endpoint
      * @param {String} endpoint the endpoint for the get
      * @param {AxiosRequestConfig} [options] the optional request options
      */
     get(endpoint, options) {
-        return this._http.get(endpoint, options);
+        // get currentTimeStamp in seconds
+        const currentTimeStamp = Math.floor(Date.now() / 1000);
+        if (this._cache[endpoint] && !options) {
+            // if it has been less then the cache duration since last requested this get request, do nothing
+            if (currentTimeStamp - this._cache[endpoint] < this.cacheDuration) return;
+        }
+
+        return this._http.get(endpoint, options).then(response => {
+            this._cache[endpoint] = currentTimeStamp;
+            this._storageService.setItem(CACHE_KEY, this._cache);
+            return response;
+        });
     }
 
     /**
@@ -829,37 +890,6 @@ class RouteSettings {
         newInstance.baseName = baseRouteName;
         newInstance.basePath = '/' + this._translationService.getPlural(baseRouteName);
         return newInstance;
-    }
-}
-
-const keepALiveKey = 'keepALive';
-/** setting keepALive here so we don't have to Parse it each time we get it */
-let keepALive = JSON.parse(localStorage.getItem(keepALiveKey));
-
-class StorageService {
-    set keepALive(value) {
-        localStorage.setItem(keepALiveKey, value);
-        keepALive = value;
-    }
-
-    get keepALive() {
-        return keepALive;
-    }
-
-    setItem(key, value) {
-        if (!this.keepALive) return;
-        if (typeof value !== 'string') value = JSON.stringify(value);
-        localStorage.setItem(key, value);
-    }
-
-    getItem(key) {
-        if (!this.keepALive) return null;
-        return localStorage.getItem(key);
-    }
-
-    clear() {
-        if (!this.keepALive) return;
-        localStorage.clear();
     }
 }
 
@@ -1930,6 +1960,7 @@ class PageCreatorService {
     }
 }
 
+const storageService = new StorageService();
 // Bind the store to Vue and generate empty store
 Vue.use(Vuex);
 const store = new Vuex.Store();
@@ -1939,14 +1970,13 @@ const router = new VueRouter({
     mode: 'history',
     routes: [],
 });
-const httpService = new HTTPService();
+const httpService = new HTTPService(storageService);
 const eventService = new EventService(httpService);
 const translatorService = new TranslatorService();
 
 const routeFactory = new RouteFactory();
 const routeSettings = new RouteSettings(translatorService);
 const routerService = new RouterService(router, routeFactory, routeSettings);
-const storageService = new StorageService();
 
 const storeFactory = new StoreModuleFactory(httpService, storageService);
 const storeService = new StoreService(store, storeFactory, httpService);
