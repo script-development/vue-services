@@ -1,5 +1,7 @@
-import Vue from 'vue';
+import {StorageService} from './storage';
+const storageService = new StorageService();
 
+import Vue from 'vue';
 import Vuex from 'vuex';
 // Bind the store to Vue and generate empty store
 Vue.use(Vuex);
@@ -14,7 +16,7 @@ const router = new VueRouter({
 });
 
 import {HTTPService} from './http';
-export const httpService = new HTTPService();
+export const httpService = new HTTPService(storageService);
 
 import {EventService} from './event';
 export const eventService = new EventService(httpService);
@@ -30,13 +32,10 @@ const routeFactory = new RouteFactory();
 const routeSettings = new RouteSettings(translatorService);
 export const routerService = new RouterService(router, routeFactory, routeSettings);
 
-import {StorageService} from './storage';
-const storageService = new StorageService();
-
 import {StoreModuleFactory} from './store/factory';
 import {StoreService} from './store';
 
-const storeFactory = new StoreModuleFactory(httpService);
+const storeFactory = new StoreModuleFactory(httpService, storageService);
 export const storeService = new StoreService(store, storeFactory, httpService);
 
 import {ErrorService} from './error';

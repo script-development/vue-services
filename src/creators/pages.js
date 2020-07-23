@@ -51,7 +51,7 @@ export class PageCreator {
         };
     }
 
-    editPage(form, getter, subject, updateAction, destroyAction) {
+    editPage(form, getter, subject, updateAction, destroyAction, showAction) {
         // define pageCreator here, cause this context get's lost in the return object
         const pageCreator = this;
 
@@ -72,18 +72,19 @@ export class PageCreator {
                     pageCreator.createEditPageTitle(h, this.item),
                     pageCreator.createForm(h, form, editable, updateAction),
                     // TODO :: move to method, when there are more b-links
-                    h(
-                        'b-link',
-                        {
-                            class: 'text-danger',
-                            on: {click: destroyAction},
-                        },
-                        [`${pageCreator._translatorService.getCapitalizedSingular(subject)} verwijderen`]
-                    ),
+                    // h(
+                    //     'b-link',
+                    //     {
+                    //         class: 'text-danger',
+                    //         on: {click: destroyAction},
+                    //     },
+                    //     [`${pageCreator._translatorService.getCapitalizedSingular(subject)} verwijderen`]
+                    // ),
                 ]);
             },
             mounted() {
                 pageCreator.checkQuery(editable);
+                if (showAction) showAction();
             },
         };
     }
@@ -103,7 +104,8 @@ export class PageCreator {
      */
     createTitle(h, title) {
         // TODO :: vue3, use create element
-        return h('h1', [title]);
+        // TODO :: uses Bootstrap-Vue
+        return h('b-row', [h('b-col', [h('h1', [title])])]);
     }
 
     /**
@@ -112,7 +114,7 @@ export class PageCreator {
      */
     createCreatePageTitle(h, subject) {
         // TODO :: vue3, use create element
-        return h('h1', [this._translatorService.getCapitalizedSingular(subject) + ` toevoegen`]);
+        return this.createTitle(h, this._translatorService.getCapitalizedSingular(subject) + ` toevoegen`);
     }
 
     /**
@@ -126,7 +128,7 @@ export class PageCreator {
         if (item.firstname) {
             name = `${item.firstname} ${item.lastname}`;
         }
-        return h('h1', [name + ' aanpassen']);
+        return this.createTitle(h, name + ' aanpassen');
     }
 
     /**
@@ -137,13 +139,17 @@ export class PageCreator {
      */
     createForm(h, form, editable, action) {
         // TODO :: vue3, use create element
-        return h(form, {
-            props: {
-                editable,
-                errors: this._errorService.getErrors(),
-            },
-            on: {submit: () => action(editable)},
-        });
+        return h('div', {class: 'row mt-3'}, [
+            h('div', {class: 'col'}, [
+                h(form, {
+                    props: {
+                        editable,
+                        errors: this._errorService.getErrors(),
+                    },
+                    on: {submit: () => action(editable)},
+                }),
+            ]),
+        ]);
     }
 
     /**

@@ -25,3 +25,5 @@ export const httpService: HTTPService;
 export const eventService: EventService;
 // export const pageCreator: PageCreator;
 export const translatorService: TranslatorService;
+
+export {HTTPService, EventService, TranslatorService, AuthService, ErrorService, LoadingService, PageCreatorService};

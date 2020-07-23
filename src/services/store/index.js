@@ -8,7 +8,6 @@
 
 export class StoreService {
     /**
-     *
      * @param {Store} store the store being used
      * @param {StoreModuleFactory} factory the factory being used to create store modules
      * @param {HTTPService} httpService the http service for communication with the API
@@ -252,7 +251,7 @@ export class StoreService {
      * @param {Module} [extraFunctionality] extra functionality added to the store
      */
     generateAndSetDefaultStoreModule(moduleName, endpoint, extraFunctionality) {
-        const storeModule = this._factory.createDefaultStore(endpoint);
+        const storeModule = this._factory.createDefaultStore(moduleName, endpoint);
 
         if (extraFunctionality) {
             for (const key in extraFunctionality) {

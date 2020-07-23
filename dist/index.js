@@ -9,13 +9,60 @@ var Vuex = _interopDefault(require('vuex'));
 var VueRouter = _interopDefault(require('vue-router'));
 var axios = _interopDefault(require('axios'));
 
+const keepALiveKey = 'keepALive';
+/** setting keepALive here so we don't have to Parse it each time we get it */
+let keepALive = JSON.parse(localStorage.getItem(keepALiveKey));
+
+class StorageService {
+    set keepALive(value) {
+        localStorage.setItem(keepALiveKey, value);
+        keepALive = value;
+    }
+
+    get keepALive() {
+        return keepALive;
+    }
+
+    setItem(key, value) {
+        if (!this.keepALive) return;
+        if (typeof value !== 'string') value = JSON.stringify(value);
+        localStorage.setItem(key, value);
+    }
+
+    getItem(key) {
+        if (!this.keepALive) return null;
+        return localStorage.getItem(key);
+    }
+
+    clear() {
+        if (!this.keepALive) return;
+        localStorage.clear();
+    }
+}
+
 /**
  * @typedef {import('axios').AxiosRequestConfig} AxiosRequestConfig
+ * @typedef {import('../storage').StorageService} StorageService
+ * @typedef {Object<string,number>} Cache
  */
 const API_URL = process.env.MIX_APP_URL ? `${process.env.MIX_APP_URL}/api` : '/api';
+const HEADERS_TO_TYPE = {
+    'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet': 'application/xlsx',
+};
+
+const CACHE_KEY = 'HTTP_CACHE';
 
 class HTTPService {
-    constructor() {
+    /**
+     * @param {StorageService} storageService
+     */
+    constructor(storageService) {
+        this._storageService = storageService;
+        const storedCache = this._storageService.getItem(CACHE_KEY);
+        /** @type {Cache} */
+        this._cache = storedCache ? JSON.parse(storedCache) : {};
+        this._cacheDuration = 10;
+
         this._http = axios.create({
             baseURL: API_URL,
             withCredentials: false,
@@ -53,13 +100,30 @@ class HTTPService {
         );
     }
 
+    // prettier-ignore
+    get cacheDuration() {return this._cacheDuration;}
+
+    // prettier-ignore
+    set cacheDuration(value) {this._cacheDuration = value;}
+
     /**
      * send a get request to the given endpoint
      * @param {String} endpoint the endpoint for the get
      * @param {AxiosRequestConfig} [options] the optional request options
      */
     get(endpoint, options) {
-        return this._http.get(endpoint, options);
+        // get currentTimeStamp in seconds
+        const currentTimeStamp = Math.floor(Date.now() / 1000);
+        if (this._cache[endpoint] && !options) {
+            // if it has been less then the cache duration since last requested this get request, do nothing
+            if (currentTimeStamp - this._cache[endpoint] < this.cacheDuration) return;
+        }
+
+        return this._http.get(endpoint, options).then(response => {
+            this._cache[endpoint] = currentTimeStamp;
+            this._storageService.setItem(CACHE_KEY, this._cache);
+            return response;
+        });
     }
 
     /**
@@ -77,6 +141,25 @@ class HTTPService {
      */
     delete(endpoint) {
         return this._http.delete(endpoint);
+    }
+
+    /**
+     * download a file from the backend
+     * type should be resolved automagically, if not, then you can pass the type
+     * @param {String} endpoint the endpoint for the download
+     * @param {String} documentName the name of the document to be downloaded
+     * @param {String} [type] the downloaded document type
+     */
+    download(endpoint, documentName, type) {
+        return this._http.get(endpoint, {responseType: 'blob'}).then(response => {
+            if (!type) type = HEADERS_TO_TYPE[response.headers['content-type']];
+            const blob = new Blob([response.data], {type});
+            const link = document.createElement('a');
+            link.href = window.URL.createObjectURL(blob);
+            link.download = documentName;
+            link.click();
+            return response;
+        });
     }
 
     registerRequestMiddleware(middlewareFunc) {
@@ -810,49 +893,22 @@ class RouteSettings {
     }
 }
 
-const keepALiveKey = 'keepALive';
-/** setting keepALive here so we don't have to Parse it each time we get it */
-let keepALive = JSON.parse(localStorage.getItem(keepALiveKey));
-
-class StorageService {
-    set keepALive(value) {
-        localStorage.setItem(keepALiveKey, value);
-        keepALive = value;
-    }
-
-    get keepALive() {
-        return keepALive;
-    }
-
-    setItem(key, value, size) {
-        if (!this.keepALive) return;
-        localStorage.setItem(key, value);
-    }
-
-    getItem(key) {
-        if (!this.keepALive) return null;
-        return localStorage.getItem(key);
-    }
-
-    clear() {
-        if (!this.keepALive) return;
-        localStorage.clear();
-    }
-}
-
 /**
  * @typedef {import('../../http').HTTPService} HTTPService
+ * @typedef {import('../../storage').StorageService} StorageService
  * @typedef {import('axios').AxiosRequestConfig} AxiosRequestConfig
  */
 
 class StoreModuleFactory {
     /**
-     * @param {HTTPService} httpService
-     * @param {Boolean} namespaced
+     * @param {HTTPService} httpService the http service for communication with the API
+     * @param {StorageService} storageService the storage service for storing stuff in the browser
+     * @param {Boolean} [namespaced]
      */
-    constructor(httpService, namespaced = true) {
-        this._namespaced = namespaced;
+    constructor(httpService, storageService, namespaced = true) {
         this._httpService = httpService;
+        this._storageService = storageService;
+        this._namespaced = namespaced;
 
         // getter naming
         /** @type {String} */ this._readAllGetter;
@@ -875,36 +931,47 @@ class StoreModuleFactory {
 
     /**
      * Generate a default store module
+     * @param {String} moduleName the name of the module
      * @param {String} [endpoint] the optional endpoint for the API
      */
-    createDefaultStore(endpoint) {
+    createDefaultStore(moduleName, endpoint) {
         return {
             namespaced: this._namespaced,
-            state: this.createDefaultState(),
+            state: this.createDefaultState(moduleName),
             getters: this.createDefaultGetters(),
-            mutations: this.createDefaultMutations(),
+            mutations: this.createDefaultMutations(moduleName),
             actions: this.createDefaultActions(endpoint),
         };
     }
 
     /** create default state for the store */
-    createDefaultState(allItemsStateName) {
-        return {[this.allItemsStateName]: {}};
+    createDefaultState(moduleName) {
+        const stored = this._storageService.getItem(moduleName + this.allItemsStateName);
+        return {[this.allItemsStateName]: stored ? JSON.parse(stored) : {}};
     }
 
     /** create default getters for the store */
     createDefaultGetters() {
         return {
-            [this.readAllGetter]: state => Object.values(state[this.allItemsStateName]),
+            [this.readAllGetter]: state => {
+                const data = state[this.allItemsStateName];
+                // if not all keys are a number, then return as is
+                if (Object.keys(data).some(key => isNaN(key))) return data;
+                return Object.values(data);
+            },
             [this.readByIdGetter]: state => id => state[this.allItemsStateName][id],
         };
     }
 
     /** create default mutations for the store */
-    createDefaultMutations() {
+    createDefaultMutations(moduleName) {
         return {
             [this.setAllMutation]: (state, allData) => {
-                if (!allData.length) return (state[this.allItemsStateName] = allData);
+                if (!allData.length) {
+                    state[this.allItemsStateName] = allData;
+                    this._storageService.setItem(moduleName + this.allItemsStateName, state[this.allItemsStateName]);
+                    return;
+                }
 
                 for (const data of allData) {
                     const idData = state[this.allItemsStateName][data.id];
@@ -914,6 +981,7 @@ class StoreModuleFactory {
 
                     Vue.set(state[this.allItemsStateName], data.id, data);
                 }
+                this._storageService.setItem(moduleName + this.allItemsStateName, state[this.allItemsStateName]);
             },
             [this.deleteMutation]: (state, id) => Vue.delete(state[this.allItemsStateName], id),
         };
@@ -958,7 +1026,7 @@ class StoreModuleFactory {
      * @param {AxiosRequestConfig} [options] the optional request options
      */
     createExtraGetAction(endpoint, options) {
-        return (_, payload) => this._httpService.get(endpoint + payload ? `/${payload}` : '', options);
+        return (_, payload) => this._httpService.get(endpoint + (payload ? `/${payload}` : ''), options);
     }
 
     // prettier-ignore
@@ -1032,7 +1100,6 @@ class StoreModuleFactory {
 
 class StoreService {
     /**
-     *
      * @param {Store} store the store being used
      * @param {StoreModuleFactory} factory the factory being used to create store modules
      * @param {HTTPService} httpService the http service for communication with the API
@@ -1276,7 +1343,7 @@ class StoreService {
      * @param {Module} [extraFunctionality] extra functionality added to the store
      */
     generateAndSetDefaultStoreModule(moduleName, endpoint, extraFunctionality) {
-        const storeModule = this._factory.createDefaultStore(endpoint);
+        const storeModule = this._factory.createDefaultStore(moduleName, endpoint);
 
         if (extraFunctionality) {
             for (const key in extraFunctionality) {
@@ -1782,7 +1849,7 @@ class PageCreatorService {
         };
     }
 
-    editPage(form, getter, subject, updateAction, destroyAction) {
+    editPage(form, getter, subject, updateAction, destroyAction, showAction) {
         // define pageCreator here, cause this context get's lost in the return object
         const pageCreator = this;
 
@@ -1803,18 +1870,19 @@ class PageCreatorService {
                     pageCreator.createEditPageTitle(h, this.item),
                     pageCreator.createForm(h, form, editable, updateAction),
                     // TODO :: move to method, when there are more b-links
-                    h(
-                        'b-link',
-                        {
-                            class: 'text-danger',
-                            on: {click: destroyAction},
-                        },
-                        [`${pageCreator._translatorService.getCapitalizedSingular(subject)} verwijderen`]
-                    ),
+                    // h(
+                    //     'b-link',
+                    //     {
+                    //         class: 'text-danger',
+                    //         on: {click: destroyAction},
+                    //     },
+                    //     [`${pageCreator._translatorService.getCapitalizedSingular(subject)} verwijderen`]
+                    // ),
                 ]);
             },
             mounted() {
                 pageCreator.checkQuery(editable);
+                if (showAction) showAction();
             },
         };
     }
@@ -1834,7 +1902,8 @@ class PageCreatorService {
      */
     createTitle(h, title) {
         // TODO :: vue3, use create element
-        return h('h1', [title]);
+        // TODO :: uses Bootstrap-Vue
+        return h('b-row', [h('b-col', [h('h1', [title])])]);
     }
 
     /**
@@ -1843,7 +1912,7 @@ class PageCreatorService {
      */
     createCreatePageTitle(h, subject) {
         // TODO :: vue3, use create element
-        return h('h1', [this._translatorService.getCapitalizedSingular(subject) + ` toevoegen`]);
+        return this.createTitle(h, this._translatorService.getCapitalizedSingular(subject) + ` toevoegen`);
     }
 
     /**
@@ -1857,7 +1926,7 @@ class PageCreatorService {
         if (item.firstname) {
             name = `${item.firstname} ${item.lastname}`;
         }
-        return h('h1', [name + ' aanpassen']);
+        return this.createTitle(h, name + ' aanpassen');
     }
 
     /**
@@ -1868,13 +1937,17 @@ class PageCreatorService {
      */
     createForm(h, form, editable, action) {
         // TODO :: vue3, use create element
-        return h(form, {
-            props: {
-                editable,
-                errors: this._errorService.getErrors(),
-            },
-            on: {submit: () => action(editable)},
-        });
+        return h('div', {class: 'row mt-3'}, [
+            h('div', {class: 'col'}, [
+                h(form, {
+                    props: {
+                        editable,
+                        errors: this._errorService.getErrors(),
+                    },
+                    on: {submit: () => action(editable)},
+                }),
+            ]),
+        ]);
     }
 
     /**
@@ -1893,6 +1966,7 @@ class PageCreatorService {
     }
 }
 
+const storageService = new StorageService();
 // Bind the store to Vue and generate empty store
 Vue.use(Vuex);
 const store = new Vuex.Store();
@@ -1902,16 +1976,15 @@ const router = new VueRouter({
     mode: 'history',
     routes: [],
 });
-const httpService = new HTTPService();
+const httpService = new HTTPService(storageService);
 const eventService = new EventService(httpService);
 const translatorService = new TranslatorService();
 
 const routeFactory = new RouteFactory();
 const routeSettings = new RouteSettings(translatorService);
 const routerService = new RouterService(router, routeFactory, routeSettings);
-const storageService = new StorageService();
 
-const storeFactory = new StoreModuleFactory(httpService);
+const storeFactory = new StoreModuleFactory(httpService, storageService);
 const storeService = new StoreService(store, storeFactory, httpService);
 const errorService = new ErrorService(storeService, routerService, httpService);
 const loadingService = new LoadingService(storeService, httpService);
@@ -2100,6 +2173,7 @@ class BaseController {
     get basePage() {
         return {
             render: h => h(MinimalRouterView, {props: {depth: 1}}),
+            // TODO #9 @Goosterhof
             mounted: () => this.read(),
         };
     }
