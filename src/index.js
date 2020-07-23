@@ -6,8 +6,9 @@ export {
     authService,
     httpService,
     eventService,
-    pageCreatorService,
     translatorService,
 } from './services';
+
+export {formCreator, buttonCreator, pageCreator} from './creators';
 
 export {BaseController} from './controllers';

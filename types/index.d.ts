@@ -7,7 +7,7 @@ import {
     AuthService,
     ErrorService,
     LoadingService,
-    PageCreatorService,
+    // PageCreator, // TODO :: PageCreator
 } from './services';
 
 export {Translation} from './services';
@@ -23,7 +23,7 @@ export const errorService: ErrorService;
 export const loadingService: LoadingService;
 export const httpService: HTTPService;
 export const eventService: EventService;
-export const pageCreatorService: PageCreatorService;
+// export const pageCreator: PageCreator;
 export const translatorService: TranslatorService;
 
 export {HTTPService, EventService, TranslatorService, AuthService, ErrorService, LoadingService, PageCreatorService};
