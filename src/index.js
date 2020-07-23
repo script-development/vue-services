@@ -12,3 +12,7 @@ export {
 export {formCreator, buttonCreator, pageCreator} from './creators';
 
 export {BaseController} from './controllers';
+
+import {AppStarter} from './app';
+
+export const appStarter = new AppStarter(routerService, eventService, authService, pageCreator);

@@ -24,6 +24,9 @@ export class PageCreator {
         this._routerService = routerService;
     }
 
+    /**
+     * @param {CreateElement} h
+     */
     init(h) {
         this._h = h;
     }
@@ -95,7 +98,21 @@ export class PageCreator {
      */
     createContainer(h, children) {
         // TODO :: vue3, use create element
-        return h('b-container', {props: {class: 'ml-0'}}, children);
+        return h('div', {class: 'ml-0 container'}, children);
+    }
+    /**
+     * @param {CreateElement} h
+     * @param {VNode[]} children
+     */
+    createRow(h, children) {
+        return h('div', {class: 'row'}, children);
+    }
+    /**
+     * @param {CreateElement} h
+     * @param {VNode[]} children
+     */
+    createCol(h, children) {
+        return h('div', {class: 'col'}, children);
     }
 
     /**
@@ -104,8 +121,7 @@ export class PageCreator {
      */
     createTitle(h, title) {
         // TODO :: vue3, use create element
-        // TODO :: uses Bootstrap-Vue
-        return h('b-row', [h('b-col', [h('h1', [title])])]);
+        return this.createRow(h, [this.createCol(h, [h('h1', [title])])]);
     }
 
     /**
@@ -140,7 +156,7 @@ export class PageCreator {
     createForm(h, form, editable, action) {
         // TODO :: vue3, use create element
         return h('div', {class: 'row mt-3'}, [
-            h('div', {class: 'col'}, [
+            this.createCol(h, [
                 h(form, {
                     props: {
                         editable,
