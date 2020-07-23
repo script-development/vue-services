@@ -5,6 +5,7 @@
  */
 
 import axios from 'axios';
+// TODO :: heavilly dependant on webpack and laravel mix
 const API_URL = process.env.MIX_APP_URL ? `${process.env.MIX_APP_URL}/api` : '/api';
 const HEADERS_TO_TYPE = {
     'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet': 'application/xlsx',

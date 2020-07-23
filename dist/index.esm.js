@@ -1795,29 +1795,59 @@ class AuthService {
     }
 }
 
+const storageService = new StorageService();
+// Bind the store to Vue and generate empty store
+Vue.use(Vuex);
+const store = new Vuex.Store();
+Vue.use(VueRouter);
+
+const router = new VueRouter({
+    mode: 'history',
+    routes: [],
+});
+const httpService = new HTTPService(storageService);
+const eventService = new EventService(httpService);
+const translatorService = new TranslatorService();
+
+const routeFactory = new RouteFactory();
+const routeSettings = new RouteSettings(translatorService);
+const routerService = new RouterService(router, routeFactory, routeSettings);
+
+const storeFactory = new StoreModuleFactory(httpService, storageService);
+const storeService = new StoreService(store, storeFactory, httpService);
+const errorService = new ErrorService(storeService, routerService, httpService);
+const loadingService = new LoadingService(storeService, httpService);
+
+const authService = new AuthService(routerService, storeService, storageService, httpService);
+
 /**
- * @typedef {import('../error').ErrorService} ErrorService
- * @typedef {import('../translator').TranslatorService} TranslatorService
- * @typedef {import('../event').EventService} EventService
- * @typedef {import('../router').RouterService} RouterService
+ * @typedef {import('../services/error').ErrorService} ErrorService
+ * @typedef {import('../services/translator').TranslatorService} TranslatorService
+ * @typedef {import('../services/event').EventService} EventService
+ * @typedef {import('../services/router').RouterService} RouterService
  * @typedef {import('vue').CreateElement} CreateElement
  * @typedef {import('vue').VNode} VNode
  * @typedef {import('vue').Component} Component
  */
 
-class PageCreatorService {
+class PageCreator {
     /**
-     *
      * @param {ErrorService} errorService
      * @param {TranslatorService} translatorService
      * @param {EventService} eventService
      * @param {RouterService} routerService
      */
     constructor(errorService, translatorService, eventService, routerService) {
+        /** @type {CreateElement} */
+        this._h;
         this._errorService = errorService;
         this._translatorService = translatorService;
         this._eventService = eventService;
         this._routerService = routerService;
+    }
+
+    init(h) {
+        this._h = h;
     }
 
     createPage(form, modelFactory, subject, createAction, title) {
@@ -1960,31 +1990,102 @@ class PageCreatorService {
     }
 }
 
-const storageService = new StorageService();
-// Bind the store to Vue and generate empty store
-Vue.use(Vuex);
-const store = new Vuex.Store();
-Vue.use(VueRouter);
+/**
+ * @typedef {import('vue').CreateElement} CreateElement
+ */
 
-const router = new VueRouter({
-    mode: 'history',
-    routes: [],
-});
-const httpService = new HTTPService(storageService);
-const eventService = new EventService(httpService);
-const translatorService = new TranslatorService();
+class ButtonCreator {
+    constructor() {
+        /** @type {CreateElement} */
+        this._h;
+        this._buttonContainerHTMLElement = 'b-form-group';
+        this._buttonContainerClass = 'mb-3';
+        this._buttonHTMLElement = 'b-button';
+    }
 
-const routeFactory = new RouteFactory();
-const routeSettings = new RouteSettings(translatorService);
-const routerService = new RouterService(router, routeFactory, routeSettings);
+    init(h) {
+        this._h = h;
+    }
 
-const storeFactory = new StoreModuleFactory(httpService, storageService);
-const storeService = new StoreService(store, storeFactory, httpService);
-const errorService = new ErrorService(storeService, routerService, httpService);
-const loadingService = new LoadingService(storeService, httpService);
+    /**
+     *
+     * @param {CreateElement} h
+     * @param {String} type
+     * @param {String} innerHTML
+     * @param {String} variant
+     */
+    button(h, type, innerHTML, variant) {
+        return h(
+            this._buttonContainerHTMLElement,
+            {
+                class: this._buttonContainerClass,
+            },
+            [
+                h(this._buttonHTMLElement, {
+                    props: {variant, type},
+                    domProps: {innerHTML},
+                }),
+            ]
+        );
+    }
 
-const authService = new AuthService(routerService, storeService, storageService, httpService);
-const pageCreatorService = new PageCreatorService(errorService, translatorService, eventService, routerService);
+    submitButton(h) {
+        return this.button(h, 'submit', 'Opslaan', 'secondary');
+    }
+}
+
+/**
+ * @typedef {import('vue').CreateElement} CreateElement
+ * @typedef {import('vue').VNode} VNode
+ * @typedef {import('./buttons').ButtonCreator} ButtonCreator
+ */
+class FormCreator {
+    /**
+     * @param {ButtonCreator} buttonCreator
+     */
+    constructor(buttonCreator) {
+        /** @type {CreateElement} */
+        this._h;
+        this._buttonCreator = buttonCreator;
+
+        this._formHTMLElement = 'b-form';
+        this._formClass = 'edit-form';
+    }
+
+    init(h) {
+        this._h = h;
+    }
+
+    /**
+     * @param {CreateElement} h
+     * @param {VNode[]} children
+     * @param {Function} submit
+     */
+    form(h, children, submit) {
+        return h(
+            this._formHTMLElement,
+            {
+                class: this._formClass,
+                novalidate: true,
+                on: {
+                    submit: e => {
+                        e.preventDefault();
+                        submit();
+                    },
+                },
+            },
+            [...children, this._buttonCreator.submitButton(h)]
+        );
+    }
+}
+
+/**
+ * @typedef {import('vue').CreateElement} CreateElement
+ */
+
+const pageCreator = new PageCreator(errorService, translatorService, eventService, routerService);
+const buttonCreator = new ButtonCreator();
+const formCreator = new FormCreator(buttonCreator);
 
 const name = 'default';
 
@@ -2032,7 +2133,7 @@ class BaseController {
     constructor(APIEndpoint, translation) {
         this._storeService = storeService;
         this._routerService = routerService;
-        this._pageCreatorService = pageCreatorService;
+        this._pageCreatorService = pageCreator;
         this._eventService = eventService;
         this._translatorService = translatorService;
 
@@ -2302,4 +2403,4 @@ class BaseController {
     }
 }
 
-export { BaseController, authService, errorService, eventService, httpService, loadingService, pageCreatorService, routerService, storeService, translatorService };
+export { BaseController, authService, buttonCreator, errorService, eventService, formCreator, httpService, loadingService, pageCreator, routerService, storeService, translatorService };

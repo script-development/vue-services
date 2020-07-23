@@ -19,7 +19,7 @@ export class BaseController {
     constructor(APIEndpoint, translation) {
         this._storeService = storeService;
         this._routerService = routerService;
-        this._pageCreator = pageCreator;
+        this._pageCreatorService = pageCreator;
         this._eventService = eventService;
         this._translatorService = translatorService;
 
