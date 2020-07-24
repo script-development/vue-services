@@ -109,7 +109,7 @@ export class PageCreator {
                     );
                 }
 
-                return pageCreator.createContainer();
+                return pageCreator.createContainer(containerChildren);
             },
             mounted() {
                 pageCreator.checkQuery(editable);

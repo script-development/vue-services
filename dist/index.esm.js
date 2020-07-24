@@ -359,8 +359,8 @@ class RouterService {
         this._routerBeforeMiddleware = [this.beforeMiddleware];
         this._router.beforeEach((to, from, next) => {
             for (const middlewareFunc of this._routerBeforeMiddleware) {
-                // TODO :: this isn't logical at all, need to find a logical way to break out of the loop
-                if (middlewareFunc(to, from, next)) break;
+                // MiddlewareFunc will return true if it encountered problems
+                if (middlewareFunc(to, from, next)) return next(false);
             }
             return next();
         });
@@ -405,6 +405,8 @@ class RouterService {
      * @param {Object.<string, string>} [query] the optional query for the new route
      */
     goToRoute(name, id, query) {
+        if (this._router.currentRoute.name === name && !query && !id) return;
+
         const route = {name};
         if (id) route.params = {id};
         if (query) route.query = query;
@@ -1630,6 +1632,7 @@ class MissingDefaultLoggedinPageError extends Error {
  * @typedef {import('../storage').StorageService} StorageService
  * @typedef {import('../http').HTTPService} HTTPService
  * @typedef {import('vue').Component} Component
+ * @typedef {import('vue-router').NavigationGuard} NavigationGuard
  */
 
 const LOGIN_ACTION = 'login';
@@ -1740,6 +1743,7 @@ class AuthService {
         };
     }
 
+    /** @returns {NavigationGuard} */
     get routeMiddleware() {
         return (to, from, next) => {
             const isLoggedIn = this.isLoggedin;
@@ -1932,7 +1936,7 @@ class PageCreator {
                     );
                 }
 
-                return pageCreator.createContainer();
+                return pageCreator.createContainer(containerChildren);
             },
             mounted() {
                 pageCreator.checkQuery(editable);

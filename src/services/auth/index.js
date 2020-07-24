@@ -4,6 +4,7 @@
  * @typedef {import('../storage').StorageService} StorageService
  * @typedef {import('../http').HTTPService} HTTPService
  * @typedef {import('vue').Component} Component
+ * @typedef {import('vue-router').NavigationGuard} NavigationGuard
  */
 
 import storeModule from './store';
@@ -120,6 +121,7 @@ export class AuthService {
         };
     }
 
+    /** @returns {NavigationGuard} */
     get routeMiddleware() {
         return (to, from, next) => {
             const isLoggedIn = this.isLoggedin;
