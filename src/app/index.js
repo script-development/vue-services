@@ -3,7 +3,10 @@
  * @typedef {import('../services/event').EventService} EventService
  * @typedef {import('../services/auth').AuthService} AuthService
  * @typedef {import('../creators/pages').PageCreator} PageCreator
+ * @typedef {import('vue').Component} Component
  */
+
+import Vue from 'vue';
 
 export class AppStarter {
     /**
@@ -19,6 +22,13 @@ export class AppStarter {
         this._pageCreator = pageCreator;
     }
 
+    /**
+     * Start the app and set required settings
+     *
+     * @param {Component} mainComponent the main app component
+     * @param {String} defaultLoggedInPage the page to go to when logged in
+     * @param {Component} loginPage the login page
+     */
     start(mainComponent, defaultLoggedInPage, loginPage) {
         this._authService.defaultLoggedInPage = defaultLoggedInPage;
         this._authService.loginPage = loginPage;
@@ -27,10 +37,9 @@ export class AppStarter {
         this._eventService.app = new Vue({
             el: '#app',
             router: this._routerService._router,
-            // store: storeService._store,
             render: h => {
                 this._pageCreator.init(h);
-                return h(App);
+                return h(mainComponent);
             },
         });
     }
