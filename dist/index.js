@@ -1857,9 +1857,18 @@ class PageCreator {
      * @param {CreateElement} h
      */
     init(h) {
+        // TODO :: also attach h to other creators here
         this._h = h;
     }
 
+    /**
+     * Generate a create page
+     * @param {Component} form the form to create stuff with
+     * @param {()=>Object<string,any} modelFactory the factory to create a new instance of a model
+     * @param {String} subject the subject for which to create something for
+     * @param {Function} createAction the action to send the newly created model to the backend
+     * @param {String} [title] the optional title, will generate default one if nothing is given
+     */
     createPage(form, modelFactory, subject, createAction, title) {
         // define pageCreator here, cause this context get's lost in the return object
         const pageCreator = this;
@@ -1883,6 +1892,15 @@ class PageCreator {
         };
     }
 
+    /**
+     * Generate an edit page
+     * @param {Component} form the form to create stuff with
+     * @param {()=>Object<string,any} getter the getter to get the instance from the store
+     * @param {String} subject the subject for which to create something for
+     * @param {Function} updateAction the action to send the updated model to the backend
+     * @param {Function} [destroyAction] the optional destroyAction, will attach a destroy button with this action
+     * @param {Function} [showAction] the optional showAction, will get data from the server if given
+     */
     editPage(form, getter, subject, updateAction, destroyAction, showAction) {
         // define pageCreator here, cause this context get's lost in the return object
         const pageCreator = this;
@@ -1900,19 +1918,27 @@ class PageCreator {
             render() {
                 if (!this.item) return;
 
-                return pageCreator.createContainer([
+                const containerChildren = [
                     pageCreator.createEditPageTitle(this.item),
                     pageCreator.createForm(form, editable, updateAction),
+                ];
+
+                if (destroyAction) {
                     // TODO :: move to method, when there are more b-links
-                    // h(
-                    //     'b-link',
-                    //     {
-                    //         class: 'text-danger',
-                    //         on: {click: destroyAction},
-                    //     },
-                    //     [`${pageCreator._translatorService.getCapitalizedSingular(subject)} verwijderen`]
-                    // ),
-                ]);
+                    // TODO :: uses Bootstrap-Vue element
+                    containerChildren.push(
+                        pageCreator._h(
+                            'b-link',
+                            {
+                                class: 'text-danger',
+                                on: {click: destroyAction},
+                            },
+                            [`${pageCreator._translatorService.getCapitalizedSingular(subject)} verwijderen`]
+                        )
+                    );
+                }
+
+                return pageCreator.createContainer();
             },
             mounted() {
                 pageCreator.checkQuery(editable);
@@ -1921,43 +1947,30 @@ class PageCreator {
         };
     }
 
-    /**
-     * @param {VNode[]} children
-     */
+    /** @param {VNode[]} children */
     createContainer(children) {
-        // TODO :: vue3, use create element
         return this._h('div', {class: 'ml-0 container'}, children);
     }
-    /**
-     * @param {VNode[]} children
-     */
+    /** @param {VNode[]} children */
     createRow(children) {
         return this._h('div', {class: 'row'}, children);
     }
-    /**
-     * @param {VNode[]} children
-     */
+    /** @param {VNode[]} children */
     createCol(children) {
         return this._h('div', {class: 'col'}, children);
     }
 
-    /**
-     * @param {String} title
-     */
+    /** @param {String} title */
     createTitle(title) {
         return this.createRow([this.createCol([this._h('h1', [title])])]);
     }
 
-    /**
-     * @param {String} subject
-     */
+    /** @param {String} subject */
     createCreatePageTitle(subject) {
         return this.createTitle(this._translatorService.getCapitalizedSingular(subject) + ` toevoegen`);
     }
 
-    /**
-     * @param {Object<string,any>} item
-     */
+    /** @param {Object<string,any>} item */
     createEditPageTitle(item) {
         // TODO :: it's not always name!
         let name = item.name || item.title;
@@ -1973,7 +1986,6 @@ class PageCreator {
      * @param {(item:Object<string,any) => void} action
      */
     createForm(form, editable, action) {
-        // TODO :: vue3, use create element
         return this._h('div', {class: 'row mt-3'}, [
             this.createCol([
                 this._h(form, {
@@ -1987,9 +1999,7 @@ class PageCreator {
         ]);
     }
 
-    /**
-     * @param {Object<string,any>} editable
-     */
+    /** @param {Object<string,any>} editable */
     checkQuery(editable) {
         const query = this._routerService._router.currentRoute.query;
 
@@ -2106,6 +2116,7 @@ const pageCreator = new PageCreator(errorService, translatorService, eventServic
  * @typedef {import('../services/event').EventService} EventService
  * @typedef {import('../services/auth').AuthService} AuthService
  * @typedef {import('../creators/pages').PageCreator} PageCreator
+ * @typedef {import('vue').Component} Component
  */
 
 class AppStarter {
@@ -2122,6 +2133,13 @@ class AppStarter {
         this._pageCreator = pageCreator;
     }
 
+    /**
+     * Start the app and set required settings
+     *
+     * @param {Component} mainComponent the main app component
+     * @param {String} defaultLoggedInPage the page to go to when logged in
+     * @param {Component} loginPage the login page
+     */
     start(mainComponent, defaultLoggedInPage, loginPage) {
         this._authService.defaultLoggedInPage = defaultLoggedInPage;
         this._authService.loginPage = loginPage;
