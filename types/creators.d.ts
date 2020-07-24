@@ -1,85 +1,38 @@
 import {ErrorService, TranslatorService, EventService} from './services';
 import {RouterService} from './routerService';
+import {CreateElement, Component, VNode} from 'vue';
 
 // TODO :: make this complete
 export class PageCreator {
-    /**
-     * @param {ErrorService} errorService
-     * @param {TranslatorService} translatorService
-     * @param {EventService} eventService
-     * @param {RouterService} routerService
-     */
-    constructor(
-        errorService: ErrorService,
-        translatorService: TranslatorService,
-        eventService: EventService,
-        routerService: RouterService
-    );
+    _h: CreateElement;
     _errorService: ErrorService;
     _translatorService: TranslatorService;
     _eventService: EventService;
     _routerService: RouterService;
-    createPage(
-        form: any,
-        modelFactory: any,
-        subject: any,
-        createAction: any,
-        title: any
-    ): {
-        name: string;
-        data: () => {
-            editable: any;
-        };
-        render(h: any): VNode;
-        mounted(): void;
-    };
-    editPage(
-        form: any,
-        getter: any,
-        subject: any,
-        updateAction: any,
-        destroyAction: any
-    ): {
-        name: string;
-        computed: {
-            item(): any;
-        };
-        render(h: any): VNode;
-        mounted(): void;
-    };
+
+    /** @param {CreateElement} h */
+    init(h: CreateElement): void;
+
+    createPage(form: any, modelFactory: any, subject: any, createAction: any, title: any): Component;
+    editPage(form: any, getter: any, subject: any, updateAction: any, destroyAction: any): Component;
+    /** @param {VNode[]} children */
+    createContainer(children: VNode[]): VNode;
+    /** @param {VNode[]} children */
+    createRow(children: VNode[]): VNode;
+    /** @param {VNode[]} children */
+    createCol(children: VNode[]): VNode;
+    /** @param {String} title */
+    createTitle(title: string): VNode;
+    /** @param {String} subject */
+    createCreatePageTitle(subject: string): VNode;
+    /** @param {Object<string,any>} item */
+    createEditPageTitle(item: {[x: string]: any}): VNode;
     /**
-     * @param {CreateElement} h
-     * @param {VNode[]} children
-     */
-    createContainer(h: CreateElement, children: VNode[]): VNode;
-    /**
-     * @param {CreateElement} h
-     * @param {String} title
-     */
-    createTitle(h: CreateElement, title: string): VNode;
-    /**
-     * @param {CreateElement} h
-     * @param {String} subject
-     */
-    createCreatePageTitle(h: CreateElement, subject: string): VNode;
-    /**
-     * @param {CreateElement} h
-     * @param {Object<string,any>} item
-     */
-    createEditPageTitle(
-        h: CreateElement,
-        item: {
-            [x: string]: any;
-        }
-    ): VNode;
-    /**
-     * @param {CreateElement} h
      * @param {Component} form
      * @param {Object<string,any>} editable
      * @param {(item:Object<string,any) => void} action
      */
     createForm(
-        h: CreateElement,
         form: Component,
         editable: {
             [x: string]: any;

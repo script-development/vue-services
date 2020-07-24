@@ -45,6 +45,7 @@ class StorageService {
  * @typedef {import('../storage').StorageService} StorageService
  * @typedef {Object<string,number>} Cache
  */
+// TODO :: heavilly dependant on webpack and laravel mix
 const API_URL = process.env.MIX_APP_URL ? `${process.env.MIX_APP_URL}/api` : '/api';
 const HEADERS_TO_TYPE = {
     'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet': 'application/xlsx',
@@ -1852,6 +1853,9 @@ class PageCreator {
         this._routerService = routerService;
     }
 
+    /**
+     * @param {CreateElement} h
+     */
     init(h) {
         this._h = h;
     }
@@ -1863,14 +1867,14 @@ class PageCreator {
         return {
             name: `create-${subject}`,
             data: () => ({editable: modelFactory()}),
-            render(h) {
+            render() {
                 const titleElement = title
-                    ? pageCreator.createTitle(h, title)
-                    : pageCreator.createCreatePageTitle(h, subject);
+                    ? pageCreator.createTitle(title)
+                    : pageCreator.createCreatePageTitle(subject);
 
-                return pageCreator.createContainer(h, [
+                return pageCreator.createContainer([
                     titleElement,
-                    pageCreator.createForm(h, form, this.editable, createAction),
+                    pageCreator.createForm(form, this.editable, createAction),
                 ]);
             },
             mounted() {
@@ -1893,12 +1897,12 @@ class PageCreator {
                     return item;
                 },
             },
-            render(h) {
+            render() {
                 if (!this.item) return;
 
-                return pageCreator.createContainer(h, [
-                    pageCreator.createEditPageTitle(h, this.item),
-                    pageCreator.createForm(h, form, editable, updateAction),
+                return pageCreator.createContainer([
+                    pageCreator.createEditPageTitle(this.item),
+                    pageCreator.createForm(form, editable, updateAction),
                     // TODO :: move to method, when there are more b-links
                     // h(
                     //     'b-link',
@@ -1918,58 +1922,61 @@ class PageCreator {
     }
 
     /**
-     * @param {CreateElement} h
      * @param {VNode[]} children
      */
-    createContainer(h, children) {
+    createContainer(children) {
         // TODO :: vue3, use create element
-        return h('b-container', {props: {class: 'ml-0'}}, children);
+        return this._h('div', {class: 'ml-0 container'}, children);
+    }
+    /**
+     * @param {VNode[]} children
+     */
+    createRow(children) {
+        return this._h('div', {class: 'row'}, children);
+    }
+    /**
+     * @param {VNode[]} children
+     */
+    createCol(children) {
+        return this._h('div', {class: 'col'}, children);
     }
 
     /**
-     * @param {CreateElement} h
      * @param {String} title
      */
-    createTitle(h, title) {
-        // TODO :: vue3, use create element
-        // TODO :: uses Bootstrap-Vue
-        return h('b-row', [h('b-col', [h('h1', [title])])]);
+    createTitle(title) {
+        return this.createRow([this.createCol([this._h('h1', [title])])]);
     }
 
     /**
-     * @param {CreateElement} h
      * @param {String} subject
      */
-    createCreatePageTitle(h, subject) {
-        // TODO :: vue3, use create element
-        return this.createTitle(h, this._translatorService.getCapitalizedSingular(subject) + ` toevoegen`);
+    createCreatePageTitle(subject) {
+        return this.createTitle(this._translatorService.getCapitalizedSingular(subject) + ` toevoegen`);
     }
 
     /**
-     * @param {CreateElement} h
      * @param {Object<string,any>} item
      */
-    createEditPageTitle(h, item) {
-        // TODO :: vue3, use create element
+    createEditPageTitle(item) {
         // TODO :: it's not always name!
         let name = item.name || item.title;
         if (item.firstname) {
             name = `${item.firstname} ${item.lastname}`;
         }
-        return this.createTitle(h, name + ' aanpassen');
+        return this.createTitle(name + ' aanpassen');
     }
 
     /**
-     * @param {CreateElement} h
      * @param {Component} form
      * @param {Object<string,any>} editable
      * @param {(item:Object<string,any) => void} action
      */
-    createForm(h, form, editable, action) {
+    createForm(form, editable, action) {
         // TODO :: vue3, use create element
-        return h('div', {class: 'row mt-3'}, [
-            h('div', {class: 'col'}, [
-                h(form, {
+        return this._h('div', {class: 'row mt-3'}, [
+            this.createCol([
+                this._h(form, {
                     props: {
                         editable,
                         errors: this._errorService.getErrors(),
@@ -2089,9 +2096,47 @@ class FormCreator {
  * @typedef {import('vue').CreateElement} CreateElement
  */
 
-const pageCreator = new PageCreator(errorService, translatorService, eventService, routerService);
 const buttonCreator = new ButtonCreator();
 const formCreator = new FormCreator(buttonCreator);
+
+const pageCreator = new PageCreator(errorService, translatorService, eventService, routerService);
+
+/**
+ * @typedef {import('../services/router').RouterService} RouterService
+ * @typedef {import('../services/event').EventService} EventService
+ * @typedef {import('../services/auth').AuthService} AuthService
+ * @typedef {import('../creators/pages').PageCreator} PageCreator
+ */
+
+class AppStarter {
+    /**
+     * @param {RouterService} routerService
+     * @param {EventService} eventService
+     * @param {AuthService} authService
+     * @param {PageCreator} pageCreator
+     */
+    constructor(routerService, eventService, authService, pageCreator) {
+        this._routerService = routerService;
+        this._eventService = eventService;
+        this._authService = authService;
+        this._pageCreator = pageCreator;
+    }
+
+    start(mainComponent, defaultLoggedInPage, loginPage) {
+        this._authService.defaultLoggedInPage = defaultLoggedInPage;
+        this._authService.loginPage = loginPage;
+        this._authService.setRoutes();
+
+        this._eventService.app = new Vue({
+            el: '#app',
+            router: this._routerService._router,
+            render: h => {
+                this._pageCreator.init(h);
+                return h(mainComponent);
+            },
+        });
+    }
+}
 
 const name = 'default';
 
@@ -2409,7 +2454,10 @@ class BaseController {
     }
 }
 
+const appStarter = new AppStarter(routerService, eventService, authService, pageCreator);
+
 exports.BaseController = BaseController;
+exports.appStarter = appStarter;
 exports.authService = authService;
 exports.buttonCreator = buttonCreator;
 exports.errorService = errorService;

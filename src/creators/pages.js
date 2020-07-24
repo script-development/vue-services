@@ -24,10 +24,22 @@ export class PageCreator {
         this._routerService = routerService;
     }
 
+    /**
+     * @param {CreateElement} h
+     */
     init(h) {
+        // TODO :: also attach h to other creators here
         this._h = h;
     }
 
+    /**
+     * Generate a create page
+     * @param {Component} form the form to create stuff with
+     * @param {()=>Object<string,any} modelFactory the factory to create a new instance of a model
+     * @param {String} subject the subject for which to create something for
+     * @param {Function} createAction the action to send the newly created model to the backend
+     * @param {String} [title] the optional title, will generate default one if nothing is given
+     */
     createPage(form, modelFactory, subject, createAction, title) {
         // define pageCreator here, cause this context get's lost in the return object
         const pageCreator = this;
@@ -35,14 +47,14 @@ export class PageCreator {
         return {
             name: `create-${subject}`,
             data: () => ({editable: modelFactory()}),
-            render(h) {
+            render() {
                 const titleElement = title
-                    ? pageCreator.createTitle(h, title)
-                    : pageCreator.createCreatePageTitle(h, subject);
+                    ? pageCreator.createTitle(title)
+                    : pageCreator.createCreatePageTitle(subject);
 
-                return pageCreator.createContainer(h, [
+                return pageCreator.createContainer([
                     titleElement,
-                    pageCreator.createForm(h, form, this.editable, createAction),
+                    pageCreator.createForm(form, this.editable, createAction),
                 ]);
             },
             mounted() {
@@ -51,6 +63,15 @@ export class PageCreator {
         };
     }
 
+    /**
+     * Generate an edit page
+     * @param {Component} form the form to create stuff with
+     * @param {()=>Object<string,any} getter the getter to get the instance from the store
+     * @param {String} subject the subject for which to create something for
+     * @param {Function} updateAction the action to send the updated model to the backend
+     * @param {Function} [destroyAction] the optional destroyAction, will attach a destroy button with this action
+     * @param {Function} [showAction] the optional showAction, will get data from the server if given
+     */
     editPage(form, getter, subject, updateAction, destroyAction, showAction) {
         // define pageCreator here, cause this context get's lost in the return object
         const pageCreator = this;
@@ -65,22 +86,30 @@ export class PageCreator {
                     return item;
                 },
             },
-            render(h) {
+            render() {
                 if (!this.item) return;
 
-                return pageCreator.createContainer(h, [
-                    pageCreator.createEditPageTitle(h, this.item),
-                    pageCreator.createForm(h, form, editable, updateAction),
+                const containerChildren = [
+                    pageCreator.createEditPageTitle(this.item),
+                    pageCreator.createForm(form, editable, updateAction),
+                ];
+
+                if (destroyAction) {
                     // TODO :: move to method, when there are more b-links
-                    // h(
-                    //     'b-link',
-                    //     {
-                    //         class: 'text-danger',
-                    //         on: {click: destroyAction},
-                    //     },
-                    //     [`${pageCreator._translatorService.getCapitalizedSingular(subject)} verwijderen`]
-                    // ),
-                ]);
+                    // TODO :: uses Bootstrap-Vue element
+                    containerChildren.push(
+                        pageCreator._h(
+                            'b-link',
+                            {
+                                class: 'text-danger',
+                                on: {click: destroyAction},
+                            },
+                            [`${pageCreator._translatorService.getCapitalizedSingular(subject)} verwijderen`]
+                        )
+                    );
+                }
+
+                return pageCreator.createContainer();
             },
             mounted() {
                 pageCreator.checkQuery(editable);
@@ -89,59 +118,48 @@ export class PageCreator {
         };
     }
 
-    /**
-     * @param {CreateElement} h
-     * @param {VNode[]} children
-     */
-    createContainer(h, children) {
-        // TODO :: vue3, use create element
-        return h('b-container', {props: {class: 'ml-0'}}, children);
+    /** @param {VNode[]} children */
+    createContainer(children) {
+        return this._h('div', {class: 'ml-0 container'}, children);
+    }
+    /** @param {VNode[]} children */
+    createRow(children) {
+        return this._h('div', {class: 'row'}, children);
+    }
+    /** @param {VNode[]} children */
+    createCol(children) {
+        return this._h('div', {class: 'col'}, children);
     }
 
-    /**
-     * @param {CreateElement} h
-     * @param {String} title
-     */
-    createTitle(h, title) {
-        // TODO :: vue3, use create element
-        // TODO :: uses Bootstrap-Vue
-        return h('b-row', [h('b-col', [h('h1', [title])])]);
+    /** @param {String} title */
+    createTitle(title) {
+        return this.createRow([this.createCol([this._h('h1', [title])])]);
     }
 
-    /**
-     * @param {CreateElement} h
-     * @param {String} subject
-     */
-    createCreatePageTitle(h, subject) {
-        // TODO :: vue3, use create element
-        return this.createTitle(h, this._translatorService.getCapitalizedSingular(subject) + ` toevoegen`);
+    /** @param {String} subject */
+    createCreatePageTitle(subject) {
+        return this.createTitle(this._translatorService.getCapitalizedSingular(subject) + ` toevoegen`);
     }
 
-    /**
-     * @param {CreateElement} h
-     * @param {Object<string,any>} item
-     */
-    createEditPageTitle(h, item) {
-        // TODO :: vue3, use create element
+    /** @param {Object<string,any>} item */
+    createEditPageTitle(item) {
         // TODO :: it's not always name!
         let name = item.name || item.title;
         if (item.firstname) {
             name = `${item.firstname} ${item.lastname}`;
         }
-        return this.createTitle(h, name + ' aanpassen');
+        return this.createTitle(name + ' aanpassen');
     }
 
     /**
-     * @param {CreateElement} h
      * @param {Component} form
      * @param {Object<string,any>} editable
      * @param {(item:Object<string,any) => void} action
      */
-    createForm(h, form, editable, action) {
-        // TODO :: vue3, use create element
-        return h('div', {class: 'row mt-3'}, [
-            h('div', {class: 'col'}, [
-                h(form, {
+    createForm(form, editable, action) {
+        return this._h('div', {class: 'row mt-3'}, [
+            this.createCol([
+                this._h(form, {
                     props: {
                         editable,
                         errors: this._errorService.getErrors(),
@@ -152,9 +170,7 @@ export class PageCreator {
         ]);
     }
 
-    /**
-     * @param {Object<string,any>} editable
-     */
+    /** @param {Object<string,any>} editable */
     checkQuery(editable) {
         const query = this._routerService._router.currentRoute.query;
 
