@@ -6,20 +6,33 @@
  * @typedef {import("./settings").RouteSettings} RouteSettings
  */
 
+import Vue from 'vue';
+import VueRouter from 'vue-router';
+Vue.use(VueRouter);
+
+const router = new VueRouter({
+    mode: 'history',
+    routes: [],
+});
+
+/**
+ * checks if the given string is in the current routes name
+ * @param {string} pageName the name of the page to check
+ */
+const onPage = pageName => router.currentRoute.name.includes(pageName);
+
 export class RouterService {
     /**
-     *
-     * @param {VueRouter} router the actual router
      * @param {RouteFactory} factory the router factory
      * @param {RouteSettings} settings the settings service for the routes
      */
-    constructor(router, factory, settings) {
+    constructor(factory, settings) {
         this._router = router;
         this._factory = factory;
         this._settings = settings;
 
         this._routerBeforeMiddleware = [this.beforeMiddleware];
-        this._router.beforeEach((to, from, next) => {
+        router.beforeEach((to, from, next) => {
             for (const middlewareFunc of this._routerBeforeMiddleware) {
                 // MiddlewareFunc will return true if it encountered problems
                 if (middlewareFunc(to, from, next)) return next(false);
@@ -28,11 +41,22 @@ export class RouterService {
         });
 
         this._routerAfterMiddleware = [];
-        this._router.afterEach((to, from) => {
+        router.afterEach((to, from) => {
             for (const middlewareFunc of this._routerAfterMiddleware) {
                 middlewareFunc(to, from);
             }
         });
+    }
+
+    /** router can only be consumed once, which will happen at the appstarter */
+    get router() {
+        if (!this._router) {
+            console.error('You may not acces the router directly!');
+            return;
+        }
+        const onceRouter = this._router;
+        this._router = undefined;
+        return onceRouter;
     }
 
     /**
@@ -56,7 +80,7 @@ export class RouterService {
      * Add routes to the router
      * @param {RouteConfig[]} routes
      */
-    addRoutes(routes) {this._router.addRoutes(routes);}
+    addRoutes(routes) {router.addRoutes(routes);}
 
     /**
      * Go to the give route by name, optional id and query
@@ -67,13 +91,13 @@ export class RouterService {
      * @param {Object.<string, string>} [query] the optional query for the new route
      */
     goToRoute(name, id, query) {
-        if (this._router.currentRoute.name === name && !query && !id) return;
+        if (router.currentRoute.name === name && !query && !id) return;
 
         const route = {name};
         if (id) route.params = {id};
         if (query) route.query = query;
 
-        this._router.push(route).catch(err => {
+        router.push(route).catch(err => {
             // Ignore the vue-router err regarding navigating to the page they are already on.
             if (err && err.name != 'NavigationDuplicated') {
                 // But print any other errors to the console
@@ -128,10 +152,29 @@ export class RouterService {
             const fromQuery = from.query.from;
             if (fromQuery) {
                 if (fromQuery == to.fullPath) return false;
-                this._router.push(from.query.from);
+                router.push(from.query.from);
                 return true;
             }
             return false;
         };
     }
+
+    // prettier-ignore
+    /** returns if you are on the create page */
+    get onCreatePage() { return onPage(this._settings.createPageName); }
+    // prettier-ignore
+    /** returns if you are on the edit page */
+    get onEditPage() { return onPage(this._settings.editPageName); }
+    // prettier-ignore
+    /** returns if you are on the show page */
+    get onShowPage() { return onPage(this._settings.showPageName); }
+    // prettier-ignore
+    /** returns if you are on the overview page */
+    get onOverviewPage() { return onPage(this._settings.overviewPageName); }
+    // prettier-ignore
+    /** Get the query from the current route */
+    get query() { return router.currentRoute.query; }
+    // prettier-ignore
+    /** Get the id from the params from the current route */
+    get id() { return router.currentRoute.params.id; }
 }

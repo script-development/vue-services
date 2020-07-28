@@ -36,7 +36,7 @@ export class AppStarter {
 
         this._eventService.app = new Vue({
             el: '#app',
-            router: this._routerService._router,
+            router: this._routerService.router,
             render: h => {
                 this._pageCreator.init(h);
                 return h(mainComponent);

@@ -172,7 +172,7 @@ export class PageCreator {
 
     /** @param {Object<string,any>} editable */
     checkQuery(editable) {
-        const query = this._routerService._router.currentRoute.query;
+        const query = this._routerService.query;
 
         if (!Object.keys(query).length) return;
 

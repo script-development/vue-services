@@ -102,7 +102,7 @@ export class BaseController {
     }
 
     get getByCurrentRouteId() {
-        return () => this.getById(this._routerService._router.currentRoute.params.id);
+        return () => this.getById(this._routerService.id);
     }
 
     /** store service action functions */
@@ -135,7 +135,7 @@ export class BaseController {
     }
 
     get destroyByCurrentRouteId() {
-        return () => this.destroy(this._routerService._router.currentRoute.params.id);
+        return () => this.destroy(this._routerService.id);
     }
 
     get read() {
@@ -143,7 +143,7 @@ export class BaseController {
     }
 
     get showByCurrentRouteId() {
-        return () => this._storeService.show(this._APIEndpoint, this._routerService._router.currentRoute.params.id);
+        return () => this._storeService.show(this._APIEndpoint, this._routerService.id);
     }
 
     get show() {
