@@ -76,22 +76,24 @@ export class PageCreator {
         // define pageCreator here, cause this context get's lost in the return object
         const pageCreator = this;
 
-        let editable;
         return {
             name: `edit-${subject}`,
             computed: {
                 item() {
                     const item = getter();
-                    if (item) editable = JSON.parse(JSON.stringify(item));
+                    if (item) this.editable = JSON.parse(JSON.stringify(item));
                     return item;
                 },
+            },
+            data() {
+                return {editable: {}};
             },
             render() {
                 if (!this.item) return;
 
                 const containerChildren = [
                     pageCreator.createEditPageTitle(this.item),
-                    pageCreator.createForm(form, editable, updateAction),
+                    pageCreator.createForm(form, this.editable, updateAction),
                 ];
 
                 if (destroyAction) {
@@ -112,7 +114,7 @@ export class PageCreator {
                 return pageCreator.createContainer(containerChildren);
             },
             mounted() {
-                pageCreator.checkQuery(editable);
+                pageCreator.checkQuery(this.editable);
                 if (showAction) showAction();
             },
         };

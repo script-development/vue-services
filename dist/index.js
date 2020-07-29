@@ -512,11 +512,9 @@ class RouterService {
     // prettier-ignore
     /** returns if you are on the overview page */
     get onOverviewPage() { return onPage(this._settings.overviewPageName); }
-
     // prettier-ignore
     /** Get the query from the current route */
     get query() { return router.currentRoute.query; }
-
     // prettier-ignore
     /** Get the id from the params from the current route */
     get id() { return router.currentRoute.params.id; }
@@ -1945,22 +1943,24 @@ class PageCreator {
         // define pageCreator here, cause this context get's lost in the return object
         const pageCreator = this;
 
-        let editable;
         return {
             name: `edit-${subject}`,
             computed: {
                 item() {
                     const item = getter();
-                    if (item) editable = JSON.parse(JSON.stringify(item));
+                    if (item) this.editable = JSON.parse(JSON.stringify(item));
                     return item;
                 },
+            },
+            data() {
+                return {editable: {}};
             },
             render() {
                 if (!this.item) return;
 
                 const containerChildren = [
                     pageCreator.createEditPageTitle(this.item),
-                    pageCreator.createForm(form, editable, updateAction),
+                    pageCreator.createForm(form, this.editable, updateAction),
                 ];
 
                 if (destroyAction) {
@@ -1981,7 +1981,7 @@ class PageCreator {
                 return pageCreator.createContainer(containerChildren);
             },
             mounted() {
-                pageCreator.checkQuery(editable);
+                pageCreator.checkQuery(this.editable);
                 if (showAction) showAction();
             },
         };
