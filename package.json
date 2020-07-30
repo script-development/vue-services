@@ -26,8 +26,11 @@
     "dependencies": {
         "axios": "0.19.2",
         "vue": "2.6.11",
-        "vuex": "3.5.1",
-        "vue-router": "3.3.4"
+        "vue-router": "3.3.4",
+        "vuex": "3.5.1"
+    },
+    "peerDependencies": {
+        "@msgpack/msgpack": "^1.12.2"
     },
     "publishConfig": {
         "registry": "https://npm.pkg.github.com/"
