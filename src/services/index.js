@@ -36,6 +36,9 @@ export const errorService = new ErrorService(storeService, routerService, httpSe
 import {LoadingService} from './loading';
 export const loadingService = new LoadingService(storeService, httpService);
 
+import {StaticDataService} from './staticdata';
+export const staticDataService = new StaticDataService(storeService, httpService);
+
 import {AuthService} from './auth';
 
 export const authService = new AuthService(routerService, storeService, storageService, httpService);

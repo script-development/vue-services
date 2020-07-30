@@ -8,6 +8,7 @@ var Vue = _interopDefault(require('vue'));
 var Vuex = _interopDefault(require('vuex'));
 var axios = _interopDefault(require('axios'));
 var VueRouter = _interopDefault(require('vue-router'));
+var msgpack = _interopDefault(require('@msgpack/msgpack'));
 
 const keepALiveKey = 'keepALive';
 /** setting keepALive here so we don't have to Parse it each time we get it */
@@ -1577,6 +1578,76 @@ class LoadingService {
     }
 }
 
+/**
+ * @typedef {import('../store').StoreService} StoreService
+ * @typedef {import('../http').HTTPService} HTTPService
+ */
+
+class StaticDataService {
+    /**
+     * @param {StoreService} storeService
+     * @param {HTTPService} httpService the http service for communication with the API
+     */
+    constructor(storeService, httpService) {
+        this._storeService = storeService;
+        this._httpService = httpService;
+
+        this._data;
+    }
+    /**
+     * Create new route settings
+     *
+     * @param {[string,Object<string,string>]} storeModuleName Modulenames
+     */
+    createStoreModules(data) {
+        this._data = data;
+        for (const moduleName of this._data) {
+            if (typeof moduleName == 'string') {
+                this.createStoreModule(moduleName);
+            } else if (typeof moduleName == 'object' && Object.values(moduleName) == 'msg-pack') {
+                this.createStoreModuleMsgPack(Object.keys(moduleName).toString());
+            }
+        }
+    }
+
+    /**
+     * Create module for static data
+     *
+     * @param {[string,Object<string,string>]} storeModuleName Modulenames
+     */
+    createStoreModule(storeModuleName) {
+        this._storeService.generateAndSetDefaultStoreModule(storeModuleName);
+    }
+
+    /**
+     * Create module for static data with msg-pack lite(peerDependencies)
+     *
+     * @param {[string,Object<string,string>]} storeModuleName Modulenames
+     */
+    createStoreModuleMsgPack(storeModuleName) {
+        const storeModule = this._storeService._factory.createDefaultStore(storeModuleName);
+        storeModule.actions[this._storeService._factory.readAction] = () =>
+            this._httpService.get(storeModuleName, {responseType: 'arraybuffer'}).then(response => {
+                this._storeService.setAllInStore(storeModuleName, msgpack.decode(new Uint8Array(response)));
+                return response;
+            });
+        this._storeService.registerModule(storeModuleName, storeModule);
+    }
+
+    getStaticData() {
+        this._httpService.get('staticdata');
+        for (const staticDataName of this._data) {
+            if (typeof staticDataName == 'object') {
+                this._storeService.read(Object.keys(staticDataName).toString());
+            }
+        }
+    }
+
+    getAll(staticdata) {
+        return this._storeService.getAllFromStore(staticdata);
+    }
+}
+
 const IS_LOGGED_IN = 'harry';
 
 var storeModule = (storageService, httpService, authService) => ({
@@ -1862,6 +1933,7 @@ const storeFactory = new StoreModuleFactory(httpService, storageService);
 const storeService = new StoreService(store, storeFactory, httpService);
 const errorService = new ErrorService(storeService, routerService, httpService);
 const loadingService = new LoadingService(storeService, httpService);
+const staticDataService = new StaticDataService(storeService, httpService);
 
 const authService = new AuthService(routerService, storeService, storageService, httpService);
 
@@ -2168,6 +2240,7 @@ const pageCreator = new PageCreator(errorService, translatorService, eventServic
  * @typedef {import('../services/router').RouterService} RouterService
  * @typedef {import('../services/event').EventService} EventService
  * @typedef {import('../services/auth').AuthService} AuthService
+ * @typedef {import('../services/staticdata').StaticDataService} StaticDataService
  * @typedef {import('../creators/pages').PageCreator} PageCreator
  * @typedef {import('vue').Component} Component
  */
@@ -2177,12 +2250,14 @@ class AppStarter {
      * @param {RouterService} routerService
      * @param {EventService} eventService
      * @param {AuthService} authService
+     * @param {StaticDataService} staticDataService
      * @param {PageCreator} pageCreator
      */
-    constructor(routerService, eventService, authService, pageCreator) {
+    constructor(routerService, eventService, authService, staticDataService, pageCreator) {
         this._routerService = routerService;
         this._eventService = eventService;
         this._authService = authService;
+        this._staticDataService = staticDataService;
         this._pageCreator = pageCreator;
     }
 
@@ -2192,8 +2267,11 @@ class AppStarter {
      * @param {Component} mainComponent the main app component
      * @param {String} defaultLoggedInPage the page to go to when logged in
      * @param {Component} loginPage the login page
+     * @param {[string,Object<string,string>]} [staticData] the static data
      */
-    start(mainComponent, defaultLoggedInPage, loginPage) {
+    start(mainComponent, defaultLoggedInPage, loginPage, staticData) {
+        if (staticData) this._staticDataService.createStoreModules(staticData);
+
         this._authService.defaultLoggedInPage = defaultLoggedInPage;
         this._authService.loginPage = loginPage;
         this._authService.setRoutes();
@@ -2525,7 +2603,7 @@ class BaseController {
     }
 }
 
-const appStarter = new AppStarter(routerService, eventService, authService, pageCreator);
+const appStarter = new AppStarter(routerService, eventService, authService, staticDataService, pageCreator);
 
 exports.BaseController = BaseController;
 exports.appStarter = appStarter;
@@ -2538,5 +2616,6 @@ exports.httpService = httpService;
 exports.loadingService = loadingService;
 exports.pageCreator = pageCreator;
 exports.routerService = routerService;
+exports.staticDataService = staticDataService;
 exports.storeService = storeService;
 exports.translatorService = translatorService;

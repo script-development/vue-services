@@ -7,13 +7,14 @@ import {
     httpService,
     eventService,
     translatorService,
+    staticDataService,
 } from './services';
 
 import {formCreator, buttonCreator, pageCreator} from './creators';
 
 import {AppStarter} from './app';
 
-const appStarter = new AppStarter(routerService, eventService, authService, pageCreator);
+const appStarter = new AppStarter(routerService, eventService, authService, staticDataService, pageCreator);
 
 export {
     routerService,
@@ -24,6 +25,7 @@ export {
     httpService,
     eventService,
     translatorService,
+    staticDataService,
     formCreator,
     buttonCreator,
     pageCreator,
