@@ -6,9 +6,8 @@ function _interopDefault (ex) { return (ex && (typeof ex === 'object') && 'defau
 
 var Vue = _interopDefault(require('vue'));
 var Vuex = _interopDefault(require('vuex'));
-var VueRouter = _interopDefault(require('vue-router'));
 var axios = _interopDefault(require('axios'));
-var msgpack = _interopDefault(require('@msgpack/msgpack'));
+var VueRouter = _interopDefault(require('vue-router'));
 
 const keepALiveKey = 'keepALive';
 /** setting keepALive here so we don't have to Parse it each time we get it */
@@ -350,21 +349,31 @@ class TranslatorService {
  * @typedef {import("./factory").RouteFactory} RouteFactory
  * @typedef {import("./settings").RouteSettings} RouteSettings
  */
+Vue.use(VueRouter);
+
+const router = new VueRouter({
+    mode: 'history',
+    routes: [],
+});
+
+/**
+ * checks if the given string is in the current routes name
+ * @param {string} pageName the name of the page to check
+ */
+const onPage = pageName => router.currentRoute.name.includes(pageName);
 
 class RouterService {
     /**
-     *
-     * @param {VueRouter} router the actual router
      * @param {RouteFactory} factory the router factory
      * @param {RouteSettings} settings the settings service for the routes
      */
-    constructor(router, factory, settings) {
+    constructor(factory, settings) {
         this._router = router;
         this._factory = factory;
         this._settings = settings;
 
         this._routerBeforeMiddleware = [this.beforeMiddleware];
-        this._router.beforeEach((to, from, next) => {
+        router.beforeEach((to, from, next) => {
             for (const middlewareFunc of this._routerBeforeMiddleware) {
                 // MiddlewareFunc will return true if it encountered problems
                 if (middlewareFunc(to, from, next)) return next(false);
@@ -373,11 +382,22 @@ class RouterService {
         });
 
         this._routerAfterMiddleware = [];
-        this._router.afterEach((to, from) => {
+        router.afterEach((to, from) => {
             for (const middlewareFunc of this._routerAfterMiddleware) {
                 middlewareFunc(to, from);
             }
         });
+    }
+
+    /** router can only be consumed once, which will happen at the appstarter */
+    get router() {
+        if (!this._router) {
+            console.error('You may not acces the router directly!');
+            return;
+        }
+        const onceRouter = this._router;
+        this._router = undefined;
+        return onceRouter;
     }
 
     /**
@@ -401,7 +421,7 @@ class RouterService {
      * Add routes to the router
      * @param {RouteConfig[]} routes
      */
-    addRoutes(routes) {this._router.addRoutes(routes);}
+    addRoutes(routes) {router.addRoutes(routes);}
 
     /**
      * Go to the give route by name, optional id and query
@@ -412,13 +432,13 @@ class RouterService {
      * @param {Object.<string, string>} [query] the optional query for the new route
      */
     goToRoute(name, id, query) {
-        if (this._router.currentRoute.name === name && !query && !id) return;
+        if (router.currentRoute.name === name && !query && !id) return;
 
         const route = {name};
         if (id) route.params = {id};
         if (query) route.query = query;
 
-        this._router.push(route).catch(err => {
+        router.push(route).catch(err => {
             // Ignore the vue-router err regarding navigating to the page they are already on.
             if (err && err.name != 'NavigationDuplicated') {
                 // But print any other errors to the console
@@ -473,12 +493,31 @@ class RouterService {
             const fromQuery = from.query.from;
             if (fromQuery) {
                 if (fromQuery == to.fullPath) return false;
-                this._router.push(from.query.from);
+                router.push(from.query.from);
                 return true;
             }
             return false;
         };
     }
+
+    // prettier-ignore
+    /** returns if you are on the create page */
+    get onCreatePage() { return onPage(this._settings.createPageName); }
+    // prettier-ignore
+    /** returns if you are on the edit page */
+    get onEditPage() { return onPage(this._settings.editPageName); }
+    // prettier-ignore
+    /** returns if you are on the show page */
+    get onShowPage() { return onPage(this._settings.showPageName); }
+    // prettier-ignore
+    /** returns if you are on the overview page */
+    get onOverviewPage() { return onPage(this._settings.overviewPageName); }
+    // prettier-ignore
+    /** Get the query from the current route */
+    get query() { return router.currentRoute.query; }
+    // prettier-ignore
+    /** Get the id from the params from the current route */
+    get id() { return router.currentRoute.params.id; }
 }
 
 /**
@@ -1881,19 +1920,13 @@ const storageService = new StorageService();
 // Bind the store to Vue and generate empty store
 Vue.use(Vuex);
 const store = new Vuex.Store();
-Vue.use(VueRouter);
-
-const router = new VueRouter({
-    mode: 'history',
-    routes: [],
-});
 const httpService = new HTTPService(storageService);
 const eventService = new EventService(httpService);
 const translatorService = new TranslatorService();
 
 const routeFactory = new RouteFactory();
 const routeSettings = new RouteSettings(translatorService);
-const routerService = new RouterService(router, routeFactory, routeSettings);
+const routerService = new RouterService(routeFactory, routeSettings);
 
 const storeFactory = new StoreModuleFactory(httpService, storageService);
 const storeService = new StoreService(store, storeFactory, httpService);
@@ -1976,27 +2009,30 @@ class PageCreator {
      * @param {Function} updateAction the action to send the updated model to the backend
      * @param {Function} [destroyAction] the optional destroyAction, will attach a destroy button with this action
      * @param {Function} [showAction] the optional showAction, will get data from the server if given
+     * @param {String|String[]} [titleItemProperty] the optional titleItemProperty, will show title based on the given property. If nothing is given then the creator will try to resolve a title
      */
-    editPage(form, getter, subject, updateAction, destroyAction, showAction) {
+    editPage(form, getter, subject, updateAction, destroyAction, showAction, titleItemProperty) {
         // define pageCreator here, cause this context get's lost in the return object
         const pageCreator = this;
 
-        let editable;
         return {
             name: `edit-${subject}`,
             computed: {
                 item() {
                     const item = getter();
-                    if (item) editable = JSON.parse(JSON.stringify(item));
+                    if (item) this.editable = JSON.parse(JSON.stringify(item));
                     return item;
                 },
+            },
+            data() {
+                return {editable: {}};
             },
             render() {
                 if (!this.item) return;
 
                 const containerChildren = [
-                    pageCreator.createEditPageTitle(this.item),
-                    pageCreator.createForm(form, editable, updateAction),
+                    pageCreator.createEditPageTitle(this.item, titleItemProperty),
+                    pageCreator.createForm(form, this.editable, updateAction),
                 ];
 
                 if (destroyAction) {
@@ -2017,7 +2053,7 @@ class PageCreator {
                 return pageCreator.createContainer(containerChildren);
             },
             mounted() {
-                pageCreator.checkQuery(editable);
+                pageCreator.checkQuery(this.editable);
                 if (showAction) showAction();
             },
         };
@@ -2046,13 +2082,25 @@ class PageCreator {
         return this.createTitle(this._translatorService.getCapitalizedSingular(subject) + ` toevoegen`);
     }
 
-    /** @param {Object<string,any>} item */
-    createEditPageTitle(item) {
-        // TODO :: it's not always name!
-        let name = item.name || item.title;
-        if (item.firstname) {
-            name = `${item.firstname} ${item.lastname}`;
+    /**
+     * @param {Object<string,any>} item the item for which to show the title
+     * @param {String|String[]} [titleItemProperty] the optional titleItemProperty, will show title based on the given property. If nothing is given then the creator will try to resolve a title
+     */
+    createEditPageTitle(item, titleItemProperty) {
+        // if titleItemProperty is given, create title based on that
+        if (titleItemProperty) {
+            if (Array.isArray(titleItemProperty)) {
+                return this.createTitle(`${titleItemProperty.map(prop => item[prop]).join(' ')} aanpassen`);
+            }
+            return this.createTitle(`${item[titleItemProperty]} aanpassen`);
         }
+
+        // if titleItemProperty is not given, try to resolve it with the most common properties
+        let name = item.name || item.title;
+        if (item.firstname) name = `${item.firstname} ${item.lastname}`;
+
+        if (!name) return this.createTitle('Aanpassen');
+
         return this.createTitle(name + ' aanpassen');
     }
 
@@ -2077,7 +2125,7 @@ class PageCreator {
 
     /** @param {Object<string,any>} editable */
     checkQuery(editable) {
-        const query = this._routerService._router.currentRoute.query;
+        const query = this._routerService.query;
 
         if (!Object.keys(query).length) return;
 
@@ -2229,7 +2277,7 @@ class AppStarter {
 
         this._eventService.app = new Vue({
             el: '#app',
-            router: this._routerService._router,
+            router: this._routerService.router,
             render: h => {
                 this._pageCreator.init(h);
                 return h(mainComponent);
@@ -2367,7 +2415,7 @@ class BaseController {
     }
 
     get getByCurrentRouteId() {
-        return () => this.getById(this._routerService._router.currentRoute.params.id);
+        return () => this.getById(this._routerService.id);
     }
 
     /** store service action functions */
@@ -2400,7 +2448,7 @@ class BaseController {
     }
 
     get destroyByCurrentRouteId() {
-        return () => this.destroy(this._routerService._router.currentRoute.params.id);
+        return () => this.destroy(this._routerService.id);
     }
 
     get read() {
@@ -2408,7 +2456,7 @@ class BaseController {
     }
 
     get showByCurrentRouteId() {
-        return () => this._storeService.show(this._APIEndpoint, this._routerService._router.currentRoute.params.id);
+        return () => this._storeService.show(this._APIEndpoint, this._routerService.id);
     }
 
     get show() {

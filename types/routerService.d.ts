@@ -331,13 +331,10 @@ export class RouteFactory {
 }
 export class RouterService {
     /**
-     *
-     * @param {VueRouter} router the actual router
      * @param {RouteFactory} factory the router factory
      * @param {RouteSettings} settings the settings service for the routes
      */
-    constructor(router: VueRouter, factory: RouteFactory, settings: RouteSettings);
-    _router: VueRouter;
+    constructor(factory: RouteFactory, settings: RouteSettings);
     _factory: RouteFactory;
     _settings: RouteSettings;
     _routerBeforeMiddleware: ((to: Route, from: Route, next: any) => boolean)[];
@@ -390,4 +387,16 @@ export class RouterService {
      * @returns {(to:Route, from:Route, next:any) => Boolean}
      */
     get beforeMiddleware(): (to: Route, from: Route, next: any) => boolean;
+    /** returns if you are on the create page */
+    get onCreatePage(): boolean;
+    /** returns if you are on the edit page */
+    get onEditPage(): boolean;
+    /** returns if you are on the show page */
+    get onShowPage(): boolean;
+    /** returns if you are on the overview page */
+    get onOverviewPage(): boolean;
+    /** Get the query from the current route */
+    get query(): {[key: string]: string};
+    /** Get the id from the params from the current route */
+    get id(): string;
 }

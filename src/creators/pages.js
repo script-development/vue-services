@@ -71,27 +71,30 @@ export class PageCreator {
      * @param {Function} updateAction the action to send the updated model to the backend
      * @param {Function} [destroyAction] the optional destroyAction, will attach a destroy button with this action
      * @param {Function} [showAction] the optional showAction, will get data from the server if given
+     * @param {String|String[]} [titleItemProperty] the optional titleItemProperty, will show title based on the given property. If nothing is given then the creator will try to resolve a title
      */
-    editPage(form, getter, subject, updateAction, destroyAction, showAction) {
+    editPage(form, getter, subject, updateAction, destroyAction, showAction, titleItemProperty) {
         // define pageCreator here, cause this context get's lost in the return object
         const pageCreator = this;
 
-        let editable;
         return {
             name: `edit-${subject}`,
             computed: {
                 item() {
                     const item = getter();
-                    if (item) editable = JSON.parse(JSON.stringify(item));
+                    if (item) this.editable = JSON.parse(JSON.stringify(item));
                     return item;
                 },
+            },
+            data() {
+                return {editable: {}};
             },
             render() {
                 if (!this.item) return;
 
                 const containerChildren = [
-                    pageCreator.createEditPageTitle(this.item),
-                    pageCreator.createForm(form, editable, updateAction),
+                    pageCreator.createEditPageTitle(this.item, titleItemProperty),
+                    pageCreator.createForm(form, this.editable, updateAction),
                 ];
 
                 if (destroyAction) {
@@ -112,7 +115,7 @@ export class PageCreator {
                 return pageCreator.createContainer(containerChildren);
             },
             mounted() {
-                pageCreator.checkQuery(editable);
+                pageCreator.checkQuery(this.editable);
                 if (showAction) showAction();
             },
         };
@@ -141,13 +144,25 @@ export class PageCreator {
         return this.createTitle(this._translatorService.getCapitalizedSingular(subject) + ` toevoegen`);
     }
 
-    /** @param {Object<string,any>} item */
-    createEditPageTitle(item) {
-        // TODO :: it's not always name!
-        let name = item.name || item.title;
-        if (item.firstname) {
-            name = `${item.firstname} ${item.lastname}`;
+    /**
+     * @param {Object<string,any>} item the item for which to show the title
+     * @param {String|String[]} [titleItemProperty] the optional titleItemProperty, will show title based on the given property. If nothing is given then the creator will try to resolve a title
+     */
+    createEditPageTitle(item, titleItemProperty) {
+        // if titleItemProperty is given, create title based on that
+        if (titleItemProperty) {
+            if (Array.isArray(titleItemProperty)) {
+                return this.createTitle(`${titleItemProperty.map(prop => item[prop]).join(' ')} aanpassen`);
+            }
+            return this.createTitle(`${item[titleItemProperty]} aanpassen`);
         }
+
+        // if titleItemProperty is not given, try to resolve it with the most common properties
+        let name = item.name || item.title;
+        if (item.firstname) name = `${item.firstname} ${item.lastname}`;
+
+        if (!name) return this.createTitle('Aanpassen');
+
         return this.createTitle(name + ' aanpassen');
     }
 
@@ -172,7 +187,7 @@ export class PageCreator {
 
     /** @param {Object<string,any>} editable */
     checkQuery(editable) {
-        const query = this._routerService._router.currentRoute.query;
+        const query = this._routerService.query;
 
         if (!Object.keys(query).length) return;
 

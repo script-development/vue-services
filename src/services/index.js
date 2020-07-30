@@ -7,14 +7,6 @@ import Vuex from 'vuex';
 Vue.use(Vuex);
 const store = new Vuex.Store();
 
-import VueRouter from 'vue-router';
-Vue.use(VueRouter);
-
-const router = new VueRouter({
-    mode: 'history',
-    routes: [],
-});
-
 import {HTTPService} from './http';
 export const httpService = new HTTPService(storageService);
 
@@ -30,7 +22,7 @@ import {RouteSettings} from './router/settings';
 
 const routeFactory = new RouteFactory();
 const routeSettings = new RouteSettings(translatorService);
-export const routerService = new RouterService(router, routeFactory, routeSettings);
+export const routerService = new RouterService(routeFactory, routeSettings);
 
 import {StoreModuleFactory} from './store/factory';
 import {StoreService} from './store';

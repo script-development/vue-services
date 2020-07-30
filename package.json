@@ -1,6 +1,6 @@
 {
     "name": "@script-development/vue-services",
-    "version": "0.0.27",
+    "version": "0.0.30",
     "description": "Services for Vue SPA App",
     "main": "dist/index.js",
     "module": "dist/index.esm.js",
@@ -21,6 +21,9 @@
     "license": "MIT",
     "devDependencies": {
         "@rollup/plugin-node-resolve": "^8.1.0",
+        "prettier": "^2.0.5",
+        "husky": "^4.2.5",
+        "pretty-quick": "^2.0.1",
         "rollup": "^2.21.0"
     },
     "dependencies": {
@@ -34,5 +37,10 @@
     },
     "publishConfig": {
         "registry": "https://npm.pkg.github.com/"
+    },
+    "husky": {
+        "hooks": {
+            "pre-commit": "pretty-quick --staged --pattern \"**/*.*(js|json)\""
+        }
     }
 }
