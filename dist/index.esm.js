@@ -1,11 +1,8 @@
 import Vue from 'vue';
 import Vuex from 'vuex';
 import axios from 'axios';
-<<<<<<< HEAD
-import msgpack from '@msgpack/msgpack';
-=======
 import VueRouter from 'vue-router';
->>>>>>> master
+import msgpack from '@msgpack/msgpack';
 
 const keepALiveKey = 'keepALive';
 /** setting keepALive here so we don't have to Parse it each time we get it */

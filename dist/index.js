@@ -8,6 +8,7 @@ var Vue = _interopDefault(require('vue'));
 var Vuex = _interopDefault(require('vuex'));
 var axios = _interopDefault(require('axios'));
 var VueRouter = _interopDefault(require('vue-router'));
+var msgpack = _interopDefault(require('@msgpack/msgpack'));
 
 const keepALiveKey = 'keepALive';
 /** setting keepALive here so we don't have to Parse it each time we get it */
