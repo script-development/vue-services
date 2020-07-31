@@ -2,7 +2,6 @@ import Vue from 'vue';
 import Vuex from 'vuex';
 import axios from 'axios';
 import VueRouter from 'vue-router';
-import msgpack from '@msgpack/msgpack';
 
 const keepALiveKey = 'keepALive';
 /** setting keepALive here so we don't have to Parse it each time we get it */
@@ -300,8 +299,9 @@ class TranslatorService {
     getTranslation(value, pluralOrSingular) {
         const translation = this._translations[value];
 
-        if(!translation) throw new MissingTranslationError(`Missing translation for ${value}`)
-        if(!translation[pluralOrSingular]) throw new MissingTranslationError(`Missing ${pluralOrSingular} translation for ${value}`)
+        if (!translation) throw new MissingTranslationError(`Missing translation for ${value}`);
+        if (!translation[pluralOrSingular])
+            throw new MissingTranslationError(`Missing ${pluralOrSingular} translation for ${value}`);
 
         return translation[pluralOrSingular];
     }
@@ -1427,9 +1427,9 @@ class StoreService {
 }
 
 var NotFoundPage = {
-  render(h) {
-    return h("div", ["ERROR 404"]);
-  },
+    render(h) {
+        return h('div', ['ERROR 404']);
+    },
 };
 
 /**
@@ -1576,6 +1576,12 @@ class LoadingService {
  * @typedef {import('../store').StoreService} StoreService
  * @typedef {import('../http').HTTPService} HTTPService
  */
+let msgpack;
+try {
+    msgpack = require('@msgpack/msgpack');
+} catch (error) {
+    console.warn();
+}
 
 class StaticDataService {
     /**
@@ -1619,6 +1625,9 @@ class StaticDataService {
      * @param {[string,Object<string,string>]} storeModuleName Modulenames
      */
     createStoreModuleMsgPack(storeModuleName) {
+        if (!msgpack) {
+            return console.error('MESSAGE PACK NOT INSTALLED');
+        }
         const storeModule = this._storeService._factory.createDefaultStore(storeModuleName);
         storeModule.actions[this._storeService._factory.readAction] = () =>
             this._httpService.get(storeModuleName, {responseType: 'arraybuffer'}).then(response => {
@@ -1706,22 +1715,22 @@ var storeModule = (storageService, httpService, authService) => ({
 });
 
 var LoginPage = {
-  render(h) {
-    h("div", ["Implement your own login page!"]);
-  },
+    render(h) {
+        h('div', ['Implement your own login page!']);
+    },
 };
 
 var ForgotPasswordPage = {
     render(h) {
-      h("div", ["Implement your own forgot password page!"]);
+        h('div', ['Implement your own forgot password page!']);
     },
-  };
+};
 
 var ResetPasswordPage = {
     render(h) {
-      h("div", ["Implement your own reset password page!"]);
+        h('div', ['Implement your own reset password page!']);
     },
-  };
+};
 
 class MissingDefaultLoggedinPageError extends Error {
     constructor(...params) {
@@ -2292,12 +2301,7 @@ var MinimalRouterView = {
             default: 0,
         },
     },
-    render(h, {
-        props,
-        children,
-        parent,
-        data
-    }) {
+    render(h, {props, children, parent, data}) {
         const route = parent.$route;
         const matched = route.matched[props.depth];
         const component = matched && matched.components[name];
@@ -2599,4 +2603,19 @@ class BaseController {
 
 const appStarter = new AppStarter(routerService, eventService, authService, staticDataService, pageCreator);
 
-export { BaseController, appStarter, authService, buttonCreator, errorService, eventService, formCreator, httpService, loadingService, pageCreator, routerService, staticDataService, storeService, translatorService };
+export {
+    BaseController,
+    appStarter,
+    authService,
+    buttonCreator,
+    errorService,
+    eventService,
+    formCreator,
+    httpService,
+    loadingService,
+    pageCreator,
+    routerService,
+    staticDataService,
+    storeService,
+    translatorService,
+};

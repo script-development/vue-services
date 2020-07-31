@@ -2,7 +2,12 @@
  * @typedef {import('../store').StoreService} StoreService
  * @typedef {import('../http').HTTPService} HTTPService
  */
-import msgpack from '@msgpack/msgpack';
+let msgpack;
+try {
+    msgpack = require('@msgpack/msgpack');
+} catch (error) {
+    console.warn();
+}
 
 export class StaticDataService {
     /**
@@ -46,6 +51,9 @@ export class StaticDataService {
      * @param {[string,Object<string,string>]} storeModuleName Modulenames
      */
     createStoreModuleMsgPack(storeModuleName) {
+        if (!msgpack) {
+            return console.error('MESSAGE PACK NOT INSTALLED');
+        }
         const storeModule = this._storeService._factory.createDefaultStore(storeModuleName);
         storeModule.actions[this._storeService._factory.readAction] = () =>
             this._httpService.get(storeModuleName, {responseType: 'arraybuffer'}).then(response => {
