@@ -1654,8 +1654,12 @@ class StaticDataService {
         }
     }
 
-    getAll(staticdata) {
-        return this._storeService.getAllFromStore(staticdata);
+    getAll(data) {
+        return this._storeService.getAllFromStore(data);
+    }
+
+    getById(data, id) {
+        return this._storeService.getByIdFromStore(data, id);
     }
 }
 
