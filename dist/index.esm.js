@@ -1640,12 +1640,15 @@ class StaticDataService {
         const storeModule = this._storeService._factory.createDefaultStore(storeModuleName);
         storeModule.actions[this._storeService._factory.readAction] = () =>
             this._httpService.get(storeModuleName, {responseType: 'arraybuffer'}).then(response => {
-                this._storeService.setAllInStore(storeModuleName, msgpack.decode(new Uint8Array(response)));
+                this._storeService.setAllInStore(storeModuleName, msgpack.decode(new Uint8Array(response.data)));
                 return response;
             });
         this._storeService.registerModule(storeModuleName, storeModule);
     }
 
+    /**
+     * TODO :: @Methox - documentation
+     */
     getStaticData() {
         this._httpService.get('staticdata');
         for (const staticDataName of this._data) {
@@ -1655,10 +1658,21 @@ class StaticDataService {
         }
     }
 
+    /**
+     * TODO :: @Methox - documentation
+     *
+     * @param {*} data
+     */
     getAll(data) {
         return this._storeService.getAllFromStore(data);
     }
 
+    /**
+     * TODO :: @Methox - documentation
+     *
+     * @param {*} data
+     * @param {*} id
+     */
     getById(data, id) {
         return this._storeService.getByIdFromStore(data, id);
     }
