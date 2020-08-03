@@ -217,3 +217,5 @@ export class AuthService {
     get routeMiddleware(): (to: any, from: any, next: any) => boolean;
     setRoutes(): void;
 }
+
+// TODO :: @Methox - add StaticDataService

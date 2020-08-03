@@ -1585,11 +1585,19 @@ class LoadingService {
  * @typedef {import('../http').HTTPService} HTTPService
  */
 let msgpack;
+/**
+ * Gives a warning in webpack, check this issue: https://github.com/webpack/webpack/issues/7713
+ * this is the way to go for now
+ *
+ * to ignore this error, add the following webpack config in webpack.config.js:
+ * {externals: {'@msgpack/msgpack': true}}
+ *
+ * or when using 'laravel-mix', the following to webpack.mix.js:
+ * mix.webpackConfig({externals: {'@msgpack/msgpack': true}});
+ */
 try {
     msgpack = require('@msgpack/msgpack');
-} catch (error) {
-    console.warn();
-}
+} catch (error) {}
 
 class StaticDataService {
     /**
@@ -1634,7 +1642,8 @@ class StaticDataService {
      */
     createStoreModuleMsgPack(storeModuleName) {
         if (!msgpack) {
-            return console.error('MESSAGE PACK NOT INSTALLED');
+            console.error('MESSAGE PACK NOT INSTALLED');
+            return console.warn('run the following command to install messagepack: npm --save @msgpack/msgpack');
         }
         const storeModule = this._storeService._factory.createDefaultStore(storeModuleName);
         storeModule.actions[this._storeService._factory.readAction] = () =>
