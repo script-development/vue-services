@@ -217,5 +217,57 @@ export class AuthService {
     get routeMiddleware(): (to: any, from: any, next: any) => boolean;
     setRoutes(): void;
 }
+export class StaticDataService {
+    /**
+     * @param {StoreService} storeService
+     * @param {HTTPService} httpService the http service for communication with the API
+     */
+    constructor(
+        storeService: StoreService,
+        httpService: HTTPService
+    ) 
+    _storeService: StoreService;
+    _httpService: HTTPService;
+    _data;
+    
+    /**
+     * initiates the setup for the default store modules
+     *
+     * @param {[string,Object<string,string>]} storeModuleName Modulenames
+     */
+    createStoreModules(data): void
 
-// TODO :: @Methox - add StaticDataService
+    /**
+     * Creates and registers modules for the staticdata
+     *
+     * @param {[string,Object<string,string>]} storeModuleName Modulenames
+     */
+    createStoreModule(storeModuleName): void
+
+    /**
+     * Create module for static data with msg-pack lite(peerDependencies)
+     *
+     * @param {[string,Object<string,string>]} storeModuleName Modulenames
+     */
+    createStoreModuleMsgPack(storeModuleName): void
+
+    /**
+     * Sends an action to the store which reads all the staticdata from the server
+     */
+    getStaticData(): void
+
+    /**
+     * Retrieves all entries from the specific data source
+     *
+     * @param {string} data
+     */
+    getAll(data: string): Array<object>
+
+    /**
+     * Retrieves a single row(by ID) from the specific data source
+     *
+     * @param {String} data
+     * @param {Number} id
+     */
+    getById(data: string, id: number): Object
+}

@@ -29,7 +29,7 @@ export class StaticDataService {
         this._data;
     }
     /**
-     * Create new route settings
+     * initiates the setup for the default store modules
      *
      * @param {[string,Object<string,string>]} storeModuleName Modulenames
      */
@@ -45,7 +45,7 @@ export class StaticDataService {
     }
 
     /**
-     * Create module for static data
+     * Creates and registers modules for the staticdata
      *
      * @param {[string,Object<string,string>]} storeModuleName Modulenames
      */
@@ -73,7 +73,7 @@ export class StaticDataService {
     }
 
     /**
-     * TODO :: @Methox - documentation
+     * Sends an action to the store which reads all the staticdata from the server defined in the 'constants/staticdata.js' file
      */
     getStaticData() {
         this._httpService.get('staticdata');
@@ -85,19 +85,19 @@ export class StaticDataService {
     }
 
     /**
-     * TODO :: @Methox - documentation
+     * Get all from data from the given store module
      *
-     * @param {*} data
+     * @param {String} data the module from which to get all
      */
     getAll(data) {
         return this._storeService.getAllFromStore(data);
     }
 
     /**
-     * TODO :: @Methox - documentation
+     * Get all data from the given store module by id
      *
-     * @param {*} data
-     * @param {*} id
+     * @param {String} data the module from which to get all
+     * @param {String} id the id of the data object to get
      */
     getById(data, id) {
         return this._storeService.getByIdFromStore(data, id);
