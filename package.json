@@ -1,6 +1,6 @@
 {
     "name": "@script-development/vue-services",
-    "version": "0.0.34",
+    "version": "0.0.35",
     "description": "Services for Vue SPA App",
     "main": "dist/index.js",
     "module": "dist/index.esm.js",
