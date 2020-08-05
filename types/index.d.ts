@@ -1,5 +1,6 @@
 export {BaseController} from './controllers';
-// TODO :: @Methox - add StaticDataService
+
+export {PageCreator} from './creators';
 
 import {
     HTTPService,
@@ -8,7 +9,7 @@ import {
     AuthService,
     ErrorService,
     LoadingService,
-    // PageCreator, // TODO :: PageCreator
+    StaticDataService,
 } from './services';
 
 export {Translation} from './services';
@@ -26,5 +27,6 @@ export const httpService: HTTPService;
 export const eventService: EventService;
 // export const pageCreator: PageCreator;
 export const translatorService: TranslatorService;
+export const staticDataService: StaticDataService;
 
-export {HTTPService, EventService, TranslatorService, AuthService, ErrorService, LoadingService, PageCreatorService};
+export {HTTPService, EventService, TranslatorService, AuthService, ErrorService, LoadingService, StaticDataService};

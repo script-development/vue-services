@@ -1611,7 +1611,7 @@ class StaticDataService {
         this._data;
     }
     /**
-     * Create new route settings
+     * initiates the setup for the default store modules
      *
      * @param {[string,Object<string,string>]} storeModuleName Modulenames
      */
@@ -1627,7 +1627,7 @@ class StaticDataService {
     }
 
     /**
-     * Create module for static data
+     * Creates and registers modules for the staticdata
      *
      * @param {[string,Object<string,string>]} storeModuleName Modulenames
      */
@@ -1655,7 +1655,7 @@ class StaticDataService {
     }
 
     /**
-     * TODO :: @Methox - documentation
+     * Sends an action to the store which reads all the staticdata from the server defined in the 'constants/staticdata.js' file
      */
     getStaticData() {
         this._httpService.get('staticdata');
@@ -1667,19 +1667,19 @@ class StaticDataService {
     }
 
     /**
-     * TODO :: @Methox - documentation
+     * Get all from data from the given store module
      *
-     * @param {*} data
+     * @param {String} data the module from which to get all
      */
     getAll(data) {
         return this._storeService.getAllFromStore(data);
     }
 
     /**
-     * TODO :: @Methox - documentation
+     * Get all data from the given store module by id
      *
-     * @param {*} data
-     * @param {*} id
+     * @param {String} data the module from which to get all
+     * @param {String} id the id of the data object to get
      */
     getById(data, id) {
         return this._storeService.getByIdFromStore(data, id);
@@ -2098,6 +2098,55 @@ class PageCreator {
         };
     }
 
+    /**
+     *
+     * @param {String} subject the subject for which to create the overview page
+     * @param {Function} getter the table to show items in
+     * @param {Component} table the table to show items in
+     * @param {Component} [filter] the filter to filter the items
+     * @param {Function} [toCreatePage] the function to go to the create page
+     */
+    overviewPage(subject, getter, table, filter, toCreatePage) {
+        // define pageCreator here, cause this context get's lost in the return object
+        const pageCreator = this;
+
+        return {
+            name: `overview-${subject}`,
+            computed: {
+                items() {
+                    return getter();
+                },
+            },
+            data() {
+                return {
+                    filteredItems: [],
+                };
+            },
+            render() {
+                const titleElement = pageCreator.createOverviewPageTitle(subject, toCreatePage);
+
+                const containerChildren = [titleElement];
+
+                if (filter)
+                    containerChildren.push(
+                        pageCreator._h(filter, {
+                            props: {items: this.items},
+                            on: {filter: items => (this.filteredItems = items)},
+                        })
+                    );
+
+                containerChildren.push(pageCreator._h(table, {props: {items: this.filteredItems}}));
+
+                return pageCreator.createContainer(containerChildren);
+            },
+        };
+    }
+
+    /** @param {String} title */
+    createTitle(title) {
+        return this._h('h1', [title]);
+    }
+
     /** @param {VNode[]} children */
     createContainer(children) {
         return this._h('div', {class: 'ml-0 container'}, children);
@@ -2106,19 +2155,40 @@ class PageCreator {
     createRow(children) {
         return this._h('div', {class: 'row'}, children);
     }
-    /** @param {VNode[]} children */
-    createCol(children) {
-        return this._h('div', {class: 'col'}, children);
+    /**
+     * @param {VNode[]} children
+     * @param {number} [md]
+     */
+    createCol(children, md) {
+        const className = md ? `col-md-${md}` : 'col';
+        return this._h('div', {class: className}, children);
     }
 
     /** @param {String} title */
-    createTitle(title) {
-        return this.createRow([this.createCol([this._h('h1', [title])])]);
+    createTitleRow(title) {
+        return this.createRow([this.createCol([this.createTitle(title)])]);
     }
 
     /** @param {String} subject */
     createCreatePageTitle(subject) {
-        return this.createTitle(this._translatorService.getCapitalizedSingular(subject) + ` toevoegen`);
+        return this.createTitleRow(this._translatorService.getCapitalizedSingular(subject) + ` toevoegen`);
+    }
+
+    /**
+     * @param {String} subject
+     * @param {Function} [toCreatePage]
+     */
+    createOverviewPageTitle(subject, toCreatePage) {
+        const translation = this._translatorService.getCapitalizedPlural(subject);
+        if (!toCreatePage) return this.createTitleRow(translation);
+
+        const titleCol = this.createCol([this.createTitle(translation)], 8);
+        const buttonCol = this._h('div', {class: 'd-flex justify-content-md-end align-items-center col'}, [
+            this._h('button', {class: 'btn overview-add-btn py-2 btn-primary', on: {click: toCreatePage}}, [
+                this._translatorService.getCapitalizedSingular(subject) + ` toevoegen`,
+            ]),
+        ]);
+        return this.createRow([titleCol, buttonCol]);
     }
 
     /**
@@ -2129,18 +2199,18 @@ class PageCreator {
         // if titleItemProperty is given, create title based on that
         if (titleItemProperty) {
             if (Array.isArray(titleItemProperty)) {
-                return this.createTitle(`${titleItemProperty.map(prop => item[prop]).join(' ')} aanpassen`);
+                return this.createTitleRow(`${titleItemProperty.map(prop => item[prop]).join(' ')} aanpassen`);
             }
-            return this.createTitle(`${item[titleItemProperty]} aanpassen`);
+            return this.createTitleRow(`${item[titleItemProperty]} aanpassen`);
         }
 
         // if titleItemProperty is not given, try to resolve it with the most common properties
         let name = item.name || item.title;
         if (item.firstname) name = `${item.firstname} ${item.lastname}`;
 
-        if (!name) return this.createTitle('Aanpassen');
+        if (!name) return this.createTitleRow('Aanpassen');
 
-        return this.createTitle(name + ' aanpassen');
+        return this.createTitleRow(name + ' aanpassen');
     }
 
     /**
@@ -2440,8 +2510,8 @@ class BaseController {
     }
 
     /** store service getter functions */
-    getAll() {
-        return this._storeService.getAllFromStore(this._APIEndpoint);
+    get getAll() {
+        return () => this._storeService.getAllFromStore(this._APIEndpoint);
     }
 
     getById(id) {

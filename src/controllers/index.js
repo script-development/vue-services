@@ -93,8 +93,8 @@ export class BaseController {
     }
 
     /** store service getter functions */
-    getAll() {
-        return this._storeService.getAllFromStore(this._APIEndpoint);
+    get getAll() {
+        return () => this._storeService.getAllFromStore(this._APIEndpoint);
     }
 
     getById(id) {
