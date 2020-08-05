@@ -2475,12 +2475,12 @@ class BaseController {
     get APIEndpoint() {return this._APIEndpoint}
 
     /** go to pages functions */
-    get goToOverviewPage() {
-        return () => this._routerService.goToRoute(this.routeSettings.overviewName);
+    goToOverviewPage() {
+        this._routerService.goToRoute(this.routeSettings.overviewName);
     }
 
-    get goToShowPage() {
-        return id => this._routerService.goToRoute(this.routeSettings.showName, id);
+    goToShowPage(id) {
+        this._routerService.goToRoute(this.routeSettings.showName, id);
     }
 
     /**
@@ -2488,8 +2488,8 @@ class BaseController {
      * @param {String} id
      * @param {Object.<string, string>} [query] the optional query for the new route
      */
-    get goToEditPage() {
-        return (id, query) => this._routerService.goToRoute(this.routeSettings.editName, id, query);
+    goToEditPage(id, query) {
+        this._routerService.goToRoute(this.routeSettings.editName, id, query);
     }
 
     /**
@@ -2497,8 +2497,8 @@ class BaseController {
      *
      * @param {Object.<string, string>} [query] the optional query for the new route
      */
-    get goToCreatePage() {
-        return query => this._routerService.goToRoute(this.routeSettings.createName, undefined, query);
+    goToCreatePage(query) {
+        this._routerService.goToRoute(this.routeSettings.createName, undefined, query);
     }
 
     /** store service getter functions */
@@ -2506,8 +2506,8 @@ class BaseController {
         return () => this._storeService.getAllFromStore(this._APIEndpoint);
     }
 
-    get getById() {
-        return id => this._storeService.getByIdFromStore(this._APIEndpoint, id);
+    getById(id) {
+        return this._storeService.getByIdFromStore(this._APIEndpoint, id);
     }
 
     get getByCurrentRouteId() {
