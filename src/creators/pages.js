@@ -24,13 +24,9 @@ export class PageCreator {
         this._routerService = routerService;
     }
 
-    /**
-     * @param {CreateElement} h
-     */
-    init(h) {
-        // TODO :: also attach h to other creators here
-        this._h = h;
-    }
+    // prettier-ignore
+    /** @param {CreateElement} h */
+    set h(h) { this._h = h; }
 
     /**
      * Generate a create page

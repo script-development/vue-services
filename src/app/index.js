@@ -15,14 +15,14 @@ export class AppStarter {
      * @param {EventService} eventService
      * @param {AuthService} authService
      * @param {StaticDataService} staticDataService
-     * @param {PageCreator} pageCreator
+     * @param {Function} creatorInit
      */
-    constructor(routerService, eventService, authService, staticDataService, pageCreator) {
+    constructor(routerService, eventService, authService, staticDataService, creatorInit) {
         this._routerService = routerService;
         this._eventService = eventService;
         this._authService = authService;
         this._staticDataService = staticDataService;
-        this._pageCreator = pageCreator;
+        this._creatorInit = creatorInit;
     }
 
     /**
@@ -44,7 +44,7 @@ export class AppStarter {
             el: '#app',
             router: this._routerService.router,
             render: h => {
-                this._pageCreator.init(h);
+                this._pageCreator(h);
                 return h(mainComponent);
             },
         });

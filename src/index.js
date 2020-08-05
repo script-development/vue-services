@@ -10,11 +10,11 @@ import {
     staticDataService,
 } from './services';
 
-import {formCreator, buttonCreator, pageCreator} from './creators';
+import {tableCreator, pageCreator, init} from './creators';
 
 import {AppStarter} from './app';
 
-const appStarter = new AppStarter(routerService, eventService, authService, staticDataService, pageCreator);
+const appStarter = new AppStarter(routerService, eventService, authService, staticDataService, init);
 
 export {
     routerService,
@@ -26,8 +26,7 @@ export {
     eventService,
     translatorService,
     staticDataService,
-    formCreator,
-    buttonCreator,
+    tableCreator,
     pageCreator,
     appStarter,
 };
