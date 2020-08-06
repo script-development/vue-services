@@ -2,7 +2,11 @@
  * @typedef {import('../services/translator').TranslatorService} TranslatorService
  * @typedef {import('vue').CreateElement} CreateElement
  * @typedef {import('vue').VNode} VNode
+ * @typedef {import('bootstrap-vue').BvTableField} BvTableField
  */
+
+import {BTable} from 'bootstrap-vue';
+
 export class TableCreator {
     /**
      * @param {TranslatorService} translatorService
@@ -18,13 +22,13 @@ export class TableCreator {
     set h(h) { this._h = h; }
 
     /**
-     *
      * @param {String} subject the subject for which to create the table for
+     * @param {BvTableField[]} fields the subject for which to create the table for
+     * @param {Function} [rowClicked] the subject for which to create the table for
      */
     table(subject, fields, rowClicked) {
         // define tableCreator here, cause this context get's lost in the return object
         const creator = this;
-        const title = creator.title(this._translatorService.getCapitalizedPlural(subject));
 
         return {
             props: {items: {type: Array, required: true}},
@@ -44,6 +48,7 @@ export class TableCreator {
                 this.infiniteScroll();
             },
             render() {
+                const title = creator.title(creator._translatorService.getCapitalizedPlural(subject) + ' overzicht');
                 return creator.card([title, creator.bTable(this.items, this.perPage, fields, rowClicked)]);
             },
         };
@@ -60,7 +65,7 @@ export class TableCreator {
     }
 
     bTable(items, perPage, fields, rowClicked) {
-        return this._h('b-table', {
+        return this._h(BTable, {
             props: {items, perPage, fields, borderless: true, hover: true, responsive: true},
             on: {rowClicked: rowClicked},
         });

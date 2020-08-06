@@ -9,7 +9,7 @@
 
 import MinimalRouterView from '../components/MinimalRouterView';
 import {storeService, routerService, eventService, translatorService} from '../services';
-import {pageCreator} from '../creators';
+import {pageCreator, tableCreator} from '../creators';
 
 export class BaseController {
     /**
@@ -19,9 +19,11 @@ export class BaseController {
     constructor(APIEndpoint, translation) {
         this._storeService = storeService;
         this._routerService = routerService;
-        this._pageCreatorService = pageCreator;
         this._eventService = eventService;
         this._translatorService = translatorService;
+        // Creators
+        this._pageCreatorService = pageCreator;
+        this._tableCreator = tableCreator;
 
         if (!translation) {
             translation = {singular: APIEndpoint, plural: APIEndpoint};

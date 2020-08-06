@@ -1,6 +1,7 @@
 import {ErrorService, TranslatorService, EventService} from './services';
 import {RouterService} from './routerService';
 import {CreateElement, Component, VNode} from 'vue';
+import {BvTableField} from 'bootstrap-vue';
 
 // TODO :: make this complete
 export class PageCreator {
@@ -11,7 +12,7 @@ export class PageCreator {
     _routerService: RouterService;
 
     /** @param {CreateElement} h */
-    init(h: CreateElement): void;
+    set h(h: CreateElement);
 
     /**
      * Generate a create page
@@ -101,4 +102,28 @@ export class PageCreator {
      * @param {Object<string,any>} editable
      */
     checkQuery(editable: {[x: string]: any}): void;
+}
+
+export class TableCreator {
+    _h: CreateElement;
+    _translatorService: TranslatorService;
+
+    // prettier-ignore
+    /** @param {CreateElement} h */
+    set h(h:CreateElement)
+
+    /**
+     * @param {String} subject the subject for which to create the table for
+     * @param {BvTableField[]} fields the subject for which to create the table for
+     * @param {Function} [rowClicked] the subject for which to create the table for
+     */
+    table(subject: string, fields: BvTableField[], rowClicked?: Function): Component;
+
+    /** @param {VNode[]} children */
+    card(children: VNode[]): VNode;
+
+    /** @param {String} title */
+    title(title: string): VNode;
+
+    bTable(items: {[key: string]: any}[], perPage: number, fields: BvTableField[], rowClicked?: Function): VNode;
 }

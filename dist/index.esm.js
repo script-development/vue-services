@@ -2266,7 +2266,6 @@ class TableCreator {
     table(subject, fields, rowClicked) {
         // define tableCreator here, cause this context get's lost in the return object
         const creator = this;
-        const title = creator.title(this._translatorService.getCapitalizedPlural(subject)) + ' overzicht';
 
         return {
             props: {items: {type: Array, required: true}},
@@ -2286,6 +2285,7 @@ class TableCreator {
                 this.infiniteScroll();
             },
             render() {
+                const title = creator.title(creator._translatorService.getCapitalizedPlural(subject) + ' overzicht');
                 return creator.card([title, creator.bTable(this.items, this.perPage, fields, rowClicked)]);
             },
         };
@@ -2419,9 +2419,11 @@ class BaseController {
     constructor(APIEndpoint, translation) {
         this._storeService = storeService;
         this._routerService = routerService;
-        this._pageCreatorService = pageCreator;
         this._eventService = eventService;
         this._translatorService = translatorService;
+        // Creators
+        this._pageCreatorService = pageCreator;
+        this._tableCreator = tableCreator;
 
         if (!translation) {
             translation = {singular: APIEndpoint, plural: APIEndpoint};

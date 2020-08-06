@@ -1,7 +1,7 @@
 import {StoreService} from './storeService';
 import {RouterService, RouteSettings} from './routerService';
 import {EventService, TranslatorService, Translation} from './services';
-import {PageCreator} from './creators';
+import {PageCreator, TableCreator} from './creators';
 import {Module, ActionMethod, MutationMethod} from 'vuex';
 import {AxiosRequestConfig} from 'axios';
 
@@ -15,9 +15,11 @@ export class BaseController {
     constructor(APIEndpoint: string, translation?: Translation);
     _storeService: StoreService;
     _routerService: RouterService;
-    _pageCreatorService: PageCreator;
     _eventService: EventService;
     _translatorService: TranslatorService;
+    // Creators
+    _pageCreatorService: PageCreator;
+    _tableCreator: TableCreator;
     _APIEndpoint: string;
     /**
      * Set the routes to go to after a certain action has been done by the store
