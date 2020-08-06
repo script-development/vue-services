@@ -2371,7 +2371,7 @@ class AppStarter {
             el: '#app',
             router: this._routerService.router,
             render: h => {
-                this._pageCreator(h);
+                this._creatorInit(h);
                 return h(mainComponent);
             },
         });
