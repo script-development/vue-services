@@ -52,16 +52,6 @@ export class BaseController {
          * Settings can be changed in controller
          */
         this._routeSettings = this._routerService.newSettings(APIEndpoint);
-
-        /**
-         * Set basic pages, so there will be custom errors in the console when something is not implemented
-         * Can be edited/overwritten in controller
-         */
-        this.routeSettings.baseComponent = this.basePage;
-        this.routeSettings.editComponent = this.editPage;
-        this.routeSettings.showComponent = this.showPage;
-        this.routeSettings.overviewComponent = this.overviewPage;
-        this.routeSettings.createComponent = this.createPage;
     }
 
     // prettier-ignore
@@ -187,6 +177,16 @@ export class BaseController {
             this.APIEndpoint,
             this._extraStoreFunctionality
         );
+
+        /**
+         * Set basic pages, so there will be custom errors in the console when something is not implemented
+         * Can be edited/overwritten in controller
+         */
+        this.routeSettings.baseComponent = this.basePage;
+        this.routeSettings.editComponent = this.editPage;
+        this.routeSettings.showComponent = this.showPage;
+        this.routeSettings.overviewComponent = this.overviewPage;
+        this.routeSettings.createComponent = this.createPage;
 
         /**
          * Create basic routes and add them to the global routes

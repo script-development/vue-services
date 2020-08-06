@@ -29,6 +29,7 @@ export class TableCreator {
     table(subject, fields, rowClicked) {
         // define tableCreator here, cause this context get's lost in the return object
         const creator = this;
+        const title = creator.title(creator._translatorService.getCapitalizedPlural(subject) + ' overzicht');
 
         return {
             props: {items: {type: Array, required: true}},
@@ -48,7 +49,6 @@ export class TableCreator {
                 this.infiniteScroll();
             },
             render() {
-                const title = creator.title(creator._translatorService.getCapitalizedPlural(subject) + ' overzicht');
                 return creator.card([title, creator.bTable(this.items, this.perPage, fields, rowClicked)]);
             },
         };

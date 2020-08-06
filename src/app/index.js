@@ -4,6 +4,7 @@
  * @typedef {import('../services/auth').AuthService} AuthService
  * @typedef {import('../services/staticdata').StaticDataService} StaticDataService
  * @typedef {import('../creators/pages').PageCreator} PageCreator
+ * @typedef {import('../controllers').BaseController} BaseController
  * @typedef {import('vue').Component} Component
  */
 
@@ -31,9 +32,10 @@ export class AppStarter {
      * @param {Component} mainComponent the main app component
      * @param {String} defaultLoggedInPage the page to go to when logged in
      * @param {Component} loginPage the login page
+     * @param {Object<string,BaseController>} controllers the login page
      * @param {[string,Object<string,string>]} [staticData] the static data
      */
-    start(mainComponent, defaultLoggedInPage, loginPage, staticData) {
+    start(mainComponent, defaultLoggedInPage, loginPage, controllers, staticData) {
         if (staticData) this._staticDataService.createStoreModules(staticData);
 
         this._authService.defaultLoggedInPage = defaultLoggedInPage;
@@ -48,5 +50,8 @@ export class AppStarter {
                 return h(mainComponent);
             },
         });
+
+        // TODO :: placing it here is giving warnings that routes don't exist
+        for (const controller in controllers) controllers[controller].init();
     }
 }
