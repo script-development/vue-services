@@ -116,7 +116,7 @@ export class AuthService {
             if (status == 403) {
                 this.goToStandardLoggedInPage();
             } else if (status == 401) {
-                this.logout();
+                this._storeService.dispatch(this.storeModuleName, 'logoutApp');
             }
         };
     }

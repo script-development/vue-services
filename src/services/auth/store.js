@@ -51,6 +51,8 @@ export default (storageService, httpService, authService) => ({
             });
         },
 
+        logoutApp: ({commit}) => commit('LOGOUT'),
+
         sendEmailResetPassword: (_, email) => {
             return httpService.post('/sendEmailResetPassword', email).then(response => {
                 if (response.status == 200) authService.goToLoginPage();

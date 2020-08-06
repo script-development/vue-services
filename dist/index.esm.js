@@ -2,6 +2,7 @@ import Vue from 'vue';
 import Vuex from 'vuex';
 import axios from 'axios';
 import VueRouter from 'vue-router';
+import {BTable} from 'bootstrap-vue';
 
 const keepALiveKey = 'keepALive';
 /** setting keepALive here so we don't have to Parse it each time we get it */
@@ -1730,6 +1731,8 @@ var storeModule = (storageService, httpService, authService) => ({
             });
         },
 
+        logoutApp: ({commit}) => commit('LOGOUT'),
+
         sendEmailResetPassword: (_, email) => {
             return httpService.post('/sendEmailResetPassword', email).then(response => {
                 if (response.status == 200) authService.goToLoginPage();
@@ -1885,7 +1888,7 @@ class AuthService {
             if (status == 403) {
                 this.goToStandardLoggedInPage();
             } else if (status == 401) {
-                this.logout();
+                this._storeService.dispatch(this.storeModuleName, 'logoutApp');
             }
         };
     }
@@ -1993,13 +1996,9 @@ class PageCreator {
         this._routerService = routerService;
     }
 
-    /**
-     * @param {CreateElement} h
-     */
-    init(h) {
-        // TODO :: also attach h to other creators here
-        this._h = h;
-    }
+    // prettier-ignore
+    /** @param {CreateElement} h */
+    set h(h) { this._h = h; }
 
     /**
      * Generate a create page
@@ -2239,91 +2238,74 @@ class PageCreator {
 }
 
 /**
- * @typedef {import('vue').CreateElement} CreateElement
- */
-
-class ButtonCreator {
-    constructor() {
-        /** @type {CreateElement} */
-        this._h;
-        this._buttonContainerHTMLElement = 'b-form-group';
-        this._buttonContainerClass = 'mb-3';
-        this._buttonHTMLElement = 'b-button';
-    }
-
-    init(h) {
-        this._h = h;
-    }
-
-    /**
-     *
-     * @param {CreateElement} h
-     * @param {String} type
-     * @param {String} innerHTML
-     * @param {String} variant
-     */
-    button(h, type, innerHTML, variant) {
-        return h(
-            this._buttonContainerHTMLElement,
-            {
-                class: this._buttonContainerClass,
-            },
-            [
-                h(this._buttonHTMLElement, {
-                    props: {variant, type},
-                    domProps: {innerHTML},
-                }),
-            ]
-        );
-    }
-
-    submitButton(h) {
-        return this.button(h, 'submit', 'Opslaan', 'secondary');
-    }
-}
-
-/**
+ * @typedef {import('../services/translator').TranslatorService} TranslatorService
  * @typedef {import('vue').CreateElement} CreateElement
  * @typedef {import('vue').VNode} VNode
- * @typedef {import('./buttons').ButtonCreator} ButtonCreator
+ * @typedef {import('bootstrap-vue').BvTableField} BvTableField
  */
-class FormCreator {
+
+class TableCreator {
     /**
-     * @param {ButtonCreator} buttonCreator
+     * @param {TranslatorService} translatorService
      */
-    constructor(buttonCreator) {
+    constructor(translatorService) {
         /** @type {CreateElement} */
         this._h;
-        this._buttonCreator = buttonCreator;
-
-        this._formHTMLElement = 'b-form';
-        this._formClass = 'edit-form';
+        this._translatorService = translatorService;
     }
 
-    init(h) {
-        this._h = h;
-    }
+    // prettier-ignore
+    /** @param {CreateElement} h */
+    set h(h) { this._h = h; }
 
     /**
-     * @param {CreateElement} h
-     * @param {VNode[]} children
-     * @param {Function} submit
+     * @param {String} subject the subject for which to create the table for
+     * @param {BvTableField[]} fields the subject for which to create the table for
+     * @param {Function} [rowClicked] the subject for which to create the table for
      */
-    form(h, children, submit) {
-        return h(
-            this._formHTMLElement,
-            {
-                class: this._formClass,
-                novalidate: true,
-                on: {
-                    submit: e => {
-                        e.preventDefault();
-                        submit();
-                    },
+    table(subject, fields, rowClicked) {
+        // define tableCreator here, cause this context get's lost in the return object
+        const creator = this;
+        const title = creator.title(this._translatorService.getCapitalizedPlural(subject)) + ' overzicht';
+
+        return {
+            props: {items: {type: Array, required: true}},
+            data: () => ({perPage: 20}),
+            methods: {
+                infiniteScroll() {
+                    const docElement = document.documentElement;
+                    // check if bottom, then add 20 rows to the table
+                    if (docElement.scrollTop + window.innerHeight === docElement.offsetHeight) {
+                        if (this.perPage > this.items.length) return;
+                        this.perPage += 20;
+                    }
                 },
             },
-            [...children, this._buttonCreator.submitButton(h)]
-        );
+            mounted() {
+                window.onscroll = () => this.infiniteScroll();
+                this.infiniteScroll();
+            },
+            render() {
+                return creator.card([title, creator.bTable(this.items, this.perPage, fields, rowClicked)]);
+            },
+        };
+    }
+
+    /** @param {VNode[]} children */
+    card(children) {
+        return this._h('div', {class: 'card'}, [this._h('div', {class: 'card-body'}, children)]);
+    }
+
+    /** @param {String} title */
+    title(title) {
+        return this._h('h4', [title]);
+    }
+
+    bTable(items, perPage, fields, rowClicked) {
+        return this._h(BTable, {
+            props: {items, perPage, fields, borderless: true, hover: true, responsive: true},
+            on: {rowClicked: rowClicked},
+        });
     }
 }
 
@@ -2331,10 +2313,19 @@ class FormCreator {
  * @typedef {import('vue').CreateElement} CreateElement
  */
 
-const buttonCreator = new ButtonCreator();
-const formCreator = new FormCreator(buttonCreator);
-
 const pageCreator = new PageCreator(errorService, translatorService, eventService, routerService);
+const tableCreator = new TableCreator(translatorService);
+
+/** @param {CreateElement} h */
+const init = h => {
+    pageCreator.h = h;
+    tableCreator.h = h;
+};
+
+// import {ButtonCreator} from './buttons';
+// import {FormCreator} from './forms';
+// export const buttonCreator = new ButtonCreator();
+// export const formCreator = new FormCreator(buttonCreator);
 
 /**
  * @typedef {import('../services/router').RouterService} RouterService
@@ -2351,14 +2342,14 @@ class AppStarter {
      * @param {EventService} eventService
      * @param {AuthService} authService
      * @param {StaticDataService} staticDataService
-     * @param {PageCreator} pageCreator
+     * @param {Function} creatorInit
      */
-    constructor(routerService, eventService, authService, staticDataService, pageCreator) {
+    constructor(routerService, eventService, authService, staticDataService, creatorInit) {
         this._routerService = routerService;
         this._eventService = eventService;
         this._authService = authService;
         this._staticDataService = staticDataService;
-        this._pageCreator = pageCreator;
+        this._creatorInit = creatorInit;
     }
 
     /**
@@ -2380,7 +2371,7 @@ class AppStarter {
             el: '#app',
             router: this._routerService.router,
             render: h => {
-                this._pageCreator.init(h);
+                this._pageCreator(h);
                 return h(mainComponent);
             },
         });
@@ -2698,21 +2689,20 @@ class BaseController {
     }
 }
 
-const appStarter = new AppStarter(routerService, eventService, authService, staticDataService, pageCreator);
+const appStarter = new AppStarter(routerService, eventService, authService, staticDataService, init);
 
 export {
     BaseController,
     appStarter,
     authService,
-    buttonCreator,
     errorService,
     eventService,
-    formCreator,
     httpService,
     loadingService,
     pageCreator,
     routerService,
     staticDataService,
     storeService,
+    tableCreator,
     translatorService,
 };
