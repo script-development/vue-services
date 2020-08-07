@@ -67,7 +67,7 @@ export class TableCreator {
     bTable(items, perPage, fields, rowClicked) {
         return this._h(BTable, {
             props: {items, perPage, fields, borderless: true, hover: true, responsive: true},
-            on: {rowClicked: rowClicked},
+            on: {'row-clicked': rowClicked},
         });
     }
 }
