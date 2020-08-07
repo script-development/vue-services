@@ -2316,11 +2316,16 @@ class TableCreator {
 const pageCreator = new PageCreator(errorService, translatorService, eventService, routerService);
 const tableCreator = new TableCreator(translatorService);
 
-/** @param {CreateElement} h */
-const init = h => {
-    pageCreator.h = h;
-    tableCreator.h = h;
-};
+// Very cheesy way to bind CreateElement to the creators
+
+new Vue({
+    el: document.createElement('div'),
+    render(h) {
+        pageCreator.h = h;
+        tableCreator.h = h;
+        return h('div');
+    },
+});
 
 // import {ButtonCreator} from './buttons';
 // import {FormCreator} from './forms';
@@ -2343,14 +2348,12 @@ class AppStarter {
      * @param {EventService} eventService
      * @param {AuthService} authService
      * @param {StaticDataService} staticDataService
-     * @param {Function} creatorInit
      */
-    constructor(routerService, eventService, authService, staticDataService, creatorInit) {
+    constructor(routerService, eventService, authService, staticDataService) {
         this._routerService = routerService;
         this._eventService = eventService;
         this._authService = authService;
         this._staticDataService = staticDataService;
-        this._creatorInit = creatorInit;
     }
 
     /**
@@ -2369,17 +2372,13 @@ class AppStarter {
         this._authService.loginPage = loginPage;
         this._authService.setRoutes();
 
+        for (const controller in controllers) controllers[controller].init();
+
         this._eventService.app = new Vue({
             el: '#app',
             router: this._routerService.router,
-            render: h => {
-                this._creatorInit(h);
-                return h(mainComponent);
-            },
+            render: h => h(mainComponent),
         });
-
-        // TODO :: placing it here is giving warnings that routes don't exist
-        for (const controller in controllers) controllers[controller].init();
     }
 }
 
@@ -2696,7 +2695,7 @@ class BaseController {
     }
 }
 
-const appStarter = new AppStarter(routerService, eventService, authService, staticDataService, init);
+const appStarter = new AppStarter(routerService, eventService, authService, staticDataService);
 
 export {
     BaseController,

@@ -7,14 +7,21 @@ import {errorService, translatorService, eventService, routerService} from '../s
 import {PageCreator} from './pages';
 import {TableCreator} from './tables';
 
+import Vue from 'vue';
+
 export const pageCreator = new PageCreator(errorService, translatorService, eventService, routerService);
 export const tableCreator = new TableCreator(translatorService);
 
-/** @param {CreateElement} h */
-export const init = h => {
-    pageCreator.h = h;
-    tableCreator.h = h;
-};
+// Very cheesy way to bind CreateElement to the creators
+
+new Vue({
+    el: document.createElement('div'),
+    render(h) {
+        pageCreator.h = h;
+        tableCreator.h = h;
+        return h('div');
+    },
+});
 
 // import {ButtonCreator} from './buttons';
 // import {FormCreator} from './forms';

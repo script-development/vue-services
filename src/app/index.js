@@ -16,14 +16,12 @@ export class AppStarter {
      * @param {EventService} eventService
      * @param {AuthService} authService
      * @param {StaticDataService} staticDataService
-     * @param {Function} creatorInit
      */
-    constructor(routerService, eventService, authService, staticDataService, creatorInit) {
+    constructor(routerService, eventService, authService, staticDataService) {
         this._routerService = routerService;
         this._eventService = eventService;
         this._authService = authService;
         this._staticDataService = staticDataService;
-        this._creatorInit = creatorInit;
     }
 
     /**
@@ -42,16 +40,12 @@ export class AppStarter {
         this._authService.loginPage = loginPage;
         this._authService.setRoutes();
 
+        for (const controller in controllers) controllers[controller].init();
+
         this._eventService.app = new Vue({
             el: '#app',
             router: this._routerService.router,
-            render: h => {
-                this._creatorInit(h);
-                return h(mainComponent);
-            },
+            render: h => h(mainComponent),
         });
-
-        // TODO :: placing it here is giving warnings that routes don't exist
-        for (const controller in controllers) controllers[controller].init();
     }
 }
