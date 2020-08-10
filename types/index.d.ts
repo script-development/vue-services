@@ -1,6 +1,4 @@
-export {BaseController} from './controllers';
-
-export {PageCreator} from './creators';
+import {AppStarter} from './starter';
 
 import {
     HTTPService,
@@ -12,11 +10,15 @@ import {
     StaticDataService,
 } from './services';
 
+import {RouterService} from './routerService';
+import {StoreService} from './storeService';
+
+export {BaseController} from './controllers';
 export {Translation} from './services';
 
-import {RouterService} from './routerService';
+export {PageCreator, TableCreator} from './creators';
 
-import {StoreService} from './storeService';
+export const appStarter: AppStarter;
 
 export const authService: AuthService;
 export const routerService: RouterService;
@@ -25,7 +27,6 @@ export const errorService: ErrorService;
 export const loadingService: LoadingService;
 export const httpService: HTTPService;
 export const eventService: EventService;
-// export const pageCreator: PageCreator;
 export const translatorService: TranslatorService;
 export const staticDataService: StaticDataService;
 

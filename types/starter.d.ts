@@ -15,7 +15,7 @@ export class AppStarter {
      * @param {Component} mainComponent the main app component
      * @param {String} defaultLoggedInPage the page to go to when logged in
      * @param {Component} loginPage the login page
-     * @param {Object<string,BaseController>} controllers the login page
+     * @param {Object<string,BaseController>} controllers the controllers used by the app
      * @param {[string,Object<string,string>]} [staticData] the static data
      */
     start(
@@ -23,6 +23,6 @@ export class AppStarter {
         defaultLoggedInPage: string,
         loginPage: Component,
         controllers: {[controllerName: string]: BaseController},
-        staticData: [string, {[key: string]: string}]
+        staticData?: [string, {[key: string]: string}]
     ): void;
 }
