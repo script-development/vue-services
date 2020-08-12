@@ -15,16 +15,19 @@
         "build": "rollup src/index.js --file dist/index.js --format iife",
         "dev": "rollup -c scripts/config.js",
         "watch": "npm run dev -w",
-        "pub": "npm publish"
+        "pub": "npm publish",
+        "docs": "typedoc"
     },
     "author": "Script",
     "license": "MIT",
     "devDependencies": {
         "@rollup/plugin-node-resolve": "^8.1.0",
-        "prettier": "^2.0.5",
         "husky": "^4.2.5",
+        "prettier": "^2.0.5",
         "pretty-quick": "^2.0.1",
-        "rollup": "^2.21.0"
+        "rollup": "^2.21.0",
+        "typedoc": "^0.18.0",
+        "typescript": "^3.9.7"
     },
     "dependencies": {
         "axios": "0.19.2",

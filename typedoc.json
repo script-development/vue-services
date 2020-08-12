@@ -1,0 +1,9 @@
+{
+    "inputFiles": ["./types"],
+    "includeDeclarations": true,
+    "excludeExternals": true,
+    "mode": "file",
+    "out": "docs",
+    "name": "ServVue",
+    "includeVersion": true
+}

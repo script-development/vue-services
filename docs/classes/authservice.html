@@ -1,0 +1,802 @@
+<!doctype html>
+<html class="default no-js">
+<head>
+	<meta charset="utf-8">
+	<meta http-equiv="X-UA-Compatible" content="IE=edge">
+	<title>AuthService | ServVue - v0.0.42</title>
+	<meta name="description" content="Documentation for ServVue - v0.0.42">
+	<meta name="viewport" content="width=device-width, initial-scale=1">
+	<link rel="stylesheet" href="../assets/css/main.css">
+</head>
+<body>
+<header>
+	<div class="tsd-page-toolbar">
+		<div class="container">
+			<div class="table-wrap">
+				<div class="table-cell" id="tsd-search" data-index="../assets/js/search.json" data-base="..">
+					<div class="field">
+						<label for="tsd-search-field" class="tsd-widget search no-caption">Search</label>
+						<input id="tsd-search-field" type="text" />
+					</div>
+					<ul class="results">
+						<li class="state loading">Preparing search index...</li>
+						<li class="state failure">The search index is not available</li>
+					</ul>
+					<a href="../index.html" class="title">ServVue - v0.0.42</a>
+				</div>
+				<div class="table-cell" id="tsd-widgets">
+					<div id="tsd-filter">
+						<a href="#" class="tsd-widget options no-caption" data-toggle="options">Options</a>
+						<div class="tsd-filter-group">
+							<div class="tsd-select" id="tsd-filter-visibility">
+								<span class="tsd-select-label">All</span>
+								<ul class="tsd-select-list">
+									<li data-value="public">Public</li>
+									<li data-value="protected">Public/Protected</li>
+									<li data-value="private" class="selected">All</li>
+								</ul>
+							</div>
+							<input type="checkbox" id="tsd-filter-inherited" checked />
+							<label class="tsd-widget" for="tsd-filter-inherited">Inherited</label>
+							<input type="checkbox" id="tsd-filter-only-exported" />
+							<label class="tsd-widget" for="tsd-filter-only-exported">Only exported</label>
+						</div>
+					</div>
+					<a href="#" class="tsd-widget menu no-caption" data-toggle="menu">Menu</a>
+				</div>
+			</div>
+		</div>
+	</div>
+	<div class="tsd-page-title">
+		<div class="container">
+			<ul class="tsd-breadcrumb">
+				<li>
+					<a href="../globals.html">Globals</a>
+				</li>
+				<li>
+					<a href="authservice.html">AuthService</a>
+				</li>
+			</ul>
+			<h1>Class AuthService</h1>
+		</div>
+	</div>
+</header>
+<div class="container container-main">
+	<div class="row">
+		<div class="col-8 col-content">
+			<section class="tsd-panel tsd-hierarchy">
+				<h3>Hierarchy</h3>
+				<ul class="tsd-hierarchy">
+					<li>
+						<span class="target">AuthService</span>
+					</li>
+				</ul>
+			</section>
+			<section class="tsd-panel-group tsd-index-group">
+				<h2>Index</h2>
+				<section class="tsd-panel tsd-index-panel">
+					<div class="tsd-index-content">
+						<section class="tsd-index-section ">
+							<h3>Constructors</h3>
+							<ul class="tsd-index-list">
+								<li class="tsd-kind-constructor tsd-parent-kind-class"><a href="authservice.html#constructor" class="tsd-kind-icon">constructor</a></li>
+							</ul>
+						</section>
+						<section class="tsd-index-section ">
+							<h3>Properties</h3>
+							<ul class="tsd-index-list">
+								<li class="tsd-kind-property tsd-parent-kind-class"><a href="authservice.html#_defaultloggedinpage" class="tsd-kind-icon">_default<wbr>Logged<wbr>InPage</a></li>
+								<li class="tsd-kind-property tsd-parent-kind-class"><a href="authservice.html#_httpservice" class="tsd-kind-icon">_http<wbr>Service</a></li>
+								<li class="tsd-kind-property tsd-parent-kind-class"><a href="authservice.html#_loginpage" class="tsd-kind-icon">_login<wbr>Page</a></li>
+								<li class="tsd-kind-property tsd-parent-kind-class"><a href="authservice.html#_routerservice" class="tsd-kind-icon">_router<wbr>Service</a></li>
+								<li class="tsd-kind-property tsd-parent-kind-class"><a href="authservice.html#_storageservice" class="tsd-kind-icon">_storage<wbr>Service</a></li>
+								<li class="tsd-kind-property tsd-parent-kind-class"><a href="authservice.html#_storeservice" class="tsd-kind-icon">_store<wbr>Service</a></li>
+							</ul>
+						</section>
+						<section class="tsd-index-section ">
+							<h3>Accessors</h3>
+							<ul class="tsd-index-list">
+								<li class="tsd-kind-accessor tsd-parent-kind-class"><a href="authservice.html#defaultloggedinpage" class="tsd-kind-icon">default<wbr>Logged<wbr>InPage</a></li>
+								<li class="tsd-kind-get-signature tsd-parent-kind-class"><a href="authservice.html#isloggedin" class="tsd-kind-icon">is<wbr>Loggedin</a></li>
+								<li class="tsd-kind-accessor tsd-parent-kind-class"><a href="authservice.html#loginpage" class="tsd-kind-icon">login<wbr>Page</a></li>
+								<li class="tsd-kind-get-signature tsd-parent-kind-class"><a href="authservice.html#responseerrormiddleware" class="tsd-kind-icon">response<wbr>Error<wbr>Middleware</a></li>
+								<li class="tsd-kind-get-signature tsd-parent-kind-class"><a href="authservice.html#routemiddleware" class="tsd-kind-icon">route<wbr>Middleware</a></li>
+								<li class="tsd-kind-get-signature tsd-parent-kind-class"><a href="authservice.html#storemodulename" class="tsd-kind-icon">store<wbr>Module<wbr>Name</a></li>
+							</ul>
+						</section>
+						<section class="tsd-index-section ">
+							<h3>Methods</h3>
+							<ul class="tsd-index-list">
+								<li class="tsd-kind-method tsd-parent-kind-class"><a href="authservice.html#gotologinpage" class="tsd-kind-icon">go<wbr>ToLogin<wbr>Page</a></li>
+								<li class="tsd-kind-method tsd-parent-kind-class"><a href="authservice.html#gotostandardloggedinpage" class="tsd-kind-icon">go<wbr>ToStandard<wbr>Logged<wbr>InPage</a></li>
+								<li class="tsd-kind-method tsd-parent-kind-class"><a href="authservice.html#login" class="tsd-kind-icon">login</a></li>
+								<li class="tsd-kind-method tsd-parent-kind-class"><a href="authservice.html#logout" class="tsd-kind-icon">logout</a></li>
+								<li class="tsd-kind-method tsd-parent-kind-class"><a href="authservice.html#resetpassword" class="tsd-kind-icon">reset<wbr>Password</a></li>
+								<li class="tsd-kind-method tsd-parent-kind-class"><a href="authservice.html#sendemailresetpassword" class="tsd-kind-icon">send<wbr>Email<wbr>Reset<wbr>Password</a></li>
+								<li class="tsd-kind-method tsd-parent-kind-class"><a href="authservice.html#setroutes" class="tsd-kind-icon">set<wbr>Routes</a></li>
+							</ul>
+						</section>
+					</div>
+				</section>
+			</section>
+			<section class="tsd-panel-group tsd-member-group ">
+				<h2>Constructors</h2>
+				<section class="tsd-panel tsd-member tsd-kind-constructor tsd-parent-kind-class">
+					<a name="constructor" class="tsd-anchor"></a>
+					<h3>constructor</h3>
+					<ul class="tsd-signatures tsd-kind-constructor tsd-parent-kind-class">
+						<li class="tsd-signature tsd-kind-icon">new <wbr>Auth<wbr>Service<span class="tsd-signature-symbol">(</span>routerService<span class="tsd-signature-symbol">: </span><a href="routerservice.html" class="tsd-signature-type">RouterService</a>, storeService<span class="tsd-signature-symbol">: </span><a href="storeservice.html" class="tsd-signature-type">StoreService</a>, storageService<span class="tsd-signature-symbol">: </span><a href="storageservice.html" class="tsd-signature-type">StorageService</a>, httpService<span class="tsd-signature-symbol">: </span><a href="httpservice.html" class="tsd-signature-type">HTTPService</a><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><a href="authservice.html" class="tsd-signature-type">AuthService</a></li>
+					</ul>
+					<ul class="tsd-descriptions">
+						<li class="tsd-description">
+							<aside class="tsd-sources">
+								<ul>
+									<li>Defined in <a href="https://github.com/script-development/vue-services/blob/b9c928c/types/services.d.ts#L174">services.d.ts:174</a></li>
+								</ul>
+							</aside>
+							<div class="tsd-comment tsd-typography">
+							</div>
+							<h4 class="tsd-parameters-title">Parameters</h4>
+							<ul class="tsd-parameters">
+								<li>
+									<h5>routerService: <a href="routerservice.html" class="tsd-signature-type">RouterService</a></h5>
+								</li>
+								<li>
+									<h5>storeService: <a href="storeservice.html" class="tsd-signature-type">StoreService</a></h5>
+								</li>
+								<li>
+									<h5>storageService: <a href="storageservice.html" class="tsd-signature-type">StorageService</a></h5>
+								</li>
+								<li>
+									<h5>httpService: <a href="httpservice.html" class="tsd-signature-type">HTTPService</a></h5>
+									<div class="tsd-comment tsd-typography">
+										<div class="lead">
+										</div>
+									</div>
+								</li>
+							</ul>
+							<h4 class="tsd-returns-title">Returns <a href="authservice.html" class="tsd-signature-type">AuthService</a></h4>
+						</li>
+					</ul>
+				</section>
+			</section>
+			<section class="tsd-panel-group tsd-member-group ">
+				<h2>Properties</h2>
+				<section class="tsd-panel tsd-member tsd-kind-property tsd-parent-kind-class">
+					<a name="_defaultloggedinpage" class="tsd-anchor"></a>
+					<h3>_default<wbr>Logged<wbr>InPage</h3>
+					<div class="tsd-signature tsd-kind-icon">_default<wbr>Logged<wbr>InPage<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">string</span></div>
+					<aside class="tsd-sources">
+						<ul>
+							<li>Defined in <a href="https://github.com/script-development/vue-services/blob/b9c928c/types/services.d.ts#L199">services.d.ts:199</a></li>
+						</ul>
+					</aside>
+				</section>
+				<section class="tsd-panel tsd-member tsd-kind-property tsd-parent-kind-class">
+					<a name="_httpservice" class="tsd-anchor"></a>
+					<h3>_http<wbr>Service</h3>
+					<div class="tsd-signature tsd-kind-icon">_http<wbr>Service<span class="tsd-signature-symbol">:</span> <a href="httpservice.html" class="tsd-signature-type">HTTPService</a></div>
+					<aside class="tsd-sources">
+						<ul>
+							<li>Defined in <a href="https://github.com/script-development/vue-services/blob/b9c928c/types/services.d.ts#L190">services.d.ts:190</a></li>
+						</ul>
+					</aside>
+				</section>
+				<section class="tsd-panel tsd-member tsd-kind-property tsd-parent-kind-class">
+					<a name="_loginpage" class="tsd-anchor"></a>
+					<h3>_login<wbr>Page</h3>
+					<div class="tsd-signature tsd-kind-icon">_login<wbr>Page<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-symbol">{ </span>render<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">any</span><span class="tsd-signature-symbol"> }</span></div>
+					<aside class="tsd-sources">
+						<ul>
+							<li>Defined in <a href="https://github.com/script-development/vue-services/blob/b9c928c/types/services.d.ts#L191">services.d.ts:191</a></li>
+						</ul>
+					</aside>
+					<div class="tsd-type-declaration">
+						<h4>Type declaration</h4>
+						<ul class="tsd-parameters">
+							<li class="tsd-parameter">
+								<h5>render<span class="tsd-signature-symbol">: </span>function</h5>
+								<ul class="tsd-signatures tsd-kind-function tsd-parent-kind-type-literal">
+									<li class="tsd-signature tsd-kind-icon">render<span class="tsd-signature-symbol">(</span>h<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">any</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">void</span></li>
+								</ul>
+								<ul class="tsd-descriptions">
+									<li class="tsd-description">
+										<aside class="tsd-sources">
+											<ul>
+												<li>Defined in <a href="https://github.com/script-development/vue-services/blob/b9c928c/types/services.d.ts#L192">services.d.ts:192</a></li>
+											</ul>
+										</aside>
+										<h4 class="tsd-parameters-title">Parameters</h4>
+										<ul class="tsd-parameters">
+											<li>
+												<h5>h: <span class="tsd-signature-type">any</span></h5>
+											</li>
+										</ul>
+										<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">void</span></h4>
+									</li>
+								</ul>
+							</li>
+						</ul>
+					</div>
+				</section>
+				<section class="tsd-panel tsd-member tsd-kind-property tsd-parent-kind-class">
+					<a name="_routerservice" class="tsd-anchor"></a>
+					<h3>_router<wbr>Service</h3>
+					<div class="tsd-signature tsd-kind-icon">_router<wbr>Service<span class="tsd-signature-symbol">:</span> <a href="routerservice.html" class="tsd-signature-type">RouterService</a></div>
+					<aside class="tsd-sources">
+						<ul>
+							<li>Defined in <a href="https://github.com/script-development/vue-services/blob/b9c928c/types/services.d.ts#L187">services.d.ts:187</a></li>
+						</ul>
+					</aside>
+				</section>
+				<section class="tsd-panel tsd-member tsd-kind-property tsd-parent-kind-class">
+					<a name="_storageservice" class="tsd-anchor"></a>
+					<h3>_storage<wbr>Service</h3>
+					<div class="tsd-signature tsd-kind-icon">_storage<wbr>Service<span class="tsd-signature-symbol">:</span> <a href="storageservice.html" class="tsd-signature-type">StorageService</a></div>
+					<aside class="tsd-sources">
+						<ul>
+							<li>Defined in <a href="https://github.com/script-development/vue-services/blob/b9c928c/types/services.d.ts#L189">services.d.ts:189</a></li>
+						</ul>
+					</aside>
+				</section>
+				<section class="tsd-panel tsd-member tsd-kind-property tsd-parent-kind-class">
+					<a name="_storeservice" class="tsd-anchor"></a>
+					<h3>_store<wbr>Service</h3>
+					<div class="tsd-signature tsd-kind-icon">_store<wbr>Service<span class="tsd-signature-symbol">:</span> <a href="storeservice.html" class="tsd-signature-type">StoreService</a></div>
+					<aside class="tsd-sources">
+						<ul>
+							<li>Defined in <a href="https://github.com/script-development/vue-services/blob/b9c928c/types/services.d.ts#L188">services.d.ts:188</a></li>
+						</ul>
+					</aside>
+				</section>
+			</section>
+			<section class="tsd-panel-group tsd-member-group ">
+				<h2>Accessors</h2>
+				<section class="tsd-panel tsd-member tsd-kind-accessor tsd-parent-kind-class">
+					<a name="defaultloggedinpage" class="tsd-anchor"></a>
+					<h3>default<wbr>Logged<wbr>InPage</h3>
+					<ul class="tsd-signatures tsd-kind-accessor tsd-parent-kind-class">
+						<li class="tsd-signature tsd-kind-icon"><span class="tsd-signature-symbol">get</span> defaultLoggedInPage<span class="tsd-signature-symbol">(</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">string</span></li>
+						<li class="tsd-signature tsd-kind-icon"><span class="tsd-signature-symbol">set</span> defaultLoggedInPage<span class="tsd-signature-symbol">(</span>arg<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">string</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">any</span></li>
+					</ul>
+					<ul class="tsd-descriptions">
+						<li class="tsd-description">
+							<aside class="tsd-sources">
+								<ul>
+									<li>Defined in <a href="https://github.com/script-development/vue-services/blob/b9c928c/types/services.d.ts#L198">services.d.ts:198</a></li>
+								</ul>
+							</aside>
+							<div class="tsd-comment tsd-typography">
+							</div>
+							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">string</span></h4>
+						</li>
+						<li class="tsd-description">
+							<aside class="tsd-sources">
+								<ul>
+									<li>Defined in <a href="https://github.com/script-development/vue-services/blob/b9c928c/types/services.d.ts#L197">services.d.ts:197</a></li>
+								</ul>
+							</aside>
+							<div class="tsd-comment tsd-typography">
+							</div>
+							<h4 class="tsd-parameters-title">Parameters</h4>
+							<ul class="tsd-parameters">
+								<li>
+									<h5>arg: <span class="tsd-signature-type">string</span></h5>
+								</li>
+							</ul>
+							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">any</span></h4>
+						</li>
+					</ul>
+				</section>
+				<section class="tsd-panel tsd-member tsd-kind-get-signature tsd-parent-kind-class">
+					<a name="isloggedin" class="tsd-anchor"></a>
+					<h3>is<wbr>Loggedin</h3>
+					<ul class="tsd-signatures tsd-kind-get-signature tsd-parent-kind-class">
+						<li class="tsd-signature tsd-kind-icon"><span class="tsd-signature-symbol">get</span> isLoggedin<span class="tsd-signature-symbol">(</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">boolean</span></li>
+					</ul>
+					<ul class="tsd-descriptions">
+						<li class="tsd-description">
+							<aside class="tsd-sources">
+								<ul>
+									<li>Defined in <a href="https://github.com/script-development/vue-services/blob/b9c928c/types/services.d.ts#L195">services.d.ts:195</a></li>
+								</ul>
+							</aside>
+							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">boolean</span></h4>
+						</li>
+					</ul>
+				</section>
+				<section class="tsd-panel tsd-member tsd-kind-accessor tsd-parent-kind-class">
+					<a name="loginpage" class="tsd-anchor"></a>
+					<h3>login<wbr>Page</h3>
+					<ul class="tsd-signatures tsd-kind-accessor tsd-parent-kind-class">
+						<li class="tsd-signature tsd-kind-icon"><span class="tsd-signature-symbol">get</span> loginPage<span class="tsd-signature-symbol">(</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">Component</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">DefaultData</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">never</span><span class="tsd-signature-symbol">&gt;</span><span class="tsd-signature-symbol">, </span><span class="tsd-signature-type">DefaultMethods</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">never</span><span class="tsd-signature-symbol">&gt;</span><span class="tsd-signature-symbol">, </span><span class="tsd-signature-type">DefaultComputed</span><span class="tsd-signature-symbol">, </span><span class="tsd-signature-type">Record</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">string</span><span class="tsd-signature-symbol">, </span><span class="tsd-signature-type">any</span><span class="tsd-signature-symbol">&gt;</span><span class="tsd-signature-symbol">&gt;</span></li>
+						<li class="tsd-signature tsd-kind-icon"><span class="tsd-signature-symbol">set</span> loginPage<span class="tsd-signature-symbol">(</span>arg<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">Component</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">DefaultData</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">never</span><span class="tsd-signature-symbol">&gt;</span><span class="tsd-signature-symbol">, </span><span class="tsd-signature-type">DefaultMethods</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">never</span><span class="tsd-signature-symbol">&gt;</span><span class="tsd-signature-symbol">, </span><span class="tsd-signature-type">DefaultComputed</span><span class="tsd-signature-symbol">, </span><span class="tsd-signature-type">Record</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">string</span><span class="tsd-signature-symbol">, </span><span class="tsd-signature-type">any</span><span class="tsd-signature-symbol">&gt;</span><span class="tsd-signature-symbol">&gt;</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">any</span></li>
+					</ul>
+					<ul class="tsd-descriptions">
+						<li class="tsd-description">
+							<aside class="tsd-sources">
+								<ul>
+									<li>Defined in <a href="https://github.com/script-development/vue-services/blob/b9c928c/types/services.d.ts#L202">services.d.ts:202</a></li>
+								</ul>
+							</aside>
+							<div class="tsd-comment tsd-typography">
+							</div>
+							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">Component</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">DefaultData</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">never</span><span class="tsd-signature-symbol">&gt;</span><span class="tsd-signature-symbol">, </span><span class="tsd-signature-type">DefaultMethods</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">never</span><span class="tsd-signature-symbol">&gt;</span><span class="tsd-signature-symbol">, </span><span class="tsd-signature-type">DefaultComputed</span><span class="tsd-signature-symbol">, </span><span class="tsd-signature-type">Record</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">string</span><span class="tsd-signature-symbol">, </span><span class="tsd-signature-type">any</span><span class="tsd-signature-symbol">&gt;</span><span class="tsd-signature-symbol">&gt;</span></h4>
+						</li>
+						<li class="tsd-description">
+							<aside class="tsd-sources">
+								<ul>
+									<li>Defined in <a href="https://github.com/script-development/vue-services/blob/b9c928c/types/services.d.ts#L201">services.d.ts:201</a></li>
+								</ul>
+							</aside>
+							<div class="tsd-comment tsd-typography">
+							</div>
+							<h4 class="tsd-parameters-title">Parameters</h4>
+							<ul class="tsd-parameters">
+								<li>
+									<h5>arg: <span class="tsd-signature-type">Component</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">DefaultData</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">never</span><span class="tsd-signature-symbol">&gt;</span><span class="tsd-signature-symbol">, </span><span class="tsd-signature-type">DefaultMethods</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">never</span><span class="tsd-signature-symbol">&gt;</span><span class="tsd-signature-symbol">, </span><span class="tsd-signature-type">DefaultComputed</span><span class="tsd-signature-symbol">, </span><span class="tsd-signature-type">Record</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">string</span><span class="tsd-signature-symbol">, </span><span class="tsd-signature-type">any</span><span class="tsd-signature-symbol">&gt;</span><span class="tsd-signature-symbol">&gt;</span></h5>
+								</li>
+							</ul>
+							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">any</span></h4>
+						</li>
+					</ul>
+				</section>
+				<section class="tsd-panel tsd-member tsd-kind-get-signature tsd-parent-kind-class">
+					<a name="responseerrormiddleware" class="tsd-anchor"></a>
+					<h3>response<wbr>Error<wbr>Middleware</h3>
+					<ul class="tsd-signatures tsd-kind-get-signature tsd-parent-kind-class">
+						<li class="tsd-signature tsd-kind-icon"><span class="tsd-signature-symbol">get</span> responseErrorMiddleware<span class="tsd-signature-symbol">(</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-symbol">(</span>__namedParameters<span class="tsd-signature-symbol">: </span><span class="tsd-signature-symbol">{ </span>response<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">any</span><span class="tsd-signature-symbol"> }</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol"> =&gt; </span><span class="tsd-signature-type">void</span></li>
+					</ul>
+					<ul class="tsd-descriptions">
+						<li class="tsd-description">
+							<aside class="tsd-sources">
+								<ul>
+									<li>Defined in <a href="https://github.com/script-development/vue-services/blob/b9c928c/types/services.d.ts#L216">services.d.ts:216</a></li>
+								</ul>
+							</aside>
+							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-symbol">(</span>__namedParameters<span class="tsd-signature-symbol">: </span><span class="tsd-signature-symbol">{ </span>response<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">any</span><span class="tsd-signature-symbol"> }</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol"> =&gt; </span><span class="tsd-signature-type">void</span></h4>
+							<ul class="tsd-parameters">
+								<li class="tsd-parameter-signature">
+									<ul class="tsd-signatures tsd-kind-type-literal">
+										<li class="tsd-signature tsd-kind-icon"><span class="tsd-signature-symbol">(</span>__namedParameters<span class="tsd-signature-symbol">: </span><span class="tsd-signature-symbol">{ </span>response<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">any</span><span class="tsd-signature-symbol"> }</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">void</span></li>
+									</ul>
+									<ul class="tsd-descriptions">
+										<li class="tsd-description">
+											<h4 class="tsd-parameters-title">Parameters</h4>
+											<ul class="tsd-parameters">
+												<li>
+													<h5>__namedParameters: <span class="tsd-signature-symbol">{ </span>response<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">any</span><span class="tsd-signature-symbol"> }</span></h5>
+													<ul class="tsd-parameters">
+														<li class="tsd-parameter">
+															<h5>response<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">any</span></h5>
+														</li>
+													</ul>
+												</li>
+											</ul>
+											<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">void</span></h4>
+										</li>
+									</ul>
+								</li>
+							</ul>
+						</li>
+					</ul>
+				</section>
+				<section class="tsd-panel tsd-member tsd-kind-get-signature tsd-parent-kind-class">
+					<a name="routemiddleware" class="tsd-anchor"></a>
+					<h3>route<wbr>Middleware</h3>
+					<ul class="tsd-signatures tsd-kind-get-signature tsd-parent-kind-class">
+						<li class="tsd-signature tsd-kind-icon"><span class="tsd-signature-symbol">get</span> routeMiddleware<span class="tsd-signature-symbol">(</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-symbol">(</span>to<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">any</span>, from<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">any</span>, next<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">any</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol"> =&gt; </span><span class="tsd-signature-type">boolean</span></li>
+					</ul>
+					<ul class="tsd-descriptions">
+						<li class="tsd-description">
+							<aside class="tsd-sources">
+								<ul>
+									<li>Defined in <a href="https://github.com/script-development/vue-services/blob/b9c928c/types/services.d.ts#L217">services.d.ts:217</a></li>
+								</ul>
+							</aside>
+							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-symbol">(</span>to<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">any</span>, from<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">any</span>, next<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">any</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol"> =&gt; </span><span class="tsd-signature-type">boolean</span></h4>
+							<ul class="tsd-parameters">
+								<li class="tsd-parameter-signature">
+									<ul class="tsd-signatures tsd-kind-type-literal">
+										<li class="tsd-signature tsd-kind-icon"><span class="tsd-signature-symbol">(</span>to<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">any</span>, from<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">any</span>, next<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">any</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">boolean</span></li>
+									</ul>
+									<ul class="tsd-descriptions">
+										<li class="tsd-description">
+											<h4 class="tsd-parameters-title">Parameters</h4>
+											<ul class="tsd-parameters">
+												<li>
+													<h5>to: <span class="tsd-signature-type">any</span></h5>
+												</li>
+												<li>
+													<h5>from: <span class="tsd-signature-type">any</span></h5>
+												</li>
+												<li>
+													<h5>next: <span class="tsd-signature-type">any</span></h5>
+												</li>
+											</ul>
+											<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">boolean</span></h4>
+										</li>
+									</ul>
+								</li>
+							</ul>
+						</li>
+					</ul>
+				</section>
+				<section class="tsd-panel tsd-member tsd-kind-get-signature tsd-parent-kind-class">
+					<a name="storemodulename" class="tsd-anchor"></a>
+					<h3>store<wbr>Module<wbr>Name</h3>
+					<ul class="tsd-signatures tsd-kind-get-signature tsd-parent-kind-class">
+						<li class="tsd-signature tsd-kind-icon"><span class="tsd-signature-symbol">get</span> storeModuleName<span class="tsd-signature-symbol">(</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">string</span></li>
+					</ul>
+					<ul class="tsd-descriptions">
+						<li class="tsd-description">
+							<aside class="tsd-sources">
+								<ul>
+									<li>Defined in <a href="https://github.com/script-development/vue-services/blob/b9c928c/types/services.d.ts#L194">services.d.ts:194</a></li>
+								</ul>
+							</aside>
+							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">string</span></h4>
+						</li>
+					</ul>
+				</section>
+			</section>
+			<section class="tsd-panel-group tsd-member-group ">
+				<h2>Methods</h2>
+				<section class="tsd-panel tsd-member tsd-kind-method tsd-parent-kind-class">
+					<a name="gotologinpage" class="tsd-anchor"></a>
+					<h3>go<wbr>ToLogin<wbr>Page</h3>
+					<ul class="tsd-signatures tsd-kind-method tsd-parent-kind-class">
+						<li class="tsd-signature tsd-kind-icon">go<wbr>ToLogin<wbr>Page<span class="tsd-signature-symbol">(</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">void</span></li>
+					</ul>
+					<ul class="tsd-descriptions">
+						<li class="tsd-description">
+							<aside class="tsd-sources">
+								<ul>
+									<li>Defined in <a href="https://github.com/script-development/vue-services/blob/b9c928c/types/services.d.ts#L215">services.d.ts:215</a></li>
+								</ul>
+							</aside>
+							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">void</span></h4>
+						</li>
+					</ul>
+				</section>
+				<section class="tsd-panel tsd-member tsd-kind-method tsd-parent-kind-class">
+					<a name="gotostandardloggedinpage" class="tsd-anchor"></a>
+					<h3>go<wbr>ToStandard<wbr>Logged<wbr>InPage</h3>
+					<ul class="tsd-signatures tsd-kind-method tsd-parent-kind-class">
+						<li class="tsd-signature tsd-kind-icon">go<wbr>ToStandard<wbr>Logged<wbr>InPage<span class="tsd-signature-symbol">(</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">void</span></li>
+					</ul>
+					<ul class="tsd-descriptions">
+						<li class="tsd-description">
+							<aside class="tsd-sources">
+								<ul>
+									<li>Defined in <a href="https://github.com/script-development/vue-services/blob/b9c928c/types/services.d.ts#L212">services.d.ts:212</a></li>
+								</ul>
+							</aside>
+							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">void</span></h4>
+						</li>
+					</ul>
+				</section>
+				<section class="tsd-panel tsd-member tsd-kind-method tsd-parent-kind-class">
+					<a name="login" class="tsd-anchor"></a>
+					<h3>login</h3>
+					<ul class="tsd-signatures tsd-kind-method tsd-parent-kind-class">
+						<li class="tsd-signature tsd-kind-icon">login<span class="tsd-signature-symbol">(</span>credentials<span class="tsd-signature-symbol">: </span><span class="tsd-signature-symbol">{ </span>email<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">string</span><span class="tsd-signature-symbol">; </span>password<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">string</span><span class="tsd-signature-symbol">; </span>rememberMe<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">boolean</span><span class="tsd-signature-symbol"> }</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">Promise</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">AxiosResponse</span><span class="tsd-signature-symbol">&gt;</span></li>
+					</ul>
+					<ul class="tsd-descriptions">
+						<li class="tsd-description">
+							<aside class="tsd-sources">
+								<ul>
+									<li>Defined in <a href="https://github.com/script-development/vue-services/blob/b9c928c/types/services.d.ts#L210">services.d.ts:210</a></li>
+								</ul>
+							</aside>
+							<div class="tsd-comment tsd-typography">
+								<div class="lead">
+									<p>Login to the app</p>
+								</div>
+							</div>
+							<h4 class="tsd-parameters-title">Parameters</h4>
+							<ul class="tsd-parameters">
+								<li>
+									<h5>credentials: <span class="tsd-signature-symbol">{ </span>email<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">string</span><span class="tsd-signature-symbol">; </span>password<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">string</span><span class="tsd-signature-symbol">; </span>rememberMe<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">boolean</span><span class="tsd-signature-symbol"> }</span></h5>
+									<div class="tsd-comment tsd-typography">
+										<p>the credentials to login with</p>
+									</div>
+									<ul class="tsd-parameters">
+										<li class="tsd-parameter">
+											<h5>email<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">string</span></h5>
+											<div class="tsd-comment tsd-typography">
+												<p>the email to login with</p>
+											</div>
+										</li>
+										<li class="tsd-parameter">
+											<h5>password<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">string</span></h5>
+											<div class="tsd-comment tsd-typography">
+												<p>the password to login with</p>
+											</div>
+										</li>
+										<li class="tsd-parameter">
+											<h5>remember<wbr>Me<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">boolean</span></h5>
+											<div class="tsd-comment tsd-typography">
+												<p>if you want a consistent login</p>
+											</div>
+										</li>
+									</ul>
+								</li>
+							</ul>
+							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">Promise</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">AxiosResponse</span><span class="tsd-signature-symbol">&gt;</span></h4>
+						</li>
+					</ul>
+				</section>
+				<section class="tsd-panel tsd-member tsd-kind-method tsd-parent-kind-class">
+					<a name="logout" class="tsd-anchor"></a>
+					<h3>logout</h3>
+					<ul class="tsd-signatures tsd-kind-method tsd-parent-kind-class">
+						<li class="tsd-signature tsd-kind-icon">logout<span class="tsd-signature-symbol">(</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">Promise</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">AxiosResponse</span><span class="tsd-signature-symbol">&gt;</span></li>
+					</ul>
+					<ul class="tsd-descriptions">
+						<li class="tsd-description">
+							<aside class="tsd-sources">
+								<ul>
+									<li>Defined in <a href="https://github.com/script-development/vue-services/blob/b9c928c/types/services.d.ts#L211">services.d.ts:211</a></li>
+								</ul>
+							</aside>
+							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">Promise</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">AxiosResponse</span><span class="tsd-signature-symbol">&gt;</span></h4>
+						</li>
+					</ul>
+				</section>
+				<section class="tsd-panel tsd-member tsd-kind-method tsd-parent-kind-class">
+					<a name="resetpassword" class="tsd-anchor"></a>
+					<h3>reset<wbr>Password</h3>
+					<ul class="tsd-signatures tsd-kind-method tsd-parent-kind-class">
+						<li class="tsd-signature tsd-kind-icon">reset<wbr>Password<span class="tsd-signature-symbol">(</span>data<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">any</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">Promise</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">AxiosResponse</span><span class="tsd-signature-symbol">&gt;</span></li>
+					</ul>
+					<ul class="tsd-descriptions">
+						<li class="tsd-description">
+							<aside class="tsd-sources">
+								<ul>
+									<li>Defined in <a href="https://github.com/script-development/vue-services/blob/b9c928c/types/services.d.ts#L214">services.d.ts:214</a></li>
+								</ul>
+							</aside>
+							<h4 class="tsd-parameters-title">Parameters</h4>
+							<ul class="tsd-parameters">
+								<li>
+									<h5>data: <span class="tsd-signature-type">any</span></h5>
+								</li>
+							</ul>
+							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">Promise</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">AxiosResponse</span><span class="tsd-signature-symbol">&gt;</span></h4>
+						</li>
+					</ul>
+				</section>
+				<section class="tsd-panel tsd-member tsd-kind-method tsd-parent-kind-class">
+					<a name="sendemailresetpassword" class="tsd-anchor"></a>
+					<h3>send<wbr>Email<wbr>Reset<wbr>Password</h3>
+					<ul class="tsd-signatures tsd-kind-method tsd-parent-kind-class">
+						<li class="tsd-signature tsd-kind-icon">send<wbr>Email<wbr>Reset<wbr>Password<span class="tsd-signature-symbol">(</span>email<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">any</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">Promise</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">AxiosResponse</span><span class="tsd-signature-symbol">&gt;</span></li>
+					</ul>
+					<ul class="tsd-descriptions">
+						<li class="tsd-description">
+							<aside class="tsd-sources">
+								<ul>
+									<li>Defined in <a href="https://github.com/script-development/vue-services/blob/b9c928c/types/services.d.ts#L213">services.d.ts:213</a></li>
+								</ul>
+							</aside>
+							<h4 class="tsd-parameters-title">Parameters</h4>
+							<ul class="tsd-parameters">
+								<li>
+									<h5>email: <span class="tsd-signature-type">any</span></h5>
+								</li>
+							</ul>
+							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">Promise</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">AxiosResponse</span><span class="tsd-signature-symbol">&gt;</span></h4>
+						</li>
+					</ul>
+				</section>
+				<section class="tsd-panel tsd-member tsd-kind-method tsd-parent-kind-class">
+					<a name="setroutes" class="tsd-anchor"></a>
+					<h3>set<wbr>Routes</h3>
+					<ul class="tsd-signatures tsd-kind-method tsd-parent-kind-class">
+						<li class="tsd-signature tsd-kind-icon">set<wbr>Routes<span class="tsd-signature-symbol">(</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">void</span></li>
+					</ul>
+					<ul class="tsd-descriptions">
+						<li class="tsd-description">
+							<aside class="tsd-sources">
+								<ul>
+									<li>Defined in <a href="https://github.com/script-development/vue-services/blob/b9c928c/types/services.d.ts#L218">services.d.ts:218</a></li>
+								</ul>
+							</aside>
+							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">void</span></h4>
+						</li>
+					</ul>
+				</section>
+			</section>
+		</div>
+		<div class="col-4 col-menu menu-sticky-wrap menu-highlight">
+			<nav class="tsd-navigation primary">
+				<ul>
+					<li class="globals  ">
+						<a href="../globals.html"><em>Globals</em></a>
+					</li>
+				</ul>
+			</nav>
+			<nav class="tsd-navigation secondary menu-sticky">
+				<ul class="before-current">
+					<li class=" tsd-kind-class">
+						<a href="appstarter.html" class="tsd-kind-icon">App<wbr>Starter</a>
+					</li>
+				</ul>
+				<ul class="current">
+					<li class="current tsd-kind-class">
+						<a href="authservice.html" class="tsd-kind-icon">Auth<wbr>Service</a>
+						<ul>
+							<li class=" tsd-kind-constructor tsd-parent-kind-class">
+								<a href="authservice.html#constructor" class="tsd-kind-icon">constructor</a>
+							</li>
+							<li class=" tsd-kind-property tsd-parent-kind-class">
+								<a href="authservice.html#_defaultloggedinpage" class="tsd-kind-icon">_default<wbr>Logged<wbr>InPage</a>
+							</li>
+							<li class=" tsd-kind-property tsd-parent-kind-class">
+								<a href="authservice.html#_httpservice" class="tsd-kind-icon">_http<wbr>Service</a>
+							</li>
+							<li class=" tsd-kind-property tsd-parent-kind-class">
+								<a href="authservice.html#_loginpage" class="tsd-kind-icon">_login<wbr>Page</a>
+							</li>
+							<li class=" tsd-kind-property tsd-parent-kind-class">
+								<a href="authservice.html#_routerservice" class="tsd-kind-icon">_router<wbr>Service</a>
+							</li>
+							<li class=" tsd-kind-property tsd-parent-kind-class">
+								<a href="authservice.html#_storageservice" class="tsd-kind-icon">_storage<wbr>Service</a>
+							</li>
+							<li class=" tsd-kind-property tsd-parent-kind-class">
+								<a href="authservice.html#_storeservice" class="tsd-kind-icon">_store<wbr>Service</a>
+							</li>
+							<li class=" tsd-kind-accessor tsd-parent-kind-class">
+								<a href="authservice.html#defaultloggedinpage" class="tsd-kind-icon">default<wbr>Logged<wbr>InPage</a>
+							</li>
+							<li class=" tsd-kind-get-signature tsd-parent-kind-class">
+								<a href="authservice.html#isloggedin" class="tsd-kind-icon">is<wbr>Loggedin</a>
+							</li>
+							<li class=" tsd-kind-accessor tsd-parent-kind-class">
+								<a href="authservice.html#loginpage" class="tsd-kind-icon">login<wbr>Page</a>
+							</li>
+							<li class=" tsd-kind-get-signature tsd-parent-kind-class">
+								<a href="authservice.html#responseerrormiddleware" class="tsd-kind-icon">response<wbr>Error<wbr>Middleware</a>
+							</li>
+							<li class=" tsd-kind-get-signature tsd-parent-kind-class">
+								<a href="authservice.html#routemiddleware" class="tsd-kind-icon">route<wbr>Middleware</a>
+							</li>
+							<li class=" tsd-kind-get-signature tsd-parent-kind-class">
+								<a href="authservice.html#storemodulename" class="tsd-kind-icon">store<wbr>Module<wbr>Name</a>
+							</li>
+							<li class=" tsd-kind-method tsd-parent-kind-class">
+								<a href="authservice.html#gotologinpage" class="tsd-kind-icon">go<wbr>ToLogin<wbr>Page</a>
+							</li>
+							<li class=" tsd-kind-method tsd-parent-kind-class">
+								<a href="authservice.html#gotostandardloggedinpage" class="tsd-kind-icon">go<wbr>ToStandard<wbr>Logged<wbr>InPage</a>
+							</li>
+							<li class=" tsd-kind-method tsd-parent-kind-class">
+								<a href="authservice.html#login" class="tsd-kind-icon">login</a>
+							</li>
+							<li class=" tsd-kind-method tsd-parent-kind-class">
+								<a href="authservice.html#logout" class="tsd-kind-icon">logout</a>
+							</li>
+							<li class=" tsd-kind-method tsd-parent-kind-class">
+								<a href="authservice.html#resetpassword" class="tsd-kind-icon">reset<wbr>Password</a>
+							</li>
+							<li class=" tsd-kind-method tsd-parent-kind-class">
+								<a href="authservice.html#sendemailresetpassword" class="tsd-kind-icon">send<wbr>Email<wbr>Reset<wbr>Password</a>
+							</li>
+							<li class=" tsd-kind-method tsd-parent-kind-class">
+								<a href="authservice.html#setroutes" class="tsd-kind-icon">set<wbr>Routes</a>
+							</li>
+						</ul>
+					</li>
+				</ul>
+				<ul class="after-current">
+					<li class=" tsd-kind-class">
+						<a href="basecontroller.html" class="tsd-kind-icon">Base<wbr>Controller</a>
+					</li>
+					<li class=" tsd-kind-class">
+						<a href="errorservice.html" class="tsd-kind-icon">Error<wbr>Service</a>
+					</li>
+					<li class=" tsd-kind-class">
+						<a href="eventservice.html" class="tsd-kind-icon">Event<wbr>Service</a>
+					</li>
+					<li class=" tsd-kind-class">
+						<a href="httpservice.html" class="tsd-kind-icon">HTTPService</a>
+					</li>
+					<li class=" tsd-kind-class">
+						<a href="loadingservice.html" class="tsd-kind-icon">Loading<wbr>Service</a>
+					</li>
+					<li class=" tsd-kind-class">
+						<a href="pagecreator.html" class="tsd-kind-icon">Page<wbr>Creator</a>
+					</li>
+					<li class=" tsd-kind-class">
+						<a href="routefactory.html" class="tsd-kind-icon">Route<wbr>Factory</a>
+					</li>
+					<li class=" tsd-kind-class">
+						<a href="routesettings.html" class="tsd-kind-icon">Route<wbr>Settings</a>
+					</li>
+					<li class=" tsd-kind-class">
+						<a href="routerservice.html" class="tsd-kind-icon">Router<wbr>Service</a>
+					</li>
+					<li class=" tsd-kind-class">
+						<a href="staticdataservice.html" class="tsd-kind-icon">Static<wbr>Data<wbr>Service</a>
+					</li>
+					<li class=" tsd-kind-class">
+						<a href="storageservice.html" class="tsd-kind-icon">Storage<wbr>Service</a>
+					</li>
+					<li class=" tsd-kind-class">
+						<a href="storemodulefactory.html" class="tsd-kind-icon">Store<wbr>Module<wbr>Factory</a>
+					</li>
+					<li class=" tsd-kind-class">
+						<a href="storeservice.html" class="tsd-kind-icon">Store<wbr>Service</a>
+					</li>
+					<li class=" tsd-kind-class">
+						<a href="tablecreator.html" class="tsd-kind-icon">Table<wbr>Creator</a>
+					</li>
+					<li class=" tsd-kind-class">
+						<a href="translatorservice.html" class="tsd-kind-icon">Translator<wbr>Service</a>
+					</li>
+					<li class=" tsd-kind-type-alias">
+						<a href="../globals.html#cache" class="tsd-kind-icon">Cache</a>
+					</li>
+					<li class=" tsd-kind-type-alias">
+						<a href="../globals.html#gettermethod" class="tsd-kind-icon">Getter<wbr>Method</a>
+					</li>
+					<li class=" tsd-kind-type-alias">
+						<a href="../globals.html#translation" class="tsd-kind-icon">Translation</a>
+					</li>
+					<li class=" tsd-kind-variable">
+						<a href="../globals.html#appstarter" class="tsd-kind-icon">app<wbr>Starter</a>
+					</li>
+					<li class=" tsd-kind-variable">
+						<a href="../globals.html#authservice" class="tsd-kind-icon">auth<wbr>Service</a>
+					</li>
+					<li class=" tsd-kind-variable">
+						<a href="../globals.html#errorservice" class="tsd-kind-icon">error<wbr>Service</a>
+					</li>
+					<li class=" tsd-kind-variable">
+						<a href="../globals.html#eventservice" class="tsd-kind-icon">event<wbr>Service</a>
+					</li>
+					<li class=" tsd-kind-variable">
+						<a href="../globals.html#httpservice" class="tsd-kind-icon">http<wbr>Service</a>
+					</li>
+					<li class=" tsd-kind-variable">
+						<a href="../globals.html#loadingservice" class="tsd-kind-icon">loading<wbr>Service</a>
+					</li>
+					<li class=" tsd-kind-variable">
+						<a href="../globals.html#routerservice" class="tsd-kind-icon">router<wbr>Service</a>
+					</li>
+					<li class=" tsd-kind-variable">
+						<a href="../globals.html#staticdataservice" class="tsd-kind-icon">static<wbr>Data<wbr>Service</a>
+					</li>
+					<li class=" tsd-kind-variable">
+						<a href="../globals.html#storeservice" class="tsd-kind-icon">store<wbr>Service</a>
+					</li>
+					<li class=" tsd-kind-variable">
+						<a href="../globals.html#translatorservice" class="tsd-kind-icon">translator<wbr>Service</a>
+					</li>
+				</ul>
+			</nav>
+		</div>
+	</div>
+</div>
+<footer class="with-border-bottom">
+	<div class="container">
+		<h2>Legend</h2>
+		<div class="tsd-legend-group">
+			<ul class="tsd-legend">
+				<li class="tsd-kind-constructor tsd-parent-kind-class"><span class="tsd-kind-icon">Constructor</span></li>
+				<li class="tsd-kind-property tsd-parent-kind-class"><span class="tsd-kind-icon">Property</span></li>
+				<li class="tsd-kind-method tsd-parent-kind-class"><span class="tsd-kind-icon">Method</span></li>
+				<li class="tsd-kind-accessor tsd-parent-kind-class"><span class="tsd-kind-icon">Accessor</span></li>
+			</ul>
+		</div>
+	</div>
+</footer>
+<div class="container tsd-generator">
+	<p>Generated using <a href="https://typedoc.org/" target="_blank">TypeDoc</a></p>
+</div>
+<div class="overlay"></div>
+<script src="../assets/js/main.js"></script>
+</body>
+</html>

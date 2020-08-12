@@ -1,0 +1,772 @@
+<!doctype html>
+<html class="default no-js">
+<head>
+	<meta charset="utf-8">
+	<meta http-equiv="X-UA-Compatible" content="IE=edge">
+	<title>RouterService | ServVue - v0.0.42</title>
+	<meta name="description" content="Documentation for ServVue - v0.0.42">
+	<meta name="viewport" content="width=device-width, initial-scale=1">
+	<link rel="stylesheet" href="../assets/css/main.css">
+</head>
+<body>
+<header>
+	<div class="tsd-page-toolbar">
+		<div class="container">
+			<div class="table-wrap">
+				<div class="table-cell" id="tsd-search" data-index="../assets/js/search.json" data-base="..">
+					<div class="field">
+						<label for="tsd-search-field" class="tsd-widget search no-caption">Search</label>
+						<input id="tsd-search-field" type="text" />
+					</div>
+					<ul class="results">
+						<li class="state loading">Preparing search index...</li>
+						<li class="state failure">The search index is not available</li>
+					</ul>
+					<a href="../index.html" class="title">ServVue - v0.0.42</a>
+				</div>
+				<div class="table-cell" id="tsd-widgets">
+					<div id="tsd-filter">
+						<a href="#" class="tsd-widget options no-caption" data-toggle="options">Options</a>
+						<div class="tsd-filter-group">
+							<div class="tsd-select" id="tsd-filter-visibility">
+								<span class="tsd-select-label">All</span>
+								<ul class="tsd-select-list">
+									<li data-value="public">Public</li>
+									<li data-value="protected">Public/Protected</li>
+									<li data-value="private" class="selected">All</li>
+								</ul>
+							</div>
+							<input type="checkbox" id="tsd-filter-inherited" checked />
+							<label class="tsd-widget" for="tsd-filter-inherited">Inherited</label>
+							<input type="checkbox" id="tsd-filter-only-exported" />
+							<label class="tsd-widget" for="tsd-filter-only-exported">Only exported</label>
+						</div>
+					</div>
+					<a href="#" class="tsd-widget menu no-caption" data-toggle="menu">Menu</a>
+				</div>
+			</div>
+		</div>
+	</div>
+	<div class="tsd-page-title">
+		<div class="container">
+			<ul class="tsd-breadcrumb">
+				<li>
+					<a href="../globals.html">Globals</a>
+				</li>
+				<li>
+					<a href="routerservice.html">RouterService</a>
+				</li>
+			</ul>
+			<h1>Class RouterService</h1>
+		</div>
+	</div>
+</header>
+<div class="container container-main">
+	<div class="row">
+		<div class="col-8 col-content">
+			<section class="tsd-panel tsd-hierarchy">
+				<h3>Hierarchy</h3>
+				<ul class="tsd-hierarchy">
+					<li>
+						<span class="target">RouterService</span>
+					</li>
+				</ul>
+			</section>
+			<section class="tsd-panel-group tsd-index-group">
+				<h2>Index</h2>
+				<section class="tsd-panel tsd-index-panel">
+					<div class="tsd-index-content">
+						<section class="tsd-index-section ">
+							<h3>Constructors</h3>
+							<ul class="tsd-index-list">
+								<li class="tsd-kind-constructor tsd-parent-kind-class"><a href="routerservice.html#constructor" class="tsd-kind-icon">constructor</a></li>
+							</ul>
+						</section>
+						<section class="tsd-index-section ">
+							<h3>Properties</h3>
+							<ul class="tsd-index-list">
+								<li class="tsd-kind-property tsd-parent-kind-class"><a href="routerservice.html#_factory" class="tsd-kind-icon">_factory</a></li>
+								<li class="tsd-kind-property tsd-parent-kind-class"><a href="routerservice.html#_routeraftermiddleware" class="tsd-kind-icon">_router<wbr>After<wbr>Middleware</a></li>
+								<li class="tsd-kind-property tsd-parent-kind-class"><a href="routerservice.html#_routerbeforemiddleware" class="tsd-kind-icon">_router<wbr>Before<wbr>Middleware</a></li>
+								<li class="tsd-kind-property tsd-parent-kind-class"><a href="routerservice.html#_settings" class="tsd-kind-icon">_settings</a></li>
+							</ul>
+						</section>
+						<section class="tsd-index-section ">
+							<h3>Accessors</h3>
+							<ul class="tsd-index-list">
+								<li class="tsd-kind-get-signature tsd-parent-kind-class"><a href="routerservice.html#beforemiddleware" class="tsd-kind-icon">before<wbr>Middleware</a></li>
+								<li class="tsd-kind-get-signature tsd-parent-kind-class"><a href="routerservice.html#id" class="tsd-kind-icon">id</a></li>
+								<li class="tsd-kind-get-signature tsd-parent-kind-class"><a href="routerservice.html#oncreatepage" class="tsd-kind-icon">on<wbr>Create<wbr>Page</a></li>
+								<li class="tsd-kind-get-signature tsd-parent-kind-class"><a href="routerservice.html#oneditpage" class="tsd-kind-icon">on<wbr>Edit<wbr>Page</a></li>
+								<li class="tsd-kind-get-signature tsd-parent-kind-class"><a href="routerservice.html#onoverviewpage" class="tsd-kind-icon">on<wbr>Overview<wbr>Page</a></li>
+								<li class="tsd-kind-get-signature tsd-parent-kind-class"><a href="routerservice.html#onshowpage" class="tsd-kind-icon">on<wbr>Show<wbr>Page</a></li>
+								<li class="tsd-kind-get-signature tsd-parent-kind-class"><a href="routerservice.html#query" class="tsd-kind-icon">query</a></li>
+							</ul>
+						</section>
+						<section class="tsd-index-section ">
+							<h3>Methods</h3>
+							<ul class="tsd-index-list">
+								<li class="tsd-kind-method tsd-parent-kind-class"><a href="routerservice.html#addroutes" class="tsd-kind-icon">add<wbr>Routes</a></li>
+								<li class="tsd-kind-method tsd-parent-kind-class"><a href="routerservice.html#createroutes" class="tsd-kind-icon">create<wbr>Routes</a></li>
+								<li class="tsd-kind-method tsd-parent-kind-class"><a href="routerservice.html#gotoroute" class="tsd-kind-icon">go<wbr>ToRoute</a></li>
+								<li class="tsd-kind-method tsd-parent-kind-class"><a href="routerservice.html#newsettings" class="tsd-kind-icon">new<wbr>Settings</a></li>
+								<li class="tsd-kind-method tsd-parent-kind-class"><a href="routerservice.html#registeraftermiddleware" class="tsd-kind-icon">register<wbr>After<wbr>Middleware</a></li>
+								<li class="tsd-kind-method tsd-parent-kind-class"><a href="routerservice.html#registerbeforemiddleware" class="tsd-kind-icon">register<wbr>Before<wbr>Middleware</a></li>
+							</ul>
+						</section>
+					</div>
+				</section>
+			</section>
+			<section class="tsd-panel-group tsd-member-group ">
+				<h2>Constructors</h2>
+				<section class="tsd-panel tsd-member tsd-kind-constructor tsd-parent-kind-class">
+					<a name="constructor" class="tsd-anchor"></a>
+					<h3>constructor</h3>
+					<ul class="tsd-signatures tsd-kind-constructor tsd-parent-kind-class">
+						<li class="tsd-signature tsd-kind-icon">new <wbr>Router<wbr>Service<span class="tsd-signature-symbol">(</span>factory<span class="tsd-signature-symbol">: </span><a href="routefactory.html" class="tsd-signature-type">RouteFactory</a>, settings<span class="tsd-signature-symbol">: </span><a href="routesettings.html" class="tsd-signature-type">RouteSettings</a><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><a href="routerservice.html" class="tsd-signature-type">RouterService</a></li>
+					</ul>
+					<ul class="tsd-descriptions">
+						<li class="tsd-description">
+							<aside class="tsd-sources">
+								<ul>
+									<li>Defined in <a href="https://github.com/script-development/vue-services/blob/b9c928c/types/routerService.d.ts#L332">routerService.d.ts:332</a></li>
+								</ul>
+							</aside>
+							<div class="tsd-comment tsd-typography">
+							</div>
+							<h4 class="tsd-parameters-title">Parameters</h4>
+							<ul class="tsd-parameters">
+								<li>
+									<h5>factory: <a href="routefactory.html" class="tsd-signature-type">RouteFactory</a></h5>
+									<div class="tsd-comment tsd-typography">
+										<div class="lead">
+											<p>the router factory</p>
+										</div>
+									</div>
+								</li>
+								<li>
+									<h5>settings: <a href="routesettings.html" class="tsd-signature-type">RouteSettings</a></h5>
+									<div class="tsd-comment tsd-typography">
+										<div class="lead">
+											<p>the settings service for the routes</p>
+										</div>
+									</div>
+								</li>
+							</ul>
+							<h4 class="tsd-returns-title">Returns <a href="routerservice.html" class="tsd-signature-type">RouterService</a></h4>
+						</li>
+					</ul>
+				</section>
+			</section>
+			<section class="tsd-panel-group tsd-member-group ">
+				<h2>Properties</h2>
+				<section class="tsd-panel tsd-member tsd-kind-property tsd-parent-kind-class">
+					<a name="_factory" class="tsd-anchor"></a>
+					<h3>_factory</h3>
+					<div class="tsd-signature tsd-kind-icon">_factory<span class="tsd-signature-symbol">:</span> <a href="routefactory.html" class="tsd-signature-type">RouteFactory</a></div>
+					<aside class="tsd-sources">
+						<ul>
+							<li>Defined in <a href="https://github.com/script-development/vue-services/blob/b9c928c/types/routerService.d.ts#L338">routerService.d.ts:338</a></li>
+						</ul>
+					</aside>
+				</section>
+				<section class="tsd-panel tsd-member tsd-kind-property tsd-parent-kind-class">
+					<a name="_routeraftermiddleware" class="tsd-anchor"></a>
+					<h3>_router<wbr>After<wbr>Middleware</h3>
+					<div class="tsd-signature tsd-kind-icon">_router<wbr>After<wbr>Middleware<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">any</span><span class="tsd-signature-symbol">[]</span></div>
+					<aside class="tsd-sources">
+						<ul>
+							<li>Defined in <a href="https://github.com/script-development/vue-services/blob/b9c928c/types/routerService.d.ts#L341">routerService.d.ts:341</a></li>
+						</ul>
+					</aside>
+				</section>
+				<section class="tsd-panel tsd-member tsd-kind-property tsd-parent-kind-class">
+					<a name="_routerbeforemiddleware" class="tsd-anchor"></a>
+					<h3>_router<wbr>Before<wbr>Middleware</h3>
+					<div class="tsd-signature tsd-kind-icon">_router<wbr>Before<wbr>Middleware<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-symbol">(</span><span class="tsd-signature-symbol">(</span>to<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">Route</span>, from<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">Route</span>, next<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">any</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol"> =&gt; </span><span class="tsd-signature-type">boolean</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">[]</span></div>
+					<aside class="tsd-sources">
+						<ul>
+							<li>Defined in <a href="https://github.com/script-development/vue-services/blob/b9c928c/types/routerService.d.ts#L340">routerService.d.ts:340</a></li>
+						</ul>
+					</aside>
+				</section>
+				<section class="tsd-panel tsd-member tsd-kind-property tsd-parent-kind-class">
+					<a name="_settings" class="tsd-anchor"></a>
+					<h3>_settings</h3>
+					<div class="tsd-signature tsd-kind-icon">_settings<span class="tsd-signature-symbol">:</span> <a href="routesettings.html" class="tsd-signature-type">RouteSettings</a></div>
+					<aside class="tsd-sources">
+						<ul>
+							<li>Defined in <a href="https://github.com/script-development/vue-services/blob/b9c928c/types/routerService.d.ts#L339">routerService.d.ts:339</a></li>
+						</ul>
+					</aside>
+				</section>
+			</section>
+			<section class="tsd-panel-group tsd-member-group ">
+				<h2>Accessors</h2>
+				<section class="tsd-panel tsd-member tsd-kind-get-signature tsd-parent-kind-class">
+					<a name="beforemiddleware" class="tsd-anchor"></a>
+					<h3>before<wbr>Middleware</h3>
+					<ul class="tsd-signatures tsd-kind-get-signature tsd-parent-kind-class">
+						<li class="tsd-signature tsd-kind-icon"><span class="tsd-signature-symbol">get</span> beforeMiddleware<span class="tsd-signature-symbol">(</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-symbol">(</span>to<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">Route</span>, from<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">Route</span>, next<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">any</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol"> =&gt; </span><span class="tsd-signature-type">boolean</span></li>
+					</ul>
+					<ul class="tsd-descriptions">
+						<li class="tsd-description">
+							<aside class="tsd-sources">
+								<ul>
+									<li>Defined in <a href="https://github.com/script-development/vue-services/blob/b9c928c/types/routerService.d.ts#L389">routerService.d.ts:389</a></li>
+								</ul>
+							</aside>
+							<div class="tsd-comment tsd-typography">
+							</div>
+							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-symbol">(</span>to<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">Route</span>, from<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">Route</span>, next<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">any</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol"> =&gt; </span><span class="tsd-signature-type">boolean</span></h4>
+							<ul class="tsd-parameters">
+								<li class="tsd-parameter-signature">
+									<ul class="tsd-signatures tsd-kind-type-literal">
+										<li class="tsd-signature tsd-kind-icon"><span class="tsd-signature-symbol">(</span>to<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">Route</span>, from<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">Route</span>, next<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">any</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">boolean</span></li>
+									</ul>
+									<ul class="tsd-descriptions">
+										<li class="tsd-description">
+											<h4 class="tsd-parameters-title">Parameters</h4>
+											<ul class="tsd-parameters">
+												<li>
+													<h5>to: <span class="tsd-signature-type">Route</span></h5>
+												</li>
+												<li>
+													<h5>from: <span class="tsd-signature-type">Route</span></h5>
+												</li>
+												<li>
+													<h5>next: <span class="tsd-signature-type">any</span></h5>
+												</li>
+											</ul>
+											<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">boolean</span></h4>
+										</li>
+									</ul>
+								</li>
+							</ul>
+						</li>
+					</ul>
+				</section>
+				<section class="tsd-panel tsd-member tsd-kind-get-signature tsd-parent-kind-class">
+					<a name="id" class="tsd-anchor"></a>
+					<h3>id</h3>
+					<ul class="tsd-signatures tsd-kind-get-signature tsd-parent-kind-class">
+						<li class="tsd-signature tsd-kind-icon"><span class="tsd-signature-symbol">get</span> id<span class="tsd-signature-symbol">(</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">string</span></li>
+					</ul>
+					<ul class="tsd-descriptions">
+						<li class="tsd-description">
+							<aside class="tsd-sources">
+								<ul>
+									<li>Defined in <a href="https://github.com/script-development/vue-services/blob/b9c928c/types/routerService.d.ts#L401">routerService.d.ts:401</a></li>
+								</ul>
+							</aside>
+							<div class="tsd-comment tsd-typography">
+								<div class="lead">
+									<p>Get the id from the params from the current route</p>
+								</div>
+							</div>
+							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">string</span></h4>
+						</li>
+					</ul>
+				</section>
+				<section class="tsd-panel tsd-member tsd-kind-get-signature tsd-parent-kind-class">
+					<a name="oncreatepage" class="tsd-anchor"></a>
+					<h3>on<wbr>Create<wbr>Page</h3>
+					<ul class="tsd-signatures tsd-kind-get-signature tsd-parent-kind-class">
+						<li class="tsd-signature tsd-kind-icon"><span class="tsd-signature-symbol">get</span> onCreatePage<span class="tsd-signature-symbol">(</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">boolean</span></li>
+					</ul>
+					<ul class="tsd-descriptions">
+						<li class="tsd-description">
+							<aside class="tsd-sources">
+								<ul>
+									<li>Defined in <a href="https://github.com/script-development/vue-services/blob/b9c928c/types/routerService.d.ts#L391">routerService.d.ts:391</a></li>
+								</ul>
+							</aside>
+							<div class="tsd-comment tsd-typography">
+								<div class="lead">
+									<p>returns if you are on the create page</p>
+								</div>
+							</div>
+							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">boolean</span></h4>
+						</li>
+					</ul>
+				</section>
+				<section class="tsd-panel tsd-member tsd-kind-get-signature tsd-parent-kind-class">
+					<a name="oneditpage" class="tsd-anchor"></a>
+					<h3>on<wbr>Edit<wbr>Page</h3>
+					<ul class="tsd-signatures tsd-kind-get-signature tsd-parent-kind-class">
+						<li class="tsd-signature tsd-kind-icon"><span class="tsd-signature-symbol">get</span> onEditPage<span class="tsd-signature-symbol">(</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">boolean</span></li>
+					</ul>
+					<ul class="tsd-descriptions">
+						<li class="tsd-description">
+							<aside class="tsd-sources">
+								<ul>
+									<li>Defined in <a href="https://github.com/script-development/vue-services/blob/b9c928c/types/routerService.d.ts#L393">routerService.d.ts:393</a></li>
+								</ul>
+							</aside>
+							<div class="tsd-comment tsd-typography">
+								<div class="lead">
+									<p>returns if you are on the edit page</p>
+								</div>
+							</div>
+							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">boolean</span></h4>
+						</li>
+					</ul>
+				</section>
+				<section class="tsd-panel tsd-member tsd-kind-get-signature tsd-parent-kind-class">
+					<a name="onoverviewpage" class="tsd-anchor"></a>
+					<h3>on<wbr>Overview<wbr>Page</h3>
+					<ul class="tsd-signatures tsd-kind-get-signature tsd-parent-kind-class">
+						<li class="tsd-signature tsd-kind-icon"><span class="tsd-signature-symbol">get</span> onOverviewPage<span class="tsd-signature-symbol">(</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">boolean</span></li>
+					</ul>
+					<ul class="tsd-descriptions">
+						<li class="tsd-description">
+							<aside class="tsd-sources">
+								<ul>
+									<li>Defined in <a href="https://github.com/script-development/vue-services/blob/b9c928c/types/routerService.d.ts#L397">routerService.d.ts:397</a></li>
+								</ul>
+							</aside>
+							<div class="tsd-comment tsd-typography">
+								<div class="lead">
+									<p>returns if you are on the overview page</p>
+								</div>
+							</div>
+							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">boolean</span></h4>
+						</li>
+					</ul>
+				</section>
+				<section class="tsd-panel tsd-member tsd-kind-get-signature tsd-parent-kind-class">
+					<a name="onshowpage" class="tsd-anchor"></a>
+					<h3>on<wbr>Show<wbr>Page</h3>
+					<ul class="tsd-signatures tsd-kind-get-signature tsd-parent-kind-class">
+						<li class="tsd-signature tsd-kind-icon"><span class="tsd-signature-symbol">get</span> onShowPage<span class="tsd-signature-symbol">(</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">boolean</span></li>
+					</ul>
+					<ul class="tsd-descriptions">
+						<li class="tsd-description">
+							<aside class="tsd-sources">
+								<ul>
+									<li>Defined in <a href="https://github.com/script-development/vue-services/blob/b9c928c/types/routerService.d.ts#L395">routerService.d.ts:395</a></li>
+								</ul>
+							</aside>
+							<div class="tsd-comment tsd-typography">
+								<div class="lead">
+									<p>returns if you are on the show page</p>
+								</div>
+							</div>
+							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">boolean</span></h4>
+						</li>
+					</ul>
+				</section>
+				<section class="tsd-panel tsd-member tsd-kind-get-signature tsd-parent-kind-class">
+					<a name="query" class="tsd-anchor"></a>
+					<h3>query</h3>
+					<ul class="tsd-signatures tsd-kind-get-signature tsd-parent-kind-class">
+						<li class="tsd-signature tsd-kind-icon"><span class="tsd-signature-symbol">get</span> query<span class="tsd-signature-symbol">(</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-symbol">{}</span></li>
+					</ul>
+					<ul class="tsd-descriptions">
+						<li class="tsd-description">
+							<aside class="tsd-sources">
+								<ul>
+									<li>Defined in <a href="https://github.com/script-development/vue-services/blob/b9c928c/types/routerService.d.ts#L399">routerService.d.ts:399</a></li>
+								</ul>
+							</aside>
+							<div class="tsd-comment tsd-typography">
+								<div class="lead">
+									<p>Get the query from the current route</p>
+								</div>
+							</div>
+							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-symbol">{}</span></h4>
+							<ul class="tsd-parameters">
+								<li class="tsd-parameter-index-signature">
+									<h5><span class="tsd-signature-symbol">[</span>key: <span class="tsd-signature-type">string</span><span class="tsd-signature-symbol">]: </span><span class="tsd-signature-type">string</span></h5>
+								</li>
+							</ul>
+						</li>
+					</ul>
+				</section>
+			</section>
+			<section class="tsd-panel-group tsd-member-group ">
+				<h2>Methods</h2>
+				<section class="tsd-panel tsd-member tsd-kind-method tsd-parent-kind-class">
+					<a name="addroutes" class="tsd-anchor"></a>
+					<h3>add<wbr>Routes</h3>
+					<ul class="tsd-signatures tsd-kind-method tsd-parent-kind-class">
+						<li class="tsd-signature tsd-kind-icon">add<wbr>Routes<span class="tsd-signature-symbol">(</span>routes<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">RouteConfig</span><span class="tsd-signature-symbol">[]</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">void</span></li>
+					</ul>
+					<ul class="tsd-descriptions">
+						<li class="tsd-description">
+							<aside class="tsd-sources">
+								<ul>
+									<li>Defined in <a href="https://github.com/script-development/vue-services/blob/b9c928c/types/routerService.d.ts#L356">routerService.d.ts:356</a></li>
+								</ul>
+							</aside>
+							<div class="tsd-comment tsd-typography">
+								<div class="lead">
+									<p>Add routes to the router</p>
+								</div>
+							</div>
+							<h4 class="tsd-parameters-title">Parameters</h4>
+							<ul class="tsd-parameters">
+								<li>
+									<h5>routes: <span class="tsd-signature-type">RouteConfig</span><span class="tsd-signature-symbol">[]</span></h5>
+									<div class="tsd-comment tsd-typography">
+									</div>
+								</li>
+							</ul>
+							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">void</span></h4>
+						</li>
+					</ul>
+				</section>
+				<section class="tsd-panel tsd-member tsd-kind-method tsd-parent-kind-class">
+					<a name="createroutes" class="tsd-anchor"></a>
+					<h3>create<wbr>Routes</h3>
+					<ul class="tsd-signatures tsd-kind-method tsd-parent-kind-class">
+						<li class="tsd-signature tsd-kind-icon">create<wbr>Routes<span class="tsd-signature-symbol">(</span>settings<span class="tsd-signature-symbol">: </span><a href="routesettings.html" class="tsd-signature-type">RouteSettings</a><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">RouteConfig</span><span class="tsd-signature-symbol">[]</span></li>
+					</ul>
+					<ul class="tsd-descriptions">
+						<li class="tsd-description">
+							<aside class="tsd-sources">
+								<ul>
+									<li>Defined in <a href="https://github.com/script-development/vue-services/blob/b9c928c/types/routerService.d.ts#L377">routerService.d.ts:377</a></li>
+								</ul>
+							</aside>
+							<div class="tsd-comment tsd-typography">
+								<div class="lead">
+									<p>create basic routes for the given settings</p>
+								</div>
+							</div>
+							<h4 class="tsd-parameters-title">Parameters</h4>
+							<ul class="tsd-parameters">
+								<li>
+									<h5>settings: <a href="routesettings.html" class="tsd-signature-type">RouteSettings</a></h5>
+									<div class="tsd-comment tsd-typography">
+										<p>the settings on which the routes are based</p>
+									</div>
+								</li>
+							</ul>
+							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">RouteConfig</span><span class="tsd-signature-symbol">[]</span></h4>
+						</li>
+					</ul>
+				</section>
+				<section class="tsd-panel tsd-member tsd-kind-method tsd-parent-kind-class">
+					<a name="gotoroute" class="tsd-anchor"></a>
+					<h3>go<wbr>ToRoute</h3>
+					<ul class="tsd-signatures tsd-kind-method tsd-parent-kind-class">
+						<li class="tsd-signature tsd-kind-icon">go<wbr>ToRoute<span class="tsd-signature-symbol">(</span>name<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">string</span>, id<span class="tsd-signature-symbol">?: </span><span class="tsd-signature-type">string</span>, query<span class="tsd-signature-symbol">?: </span><span class="tsd-signature-symbol">{}</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">void</span></li>
+					</ul>
+					<ul class="tsd-descriptions">
+						<li class="tsd-description">
+							<aside class="tsd-sources">
+								<ul>
+									<li>Defined in <a href="https://github.com/script-development/vue-services/blob/b9c928c/types/routerService.d.ts#L365">routerService.d.ts:365</a></li>
+								</ul>
+							</aside>
+							<div class="tsd-comment tsd-typography">
+								<div class="lead">
+									<p>Go to the give route by name, optional id and query
+									If going to a route you are already on, it catches the given error</p>
+								</div>
+							</div>
+							<h4 class="tsd-parameters-title">Parameters</h4>
+							<ul class="tsd-parameters">
+								<li>
+									<h5>name: <span class="tsd-signature-type">string</span></h5>
+									<div class="tsd-comment tsd-typography">
+										<p>the name of the new route</p>
+									</div>
+								</li>
+								<li>
+									<h5><span class="tsd-flag ts-flagOptional">Optional</span> id: <span class="tsd-signature-type">string</span></h5>
+								</li>
+								<li>
+									<h5><span class="tsd-flag ts-flagOptional">Optional</span> query: <span class="tsd-signature-symbol">{}</span></h5>
+									<ul class="tsd-parameters">
+										<li class="tsd-parameter-index-signature">
+											<h5><span class="tsd-signature-symbol">[</span>x: <span class="tsd-signature-type">string</span><span class="tsd-signature-symbol">]: </span><span class="tsd-signature-type">string</span></h5>
+										</li>
+									</ul>
+								</li>
+							</ul>
+							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">void</span></h4>
+						</li>
+					</ul>
+				</section>
+				<section class="tsd-panel tsd-member tsd-kind-method tsd-parent-kind-class">
+					<a name="newsettings" class="tsd-anchor"></a>
+					<h3>new<wbr>Settings</h3>
+					<ul class="tsd-signatures tsd-kind-method tsd-parent-kind-class">
+						<li class="tsd-signature tsd-kind-icon">new<wbr>Settings<span class="tsd-signature-symbol">(</span>baseRouteName<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">string</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><a href="routesettings.html" class="tsd-signature-type">RouteSettings</a></li>
+					</ul>
+					<ul class="tsd-descriptions">
+						<li class="tsd-description">
+							<aside class="tsd-sources">
+								<ul>
+									<li>Defined in <a href="https://github.com/script-development/vue-services/blob/b9c928c/types/routerService.d.ts#L385">routerService.d.ts:385</a></li>
+								</ul>
+							</aside>
+							<div class="tsd-comment tsd-typography">
+								<div class="lead">
+									<p>Create new route settings</p>
+								</div>
+							</div>
+							<h4 class="tsd-parameters-title">Parameters</h4>
+							<ul class="tsd-parameters">
+								<li>
+									<h5>baseRouteName: <span class="tsd-signature-type">string</span></h5>
+									<div class="tsd-comment tsd-typography">
+										<p>the base name for the routes being created</p>
+									</div>
+								</li>
+							</ul>
+							<h4 class="tsd-returns-title">Returns <a href="routesettings.html" class="tsd-signature-type">RouteSettings</a></h4>
+						</li>
+					</ul>
+				</section>
+				<section class="tsd-panel tsd-member tsd-kind-method tsd-parent-kind-class">
+					<a name="registeraftermiddleware" class="tsd-anchor"></a>
+					<h3>register<wbr>After<wbr>Middleware</h3>
+					<ul class="tsd-signatures tsd-kind-method tsd-parent-kind-class">
+						<li class="tsd-signature tsd-kind-icon">register<wbr>After<wbr>Middleware<span class="tsd-signature-symbol">(</span>middlewareFunc<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">Function</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">void</span></li>
+					</ul>
+					<ul class="tsd-descriptions">
+						<li class="tsd-description">
+							<aside class="tsd-sources">
+								<ul>
+									<li>Defined in <a href="https://github.com/script-development/vue-services/blob/b9c928c/types/routerService.d.ts#L351">routerService.d.ts:351</a></li>
+								</ul>
+							</aside>
+							<div class="tsd-comment tsd-typography">
+								<div class="lead">
+									<p>register middleware for the router after entering a route</p>
+								</div>
+							</div>
+							<h4 class="tsd-parameters-title">Parameters</h4>
+							<ul class="tsd-parameters">
+								<li>
+									<h5>middlewareFunc: <span class="tsd-signature-type">Function</span></h5>
+									<div class="tsd-comment tsd-typography">
+										<p>the middleware function</p>
+									</div>
+								</li>
+							</ul>
+							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">void</span></h4>
+						</li>
+					</ul>
+				</section>
+				<section class="tsd-panel tsd-member tsd-kind-method tsd-parent-kind-class">
+					<a name="registerbeforemiddleware" class="tsd-anchor"></a>
+					<h3>register<wbr>Before<wbr>Middleware</h3>
+					<ul class="tsd-signatures tsd-kind-method tsd-parent-kind-class">
+						<li class="tsd-signature tsd-kind-icon">register<wbr>Before<wbr>Middleware<span class="tsd-signature-symbol">(</span>middlewareFunc<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">Function</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">void</span></li>
+					</ul>
+					<ul class="tsd-descriptions">
+						<li class="tsd-description">
+							<aside class="tsd-sources">
+								<ul>
+									<li>Defined in <a href="https://github.com/script-development/vue-services/blob/b9c928c/types/routerService.d.ts#L346">routerService.d.ts:346</a></li>
+								</ul>
+							</aside>
+							<div class="tsd-comment tsd-typography">
+								<div class="lead">
+									<p>register middleware for the router before entering the route</p>
+								</div>
+							</div>
+							<h4 class="tsd-parameters-title">Parameters</h4>
+							<ul class="tsd-parameters">
+								<li>
+									<h5>middlewareFunc: <span class="tsd-signature-type">Function</span></h5>
+									<div class="tsd-comment tsd-typography">
+										<p>the middleware function</p>
+									</div>
+								</li>
+							</ul>
+							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">void</span></h4>
+						</li>
+					</ul>
+				</section>
+			</section>
+		</div>
+		<div class="col-4 col-menu menu-sticky-wrap menu-highlight">
+			<nav class="tsd-navigation primary">
+				<ul>
+					<li class="globals  ">
+						<a href="../globals.html"><em>Globals</em></a>
+					</li>
+				</ul>
+			</nav>
+			<nav class="tsd-navigation secondary menu-sticky">
+				<ul class="before-current">
+					<li class=" tsd-kind-class">
+						<a href="appstarter.html" class="tsd-kind-icon">App<wbr>Starter</a>
+					</li>
+					<li class=" tsd-kind-class">
+						<a href="authservice.html" class="tsd-kind-icon">Auth<wbr>Service</a>
+					</li>
+					<li class=" tsd-kind-class">
+						<a href="basecontroller.html" class="tsd-kind-icon">Base<wbr>Controller</a>
+					</li>
+					<li class=" tsd-kind-class">
+						<a href="errorservice.html" class="tsd-kind-icon">Error<wbr>Service</a>
+					</li>
+					<li class=" tsd-kind-class">
+						<a href="eventservice.html" class="tsd-kind-icon">Event<wbr>Service</a>
+					</li>
+					<li class=" tsd-kind-class">
+						<a href="httpservice.html" class="tsd-kind-icon">HTTPService</a>
+					</li>
+					<li class=" tsd-kind-class">
+						<a href="loadingservice.html" class="tsd-kind-icon">Loading<wbr>Service</a>
+					</li>
+					<li class=" tsd-kind-class">
+						<a href="pagecreator.html" class="tsd-kind-icon">Page<wbr>Creator</a>
+					</li>
+					<li class=" tsd-kind-class">
+						<a href="routefactory.html" class="tsd-kind-icon">Route<wbr>Factory</a>
+					</li>
+					<li class=" tsd-kind-class">
+						<a href="routesettings.html" class="tsd-kind-icon">Route<wbr>Settings</a>
+					</li>
+				</ul>
+				<ul class="current">
+					<li class="current tsd-kind-class">
+						<a href="routerservice.html" class="tsd-kind-icon">Router<wbr>Service</a>
+						<ul>
+							<li class=" tsd-kind-constructor tsd-parent-kind-class">
+								<a href="routerservice.html#constructor" class="tsd-kind-icon">constructor</a>
+							</li>
+							<li class=" tsd-kind-property tsd-parent-kind-class">
+								<a href="routerservice.html#_factory" class="tsd-kind-icon">_factory</a>
+							</li>
+							<li class=" tsd-kind-property tsd-parent-kind-class">
+								<a href="routerservice.html#_routeraftermiddleware" class="tsd-kind-icon">_router<wbr>After<wbr>Middleware</a>
+							</li>
+							<li class=" tsd-kind-property tsd-parent-kind-class">
+								<a href="routerservice.html#_routerbeforemiddleware" class="tsd-kind-icon">_router<wbr>Before<wbr>Middleware</a>
+							</li>
+							<li class=" tsd-kind-property tsd-parent-kind-class">
+								<a href="routerservice.html#_settings" class="tsd-kind-icon">_settings</a>
+							</li>
+							<li class=" tsd-kind-get-signature tsd-parent-kind-class">
+								<a href="routerservice.html#beforemiddleware" class="tsd-kind-icon">before<wbr>Middleware</a>
+							</li>
+							<li class=" tsd-kind-get-signature tsd-parent-kind-class">
+								<a href="routerservice.html#id" class="tsd-kind-icon">id</a>
+							</li>
+							<li class=" tsd-kind-get-signature tsd-parent-kind-class">
+								<a href="routerservice.html#oncreatepage" class="tsd-kind-icon">on<wbr>Create<wbr>Page</a>
+							</li>
+							<li class=" tsd-kind-get-signature tsd-parent-kind-class">
+								<a href="routerservice.html#oneditpage" class="tsd-kind-icon">on<wbr>Edit<wbr>Page</a>
+							</li>
+							<li class=" tsd-kind-get-signature tsd-parent-kind-class">
+								<a href="routerservice.html#onoverviewpage" class="tsd-kind-icon">on<wbr>Overview<wbr>Page</a>
+							</li>
+							<li class=" tsd-kind-get-signature tsd-parent-kind-class">
+								<a href="routerservice.html#onshowpage" class="tsd-kind-icon">on<wbr>Show<wbr>Page</a>
+							</li>
+							<li class=" tsd-kind-get-signature tsd-parent-kind-class">
+								<a href="routerservice.html#query" class="tsd-kind-icon">query</a>
+							</li>
+							<li class=" tsd-kind-method tsd-parent-kind-class">
+								<a href="routerservice.html#addroutes" class="tsd-kind-icon">add<wbr>Routes</a>
+							</li>
+							<li class=" tsd-kind-method tsd-parent-kind-class">
+								<a href="routerservice.html#createroutes" class="tsd-kind-icon">create<wbr>Routes</a>
+							</li>
+							<li class=" tsd-kind-method tsd-parent-kind-class">
+								<a href="routerservice.html#gotoroute" class="tsd-kind-icon">go<wbr>ToRoute</a>
+							</li>
+							<li class=" tsd-kind-method tsd-parent-kind-class">
+								<a href="routerservice.html#newsettings" class="tsd-kind-icon">new<wbr>Settings</a>
+							</li>
+							<li class=" tsd-kind-method tsd-parent-kind-class">
+								<a href="routerservice.html#registeraftermiddleware" class="tsd-kind-icon">register<wbr>After<wbr>Middleware</a>
+							</li>
+							<li class=" tsd-kind-method tsd-parent-kind-class">
+								<a href="routerservice.html#registerbeforemiddleware" class="tsd-kind-icon">register<wbr>Before<wbr>Middleware</a>
+							</li>
+						</ul>
+					</li>
+				</ul>
+				<ul class="after-current">
+					<li class=" tsd-kind-class">
+						<a href="staticdataservice.html" class="tsd-kind-icon">Static<wbr>Data<wbr>Service</a>
+					</li>
+					<li class=" tsd-kind-class">
+						<a href="storageservice.html" class="tsd-kind-icon">Storage<wbr>Service</a>
+					</li>
+					<li class=" tsd-kind-class">
+						<a href="storemodulefactory.html" class="tsd-kind-icon">Store<wbr>Module<wbr>Factory</a>
+					</li>
+					<li class=" tsd-kind-class">
+						<a href="storeservice.html" class="tsd-kind-icon">Store<wbr>Service</a>
+					</li>
+					<li class=" tsd-kind-class">
+						<a href="tablecreator.html" class="tsd-kind-icon">Table<wbr>Creator</a>
+					</li>
+					<li class=" tsd-kind-class">
+						<a href="translatorservice.html" class="tsd-kind-icon">Translator<wbr>Service</a>
+					</li>
+					<li class=" tsd-kind-type-alias">
+						<a href="../globals.html#cache" class="tsd-kind-icon">Cache</a>
+					</li>
+					<li class=" tsd-kind-type-alias">
+						<a href="../globals.html#gettermethod" class="tsd-kind-icon">Getter<wbr>Method</a>
+					</li>
+					<li class=" tsd-kind-type-alias">
+						<a href="../globals.html#translation" class="tsd-kind-icon">Translation</a>
+					</li>
+					<li class=" tsd-kind-variable">
+						<a href="../globals.html#appstarter" class="tsd-kind-icon">app<wbr>Starter</a>
+					</li>
+					<li class=" tsd-kind-variable">
+						<a href="../globals.html#authservice" class="tsd-kind-icon">auth<wbr>Service</a>
+					</li>
+					<li class=" tsd-kind-variable">
+						<a href="../globals.html#errorservice" class="tsd-kind-icon">error<wbr>Service</a>
+					</li>
+					<li class=" tsd-kind-variable">
+						<a href="../globals.html#eventservice" class="tsd-kind-icon">event<wbr>Service</a>
+					</li>
+					<li class=" tsd-kind-variable">
+						<a href="../globals.html#httpservice" class="tsd-kind-icon">http<wbr>Service</a>
+					</li>
+					<li class=" tsd-kind-variable">
+						<a href="../globals.html#loadingservice" class="tsd-kind-icon">loading<wbr>Service</a>
+					</li>
+					<li class=" tsd-kind-variable">
+						<a href="../globals.html#routerservice" class="tsd-kind-icon">router<wbr>Service</a>
+					</li>
+					<li class=" tsd-kind-variable">
+						<a href="../globals.html#staticdataservice" class="tsd-kind-icon">static<wbr>Data<wbr>Service</a>
+					</li>
+					<li class=" tsd-kind-variable">
+						<a href="../globals.html#storeservice" class="tsd-kind-icon">store<wbr>Service</a>
+					</li>
+					<li class=" tsd-kind-variable">
+						<a href="../globals.html#translatorservice" class="tsd-kind-icon">translator<wbr>Service</a>
+					</li>
+				</ul>
+			</nav>
+		</div>
+	</div>
+</div>
+<footer class="with-border-bottom">
+	<div class="container">
+		<h2>Legend</h2>
+		<div class="tsd-legend-group">
+			<ul class="tsd-legend">
+				<li class="tsd-kind-constructor tsd-parent-kind-class"><span class="tsd-kind-icon">Constructor</span></li>
+				<li class="tsd-kind-property tsd-parent-kind-class"><span class="tsd-kind-icon">Property</span></li>
+				<li class="tsd-kind-method tsd-parent-kind-class"><span class="tsd-kind-icon">Method</span></li>
+				<li class="tsd-kind-accessor tsd-parent-kind-class"><span class="tsd-kind-icon">Accessor</span></li>
+			</ul>
+		</div>
+	</div>
+</footer>
+<div class="container tsd-generator">
+	<p>Generated using <a href="https://typedoc.org/" target="_blank">TypeDoc</a></p>
+</div>
+<div class="overlay"></div>
+<script src="../assets/js/main.js"></script>
+</body>
+</html>

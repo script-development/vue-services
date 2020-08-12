@@ -1,0 +1,469 @@
+<!doctype html>
+<html class="default no-js">
+<head>
+	<meta charset="utf-8">
+	<meta http-equiv="X-UA-Compatible" content="IE=edge">
+	<title>LoadingService | ServVue - v0.0.42</title>
+	<meta name="description" content="Documentation for ServVue - v0.0.42">
+	<meta name="viewport" content="width=device-width, initial-scale=1">
+	<link rel="stylesheet" href="../assets/css/main.css">
+</head>
+<body>
+<header>
+	<div class="tsd-page-toolbar">
+		<div class="container">
+			<div class="table-wrap">
+				<div class="table-cell" id="tsd-search" data-index="../assets/js/search.json" data-base="..">
+					<div class="field">
+						<label for="tsd-search-field" class="tsd-widget search no-caption">Search</label>
+						<input id="tsd-search-field" type="text" />
+					</div>
+					<ul class="results">
+						<li class="state loading">Preparing search index...</li>
+						<li class="state failure">The search index is not available</li>
+					</ul>
+					<a href="../index.html" class="title">ServVue - v0.0.42</a>
+				</div>
+				<div class="table-cell" id="tsd-widgets">
+					<div id="tsd-filter">
+						<a href="#" class="tsd-widget options no-caption" data-toggle="options">Options</a>
+						<div class="tsd-filter-group">
+							<div class="tsd-select" id="tsd-filter-visibility">
+								<span class="tsd-select-label">All</span>
+								<ul class="tsd-select-list">
+									<li data-value="public">Public</li>
+									<li data-value="protected">Public/Protected</li>
+									<li data-value="private" class="selected">All</li>
+								</ul>
+							</div>
+							<input type="checkbox" id="tsd-filter-inherited" checked />
+							<label class="tsd-widget" for="tsd-filter-inherited">Inherited</label>
+							<input type="checkbox" id="tsd-filter-only-exported" />
+							<label class="tsd-widget" for="tsd-filter-only-exported">Only exported</label>
+						</div>
+					</div>
+					<a href="#" class="tsd-widget menu no-caption" data-toggle="menu">Menu</a>
+				</div>
+			</div>
+		</div>
+	</div>
+	<div class="tsd-page-title">
+		<div class="container">
+			<ul class="tsd-breadcrumb">
+				<li>
+					<a href="../globals.html">Globals</a>
+				</li>
+				<li>
+					<a href="loadingservice.html">LoadingService</a>
+				</li>
+			</ul>
+			<h1>Class LoadingService</h1>
+		</div>
+	</div>
+</header>
+<div class="container container-main">
+	<div class="row">
+		<div class="col-8 col-content">
+			<section class="tsd-panel tsd-hierarchy">
+				<h3>Hierarchy</h3>
+				<ul class="tsd-hierarchy">
+					<li>
+						<span class="target">LoadingService</span>
+					</li>
+				</ul>
+			</section>
+			<section class="tsd-panel-group tsd-index-group">
+				<h2>Index</h2>
+				<section class="tsd-panel tsd-index-panel">
+					<div class="tsd-index-content">
+						<section class="tsd-index-section ">
+							<h3>Constructors</h3>
+							<ul class="tsd-index-list">
+								<li class="tsd-kind-constructor tsd-parent-kind-class"><a href="loadingservice.html#constructor" class="tsd-kind-icon">constructor</a></li>
+							</ul>
+						</section>
+						<section class="tsd-index-section ">
+							<h3>Properties</h3>
+							<ul class="tsd-index-list">
+								<li class="tsd-kind-property tsd-parent-kind-class"><a href="loadingservice.html#_storemodulename" class="tsd-kind-icon">_store<wbr>Module<wbr>Name</a></li>
+								<li class="tsd-kind-property tsd-parent-kind-class"><a href="loadingservice.html#_storeservice" class="tsd-kind-icon">_store<wbr>Service</a></li>
+								<li class="tsd-kind-property tsd-parent-kind-class"><a href="loadingservice.html#loadingtimestart" class="tsd-kind-icon">loading<wbr>Time<wbr>Start</a></li>
+								<li class="tsd-kind-property tsd-parent-kind-class"><a href="loadingservice.html#loadingtimeoutid" class="tsd-kind-icon">loading<wbr>Timeout<wbr>Id</a></li>
+								<li class="tsd-kind-property tsd-parent-kind-class"><a href="loadingservice.html#mintimespinner" class="tsd-kind-icon">min<wbr>Time<wbr>Spinner</a></li>
+								<li class="tsd-kind-property tsd-parent-kind-class"><a href="loadingservice.html#spinnertimeout" class="tsd-kind-icon">spinner<wbr>Timeout</a></li>
+							</ul>
+						</section>
+						<section class="tsd-index-section ">
+							<h3>Accessors</h3>
+							<ul class="tsd-index-list">
+								<li class="tsd-kind-accessor tsd-parent-kind-class"><a href="loadingservice.html#loading" class="tsd-kind-icon">loading</a></li>
+								<li class="tsd-kind-get-signature tsd-parent-kind-class"><a href="loadingservice.html#requestmiddleware" class="tsd-kind-icon">request<wbr>Middleware</a></li>
+								<li class="tsd-kind-get-signature tsd-parent-kind-class"><a href="loadingservice.html#responsemiddleware" class="tsd-kind-icon">response<wbr>Middleware</a></li>
+							</ul>
+						</section>
+					</div>
+				</section>
+			</section>
+			<section class="tsd-panel-group tsd-member-group ">
+				<h2>Constructors</h2>
+				<section class="tsd-panel tsd-member tsd-kind-constructor tsd-parent-kind-class">
+					<a name="constructor" class="tsd-anchor"></a>
+					<h3>constructor</h3>
+					<ul class="tsd-signatures tsd-kind-constructor tsd-parent-kind-class">
+						<li class="tsd-signature tsd-kind-icon">new <wbr>Loading<wbr>Service<span class="tsd-signature-symbol">(</span>storeService<span class="tsd-signature-symbol">: </span><a href="storeservice.html" class="tsd-signature-type">StoreService</a>, httpService<span class="tsd-signature-symbol">: </span><a href="httpservice.html" class="tsd-signature-type">HTTPService</a><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><a href="loadingservice.html" class="tsd-signature-type">LoadingService</a></li>
+					</ul>
+					<ul class="tsd-descriptions">
+						<li class="tsd-description">
+							<aside class="tsd-sources">
+								<ul>
+									<li>Defined in <a href="https://github.com/script-development/vue-services/blob/b9c928c/types/services.d.ts#L147">services.d.ts:147</a></li>
+								</ul>
+							</aside>
+							<div class="tsd-comment tsd-typography">
+							</div>
+							<h4 class="tsd-parameters-title">Parameters</h4>
+							<ul class="tsd-parameters">
+								<li>
+									<h5>storeService: <a href="storeservice.html" class="tsd-signature-type">StoreService</a></h5>
+								</li>
+								<li>
+									<h5>httpService: <a href="httpservice.html" class="tsd-signature-type">HTTPService</a></h5>
+									<div class="tsd-comment tsd-typography">
+										<div class="lead">
+										</div>
+									</div>
+								</li>
+							</ul>
+							<h4 class="tsd-returns-title">Returns <a href="loadingservice.html" class="tsd-signature-type">LoadingService</a></h4>
+						</li>
+					</ul>
+				</section>
+			</section>
+			<section class="tsd-panel-group tsd-member-group ">
+				<h2>Properties</h2>
+				<section class="tsd-panel tsd-member tsd-kind-property tsd-parent-kind-class">
+					<a name="_storemodulename" class="tsd-anchor"></a>
+					<h3>_store<wbr>Module<wbr>Name</h3>
+					<div class="tsd-signature tsd-kind-icon">_store<wbr>Module<wbr>Name<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">string</span></div>
+					<aside class="tsd-sources">
+						<ul>
+							<li>Defined in <a href="https://github.com/script-development/vue-services/blob/b9c928c/types/services.d.ts#L153">services.d.ts:153</a></li>
+						</ul>
+					</aside>
+				</section>
+				<section class="tsd-panel tsd-member tsd-kind-property tsd-parent-kind-class">
+					<a name="_storeservice" class="tsd-anchor"></a>
+					<h3>_store<wbr>Service</h3>
+					<div class="tsd-signature tsd-kind-icon">_store<wbr>Service<span class="tsd-signature-symbol">:</span> <a href="storeservice.html" class="tsd-signature-type">StoreService</a></div>
+					<aside class="tsd-sources">
+						<ul>
+							<li>Defined in <a href="https://github.com/script-development/vue-services/blob/b9c928c/types/services.d.ts#L154">services.d.ts:154</a></li>
+						</ul>
+					</aside>
+				</section>
+				<section class="tsd-panel tsd-member tsd-kind-property tsd-parent-kind-class">
+					<a name="loadingtimestart" class="tsd-anchor"></a>
+					<h3>loading<wbr>Time<wbr>Start</h3>
+					<div class="tsd-signature tsd-kind-icon">loading<wbr>Time<wbr>Start<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">number</span></div>
+					<aside class="tsd-sources">
+						<ul>
+							<li>Defined in <a href="https://github.com/script-development/vue-services/blob/b9c928c/types/services.d.ts#L169">services.d.ts:169</a></li>
+						</ul>
+					</aside>
+				</section>
+				<section class="tsd-panel tsd-member tsd-kind-property tsd-parent-kind-class">
+					<a name="loadingtimeoutid" class="tsd-anchor"></a>
+					<h3>loading<wbr>Timeout<wbr>Id</h3>
+					<div class="tsd-signature tsd-kind-icon">loading<wbr>Timeout<wbr>Id<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">Timeout</span></div>
+					<aside class="tsd-sources">
+						<ul>
+							<li>Defined in <a href="https://github.com/script-development/vue-services/blob/b9c928c/types/services.d.ts#L170">services.d.ts:170</a></li>
+						</ul>
+					</aside>
+				</section>
+				<section class="tsd-panel tsd-member tsd-kind-property tsd-parent-kind-class">
+					<a name="mintimespinner" class="tsd-anchor"></a>
+					<h3>min<wbr>Time<wbr>Spinner</h3>
+					<div class="tsd-signature tsd-kind-icon">min<wbr>Time<wbr>Spinner<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">number</span></div>
+					<aside class="tsd-sources">
+						<ul>
+							<li>Defined in <a href="https://github.com/script-development/vue-services/blob/b9c928c/types/services.d.ts#L168">services.d.ts:168</a></li>
+						</ul>
+					</aside>
+				</section>
+				<section class="tsd-panel tsd-member tsd-kind-property tsd-parent-kind-class">
+					<a name="spinnertimeout" class="tsd-anchor"></a>
+					<h3>spinner<wbr>Timeout</h3>
+					<div class="tsd-signature tsd-kind-icon">spinner<wbr>Timeout<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">number</span></div>
+					<aside class="tsd-sources">
+						<ul>
+							<li>Defined in <a href="https://github.com/script-development/vue-services/blob/b9c928c/types/services.d.ts#L167">services.d.ts:167</a></li>
+						</ul>
+					</aside>
+				</section>
+			</section>
+			<section class="tsd-panel-group tsd-member-group ">
+				<h2>Accessors</h2>
+				<section class="tsd-panel tsd-member tsd-kind-accessor tsd-parent-kind-class">
+					<a name="loading" class="tsd-anchor"></a>
+					<h3>loading</h3>
+					<ul class="tsd-signatures tsd-kind-accessor tsd-parent-kind-class">
+						<li class="tsd-signature tsd-kind-icon"><span class="tsd-signature-symbol">get</span> loading<span class="tsd-signature-symbol">(</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">boolean</span></li>
+						<li class="tsd-signature tsd-kind-icon"><span class="tsd-signature-symbol">set</span> loading<span class="tsd-signature-symbol">(</span>arg<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">boolean</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">any</span></li>
+					</ul>
+					<ul class="tsd-descriptions">
+						<li class="tsd-description">
+							<aside class="tsd-sources">
+								<ul>
+									<li>Defined in <a href="https://github.com/script-development/vue-services/blob/b9c928c/types/services.d.ts#L166">services.d.ts:166</a></li>
+								</ul>
+							</aside>
+							<div class="tsd-comment tsd-typography">
+								<div class="lead">
+									<p>get the loading state</p>
+								</div>
+							</div>
+							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">boolean</span></h4>
+						</li>
+						<li class="tsd-description">
+							<aside class="tsd-sources">
+								<ul>
+									<li>Defined in <a href="https://github.com/script-development/vue-services/blob/b9c928c/types/services.d.ts#L160">services.d.ts:160</a></li>
+								</ul>
+							</aside>
+							<div class="tsd-comment tsd-typography">
+								<div class="lead">
+									<p>Set the loading state</p>
+								</div>
+							</div>
+							<h4 class="tsd-parameters-title">Parameters</h4>
+							<ul class="tsd-parameters">
+								<li>
+									<h5>arg: <span class="tsd-signature-type">boolean</span></h5>
+								</li>
+							</ul>
+							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">any</span></h4>
+						</li>
+					</ul>
+				</section>
+				<section class="tsd-panel tsd-member tsd-kind-get-signature tsd-parent-kind-class">
+					<a name="requestmiddleware" class="tsd-anchor"></a>
+					<h3>request<wbr>Middleware</h3>
+					<ul class="tsd-signatures tsd-kind-get-signature tsd-parent-kind-class">
+						<li class="tsd-signature tsd-kind-icon"><span class="tsd-signature-symbol">get</span> requestMiddleware<span class="tsd-signature-symbol">(</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-symbol">(</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol"> =&gt; </span><span class="tsd-signature-type">boolean</span></li>
+					</ul>
+					<ul class="tsd-descriptions">
+						<li class="tsd-description">
+							<aside class="tsd-sources">
+								<ul>
+									<li>Defined in <a href="https://github.com/script-development/vue-services/blob/b9c928c/types/services.d.ts#L171">services.d.ts:171</a></li>
+								</ul>
+							</aside>
+							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-symbol">(</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol"> =&gt; </span><span class="tsd-signature-type">boolean</span></h4>
+							<ul class="tsd-parameters">
+								<li class="tsd-parameter-signature">
+									<ul class="tsd-signatures tsd-kind-type-literal">
+										<li class="tsd-signature tsd-kind-icon"><span class="tsd-signature-symbol">(</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">boolean</span></li>
+									</ul>
+									<ul class="tsd-descriptions">
+										<li class="tsd-description">
+											<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">boolean</span></h4>
+										</li>
+									</ul>
+								</li>
+							</ul>
+						</li>
+					</ul>
+				</section>
+				<section class="tsd-panel tsd-member tsd-kind-get-signature tsd-parent-kind-class">
+					<a name="responsemiddleware" class="tsd-anchor"></a>
+					<h3>response<wbr>Middleware</h3>
+					<ul class="tsd-signatures tsd-kind-get-signature tsd-parent-kind-class">
+						<li class="tsd-signature tsd-kind-icon"><span class="tsd-signature-symbol">get</span> responseMiddleware<span class="tsd-signature-symbol">(</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-symbol">(</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol"> =&gt; </span><span class="tsd-signature-type">boolean</span></li>
+					</ul>
+					<ul class="tsd-descriptions">
+						<li class="tsd-description">
+							<aside class="tsd-sources">
+								<ul>
+									<li>Defined in <a href="https://github.com/script-development/vue-services/blob/b9c928c/types/services.d.ts#L172">services.d.ts:172</a></li>
+								</ul>
+							</aside>
+							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-symbol">(</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol"> =&gt; </span><span class="tsd-signature-type">boolean</span></h4>
+							<ul class="tsd-parameters">
+								<li class="tsd-parameter-signature">
+									<ul class="tsd-signatures tsd-kind-type-literal">
+										<li class="tsd-signature tsd-kind-icon"><span class="tsd-signature-symbol">(</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">boolean</span></li>
+									</ul>
+									<ul class="tsd-descriptions">
+										<li class="tsd-description">
+											<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">boolean</span></h4>
+										</li>
+									</ul>
+								</li>
+							</ul>
+						</li>
+					</ul>
+				</section>
+			</section>
+		</div>
+		<div class="col-4 col-menu menu-sticky-wrap menu-highlight">
+			<nav class="tsd-navigation primary">
+				<ul>
+					<li class="globals  ">
+						<a href="../globals.html"><em>Globals</em></a>
+					</li>
+				</ul>
+			</nav>
+			<nav class="tsd-navigation secondary menu-sticky">
+				<ul class="before-current">
+					<li class=" tsd-kind-class">
+						<a href="appstarter.html" class="tsd-kind-icon">App<wbr>Starter</a>
+					</li>
+					<li class=" tsd-kind-class">
+						<a href="authservice.html" class="tsd-kind-icon">Auth<wbr>Service</a>
+					</li>
+					<li class=" tsd-kind-class">
+						<a href="basecontroller.html" class="tsd-kind-icon">Base<wbr>Controller</a>
+					</li>
+					<li class=" tsd-kind-class">
+						<a href="errorservice.html" class="tsd-kind-icon">Error<wbr>Service</a>
+					</li>
+					<li class=" tsd-kind-class">
+						<a href="eventservice.html" class="tsd-kind-icon">Event<wbr>Service</a>
+					</li>
+					<li class=" tsd-kind-class">
+						<a href="httpservice.html" class="tsd-kind-icon">HTTPService</a>
+					</li>
+				</ul>
+				<ul class="current">
+					<li class="current tsd-kind-class">
+						<a href="loadingservice.html" class="tsd-kind-icon">Loading<wbr>Service</a>
+						<ul>
+							<li class=" tsd-kind-constructor tsd-parent-kind-class">
+								<a href="loadingservice.html#constructor" class="tsd-kind-icon">constructor</a>
+							</li>
+							<li class=" tsd-kind-property tsd-parent-kind-class">
+								<a href="loadingservice.html#_storemodulename" class="tsd-kind-icon">_store<wbr>Module<wbr>Name</a>
+							</li>
+							<li class=" tsd-kind-property tsd-parent-kind-class">
+								<a href="loadingservice.html#_storeservice" class="tsd-kind-icon">_store<wbr>Service</a>
+							</li>
+							<li class=" tsd-kind-property tsd-parent-kind-class">
+								<a href="loadingservice.html#loadingtimestart" class="tsd-kind-icon">loading<wbr>Time<wbr>Start</a>
+							</li>
+							<li class=" tsd-kind-property tsd-parent-kind-class">
+								<a href="loadingservice.html#loadingtimeoutid" class="tsd-kind-icon">loading<wbr>Timeout<wbr>Id</a>
+							</li>
+							<li class=" tsd-kind-property tsd-parent-kind-class">
+								<a href="loadingservice.html#mintimespinner" class="tsd-kind-icon">min<wbr>Time<wbr>Spinner</a>
+							</li>
+							<li class=" tsd-kind-property tsd-parent-kind-class">
+								<a href="loadingservice.html#spinnertimeout" class="tsd-kind-icon">spinner<wbr>Timeout</a>
+							</li>
+							<li class=" tsd-kind-accessor tsd-parent-kind-class">
+								<a href="loadingservice.html#loading" class="tsd-kind-icon">loading</a>
+							</li>
+							<li class=" tsd-kind-get-signature tsd-parent-kind-class">
+								<a href="loadingservice.html#requestmiddleware" class="tsd-kind-icon">request<wbr>Middleware</a>
+							</li>
+							<li class=" tsd-kind-get-signature tsd-parent-kind-class">
+								<a href="loadingservice.html#responsemiddleware" class="tsd-kind-icon">response<wbr>Middleware</a>
+							</li>
+						</ul>
+					</li>
+				</ul>
+				<ul class="after-current">
+					<li class=" tsd-kind-class">
+						<a href="pagecreator.html" class="tsd-kind-icon">Page<wbr>Creator</a>
+					</li>
+					<li class=" tsd-kind-class">
+						<a href="routefactory.html" class="tsd-kind-icon">Route<wbr>Factory</a>
+					</li>
+					<li class=" tsd-kind-class">
+						<a href="routesettings.html" class="tsd-kind-icon">Route<wbr>Settings</a>
+					</li>
+					<li class=" tsd-kind-class">
+						<a href="routerservice.html" class="tsd-kind-icon">Router<wbr>Service</a>
+					</li>
+					<li class=" tsd-kind-class">
+						<a href="staticdataservice.html" class="tsd-kind-icon">Static<wbr>Data<wbr>Service</a>
+					</li>
+					<li class=" tsd-kind-class">
+						<a href="storageservice.html" class="tsd-kind-icon">Storage<wbr>Service</a>
+					</li>
+					<li class=" tsd-kind-class">
+						<a href="storemodulefactory.html" class="tsd-kind-icon">Store<wbr>Module<wbr>Factory</a>
+					</li>
+					<li class=" tsd-kind-class">
+						<a href="storeservice.html" class="tsd-kind-icon">Store<wbr>Service</a>
+					</li>
+					<li class=" tsd-kind-class">
+						<a href="tablecreator.html" class="tsd-kind-icon">Table<wbr>Creator</a>
+					</li>
+					<li class=" tsd-kind-class">
+						<a href="translatorservice.html" class="tsd-kind-icon">Translator<wbr>Service</a>
+					</li>
+					<li class=" tsd-kind-type-alias">
+						<a href="../globals.html#cache" class="tsd-kind-icon">Cache</a>
+					</li>
+					<li class=" tsd-kind-type-alias">
+						<a href="../globals.html#gettermethod" class="tsd-kind-icon">Getter<wbr>Method</a>
+					</li>
+					<li class=" tsd-kind-type-alias">
+						<a href="../globals.html#translation" class="tsd-kind-icon">Translation</a>
+					</li>
+					<li class=" tsd-kind-variable">
+						<a href="../globals.html#appstarter" class="tsd-kind-icon">app<wbr>Starter</a>
+					</li>
+					<li class=" tsd-kind-variable">
+						<a href="../globals.html#authservice" class="tsd-kind-icon">auth<wbr>Service</a>
+					</li>
+					<li class=" tsd-kind-variable">
+						<a href="../globals.html#errorservice" class="tsd-kind-icon">error<wbr>Service</a>
+					</li>
+					<li class=" tsd-kind-variable">
+						<a href="../globals.html#eventservice" class="tsd-kind-icon">event<wbr>Service</a>
+					</li>
+					<li class=" tsd-kind-variable">
+						<a href="../globals.html#httpservice" class="tsd-kind-icon">http<wbr>Service</a>
+					</li>
+					<li class=" tsd-kind-variable">
+						<a href="../globals.html#loadingservice" class="tsd-kind-icon">loading<wbr>Service</a>
+					</li>
+					<li class=" tsd-kind-variable">
+						<a href="../globals.html#routerservice" class="tsd-kind-icon">router<wbr>Service</a>
+					</li>
+					<li class=" tsd-kind-variable">
+						<a href="../globals.html#staticdataservice" class="tsd-kind-icon">static<wbr>Data<wbr>Service</a>
+					</li>
+					<li class=" tsd-kind-variable">
+						<a href="../globals.html#storeservice" class="tsd-kind-icon">store<wbr>Service</a>
+					</li>
+					<li class=" tsd-kind-variable">
+						<a href="../globals.html#translatorservice" class="tsd-kind-icon">translator<wbr>Service</a>
+					</li>
+				</ul>
+			</nav>
+		</div>
+	</div>
+</div>
+<footer class="with-border-bottom">
+	<div class="container">
+		<h2>Legend</h2>
+		<div class="tsd-legend-group">
+			<ul class="tsd-legend">
+				<li class="tsd-kind-constructor tsd-parent-kind-class"><span class="tsd-kind-icon">Constructor</span></li>
+				<li class="tsd-kind-property tsd-parent-kind-class"><span class="tsd-kind-icon">Property</span></li>
+				<li class="tsd-kind-method tsd-parent-kind-class"><span class="tsd-kind-icon">Method</span></li>
+				<li class="tsd-kind-accessor tsd-parent-kind-class"><span class="tsd-kind-icon">Accessor</span></li>
+			</ul>
+		</div>
+	</div>
+</footer>
+<div class="container tsd-generator">
+	<p>Generated using <a href="https://typedoc.org/" target="_blank">TypeDoc</a></p>
+</div>
+<div class="overlay"></div>
+<script src="../assets/js/main.js"></script>
+</body>
+</html>

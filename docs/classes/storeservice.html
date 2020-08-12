@@ -1,0 +1,1384 @@
+<!doctype html>
+<html class="default no-js">
+<head>
+	<meta charset="utf-8">
+	<meta http-equiv="X-UA-Compatible" content="IE=edge">
+	<title>StoreService | ServVue - v0.0.42</title>
+	<meta name="description" content="Documentation for ServVue - v0.0.42">
+	<meta name="viewport" content="width=device-width, initial-scale=1">
+	<link rel="stylesheet" href="../assets/css/main.css">
+</head>
+<body>
+<header>
+	<div class="tsd-page-toolbar">
+		<div class="container">
+			<div class="table-wrap">
+				<div class="table-cell" id="tsd-search" data-index="../assets/js/search.json" data-base="..">
+					<div class="field">
+						<label for="tsd-search-field" class="tsd-widget search no-caption">Search</label>
+						<input id="tsd-search-field" type="text" />
+					</div>
+					<ul class="results">
+						<li class="state loading">Preparing search index...</li>
+						<li class="state failure">The search index is not available</li>
+					</ul>
+					<a href="../index.html" class="title">ServVue - v0.0.42</a>
+				</div>
+				<div class="table-cell" id="tsd-widgets">
+					<div id="tsd-filter">
+						<a href="#" class="tsd-widget options no-caption" data-toggle="options">Options</a>
+						<div class="tsd-filter-group">
+							<div class="tsd-select" id="tsd-filter-visibility">
+								<span class="tsd-select-label">All</span>
+								<ul class="tsd-select-list">
+									<li data-value="public">Public</li>
+									<li data-value="protected">Public/Protected</li>
+									<li data-value="private" class="selected">All</li>
+								</ul>
+							</div>
+							<input type="checkbox" id="tsd-filter-inherited" checked />
+							<label class="tsd-widget" for="tsd-filter-inherited">Inherited</label>
+							<input type="checkbox" id="tsd-filter-only-exported" />
+							<label class="tsd-widget" for="tsd-filter-only-exported">Only exported</label>
+						</div>
+					</div>
+					<a href="#" class="tsd-widget menu no-caption" data-toggle="menu">Menu</a>
+				</div>
+			</div>
+		</div>
+	</div>
+	<div class="tsd-page-title">
+		<div class="container">
+			<ul class="tsd-breadcrumb">
+				<li>
+					<a href="../globals.html">Globals</a>
+				</li>
+				<li>
+					<a href="storeservice.html">StoreService</a>
+				</li>
+			</ul>
+			<h1>Class StoreService</h1>
+		</div>
+	</div>
+</header>
+<div class="container container-main">
+	<div class="row">
+		<div class="col-8 col-content">
+			<section class="tsd-panel tsd-hierarchy">
+				<h3>Hierarchy</h3>
+				<ul class="tsd-hierarchy">
+					<li>
+						<span class="target">StoreService</span>
+					</li>
+				</ul>
+			</section>
+			<section class="tsd-panel-group tsd-index-group">
+				<h2>Index</h2>
+				<section class="tsd-panel tsd-index-panel">
+					<div class="tsd-index-content">
+						<section class="tsd-index-section ">
+							<h3>Constructors</h3>
+							<ul class="tsd-index-list">
+								<li class="tsd-kind-constructor tsd-parent-kind-class"><a href="storeservice.html#constructor" class="tsd-kind-icon">constructor</a></li>
+							</ul>
+						</section>
+						<section class="tsd-index-section ">
+							<h3>Properties</h3>
+							<ul class="tsd-index-list">
+								<li class="tsd-kind-property tsd-parent-kind-class"><a href="storeservice.html#_factory" class="tsd-kind-icon">_factory</a></li>
+								<li class="tsd-kind-property tsd-parent-kind-class"><a href="storeservice.html#_httpservice" class="tsd-kind-icon">_http<wbr>Service</a></li>
+								<li class="tsd-kind-property tsd-parent-kind-class"><a href="storeservice.html#_modulenames" class="tsd-kind-icon">_module<wbr>Names</a></li>
+								<li class="tsd-kind-property tsd-parent-kind-class"><a href="storeservice.html#_store" class="tsd-kind-icon">_store</a></li>
+							</ul>
+						</section>
+						<section class="tsd-index-section ">
+							<h3>Accessors</h3>
+							<ul class="tsd-index-list">
+								<li class="tsd-kind-get-signature tsd-parent-kind-class"><a href="storeservice.html#responsemiddleware" class="tsd-kind-icon">response<wbr>Middleware</a></li>
+								<li class="tsd-kind-get-signature tsd-parent-kind-class"><a href="storeservice.html#storeseperator" class="tsd-kind-icon">store<wbr>Seperator</a></li>
+							</ul>
+						</section>
+						<section class="tsd-index-section ">
+							<h3>Methods</h3>
+							<ul class="tsd-index-list">
+								<li class="tsd-kind-method tsd-parent-kind-class"><a href="storeservice.html#create" class="tsd-kind-icon">create</a></li>
+								<li class="tsd-kind-method tsd-parent-kind-class"><a href="storeservice.html#createextragetaction" class="tsd-kind-icon">create<wbr>Extra<wbr>Get<wbr>Action</a></li>
+								<li class="tsd-kind-method tsd-parent-kind-class"><a href="storeservice.html#createextrapostaction" class="tsd-kind-icon">create<wbr>Extra<wbr>Post<wbr>Action</a></li>
+								<li class="tsd-kind-method tsd-parent-kind-class"><a href="storeservice.html#destroy" class="tsd-kind-icon">destroy</a></li>
+								<li class="tsd-kind-method tsd-parent-kind-class"><a href="storeservice.html#dispatch" class="tsd-kind-icon">dispatch</a></li>
+								<li class="tsd-kind-method tsd-parent-kind-class"><a href="storeservice.html#generateandsetdefaultstoremodule" class="tsd-kind-icon">generate<wbr>And<wbr>Set<wbr>Default<wbr>Store<wbr>Module</a></li>
+								<li class="tsd-kind-method tsd-parent-kind-class"><a href="storeservice.html#get" class="tsd-kind-icon">get</a></li>
+								<li class="tsd-kind-method tsd-parent-kind-class"><a href="storeservice.html#getallfromstore" class="tsd-kind-icon">get<wbr>All<wbr>From<wbr>Store</a></li>
+								<li class="tsd-kind-method tsd-parent-kind-class"><a href="storeservice.html#getallitemsstatename" class="tsd-kind-icon">get<wbr>All<wbr>Items<wbr>State<wbr>Name</a></li>
+								<li class="tsd-kind-method tsd-parent-kind-class"><a href="storeservice.html#getbyidfromstore" class="tsd-kind-icon">get<wbr>ById<wbr>From<wbr>Store</a></li>
+								<li class="tsd-kind-method tsd-parent-kind-class"><a href="storeservice.html#getcreateaction" class="tsd-kind-icon">get<wbr>Create<wbr>Action</a></li>
+								<li class="tsd-kind-method tsd-parent-kind-class"><a href="storeservice.html#getdeleteaction" class="tsd-kind-icon">get<wbr>Delete<wbr>Action</a></li>
+								<li class="tsd-kind-method tsd-parent-kind-class"><a href="storeservice.html#getdeletemutation" class="tsd-kind-icon">get<wbr>Delete<wbr>Mutation</a></li>
+								<li class="tsd-kind-method tsd-parent-kind-class"><a href="storeservice.html#getreadaction" class="tsd-kind-icon">get<wbr>Read<wbr>Action</a></li>
+								<li class="tsd-kind-method tsd-parent-kind-class"><a href="storeservice.html#getreadallgetter" class="tsd-kind-icon">get<wbr>Read<wbr>All<wbr>Getter</a></li>
+								<li class="tsd-kind-method tsd-parent-kind-class"><a href="storeservice.html#getreadbyidgetter" class="tsd-kind-icon">get<wbr>Read<wbr>ById<wbr>Getter</a></li>
+								<li class="tsd-kind-method tsd-parent-kind-class"><a href="storeservice.html#getsetallinstoreaction" class="tsd-kind-icon">get<wbr>Set<wbr>All<wbr>InStore<wbr>Action</a></li>
+								<li class="tsd-kind-method tsd-parent-kind-class"><a href="storeservice.html#getsetallmutation" class="tsd-kind-icon">get<wbr>Set<wbr>All<wbr>Mutation</a></li>
+								<li class="tsd-kind-method tsd-parent-kind-class"><a href="storeservice.html#getupdateaction" class="tsd-kind-icon">get<wbr>Update<wbr>Action</a></li>
+								<li class="tsd-kind-method tsd-parent-kind-class"><a href="storeservice.html#read" class="tsd-kind-icon">read</a></li>
+								<li class="tsd-kind-method tsd-parent-kind-class"><a href="storeservice.html#registermodule" class="tsd-kind-icon">register<wbr>Module</a></li>
+								<li class="tsd-kind-method tsd-parent-kind-class"><a href="storeservice.html#setallinstore" class="tsd-kind-icon">set<wbr>All<wbr>InStore</a></li>
+								<li class="tsd-kind-method tsd-parent-kind-class"><a href="storeservice.html#setfactorysettings" class="tsd-kind-icon">set<wbr>Factory<wbr>Settings</a></li>
+								<li class="tsd-kind-method tsd-parent-kind-class"><a href="storeservice.html#show" class="tsd-kind-icon">show</a></li>
+								<li class="tsd-kind-method tsd-parent-kind-class"><a href="storeservice.html#update" class="tsd-kind-icon">update</a></li>
+							</ul>
+						</section>
+					</div>
+				</section>
+			</section>
+			<section class="tsd-panel-group tsd-member-group ">
+				<h2>Constructors</h2>
+				<section class="tsd-panel tsd-member tsd-kind-constructor tsd-parent-kind-class">
+					<a name="constructor" class="tsd-anchor"></a>
+					<h3>constructor</h3>
+					<ul class="tsd-signatures tsd-kind-constructor tsd-parent-kind-class">
+						<li class="tsd-signature tsd-kind-icon">new <wbr>Store<wbr>Service<span class="tsd-signature-symbol">(</span>store<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">Store</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">any</span><span class="tsd-signature-symbol">&gt;</span>, factory<span class="tsd-signature-symbol">: </span><a href="storemodulefactory.html" class="tsd-signature-type">StoreModuleFactory</a>, httpService<span class="tsd-signature-symbol">: </span><a href="httpservice.html" class="tsd-signature-type">HTTPService</a><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><a href="storeservice.html" class="tsd-signature-type">StoreService</a></li>
+					</ul>
+					<ul class="tsd-descriptions">
+						<li class="tsd-description">
+							<aside class="tsd-sources">
+								<ul>
+									<li>Defined in <a href="https://github.com/script-development/vue-services/blob/b9c928c/types/storeService.d.ts#L134">storeService.d.ts:134</a></li>
+								</ul>
+							</aside>
+							<div class="tsd-comment tsd-typography">
+							</div>
+							<h4 class="tsd-parameters-title">Parameters</h4>
+							<ul class="tsd-parameters">
+								<li>
+									<h5>store: <span class="tsd-signature-type">Store</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">any</span><span class="tsd-signature-symbol">&gt;</span></h5>
+									<div class="tsd-comment tsd-typography">
+										<div class="lead">
+											<p>the store being used</p>
+										</div>
+									</div>
+								</li>
+								<li>
+									<h5>factory: <a href="storemodulefactory.html" class="tsd-signature-type">StoreModuleFactory</a></h5>
+									<div class="tsd-comment tsd-typography">
+										<div class="lead">
+											<p>the factory being used to create store modules</p>
+										</div>
+									</div>
+								</li>
+								<li>
+									<h5>httpService: <a href="httpservice.html" class="tsd-signature-type">HTTPService</a></h5>
+									<div class="tsd-comment tsd-typography">
+										<div class="lead">
+											<p>the http service for communication with the API</p>
+										</div>
+									</div>
+								</li>
+							</ul>
+							<h4 class="tsd-returns-title">Returns <a href="storeservice.html" class="tsd-signature-type">StoreService</a></h4>
+						</li>
+					</ul>
+				</section>
+			</section>
+			<section class="tsd-panel-group tsd-member-group ">
+				<h2>Properties</h2>
+				<section class="tsd-panel tsd-member tsd-kind-property tsd-parent-kind-class">
+					<a name="_factory" class="tsd-anchor"></a>
+					<h3>_factory</h3>
+					<div class="tsd-signature tsd-kind-icon">_factory<span class="tsd-signature-symbol">:</span> <a href="storemodulefactory.html" class="tsd-signature-type">StoreModuleFactory</a></div>
+					<aside class="tsd-sources">
+						<ul>
+							<li>Defined in <a href="https://github.com/script-development/vue-services/blob/b9c928c/types/storeService.d.ts#L143">storeService.d.ts:143</a></li>
+						</ul>
+					</aside>
+				</section>
+				<section class="tsd-panel tsd-member tsd-kind-property tsd-parent-kind-class">
+					<a name="_httpservice" class="tsd-anchor"></a>
+					<h3>_http<wbr>Service</h3>
+					<div class="tsd-signature tsd-kind-icon">_http<wbr>Service<span class="tsd-signature-symbol">:</span> <a href="httpservice.html" class="tsd-signature-type">HTTPService</a></div>
+					<aside class="tsd-sources">
+						<ul>
+							<li>Defined in <a href="https://github.com/script-development/vue-services/blob/b9c928c/types/storeService.d.ts#L144">storeService.d.ts:144</a></li>
+						</ul>
+					</aside>
+				</section>
+				<section class="tsd-panel tsd-member tsd-kind-property tsd-parent-kind-class">
+					<a name="_modulenames" class="tsd-anchor"></a>
+					<h3>_module<wbr>Names</h3>
+					<div class="tsd-signature tsd-kind-icon">_module<wbr>Names<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">any</span><span class="tsd-signature-symbol">[]</span></div>
+					<aside class="tsd-sources">
+						<ul>
+							<li>Defined in <a href="https://github.com/script-development/vue-services/blob/b9c928c/types/storeService.d.ts#L145">storeService.d.ts:145</a></li>
+						</ul>
+					</aside>
+				</section>
+				<section class="tsd-panel tsd-member tsd-kind-property tsd-parent-kind-class">
+					<a name="_store" class="tsd-anchor"></a>
+					<h3>_store</h3>
+					<div class="tsd-signature tsd-kind-icon">_store<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">Store</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">any</span><span class="tsd-signature-symbol">&gt;</span></div>
+					<aside class="tsd-sources">
+						<ul>
+							<li>Defined in <a href="https://github.com/script-development/vue-services/blob/b9c928c/types/storeService.d.ts#L142">storeService.d.ts:142</a></li>
+						</ul>
+					</aside>
+				</section>
+			</section>
+			<section class="tsd-panel-group tsd-member-group ">
+				<h2>Accessors</h2>
+				<section class="tsd-panel tsd-member tsd-kind-get-signature tsd-parent-kind-class">
+					<a name="responsemiddleware" class="tsd-anchor"></a>
+					<h3>response<wbr>Middleware</h3>
+					<ul class="tsd-signatures tsd-kind-get-signature tsd-parent-kind-class">
+						<li class="tsd-signature tsd-kind-icon"><span class="tsd-signature-symbol">get</span> responseMiddleware<span class="tsd-signature-symbol">(</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-symbol">(</span>__namedParameters<span class="tsd-signature-symbol">: </span><span class="tsd-signature-symbol">{ </span>data<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">any</span><span class="tsd-signature-symbol"> }</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol"> =&gt; </span><span class="tsd-signature-type">void</span></li>
+					</ul>
+					<ul class="tsd-descriptions">
+						<li class="tsd-description">
+							<aside class="tsd-sources">
+								<ul>
+									<li>Defined in <a href="https://github.com/script-development/vue-services/blob/b9c928c/types/storeService.d.ts#L146">storeService.d.ts:146</a></li>
+								</ul>
+							</aside>
+							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-symbol">(</span>__namedParameters<span class="tsd-signature-symbol">: </span><span class="tsd-signature-symbol">{ </span>data<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">any</span><span class="tsd-signature-symbol"> }</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol"> =&gt; </span><span class="tsd-signature-type">void</span></h4>
+							<ul class="tsd-parameters">
+								<li class="tsd-parameter-signature">
+									<ul class="tsd-signatures tsd-kind-type-literal">
+										<li class="tsd-signature tsd-kind-icon"><span class="tsd-signature-symbol">(</span>__namedParameters<span class="tsd-signature-symbol">: </span><span class="tsd-signature-symbol">{ </span>data<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">any</span><span class="tsd-signature-symbol"> }</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">void</span></li>
+									</ul>
+									<ul class="tsd-descriptions">
+										<li class="tsd-description">
+											<h4 class="tsd-parameters-title">Parameters</h4>
+											<ul class="tsd-parameters">
+												<li>
+													<h5>__namedParameters: <span class="tsd-signature-symbol">{ </span>data<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">any</span><span class="tsd-signature-symbol"> }</span></h5>
+													<ul class="tsd-parameters">
+														<li class="tsd-parameter">
+															<h5>data<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">any</span></h5>
+														</li>
+													</ul>
+												</li>
+											</ul>
+											<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">void</span></h4>
+										</li>
+									</ul>
+								</li>
+							</ul>
+						</li>
+					</ul>
+				</section>
+				<section class="tsd-panel tsd-member tsd-kind-get-signature tsd-parent-kind-class">
+					<a name="storeseperator" class="tsd-anchor"></a>
+					<h3>store<wbr>Seperator</h3>
+					<ul class="tsd-signatures tsd-kind-get-signature tsd-parent-kind-class">
+						<li class="tsd-signature tsd-kind-icon"><span class="tsd-signature-symbol">get</span> storeSeperator<span class="tsd-signature-symbol">(</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">string</span></li>
+					</ul>
+					<ul class="tsd-descriptions">
+						<li class="tsd-description">
+							<aside class="tsd-sources">
+								<ul>
+									<li>Defined in <a href="https://github.com/script-development/vue-services/blob/b9c928c/types/storeService.d.ts#L267">storeService.d.ts:267</a></li>
+								</ul>
+							</aside>
+							<div class="tsd-comment tsd-typography">
+								<div class="lead">
+									<p>get the store seperator</p>
+								</div>
+							</div>
+							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">string</span></h4>
+						</li>
+					</ul>
+				</section>
+			</section>
+			<section class="tsd-panel-group tsd-member-group ">
+				<h2>Methods</h2>
+				<section class="tsd-panel tsd-member tsd-kind-method tsd-parent-kind-class">
+					<a name="create" class="tsd-anchor"></a>
+					<h3>create</h3>
+					<ul class="tsd-signatures tsd-kind-method tsd-parent-kind-class">
+						<li class="tsd-signature tsd-kind-icon">create<span class="tsd-signature-symbol">(</span>storeModule<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">string</span>, item<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">any</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">Promise</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">any</span><span class="tsd-signature-symbol">&gt;</span></li>
+					</ul>
+					<ul class="tsd-descriptions">
+						<li class="tsd-description">
+							<aside class="tsd-sources">
+								<ul>
+									<li>Defined in <a href="https://github.com/script-development/vue-services/blob/b9c928c/types/storeService.d.ts#L195">storeService.d.ts:195</a></li>
+								</ul>
+							</aside>
+							<div class="tsd-comment tsd-typography">
+								<div class="lead">
+									<p>dispatch an action to the store, which creates an item on the server</p>
+								</div>
+							</div>
+							<h4 class="tsd-parameters-title">Parameters</h4>
+							<ul class="tsd-parameters">
+								<li>
+									<h5>storeModule: <span class="tsd-signature-type">string</span></h5>
+									<div class="tsd-comment tsd-typography">
+										<p>the store module for which an item must be created</p>
+									</div>
+								</li>
+								<li>
+									<h5>item: <span class="tsd-signature-type">any</span></h5>
+									<div class="tsd-comment tsd-typography">
+										<p>the item to be created</p>
+									</div>
+								</li>
+							</ul>
+							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">Promise</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">any</span><span class="tsd-signature-symbol">&gt;</span></h4>
+						</li>
+					</ul>
+				</section>
+				<section class="tsd-panel tsd-member tsd-kind-method tsd-parent-kind-class">
+					<a name="createextragetaction" class="tsd-anchor"></a>
+					<h3>create<wbr>Extra<wbr>Get<wbr>Action</h3>
+					<ul class="tsd-signatures tsd-kind-method tsd-parent-kind-class">
+						<li class="tsd-signature tsd-kind-icon">create<wbr>Extra<wbr>Get<wbr>Action<span class="tsd-signature-symbol">(</span>endpoint<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">string</span>, options<span class="tsd-signature-symbol">?: </span><span class="tsd-signature-type">AxiosRequestConfig</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-symbol">{}</span></li>
+					</ul>
+					<ul class="tsd-descriptions">
+						<li class="tsd-description">
+							<aside class="tsd-sources">
+								<ul>
+									<li>Defined in <a href="https://github.com/script-development/vue-services/blob/b9c928c/types/storeService.d.ts#L307">storeService.d.ts:307</a></li>
+								</ul>
+							</aside>
+							<div class="tsd-comment tsd-typography">
+								<div class="lead">
+									<p>create a new action to add to the store which sends a get request</p>
+								</div>
+							</div>
+							<h4 class="tsd-parameters-title">Parameters</h4>
+							<ul class="tsd-parameters">
+								<li>
+									<h5>endpoint: <span class="tsd-signature-type">string</span></h5>
+									<div class="tsd-comment tsd-typography">
+										<p>api endpoint</p>
+									</div>
+								</li>
+								<li>
+									<h5><span class="tsd-flag ts-flagOptional">Optional</span> options: <span class="tsd-signature-type">AxiosRequestConfig</span></h5>
+								</li>
+							</ul>
+							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-symbol">{}</span></h4>
+							<ul class="tsd-parameters">
+								<li class="tsd-parameter-index-signature">
+									<h5><span class="tsd-signature-symbol">[</span>x: <span class="tsd-signature-type">string</span><span class="tsd-signature-symbol">]: </span><span class="tsd-signature-symbol">(</span>_<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">any</span>, payload<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">any</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol"> =&gt; </span><span class="tsd-signature-type">Promise</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">AxiosResponse</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">any</span><span class="tsd-signature-symbol">&gt;</span><span class="tsd-signature-symbol">&gt;</span></h5>
+									<ul class="tsd-parameters">
+										<li class="tsd-parameter-signature">
+											<ul class="tsd-signatures tsd-kind-type-literal">
+												<li class="tsd-signature tsd-kind-icon"><span class="tsd-signature-symbol">(</span>_<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">any</span>, payload<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">any</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">Promise</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">AxiosResponse</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">any</span><span class="tsd-signature-symbol">&gt;</span><span class="tsd-signature-symbol">&gt;</span></li>
+											</ul>
+											<ul class="tsd-descriptions">
+												<li class="tsd-description">
+													<h4 class="tsd-parameters-title">Parameters</h4>
+													<ul class="tsd-parameters">
+														<li>
+															<h5>_: <span class="tsd-signature-type">any</span></h5>
+														</li>
+														<li>
+															<h5>payload: <span class="tsd-signature-type">any</span></h5>
+														</li>
+													</ul>
+													<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">Promise</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">AxiosResponse</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">any</span><span class="tsd-signature-symbol">&gt;</span><span class="tsd-signature-symbol">&gt;</span></h4>
+												</li>
+											</ul>
+										</li>
+									</ul>
+								</li>
+							</ul>
+						</li>
+					</ul>
+				</section>
+				<section class="tsd-panel tsd-member tsd-kind-method tsd-parent-kind-class">
+					<a name="createextrapostaction" class="tsd-anchor"></a>
+					<h3>create<wbr>Extra<wbr>Post<wbr>Action</h3>
+					<ul class="tsd-signatures tsd-kind-method tsd-parent-kind-class">
+						<li class="tsd-signature tsd-kind-icon">create<wbr>Extra<wbr>Post<wbr>Action<span class="tsd-signature-symbol">(</span>endpoint<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">string</span>, actionName<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">string</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-symbol">{}</span></li>
+					</ul>
+					<ul class="tsd-descriptions">
+						<li class="tsd-description">
+							<aside class="tsd-sources">
+								<ul>
+									<li>Defined in <a href="https://github.com/script-development/vue-services/blob/b9c928c/types/storeService.d.ts#L295">storeService.d.ts:295</a></li>
+								</ul>
+							</aside>
+							<div class="tsd-comment tsd-typography">
+								<div class="lead">
+									<p>create a new action to add to the store which sends a post request</p>
+								</div>
+							</div>
+							<h4 class="tsd-parameters-title">Parameters</h4>
+							<ul class="tsd-parameters">
+								<li>
+									<h5>endpoint: <span class="tsd-signature-type">string</span></h5>
+									<div class="tsd-comment tsd-typography">
+										<p>api endpoint</p>
+									</div>
+								</li>
+								<li>
+									<h5>actionName: <span class="tsd-signature-type">string</span></h5>
+									<div class="tsd-comment tsd-typography">
+										<p>the last part of the url</p>
+									</div>
+								</li>
+							</ul>
+							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-symbol">{}</span></h4>
+							<ul class="tsd-parameters">
+								<li class="tsd-parameter-index-signature">
+									<h5><span class="tsd-signature-symbol">[</span>x: <span class="tsd-signature-type">string</span><span class="tsd-signature-symbol">]: </span><span class="tsd-signature-symbol">(</span>_<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">any</span>, payload<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">any</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol"> =&gt; </span><span class="tsd-signature-type">Promise</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">AxiosResponse</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">any</span><span class="tsd-signature-symbol">&gt;</span><span class="tsd-signature-symbol">&gt;</span></h5>
+									<ul class="tsd-parameters">
+										<li class="tsd-parameter-signature">
+											<ul class="tsd-signatures tsd-kind-type-literal">
+												<li class="tsd-signature tsd-kind-icon"><span class="tsd-signature-symbol">(</span>_<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">any</span>, payload<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">any</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">Promise</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">AxiosResponse</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">any</span><span class="tsd-signature-symbol">&gt;</span><span class="tsd-signature-symbol">&gt;</span></li>
+											</ul>
+											<ul class="tsd-descriptions">
+												<li class="tsd-description">
+													<h4 class="tsd-parameters-title">Parameters</h4>
+													<ul class="tsd-parameters">
+														<li>
+															<h5>_: <span class="tsd-signature-type">any</span></h5>
+														</li>
+														<li>
+															<h5>payload: <span class="tsd-signature-type">any</span></h5>
+														</li>
+													</ul>
+													<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">Promise</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">AxiosResponse</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">any</span><span class="tsd-signature-symbol">&gt;</span><span class="tsd-signature-symbol">&gt;</span></h4>
+												</li>
+											</ul>
+										</li>
+									</ul>
+								</li>
+							</ul>
+						</li>
+					</ul>
+				</section>
+				<section class="tsd-panel tsd-member tsd-kind-method tsd-parent-kind-class">
+					<a name="destroy" class="tsd-anchor"></a>
+					<h3>destroy</h3>
+					<ul class="tsd-signatures tsd-kind-method tsd-parent-kind-class">
+						<li class="tsd-signature tsd-kind-icon">destroy<span class="tsd-signature-symbol">(</span>storeModule<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">string</span>, id<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">string</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">Promise</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">any</span><span class="tsd-signature-symbol">&gt;</span></li>
+					</ul>
+					<ul class="tsd-descriptions">
+						<li class="tsd-description">
+							<aside class="tsd-sources">
+								<ul>
+									<li>Defined in <a href="https://github.com/script-development/vue-services/blob/b9c928c/types/storeService.d.ts#L181">storeService.d.ts:181</a></li>
+								</ul>
+							</aside>
+							<div class="tsd-comment tsd-typography">
+								<div class="lead">
+									<p>dispatch an action to the store, which deletes an item on the server</p>
+								</div>
+							</div>
+							<h4 class="tsd-parameters-title">Parameters</h4>
+							<ul class="tsd-parameters">
+								<li>
+									<h5>storeModule: <span class="tsd-signature-type">string</span></h5>
+									<div class="tsd-comment tsd-typography">
+										<p>the store module for which an item must be deleted</p>
+									</div>
+								</li>
+								<li>
+									<h5>id: <span class="tsd-signature-type">string</span></h5>
+									<div class="tsd-comment tsd-typography">
+										<p>the id of the item to be deleted</p>
+									</div>
+								</li>
+							</ul>
+							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">Promise</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">any</span><span class="tsd-signature-symbol">&gt;</span></h4>
+						</li>
+					</ul>
+				</section>
+				<section class="tsd-panel tsd-member tsd-kind-method tsd-parent-kind-class">
+					<a name="dispatch" class="tsd-anchor"></a>
+					<h3>dispatch</h3>
+					<ul class="tsd-signatures tsd-kind-method tsd-parent-kind-class">
+						<li class="tsd-signature tsd-kind-icon">dispatch<span class="tsd-signature-symbol">(</span>moduleName<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">string</span>, action<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">string</span>, payload<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">any</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">Promise</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">any</span><span class="tsd-signature-symbol">&gt;</span></li>
+					</ul>
+					<ul class="tsd-descriptions">
+						<li class="tsd-description">
+							<aside class="tsd-sources">
+								<ul>
+									<li>Defined in <a href="https://github.com/script-development/vue-services/blob/b9c928c/types/storeService.d.ts#L161">storeService.d.ts:161</a></li>
+								</ul>
+							</aside>
+							<div class="tsd-comment tsd-typography">
+								<div class="lead">
+									<p>dispatch an action to the store</p>
+								</div>
+							</div>
+							<h4 class="tsd-parameters-title">Parameters</h4>
+							<ul class="tsd-parameters">
+								<li>
+									<h5>moduleName: <span class="tsd-signature-type">string</span></h5>
+									<div class="tsd-comment tsd-typography">
+										<p>the name of the module to dispatch the action to</p>
+									</div>
+								</li>
+								<li>
+									<h5>action: <span class="tsd-signature-type">string</span></h5>
+									<div class="tsd-comment tsd-typography">
+										<p>the name of the action</p>
+									</div>
+								</li>
+								<li>
+									<h5>payload: <span class="tsd-signature-type">any</span></h5>
+									<div class="tsd-comment tsd-typography">
+										<p>the payload to sent to the action</p>
+									</div>
+								</li>
+							</ul>
+							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">Promise</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">any</span><span class="tsd-signature-symbol">&gt;</span></h4>
+						</li>
+					</ul>
+				</section>
+				<section class="tsd-panel tsd-member tsd-kind-method tsd-parent-kind-class">
+					<a name="generateandsetdefaultstoremodule" class="tsd-anchor"></a>
+					<h3>generate<wbr>And<wbr>Set<wbr>Default<wbr>Store<wbr>Module</h3>
+					<ul class="tsd-signatures tsd-kind-method tsd-parent-kind-class">
+						<li class="tsd-signature tsd-kind-icon">generate<wbr>And<wbr>Set<wbr>Default<wbr>Store<wbr>Module<span class="tsd-signature-symbol">(</span>moduleName<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">string</span>, endpoint<span class="tsd-signature-symbol">?: </span><span class="tsd-signature-type">string</span>, extraFunctionality<span class="tsd-signature-symbol">?: </span><span class="tsd-signature-type">Module</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">string</span><span class="tsd-signature-symbol">, </span><span class="tsd-signature-type">any</span><span class="tsd-signature-symbol">&gt;</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">void</span></li>
+					</ul>
+					<ul class="tsd-descriptions">
+						<li class="tsd-description">
+							<aside class="tsd-sources">
+								<ul>
+									<li>Defined in <a href="https://github.com/script-development/vue-services/blob/b9c928c/types/storeService.d.ts#L277">storeService.d.ts:277</a></li>
+								</ul>
+							</aside>
+							<div class="tsd-comment tsd-typography">
+								<div class="lead">
+									<p>generate and set the default store module in the store</p>
+								</div>
+							</div>
+							<h4 class="tsd-parameters-title">Parameters</h4>
+							<ul class="tsd-parameters">
+								<li>
+									<h5>moduleName: <span class="tsd-signature-type">string</span></h5>
+									<div class="tsd-comment tsd-typography">
+										<p>the name of the module</p>
+									</div>
+								</li>
+								<li>
+									<h5><span class="tsd-flag ts-flagOptional">Optional</span> endpoint: <span class="tsd-signature-type">string</span></h5>
+								</li>
+								<li>
+									<h5><span class="tsd-flag ts-flagOptional">Optional</span> extraFunctionality: <span class="tsd-signature-type">Module</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">string</span><span class="tsd-signature-symbol">, </span><span class="tsd-signature-type">any</span><span class="tsd-signature-symbol">&gt;</span></h5>
+								</li>
+							</ul>
+							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">void</span></h4>
+						</li>
+					</ul>
+				</section>
+				<section class="tsd-panel tsd-member tsd-kind-method tsd-parent-kind-class">
+					<a name="get" class="tsd-anchor"></a>
+					<h3>get</h3>
+					<ul class="tsd-signatures tsd-kind-method tsd-parent-kind-class">
+						<li class="tsd-signature tsd-kind-icon">get<span class="tsd-signature-symbol">(</span>moduleName<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">string</span>, getter<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">string</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">any</span></li>
+					</ul>
+					<ul class="tsd-descriptions">
+						<li class="tsd-description">
+							<aside class="tsd-sources">
+								<ul>
+									<li>Defined in <a href="https://github.com/script-development/vue-services/blob/b9c928c/types/storeService.d.ts#L153">storeService.d.ts:153</a></li>
+								</ul>
+							</aside>
+							<div class="tsd-comment tsd-typography">
+								<div class="lead">
+									<p>get something from the store</p>
+								</div>
+							</div>
+							<h4 class="tsd-parameters-title">Parameters</h4>
+							<ul class="tsd-parameters">
+								<li>
+									<h5>moduleName: <span class="tsd-signature-type">string</span></h5>
+									<div class="tsd-comment tsd-typography">
+										<p>the name of the module to get something from</p>
+									</div>
+								</li>
+								<li>
+									<h5>getter: <span class="tsd-signature-type">string</span></h5>
+									<div class="tsd-comment tsd-typography">
+										<p>the name of the getter</p>
+									</div>
+								</li>
+							</ul>
+							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">any</span></h4>
+						</li>
+					</ul>
+				</section>
+				<section class="tsd-panel tsd-member tsd-kind-method tsd-parent-kind-class">
+					<a name="getallfromstore" class="tsd-anchor"></a>
+					<h3>get<wbr>All<wbr>From<wbr>Store</h3>
+					<ul class="tsd-signatures tsd-kind-method tsd-parent-kind-class">
+						<li class="tsd-signature tsd-kind-icon">get<wbr>All<wbr>From<wbr>Store<span class="tsd-signature-symbol">(</span>storeModule<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">string</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">any</span></li>
+					</ul>
+					<ul class="tsd-descriptions">
+						<li class="tsd-description">
+							<aside class="tsd-sources">
+								<ul>
+									<li>Defined in <a href="https://github.com/script-development/vue-services/blob/b9c928c/types/storeService.d.ts#L167">storeService.d.ts:167</a></li>
+								</ul>
+							</aside>
+							<div class="tsd-comment tsd-typography">
+								<div class="lead">
+									<p>Get all from data from the given store module</p>
+								</div>
+							</div>
+							<h4 class="tsd-parameters-title">Parameters</h4>
+							<ul class="tsd-parameters">
+								<li>
+									<h5>storeModule: <span class="tsd-signature-type">string</span></h5>
+									<div class="tsd-comment tsd-typography">
+										<p>the module from which to get all</p>
+									</div>
+								</li>
+							</ul>
+							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">any</span></h4>
+						</li>
+					</ul>
+				</section>
+				<section class="tsd-panel tsd-member tsd-kind-method tsd-parent-kind-class">
+					<a name="getallitemsstatename" class="tsd-anchor"></a>
+					<h3>get<wbr>All<wbr>Items<wbr>State<wbr>Name</h3>
+					<ul class="tsd-signatures tsd-kind-method tsd-parent-kind-class">
+						<li class="tsd-signature tsd-kind-icon">get<wbr>All<wbr>Items<wbr>State<wbr>Name<span class="tsd-signature-symbol">(</span>seperator<span class="tsd-signature-symbol">?: </span><span class="tsd-signature-type">boolean</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">string</span></li>
+					</ul>
+					<ul class="tsd-descriptions">
+						<li class="tsd-description">
+							<aside class="tsd-sources">
+								<ul>
+									<li>Defined in <a href="https://github.com/script-development/vue-services/blob/b9c928c/types/storeService.d.ts#L255">storeService.d.ts:255</a></li>
+								</ul>
+							</aside>
+							<div class="tsd-comment tsd-typography">
+								<div class="lead">
+									<p> get the all data in store state name with or without seperator</p>
+								</div>
+							</div>
+							<h4 class="tsd-parameters-title">Parameters</h4>
+							<ul class="tsd-parameters">
+								<li>
+									<h5><span class="tsd-flag ts-flagOptional">Optional</span> seperator: <span class="tsd-signature-type">boolean</span></h5>
+								</li>
+							</ul>
+							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">string</span></h4>
+						</li>
+					</ul>
+				</section>
+				<section class="tsd-panel tsd-member tsd-kind-method tsd-parent-kind-class">
+					<a name="getbyidfromstore" class="tsd-anchor"></a>
+					<h3>get<wbr>ById<wbr>From<wbr>Store</h3>
+					<ul class="tsd-signatures tsd-kind-method tsd-parent-kind-class">
+						<li class="tsd-signature tsd-kind-icon">get<wbr>ById<wbr>From<wbr>Store<span class="tsd-signature-symbol">(</span>storeModule<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">string</span>, id<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">string</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">any</span></li>
+					</ul>
+					<ul class="tsd-descriptions">
+						<li class="tsd-description">
+							<aside class="tsd-sources">
+								<ul>
+									<li>Defined in <a href="https://github.com/script-development/vue-services/blob/b9c928c/types/storeService.d.ts#L174">storeService.d.ts:174</a></li>
+								</ul>
+							</aside>
+							<div class="tsd-comment tsd-typography">
+								<div class="lead">
+									<p>Get all data from the given store module by id</p>
+								</div>
+							</div>
+							<h4 class="tsd-parameters-title">Parameters</h4>
+							<ul class="tsd-parameters">
+								<li>
+									<h5>storeModule: <span class="tsd-signature-type">string</span></h5>
+									<div class="tsd-comment tsd-typography">
+										<p>the module from which to get all</p>
+									</div>
+								</li>
+								<li>
+									<h5>id: <span class="tsd-signature-type">string</span></h5>
+									<div class="tsd-comment tsd-typography">
+										<p>the id of the data object to get</p>
+									</div>
+								</li>
+							</ul>
+							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">any</span></h4>
+						</li>
+					</ul>
+				</section>
+				<section class="tsd-panel tsd-member tsd-kind-method tsd-parent-kind-class">
+					<a name="getcreateaction" class="tsd-anchor"></a>
+					<h3>get<wbr>Create<wbr>Action</h3>
+					<ul class="tsd-signatures tsd-kind-method tsd-parent-kind-class">
+						<li class="tsd-signature tsd-kind-icon">get<wbr>Create<wbr>Action<span class="tsd-signature-symbol">(</span>seperator<span class="tsd-signature-symbol">?: </span><span class="tsd-signature-type">boolean</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">string</span></li>
+					</ul>
+					<ul class="tsd-descriptions">
+						<li class="tsd-description">
+							<aside class="tsd-sources">
+								<ul>
+									<li>Defined in <a href="https://github.com/script-development/vue-services/blob/b9c928c/types/storeService.d.ts#L245">storeService.d.ts:245</a></li>
+								</ul>
+							</aside>
+							<div class="tsd-comment tsd-typography">
+								<div class="lead">
+									<p> get the update store action with or without seperator</p>
+								</div>
+							</div>
+							<h4 class="tsd-parameters-title">Parameters</h4>
+							<ul class="tsd-parameters">
+								<li>
+									<h5><span class="tsd-flag ts-flagOptional">Optional</span> seperator: <span class="tsd-signature-type">boolean</span></h5>
+								</li>
+							</ul>
+							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">string</span></h4>
+						</li>
+					</ul>
+				</section>
+				<section class="tsd-panel tsd-member tsd-kind-method tsd-parent-kind-class">
+					<a name="getdeleteaction" class="tsd-anchor"></a>
+					<h3>get<wbr>Delete<wbr>Action</h3>
+					<ul class="tsd-signatures tsd-kind-method tsd-parent-kind-class">
+						<li class="tsd-signature tsd-kind-icon">get<wbr>Delete<wbr>Action<span class="tsd-signature-symbol">(</span>seperator<span class="tsd-signature-symbol">?: </span><span class="tsd-signature-type">boolean</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">string</span></li>
+					</ul>
+					<ul class="tsd-descriptions">
+						<li class="tsd-description">
+							<aside class="tsd-sources">
+								<ul>
+									<li>Defined in <a href="https://github.com/script-development/vue-services/blob/b9c928c/types/storeService.d.ts#L235">storeService.d.ts:235</a></li>
+								</ul>
+							</aside>
+							<div class="tsd-comment tsd-typography">
+								<div class="lead">
+									<p> get the delete store action with or without seperator</p>
+								</div>
+							</div>
+							<h4 class="tsd-parameters-title">Parameters</h4>
+							<ul class="tsd-parameters">
+								<li>
+									<h5><span class="tsd-flag ts-flagOptional">Optional</span> seperator: <span class="tsd-signature-type">boolean</span></h5>
+								</li>
+							</ul>
+							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">string</span></h4>
+						</li>
+					</ul>
+				</section>
+				<section class="tsd-panel tsd-member tsd-kind-method tsd-parent-kind-class">
+					<a name="getdeletemutation" class="tsd-anchor"></a>
+					<h3>get<wbr>Delete<wbr>Mutation</h3>
+					<ul class="tsd-signatures tsd-kind-method tsd-parent-kind-class">
+						<li class="tsd-signature tsd-kind-icon">get<wbr>Delete<wbr>Mutation<span class="tsd-signature-symbol">(</span>seperator<span class="tsd-signature-symbol">?: </span><span class="tsd-signature-type">boolean</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">string</span></li>
+					</ul>
+					<ul class="tsd-descriptions">
+						<li class="tsd-description">
+							<aside class="tsd-sources">
+								<ul>
+									<li>Defined in <a href="https://github.com/script-development/vue-services/blob/b9c928c/types/storeService.d.ts#L265">storeService.d.ts:265</a></li>
+								</ul>
+							</aside>
+							<div class="tsd-comment tsd-typography">
+								<div class="lead">
+									<p> get the delete mutation name with or without seperator</p>
+								</div>
+							</div>
+							<h4 class="tsd-parameters-title">Parameters</h4>
+							<ul class="tsd-parameters">
+								<li>
+									<h5><span class="tsd-flag ts-flagOptional">Optional</span> seperator: <span class="tsd-signature-type">boolean</span></h5>
+								</li>
+							</ul>
+							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">string</span></h4>
+						</li>
+					</ul>
+				</section>
+				<section class="tsd-panel tsd-member tsd-kind-method tsd-parent-kind-class">
+					<a name="getreadaction" class="tsd-anchor"></a>
+					<h3>get<wbr>Read<wbr>Action</h3>
+					<ul class="tsd-signatures tsd-kind-method tsd-parent-kind-class">
+						<li class="tsd-signature tsd-kind-icon">get<wbr>Read<wbr>Action<span class="tsd-signature-symbol">(</span>seperator<span class="tsd-signature-symbol">?: </span><span class="tsd-signature-type">boolean</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">string</span></li>
+					</ul>
+					<ul class="tsd-descriptions">
+						<li class="tsd-description">
+							<aside class="tsd-sources">
+								<ul>
+									<li>Defined in <a href="https://github.com/script-development/vue-services/blob/b9c928c/types/storeService.d.ts#L230">storeService.d.ts:230</a></li>
+								</ul>
+							</aside>
+							<div class="tsd-comment tsd-typography">
+								<div class="lead">
+									<p> get the read store action with or without seperator</p>
+								</div>
+							</div>
+							<h4 class="tsd-parameters-title">Parameters</h4>
+							<ul class="tsd-parameters">
+								<li>
+									<h5><span class="tsd-flag ts-flagOptional">Optional</span> seperator: <span class="tsd-signature-type">boolean</span></h5>
+								</li>
+							</ul>
+							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">string</span></h4>
+						</li>
+					</ul>
+				</section>
+				<section class="tsd-panel tsd-member tsd-kind-method tsd-parent-kind-class">
+					<a name="getreadallgetter" class="tsd-anchor"></a>
+					<h3>get<wbr>Read<wbr>All<wbr>Getter</h3>
+					<ul class="tsd-signatures tsd-kind-method tsd-parent-kind-class">
+						<li class="tsd-signature tsd-kind-icon">get<wbr>Read<wbr>All<wbr>Getter<span class="tsd-signature-symbol">(</span>seperator<span class="tsd-signature-symbol">?: </span><span class="tsd-signature-type">boolean</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">string</span></li>
+					</ul>
+					<ul class="tsd-descriptions">
+						<li class="tsd-description">
+							<aside class="tsd-sources">
+								<ul>
+									<li>Defined in <a href="https://github.com/script-development/vue-services/blob/b9c928c/types/storeService.d.ts#L220">storeService.d.ts:220</a></li>
+								</ul>
+							</aside>
+							<div class="tsd-comment tsd-typography">
+								<div class="lead">
+									<p> get the read all from store getter with or without seperator</p>
+								</div>
+							</div>
+							<h4 class="tsd-parameters-title">Parameters</h4>
+							<ul class="tsd-parameters">
+								<li>
+									<h5><span class="tsd-flag ts-flagOptional">Optional</span> seperator: <span class="tsd-signature-type">boolean</span></h5>
+								</li>
+							</ul>
+							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">string</span></h4>
+						</li>
+					</ul>
+				</section>
+				<section class="tsd-panel tsd-member tsd-kind-method tsd-parent-kind-class">
+					<a name="getreadbyidgetter" class="tsd-anchor"></a>
+					<h3>get<wbr>Read<wbr>ById<wbr>Getter</h3>
+					<ul class="tsd-signatures tsd-kind-method tsd-parent-kind-class">
+						<li class="tsd-signature tsd-kind-icon">get<wbr>Read<wbr>ById<wbr>Getter<span class="tsd-signature-symbol">(</span>seperator<span class="tsd-signature-symbol">?: </span><span class="tsd-signature-type">boolean</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">string</span></li>
+					</ul>
+					<ul class="tsd-descriptions">
+						<li class="tsd-description">
+							<aside class="tsd-sources">
+								<ul>
+									<li>Defined in <a href="https://github.com/script-development/vue-services/blob/b9c928c/types/storeService.d.ts#L225">storeService.d.ts:225</a></li>
+								</ul>
+							</aside>
+							<div class="tsd-comment tsd-typography">
+								<div class="lead">
+									<p> get the read by id from store getter with or without seperator</p>
+								</div>
+							</div>
+							<h4 class="tsd-parameters-title">Parameters</h4>
+							<ul class="tsd-parameters">
+								<li>
+									<h5><span class="tsd-flag ts-flagOptional">Optional</span> seperator: <span class="tsd-signature-type">boolean</span></h5>
+								</li>
+							</ul>
+							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">string</span></h4>
+						</li>
+					</ul>
+				</section>
+				<section class="tsd-panel tsd-member tsd-kind-method tsd-parent-kind-class">
+					<a name="getsetallinstoreaction" class="tsd-anchor"></a>
+					<h3>get<wbr>Set<wbr>All<wbr>InStore<wbr>Action</h3>
+					<ul class="tsd-signatures tsd-kind-method tsd-parent-kind-class">
+						<li class="tsd-signature tsd-kind-icon">get<wbr>Set<wbr>All<wbr>InStore<wbr>Action<span class="tsd-signature-symbol">(</span>seperator<span class="tsd-signature-symbol">?: </span><span class="tsd-signature-type">boolean</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">string</span></li>
+					</ul>
+					<ul class="tsd-descriptions">
+						<li class="tsd-description">
+							<aside class="tsd-sources">
+								<ul>
+									<li>Defined in <a href="https://github.com/script-development/vue-services/blob/b9c928c/types/storeService.d.ts#L250">storeService.d.ts:250</a></li>
+								</ul>
+							</aside>
+							<div class="tsd-comment tsd-typography">
+								<div class="lead">
+									<p> get the set all in store action with or without seperator</p>
+								</div>
+							</div>
+							<h4 class="tsd-parameters-title">Parameters</h4>
+							<ul class="tsd-parameters">
+								<li>
+									<h5><span class="tsd-flag ts-flagOptional">Optional</span> seperator: <span class="tsd-signature-type">boolean</span></h5>
+								</li>
+							</ul>
+							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">string</span></h4>
+						</li>
+					</ul>
+				</section>
+				<section class="tsd-panel tsd-member tsd-kind-method tsd-parent-kind-class">
+					<a name="getsetallmutation" class="tsd-anchor"></a>
+					<h3>get<wbr>Set<wbr>All<wbr>Mutation</h3>
+					<ul class="tsd-signatures tsd-kind-method tsd-parent-kind-class">
+						<li class="tsd-signature tsd-kind-icon">get<wbr>Set<wbr>All<wbr>Mutation<span class="tsd-signature-symbol">(</span>seperator<span class="tsd-signature-symbol">?: </span><span class="tsd-signature-type">boolean</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">string</span></li>
+					</ul>
+					<ul class="tsd-descriptions">
+						<li class="tsd-description">
+							<aside class="tsd-sources">
+								<ul>
+									<li>Defined in <a href="https://github.com/script-development/vue-services/blob/b9c928c/types/storeService.d.ts#L260">storeService.d.ts:260</a></li>
+								</ul>
+							</aside>
+							<div class="tsd-comment tsd-typography">
+								<div class="lead">
+									<p> get the set all mutation name with or without seperator</p>
+								</div>
+							</div>
+							<h4 class="tsd-parameters-title">Parameters</h4>
+							<ul class="tsd-parameters">
+								<li>
+									<h5><span class="tsd-flag ts-flagOptional">Optional</span> seperator: <span class="tsd-signature-type">boolean</span></h5>
+								</li>
+							</ul>
+							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">string</span></h4>
+						</li>
+					</ul>
+				</section>
+				<section class="tsd-panel tsd-member tsd-kind-method tsd-parent-kind-class">
+					<a name="getupdateaction" class="tsd-anchor"></a>
+					<h3>get<wbr>Update<wbr>Action</h3>
+					<ul class="tsd-signatures tsd-kind-method tsd-parent-kind-class">
+						<li class="tsd-signature tsd-kind-icon">get<wbr>Update<wbr>Action<span class="tsd-signature-symbol">(</span>seperator<span class="tsd-signature-symbol">?: </span><span class="tsd-signature-type">boolean</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">string</span></li>
+					</ul>
+					<ul class="tsd-descriptions">
+						<li class="tsd-description">
+							<aside class="tsd-sources">
+								<ul>
+									<li>Defined in <a href="https://github.com/script-development/vue-services/blob/b9c928c/types/storeService.d.ts#L240">storeService.d.ts:240</a></li>
+								</ul>
+							</aside>
+							<div class="tsd-comment tsd-typography">
+								<div class="lead">
+									<p> get the update store action with or without seperator</p>
+								</div>
+							</div>
+							<h4 class="tsd-parameters-title">Parameters</h4>
+							<ul class="tsd-parameters">
+								<li>
+									<h5><span class="tsd-flag ts-flagOptional">Optional</span> seperator: <span class="tsd-signature-type">boolean</span></h5>
+								</li>
+							</ul>
+							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">string</span></h4>
+						</li>
+					</ul>
+				</section>
+				<section class="tsd-panel tsd-member tsd-kind-method tsd-parent-kind-class">
+					<a name="read" class="tsd-anchor"></a>
+					<h3>read</h3>
+					<ul class="tsd-signatures tsd-kind-method tsd-parent-kind-class">
+						<li class="tsd-signature tsd-kind-icon">read<span class="tsd-signature-symbol">(</span>storeModule<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">string</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">Promise</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">any</span><span class="tsd-signature-symbol">&gt;</span></li>
+					</ul>
+					<ul class="tsd-descriptions">
+						<li class="tsd-description">
+							<aside class="tsd-sources">
+								<ul>
+									<li>Defined in <a href="https://github.com/script-development/vue-services/blob/b9c928c/types/storeService.d.ts#L201">storeService.d.ts:201</a></li>
+								</ul>
+							</aside>
+							<div class="tsd-comment tsd-typography">
+								<div class="lead">
+									<p>dispatch an action to the store, which reads all items on the server</p>
+								</div>
+							</div>
+							<h4 class="tsd-parameters-title">Parameters</h4>
+							<ul class="tsd-parameters">
+								<li>
+									<h5>storeModule: <span class="tsd-signature-type">string</span></h5>
+									<div class="tsd-comment tsd-typography">
+										<p>the store module for which all items must be read</p>
+									</div>
+								</li>
+							</ul>
+							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">Promise</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">any</span><span class="tsd-signature-symbol">&gt;</span></h4>
+						</li>
+					</ul>
+				</section>
+				<section class="tsd-panel tsd-member tsd-kind-method tsd-parent-kind-class">
+					<a name="registermodule" class="tsd-anchor"></a>
+					<h3>register<wbr>Module</h3>
+					<ul class="tsd-signatures tsd-kind-method tsd-parent-kind-class">
+						<li class="tsd-signature tsd-kind-icon">register<wbr>Module<span class="tsd-signature-symbol">(</span>moduleName<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">string</span>, storeModule<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">Module</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">string</span><span class="tsd-signature-symbol">, </span><span class="tsd-signature-type">any</span><span class="tsd-signature-symbol">&gt;</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">void</span></li>
+					</ul>
+					<ul class="tsd-descriptions">
+						<li class="tsd-description">
+							<aside class="tsd-sources">
+								<ul>
+									<li>Defined in <a href="https://github.com/script-development/vue-services/blob/b9c928c/types/storeService.d.ts#L288">storeService.d.ts:288</a></li>
+								</ul>
+							</aside>
+							<div class="tsd-comment tsd-typography">
+								<div class="lead">
+									<p>set the store module in the store</p>
+								</div>
+							</div>
+							<h4 class="tsd-parameters-title">Parameters</h4>
+							<ul class="tsd-parameters">
+								<li>
+									<h5>moduleName: <span class="tsd-signature-type">string</span></h5>
+									<div class="tsd-comment tsd-typography">
+										<p>the name of the module</p>
+									</div>
+								</li>
+								<li>
+									<h5>storeModule: <span class="tsd-signature-type">Module</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">string</span><span class="tsd-signature-symbol">, </span><span class="tsd-signature-type">any</span><span class="tsd-signature-symbol">&gt;</span></h5>
+									<div class="tsd-comment tsd-typography">
+										<p>the module to add to the store</p>
+									</div>
+								</li>
+							</ul>
+							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">void</span></h4>
+						</li>
+					</ul>
+				</section>
+				<section class="tsd-panel tsd-member tsd-kind-method tsd-parent-kind-class">
+					<a name="setallinstore" class="tsd-anchor"></a>
+					<h3>set<wbr>All<wbr>InStore</h3>
+					<ul class="tsd-signatures tsd-kind-method tsd-parent-kind-class">
+						<li class="tsd-signature tsd-kind-icon">set<wbr>All<wbr>InStore<span class="tsd-signature-symbol">(</span>storeModule<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">string</span>, data<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">any</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">Promise</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">any</span><span class="tsd-signature-symbol">&gt;</span></li>
+					</ul>
+					<ul class="tsd-descriptions">
+						<li class="tsd-description">
+							<aside class="tsd-sources">
+								<ul>
+									<li>Defined in <a href="https://github.com/script-development/vue-services/blob/b9c928c/types/storeService.d.ts#L215">storeService.d.ts:215</a></li>
+								</ul>
+							</aside>
+							<div class="tsd-comment tsd-typography">
+								<div class="lead">
+									<p>Set all the data in the store module</p>
+								</div>
+							</div>
+							<h4 class="tsd-parameters-title">Parameters</h4>
+							<ul class="tsd-parameters">
+								<li>
+									<h5>storeModule: <span class="tsd-signature-type">string</span></h5>
+									<div class="tsd-comment tsd-typography">
+										<p>the module to fill the data with</p>
+									</div>
+								</li>
+								<li>
+									<h5>data: <span class="tsd-signature-type">any</span></h5>
+									<div class="tsd-comment tsd-typography">
+										<p>data to fill the store with</p>
+									</div>
+								</li>
+							</ul>
+							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">Promise</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">any</span><span class="tsd-signature-symbol">&gt;</span></h4>
+						</li>
+					</ul>
+				</section>
+				<section class="tsd-panel tsd-member tsd-kind-method tsd-parent-kind-class">
+					<a name="setfactorysettings" class="tsd-anchor"></a>
+					<h3>set<wbr>Factory<wbr>Settings</h3>
+					<ul class="tsd-signatures tsd-kind-method tsd-parent-kind-class">
+						<li class="tsd-signature tsd-kind-icon">set<wbr>Factory<wbr>Settings<span class="tsd-signature-symbol">(</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">void</span></li>
+					</ul>
+					<ul class="tsd-descriptions">
+						<li class="tsd-description">
+							<aside class="tsd-sources">
+								<ul>
+									<li>Defined in <a href="https://github.com/script-development/vue-services/blob/b9c928c/types/storeService.d.ts#L269">storeService.d.ts:269</a></li>
+								</ul>
+							</aside>
+							<div class="tsd-comment tsd-typography">
+								<div class="lead">
+									<p>Set the factory name</p>
+								</div>
+							</div>
+							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">void</span></h4>
+						</li>
+					</ul>
+				</section>
+				<section class="tsd-panel tsd-member tsd-kind-method tsd-parent-kind-class">
+					<a name="show" class="tsd-anchor"></a>
+					<h3>show</h3>
+					<ul class="tsd-signatures tsd-kind-method tsd-parent-kind-class">
+						<li class="tsd-signature tsd-kind-icon">show<span class="tsd-signature-symbol">(</span>storeModule<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">string</span>, id<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">number</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">Promise</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">any</span><span class="tsd-signature-symbol">&gt;</span></li>
+					</ul>
+					<ul class="tsd-descriptions">
+						<li class="tsd-description">
+							<aside class="tsd-sources">
+								<ul>
+									<li>Defined in <a href="https://github.com/script-development/vue-services/blob/b9c928c/types/storeService.d.ts#L208">storeService.d.ts:208</a></li>
+								</ul>
+							</aside>
+							<div class="tsd-comment tsd-typography">
+								<div class="lead">
+									<p>dispatch an action to the store, which reads an item on the server</p>
+								</div>
+							</div>
+							<h4 class="tsd-parameters-title">Parameters</h4>
+							<ul class="tsd-parameters">
+								<li>
+									<h5>storeModule: <span class="tsd-signature-type">string</span></h5>
+									<div class="tsd-comment tsd-typography">
+										<p>the store module for which the item must be read</p>
+									</div>
+								</li>
+								<li>
+									<h5>id: <span class="tsd-signature-type">number</span></h5>
+									<div class="tsd-comment tsd-typography">
+										<p>the id to be read</p>
+									</div>
+								</li>
+							</ul>
+							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">Promise</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">any</span><span class="tsd-signature-symbol">&gt;</span></h4>
+						</li>
+					</ul>
+				</section>
+				<section class="tsd-panel tsd-member tsd-kind-method tsd-parent-kind-class">
+					<a name="update" class="tsd-anchor"></a>
+					<h3>update</h3>
+					<ul class="tsd-signatures tsd-kind-method tsd-parent-kind-class">
+						<li class="tsd-signature tsd-kind-icon">update<span class="tsd-signature-symbol">(</span>storeModule<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">string</span>, item<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">any</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">Promise</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">any</span><span class="tsd-signature-symbol">&gt;</span></li>
+					</ul>
+					<ul class="tsd-descriptions">
+						<li class="tsd-description">
+							<aside class="tsd-sources">
+								<ul>
+									<li>Defined in <a href="https://github.com/script-development/vue-services/blob/b9c928c/types/storeService.d.ts#L188">storeService.d.ts:188</a></li>
+								</ul>
+							</aside>
+							<div class="tsd-comment tsd-typography">
+								<div class="lead">
+									<p>dispatch an action to the store, which updates an item on the server</p>
+								</div>
+							</div>
+							<h4 class="tsd-parameters-title">Parameters</h4>
+							<ul class="tsd-parameters">
+								<li>
+									<h5>storeModule: <span class="tsd-signature-type">string</span></h5>
+									<div class="tsd-comment tsd-typography">
+										<p>the store module for which an item must be updated</p>
+									</div>
+								</li>
+								<li>
+									<h5>item: <span class="tsd-signature-type">any</span></h5>
+									<div class="tsd-comment tsd-typography">
+										<p>the item to be updated</p>
+									</div>
+								</li>
+							</ul>
+							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">Promise</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">any</span><span class="tsd-signature-symbol">&gt;</span></h4>
+						</li>
+					</ul>
+				</section>
+			</section>
+		</div>
+		<div class="col-4 col-menu menu-sticky-wrap menu-highlight">
+			<nav class="tsd-navigation primary">
+				<ul>
+					<li class="globals  ">
+						<a href="../globals.html"><em>Globals</em></a>
+					</li>
+				</ul>
+			</nav>
+			<nav class="tsd-navigation secondary menu-sticky">
+				<ul class="before-current">
+					<li class=" tsd-kind-class">
+						<a href="appstarter.html" class="tsd-kind-icon">App<wbr>Starter</a>
+					</li>
+					<li class=" tsd-kind-class">
+						<a href="authservice.html" class="tsd-kind-icon">Auth<wbr>Service</a>
+					</li>
+					<li class=" tsd-kind-class">
+						<a href="basecontroller.html" class="tsd-kind-icon">Base<wbr>Controller</a>
+					</li>
+					<li class=" tsd-kind-class">
+						<a href="errorservice.html" class="tsd-kind-icon">Error<wbr>Service</a>
+					</li>
+					<li class=" tsd-kind-class">
+						<a href="eventservice.html" class="tsd-kind-icon">Event<wbr>Service</a>
+					</li>
+					<li class=" tsd-kind-class">
+						<a href="httpservice.html" class="tsd-kind-icon">HTTPService</a>
+					</li>
+					<li class=" tsd-kind-class">
+						<a href="loadingservice.html" class="tsd-kind-icon">Loading<wbr>Service</a>
+					</li>
+					<li class=" tsd-kind-class">
+						<a href="pagecreator.html" class="tsd-kind-icon">Page<wbr>Creator</a>
+					</li>
+					<li class=" tsd-kind-class">
+						<a href="routefactory.html" class="tsd-kind-icon">Route<wbr>Factory</a>
+					</li>
+					<li class=" tsd-kind-class">
+						<a href="routesettings.html" class="tsd-kind-icon">Route<wbr>Settings</a>
+					</li>
+					<li class=" tsd-kind-class">
+						<a href="routerservice.html" class="tsd-kind-icon">Router<wbr>Service</a>
+					</li>
+					<li class=" tsd-kind-class">
+						<a href="staticdataservice.html" class="tsd-kind-icon">Static<wbr>Data<wbr>Service</a>
+					</li>
+					<li class=" tsd-kind-class">
+						<a href="storageservice.html" class="tsd-kind-icon">Storage<wbr>Service</a>
+					</li>
+					<li class=" tsd-kind-class">
+						<a href="storemodulefactory.html" class="tsd-kind-icon">Store<wbr>Module<wbr>Factory</a>
+					</li>
+				</ul>
+				<ul class="current">
+					<li class="current tsd-kind-class">
+						<a href="storeservice.html" class="tsd-kind-icon">Store<wbr>Service</a>
+						<ul>
+							<li class=" tsd-kind-constructor tsd-parent-kind-class">
+								<a href="storeservice.html#constructor" class="tsd-kind-icon">constructor</a>
+							</li>
+							<li class=" tsd-kind-property tsd-parent-kind-class">
+								<a href="storeservice.html#_factory" class="tsd-kind-icon">_factory</a>
+							</li>
+							<li class=" tsd-kind-property tsd-parent-kind-class">
+								<a href="storeservice.html#_httpservice" class="tsd-kind-icon">_http<wbr>Service</a>
+							</li>
+							<li class=" tsd-kind-property tsd-parent-kind-class">
+								<a href="storeservice.html#_modulenames" class="tsd-kind-icon">_module<wbr>Names</a>
+							</li>
+							<li class=" tsd-kind-property tsd-parent-kind-class">
+								<a href="storeservice.html#_store" class="tsd-kind-icon">_store</a>
+							</li>
+							<li class=" tsd-kind-get-signature tsd-parent-kind-class">
+								<a href="storeservice.html#responsemiddleware" class="tsd-kind-icon">response<wbr>Middleware</a>
+							</li>
+							<li class=" tsd-kind-get-signature tsd-parent-kind-class">
+								<a href="storeservice.html#storeseperator" class="tsd-kind-icon">store<wbr>Seperator</a>
+							</li>
+							<li class=" tsd-kind-method tsd-parent-kind-class">
+								<a href="storeservice.html#create" class="tsd-kind-icon">create</a>
+							</li>
+							<li class=" tsd-kind-method tsd-parent-kind-class">
+								<a href="storeservice.html#createextragetaction" class="tsd-kind-icon">create<wbr>Extra<wbr>Get<wbr>Action</a>
+							</li>
+							<li class=" tsd-kind-method tsd-parent-kind-class">
+								<a href="storeservice.html#createextrapostaction" class="tsd-kind-icon">create<wbr>Extra<wbr>Post<wbr>Action</a>
+							</li>
+							<li class=" tsd-kind-method tsd-parent-kind-class">
+								<a href="storeservice.html#destroy" class="tsd-kind-icon">destroy</a>
+							</li>
+							<li class=" tsd-kind-method tsd-parent-kind-class">
+								<a href="storeservice.html#dispatch" class="tsd-kind-icon">dispatch</a>
+							</li>
+							<li class=" tsd-kind-method tsd-parent-kind-class">
+								<a href="storeservice.html#generateandsetdefaultstoremodule" class="tsd-kind-icon">generate<wbr>And<wbr>Set<wbr>Default<wbr>Store<wbr>Module</a>
+							</li>
+							<li class=" tsd-kind-method tsd-parent-kind-class">
+								<a href="storeservice.html#get" class="tsd-kind-icon">get</a>
+							</li>
+							<li class=" tsd-kind-method tsd-parent-kind-class">
+								<a href="storeservice.html#getallfromstore" class="tsd-kind-icon">get<wbr>All<wbr>From<wbr>Store</a>
+							</li>
+							<li class=" tsd-kind-method tsd-parent-kind-class">
+								<a href="storeservice.html#getallitemsstatename" class="tsd-kind-icon">get<wbr>All<wbr>Items<wbr>State<wbr>Name</a>
+							</li>
+							<li class=" tsd-kind-method tsd-parent-kind-class">
+								<a href="storeservice.html#getbyidfromstore" class="tsd-kind-icon">get<wbr>ById<wbr>From<wbr>Store</a>
+							</li>
+							<li class=" tsd-kind-method tsd-parent-kind-class">
+								<a href="storeservice.html#getcreateaction" class="tsd-kind-icon">get<wbr>Create<wbr>Action</a>
+							</li>
+							<li class=" tsd-kind-method tsd-parent-kind-class">
+								<a href="storeservice.html#getdeleteaction" class="tsd-kind-icon">get<wbr>Delete<wbr>Action</a>
+							</li>
+							<li class=" tsd-kind-method tsd-parent-kind-class">
+								<a href="storeservice.html#getdeletemutation" class="tsd-kind-icon">get<wbr>Delete<wbr>Mutation</a>
+							</li>
+							<li class=" tsd-kind-method tsd-parent-kind-class">
+								<a href="storeservice.html#getreadaction" class="tsd-kind-icon">get<wbr>Read<wbr>Action</a>
+							</li>
+							<li class=" tsd-kind-method tsd-parent-kind-class">
+								<a href="storeservice.html#getreadallgetter" class="tsd-kind-icon">get<wbr>Read<wbr>All<wbr>Getter</a>
+							</li>
+							<li class=" tsd-kind-method tsd-parent-kind-class">
+								<a href="storeservice.html#getreadbyidgetter" class="tsd-kind-icon">get<wbr>Read<wbr>ById<wbr>Getter</a>
+							</li>
+							<li class=" tsd-kind-method tsd-parent-kind-class">
+								<a href="storeservice.html#getsetallinstoreaction" class="tsd-kind-icon">get<wbr>Set<wbr>All<wbr>InStore<wbr>Action</a>
+							</li>
+							<li class=" tsd-kind-method tsd-parent-kind-class">
+								<a href="storeservice.html#getsetallmutation" class="tsd-kind-icon">get<wbr>Set<wbr>All<wbr>Mutation</a>
+							</li>
+							<li class=" tsd-kind-method tsd-parent-kind-class">
+								<a href="storeservice.html#getupdateaction" class="tsd-kind-icon">get<wbr>Update<wbr>Action</a>
+							</li>
+							<li class=" tsd-kind-method tsd-parent-kind-class">
+								<a href="storeservice.html#read" class="tsd-kind-icon">read</a>
+							</li>
+							<li class=" tsd-kind-method tsd-parent-kind-class">
+								<a href="storeservice.html#registermodule" class="tsd-kind-icon">register<wbr>Module</a>
+							</li>
+							<li class=" tsd-kind-method tsd-parent-kind-class">
+								<a href="storeservice.html#setallinstore" class="tsd-kind-icon">set<wbr>All<wbr>InStore</a>
+							</li>
+							<li class=" tsd-kind-method tsd-parent-kind-class">
+								<a href="storeservice.html#setfactorysettings" class="tsd-kind-icon">set<wbr>Factory<wbr>Settings</a>
+							</li>
+							<li class=" tsd-kind-method tsd-parent-kind-class">
+								<a href="storeservice.html#show" class="tsd-kind-icon">show</a>
+							</li>
+							<li class=" tsd-kind-method tsd-parent-kind-class">
+								<a href="storeservice.html#update" class="tsd-kind-icon">update</a>
+							</li>
+						</ul>
+					</li>
+				</ul>
+				<ul class="after-current">
+					<li class=" tsd-kind-class">
+						<a href="tablecreator.html" class="tsd-kind-icon">Table<wbr>Creator</a>
+					</li>
+					<li class=" tsd-kind-class">
+						<a href="translatorservice.html" class="tsd-kind-icon">Translator<wbr>Service</a>
+					</li>
+					<li class=" tsd-kind-type-alias">
+						<a href="../globals.html#cache" class="tsd-kind-icon">Cache</a>
+					</li>
+					<li class=" tsd-kind-type-alias">
+						<a href="../globals.html#gettermethod" class="tsd-kind-icon">Getter<wbr>Method</a>
+					</li>
+					<li class=" tsd-kind-type-alias">
+						<a href="../globals.html#translation" class="tsd-kind-icon">Translation</a>
+					</li>
+					<li class=" tsd-kind-variable">
+						<a href="../globals.html#appstarter" class="tsd-kind-icon">app<wbr>Starter</a>
+					</li>
+					<li class=" tsd-kind-variable">
+						<a href="../globals.html#authservice" class="tsd-kind-icon">auth<wbr>Service</a>
+					</li>
+					<li class=" tsd-kind-variable">
+						<a href="../globals.html#errorservice" class="tsd-kind-icon">error<wbr>Service</a>
+					</li>
+					<li class=" tsd-kind-variable">
+						<a href="../globals.html#eventservice" class="tsd-kind-icon">event<wbr>Service</a>
+					</li>
+					<li class=" tsd-kind-variable">
+						<a href="../globals.html#httpservice" class="tsd-kind-icon">http<wbr>Service</a>
+					</li>
+					<li class=" tsd-kind-variable">
+						<a href="../globals.html#loadingservice" class="tsd-kind-icon">loading<wbr>Service</a>
+					</li>
+					<li class=" tsd-kind-variable">
+						<a href="../globals.html#routerservice" class="tsd-kind-icon">router<wbr>Service</a>
+					</li>
+					<li class=" tsd-kind-variable">
+						<a href="../globals.html#staticdataservice" class="tsd-kind-icon">static<wbr>Data<wbr>Service</a>
+					</li>
+					<li class=" tsd-kind-variable">
+						<a href="../globals.html#storeservice" class="tsd-kind-icon">store<wbr>Service</a>
+					</li>
+					<li class=" tsd-kind-variable">
+						<a href="../globals.html#translatorservice" class="tsd-kind-icon">translator<wbr>Service</a>
+					</li>
+				</ul>
+			</nav>
+		</div>
+	</div>
+</div>
+<footer class="with-border-bottom">
+	<div class="container">
+		<h2>Legend</h2>
+		<div class="tsd-legend-group">
+			<ul class="tsd-legend">
+				<li class="tsd-kind-constructor tsd-parent-kind-class"><span class="tsd-kind-icon">Constructor</span></li>
+				<li class="tsd-kind-property tsd-parent-kind-class"><span class="tsd-kind-icon">Property</span></li>
+				<li class="tsd-kind-method tsd-parent-kind-class"><span class="tsd-kind-icon">Method</span></li>
+				<li class="tsd-kind-accessor tsd-parent-kind-class"><span class="tsd-kind-icon">Accessor</span></li>
+			</ul>
+		</div>
+	</div>
+</footer>
+<div class="container tsd-generator">
+	<p>Generated using <a href="https://typedoc.org/" target="_blank">TypeDoc</a></p>
+</div>
+<div class="overlay"></div>
+<script src="../assets/js/main.js"></script>
+</body>
+</html>
