@@ -2493,6 +2493,14 @@ class BaseController {
         return () => this._storeService.getAllFromStore(this._APIEndpoint);
     }
 
+    getAllFrom(moduleName) {
+        if (this._storeService._moduleNames.indexOf(moduleName) === -1)
+            return console.warn(
+                `Could not find ${moduleName}, only these modules exists at the moment: ${this._storeService._moduleNames.toString()}`
+            );
+        return this._storeService.getAllFromStore(moduleName);
+    }
+
     getById(id) {
         return this._storeService.getByIdFromStore(this._APIEndpoint, id);
     }
