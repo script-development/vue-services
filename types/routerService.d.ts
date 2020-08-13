@@ -292,10 +292,19 @@ export class RouteFactory {
      * @param {Boolean} auth if you need to be authenticated to see this route
      * @param {Boolean} admin if you need to be admin to see the route
      * @param {String} title the title of the route
+     * @param {Boolean} [cantSeeWhenLoggedIn] if the page cant be seen when logged in, default = false
      *
      * @returns {RouteConfig}
      */
-    createConfig(path: string, name: string, component: any, auth: boolean, admin: boolean, title: string): RouteConfig;
+    createConfig(
+        path: string,
+        name: string,
+        component: any,
+        auth: boolean,
+        admin: boolean,
+        title: string,
+        cantSeeWhenLoggedIn?: boolean
+    ): RouteConfig;
     /**
      * Create an overview route for the given settings
      *

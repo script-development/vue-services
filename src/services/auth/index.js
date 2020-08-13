@@ -32,11 +32,13 @@ export class AuthService {
 
         this._storeService.registerModule(this.storeModuleName, storeModule(storageService, httpService, this));
 
-        this._defaultLoggedInPage;
+        this._defaultLoggedInPageName;
         this._loginPage = LoginPage;
 
         this._httpService.registerResponseErrorMiddleware(this.responseErrorMiddleware);
         this._routerService.registerBeforeMiddleware(this.routeMiddleware);
+
+        // TODO :: this is standard behaviour for now, need to be able to adjust this
     }
 
     // prettier-ignore
@@ -53,17 +55,21 @@ export class AuthService {
         return this._storeService.get(this.storeModuleName, 'isAdmin');
     }
 
-    get defaultLoggedInPage() {
-        if (!this._defaultLoggedInPage)
+    get loggedInUser() {
+        return this._storeService.get(this.storeModuleName, 'loggedInUser');
+    }
+
+    get defaultLoggedInPageName() {
+        if (!this._defaultLoggedInPageName)
             throw new MissingDefaultLoggedinPageError(
-                'Please set the default logged in page with authService.defaultLoggedInPage = "page"'
+                'Please set the default logged in page with authService.defaultLoggedInPageName = "page.name"'
             );
-        return this._defaultLoggedInPage;
+        return this._defaultLoggedInPageName;
     }
 
     // prettier-ignore
     /** @param {string} page */
-    set defaultLoggedInPage(page){this._defaultLoggedInPage = page}
+    set defaultLoggedInPageName(page){this._defaultLoggedInPageName = page}
 
     // prettier-ignore
     get loginPage() {return this._loginPage}
@@ -102,11 +108,18 @@ export class AuthService {
     }
 
     goToStandardLoggedInPage() {
-        this._routerService.goToRoute(this.defaultLoggedInPage);
+        this._routerService.goToRoute(this.defaultLoggedInPageName);
     }
 
     goToLoginPage() {
         this._routerService.goToRoute(LOGIN_ROUTE_NAME);
+    }
+
+    /**
+     * Sends a request to the server to get the logged in user
+     */
+    getLoggedInUser() {
+        this._storeService.dispatch(this.storeModuleName, 'me');
     }
 
     get responseErrorMiddleware() {
@@ -125,20 +138,20 @@ export class AuthService {
     get routeMiddleware() {
         return (to, from, next) => {
             const isLoggedIn = this.isLoggedin;
-            // const isAdmin = this.isAdmin;
+            const isAdmin = this.isAdmin;
 
-            if (isLoggedIn && !to.meta.auth) {
+            if (!isLoggedIn && to.meta.auth) {
+                this.goToLoginPage();
+                return true;
+            }
+
+            if (isLoggedIn && to.meta.cantSeeWhenLoggedIn) {
                 this.goToStandardLoggedInPage();
                 return true;
             }
 
-            // if (!isAdmin && to.meta.admin) {
-            //     this.goToStandardLoggedInPage();
-            //     return true;
-            // }
-
-            if (!isLoggedIn && to.meta.auth) {
-                this.goToLoginPage();
+            if (!isAdmin && to.meta.admin) {
+                this.goToStandardLoggedInPage();
                 return true;
             }
 
@@ -153,7 +166,8 @@ export class AuthService {
             this.loginPage,
             false,
             false,
-            'Login'
+            'Login',
+            true
         );
 
         const forgotPasswordRoute = this._routerService._factory.createConfig(
@@ -162,7 +176,8 @@ export class AuthService {
             ForgotPasswordPage,
             false,
             false,
-            'Wachtwoord vergeten'
+            'Wachtwoord vergeten',
+            true
         );
 
         const resetPasswordRoute = this._routerService._factory.createConfig(
@@ -171,7 +186,8 @@ export class AuthService {
             ResetPasswordPage,
             false,
             false,
-            'Wachtwoord resetten'
+            'Wachtwoord resetten',
+            true
         );
 
         this._routerService.addRoutes([loginRoute, forgotPasswordRoute, resetPasswordRoute]);

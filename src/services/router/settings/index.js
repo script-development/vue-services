@@ -38,20 +38,21 @@ export class RouteSettings {
         this._overviewTitle;
         this._createTitle;
 
+        // TODO :: need to add cantSeeWhenLoggedIn setting to the pages
         /** show page settings */
-        this._showPageAdminOnly = true;
+        this._showPageAdminOnly = false;
         this._showPageAuthOnly = true;
 
         /** overview page settings */
-        this._overviewPageAdminOnly = true;
+        this._overviewPageAdminOnly = false;
         this._overviewPageAuthOnly = true;
 
         /** edit page settings */
-        this._editPageAdminOnly = true;
+        this._editPageAdminOnly = false;
         this._editPageAuthOnly = true;
 
         /** create page settings */
-        this._createPageAdminOnly = true;
+        this._createPageAdminOnly = false;
         this._createPageAuthOnly = true;
     }
 

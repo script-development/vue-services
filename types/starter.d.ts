@@ -13,14 +13,14 @@ export class AppStarter {
      * Start the app and set required settings
      *
      * @param {Component} mainComponent the main app component
-     * @param {String} defaultLoggedInPage the page to go to when logged in
+     * @param {String} defaultLoggedInPageName the page name to go to when logged in
      * @param {Component} loginPage the login page
      * @param {Object<string,BaseController>} controllers the controllers used by the app
      * @param {[string,Object<string,string>]} [staticData] the static data
      */
     start(
         mainComponent: Component,
-        defaultLoggedInPage: string,
+        defaultLoggedInPageName: string,
         loginPage: Component,
         controllers: {[controllerName: string]: BaseController},
         staticData?: [string, {[key: string]: string}]

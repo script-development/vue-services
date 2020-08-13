@@ -547,15 +547,16 @@ class RouteFactory {
      * @param {Boolean} auth if you need to be authenticated to see this route
      * @param {Boolean} admin if you need to be admin to see the route
      * @param {String} title the title of the route
+     * @param {Boolean} [cantSeeWhenLoggedIn] if the page cant be seen when logged in, default = false
      *
      * @returns {RouteConfig}
      */
-    createConfig(path, name, component, auth, admin, title) {
+    createConfig(path, name, component, auth, admin, title, cantSeeWhenLoggedIn = false) {
         return {
             path,
             name,
             component,
-            meta: {auth, admin, title},
+            meta: {auth, admin, title, cantSeeWhenLoggedIn},
         };
     }
 
@@ -672,20 +673,21 @@ class RouteSettings {
         this._overviewTitle;
         this._createTitle;
 
+        // TODO :: need to add cantSeeWhenLoggedIn setting to the pages
         /** show page settings */
-        this._showPageAdminOnly = true;
+        this._showPageAdminOnly = false;
         this._showPageAuthOnly = true;
 
         /** overview page settings */
-        this._overviewPageAdminOnly = true;
+        this._overviewPageAdminOnly = false;
         this._overviewPageAuthOnly = true;
 
         /** edit page settings */
-        this._editPageAdminOnly = true;
+        this._editPageAdminOnly = false;
         this._editPageAuthOnly = true;
 
         /** create page settings */
-        this._createPageAdminOnly = true;
+        this._createPageAdminOnly = false;
         this._createPageAuthOnly = true;
     }
 
@@ -1679,70 +1681,97 @@ class StaticDataService {
     }
 }
 
-const IS_LOGGED_IN = 'harry';
+const APP_NAME = process.env.MIX_APP_NAME || 'Harry';
 
-var storeModule = (storageService, httpService, authService) => ({
-    namespaced: true,
-    state: {
-        isLoggedIn: !!storageService.getItem(IS_LOGGED_IN),
-        // isAdmin: !!storageService.getItem(IS_ADMIN),
-        pending: false,
-        // userToRegister: {}, // move to register service
-    },
-    getters: {
-        isLoggedIn: state => state.isLoggedIn,
-        // isAdmin: state => state.isAdmin,
-        // getUserToRegister: state => state.userToRegister,// move to register service
-    },
-    mutations: {
-        LOGIN: state => (state.pending = true),
-        LOGIN_SUCCES: (state, isAdmin) => {
-            state.pending = false;
-            state.isLoggedIn = true;
-            storageService.setItem(IS_LOGGED_IN, state.isLoggedIn);
-            // if (isAdmin) {
-            //     state.isAdmin = isAdmin;
-            //     storageService.setItem(IS_ADMIN, isAdmin);
-            // } else {
-            //     state.isAdmin = false;
-            // }
-        },
-        LOGOUT: _ => {
-            storageService.clear();
-            // TODO :: or reload state? transition from this is not rly smooth
-            window.location.reload(false);
-        },
-        // SET_USER_TO_REGISTER: (state, payload) => (state.userToRegister = payload),// move to register service
-    },
-    actions: {
-        login: ({commit}, payload) => {
-            storageService.keepALive = payload.rememberMe;
-            commit('LOGIN');
-            return httpService.post('/login', payload).then(response => {
-                const isAdmin = response.data.isAdmin;
-                commit('LOGIN_SUCCES', isAdmin);
-                return response;
-            });
-        },
-        logout: ({commit}) => {
-            return httpService.post('logout').then(response => {
-                commit('LOGOUT');
-                return response;
-            });
-        },
+const IS_LOGGED_IN = APP_NAME + ' is magical';
+const IS_ADMIN = APP_NAME + ' is supreme';
+const LOGGED_IN_USER = APP_NAME + ' is Harry';
 
-        logoutApp: ({commit}) => commit('LOGOUT'),
+var storeModule = (storageService, httpService, authService) => {
+    const storedUser = storageService.getItem(LOGGED_IN_USER);
+    return {
+        namespaced: true,
+        state: {
+            isLoggedIn: !!storageService.getItem(IS_LOGGED_IN),
+            isAdmin: !!storageService.getItem(IS_ADMIN),
+            pending: false,
+            loggedInUser: storedUser ? JSON.parse(storedUser) : {},
+            // userToRegister: {}, // move to register service
+        },
+        getters: {
+            isLoggedIn: state => state.isLoggedIn,
+            isAdmin: state => state.isAdmin,
+            loggedInUser: state => state.loggedInUser,
+            // getUserToRegister: state => state.userToRegister,// move to register service
+        },
+        mutations: {
+            LOGIN: state => (state.pending = true),
+            LOGIN_SUCCES: state => {
+                state.pending = false;
+                state.isLoggedIn = true;
+                storageService.setItem(IS_LOGGED_IN, state.isLoggedIn);
+            },
+            LOGOUT: _ => {
+                storageService.clear();
+                // TODO :: or reload state? transition from this is not rly smooth
+                window.location.reload(false);
+            },
+            SET_ADMIN: (state, isAdmin) => {
+                state.isAdmin = isAdmin;
+                storageService.setItem(IS_ADMIN, isAdmin);
+            },
+            SET_LOGGED_IN_USER: (state, user) => {
+                state.loggedInUser = user;
+                storageService.setItem(LOGGED_IN_USER, JSON.stringify(user));
+            },
+            // SET_USER_TO_REGISTER: (state, payload) => (state.userToRegister = payload),// move to register service
+        },
+        actions: {
+            login: ({commit}, payload) => {
+                storageService.keepALive = payload.rememberMe;
+                commit('LOGIN');
+                return httpService.post('/login', payload).then(response => {
+                    commit('LOGIN_SUCCES');
+                    const user = response.data.user;
+                    if (user) commit('SET_LOGGED_IN_USER', user);
+                    const isAdmin = response.data.isAdmin;
+                    // After login admin can never be set to false
+                    if (isAdmin) commit('SET_ADMIN', isAdmin);
+                    return response;
+                });
+            },
+            logout: ({commit}) => {
+                return httpService.post('logout').then(response => {
+                    commit('LOGOUT');
+                    return response;
+                });
+            },
 
-        sendEmailResetPassword: (_, email) => {
-            return httpService.post('/sendEmailResetPassword', email).then(response => {
-                if (response.status == 200) authService.goToLoginPage();
-            });
+            logoutApp: ({commit}) => commit('LOGOUT'),
+
+            sendEmailResetPassword: (_, email) => {
+                return httpService.post('/sendEmailResetPassword', email).then(response => {
+                    if (response.status == 200) authService.goToLoginPage();
+                });
+            },
+
+            resetPassword: (_, data) => {
+                return httpService.post('/resetpassword', data).then(authService.goToLoginPage());
+            },
+
+            me: ({commit}) => {
+                return httpService.get('me').then(response => {
+                    const user = response.data.user;
+                    if (user) commit('SET_LOGGED_IN_USER', user);
+                    const isAdmin = response.data.isAdmin;
+                    // After login admin can never be set to false
+                    if (isAdmin) commit('SET_ADMIN', isAdmin);
+                    return response;
+                });
+            },
         },
-        resetPassword: (_, data) => {
-            return httpService.post('/resetpassword', data).then(authService.goToLoginPage());
-        },
-    },
-});
+    };
+};
 
 var LoginPage = {
     render(h) {
@@ -1804,11 +1833,13 @@ class AuthService {
 
         this._storeService.registerModule(this.storeModuleName, storeModule(storageService, httpService, this));
 
-        this._defaultLoggedInPage;
+        this._defaultLoggedInPageName;
         this._loginPage = LoginPage;
 
         this._httpService.registerResponseErrorMiddleware(this.responseErrorMiddleware);
         this._routerService.registerBeforeMiddleware(this.routeMiddleware);
+
+        // TODO :: this is standard behaviour for now, need to be able to adjust this
     }
 
     // prettier-ignore
@@ -1825,17 +1856,21 @@ class AuthService {
         return this._storeService.get(this.storeModuleName, 'isAdmin');
     }
 
-    get defaultLoggedInPage() {
-        if (!this._defaultLoggedInPage)
+    get loggedInUser() {
+        return this._storeService.get(this.storeModuleName, 'loggedInUser');
+    }
+
+    get defaultLoggedInPageName() {
+        if (!this._defaultLoggedInPageName)
             throw new MissingDefaultLoggedinPageError(
-                'Please set the default logged in page with authService.defaultLoggedInPage = "page"'
+                'Please set the default logged in page with authService.defaultLoggedInPageName = "page.name"'
             );
-        return this._defaultLoggedInPage;
+        return this._defaultLoggedInPageName;
     }
 
     // prettier-ignore
     /** @param {string} page */
-    set defaultLoggedInPage(page){this._defaultLoggedInPage = page;}
+    set defaultLoggedInPageName(page){this._defaultLoggedInPageName = page;}
 
     // prettier-ignore
     get loginPage() {return this._loginPage}
@@ -1874,11 +1909,18 @@ class AuthService {
     }
 
     goToStandardLoggedInPage() {
-        this._routerService.goToRoute(this.defaultLoggedInPage);
+        this._routerService.goToRoute(this.defaultLoggedInPageName);
     }
 
     goToLoginPage() {
         this._routerService.goToRoute(LOGIN_ROUTE_NAME);
+    }
+
+    /**
+     * Sends a request to the server to get the logged in user
+     */
+    getLoggedInUser() {
+        this._storeService.dispatch(this.storeModuleName, 'me');
     }
 
     get responseErrorMiddleware() {
@@ -1897,20 +1939,20 @@ class AuthService {
     get routeMiddleware() {
         return (to, from, next) => {
             const isLoggedIn = this.isLoggedin;
-            // const isAdmin = this.isAdmin;
+            const isAdmin = this.isAdmin;
 
-            if (isLoggedIn && !to.meta.auth) {
+            if (!isLoggedIn && to.meta.auth) {
+                this.goToLoginPage();
+                return true;
+            }
+
+            if (isLoggedIn && to.meta.cantSeeWhenLoggedIn) {
                 this.goToStandardLoggedInPage();
                 return true;
             }
 
-            // if (!isAdmin && to.meta.admin) {
-            //     this.goToStandardLoggedInPage();
-            //     return true;
-            // }
-
-            if (!isLoggedIn && to.meta.auth) {
-                this.goToLoginPage();
+            if (!isAdmin && to.meta.admin) {
+                this.goToStandardLoggedInPage();
                 return true;
             }
 
@@ -1925,7 +1967,8 @@ class AuthService {
             this.loginPage,
             false,
             false,
-            'Login'
+            'Login',
+            true
         );
 
         const forgotPasswordRoute = this._routerService._factory.createConfig(
@@ -1934,7 +1977,8 @@ class AuthService {
             ForgotPasswordPage,
             false,
             false,
-            'Wachtwoord vergeten'
+            'Wachtwoord vergeten',
+            true
         );
 
         const resetPasswordRoute = this._routerService._factory.createConfig(
@@ -1943,7 +1987,8 @@ class AuthService {
             ResetPasswordPage,
             false,
             false,
-            'Wachtwoord resetten'
+            'Wachtwoord resetten',
+            true
         );
 
         this._routerService.addRoutes([loginRoute, forgotPasswordRoute, resetPasswordRoute]);
@@ -2360,15 +2405,15 @@ class AppStarter {
      * Start the app and set required settings
      *
      * @param {Component} mainComponent the main app component
-     * @param {String} defaultLoggedInPage the page to go to when logged in
+     * @param {String} defaultLoggedInPageName the page to go to when logged in
      * @param {Component} loginPage the login page
      * @param {Object<string,BaseController>} controllers the login page
      * @param {[string,Object<string,string>]} [staticData] the static data
      */
-    start(mainComponent, defaultLoggedInPage, loginPage, controllers, staticData) {
+    start(mainComponent, defaultLoggedInPageName, loginPage, controllers, staticData) {
         if (staticData) this._staticDataService.createStoreModules(staticData);
 
-        this._authService.defaultLoggedInPage = defaultLoggedInPage;
+        this._authService.defaultLoggedInPageName = defaultLoggedInPageName;
         this._authService.loginPage = loginPage;
         this._authService.setRoutes();
 
@@ -2379,6 +2424,10 @@ class AppStarter {
             router: this._routerService.router,
             render: h => h(mainComponent),
         });
+
+        // TODO :: could even do this first and .then(()=>this._authService.getLoggedInUser())
+        // or make it a setting
+        this._authService.getLoggedInUser();
     }
 }
 

@@ -19,6 +19,8 @@ export type Translation = {
 
 type Cache = {[key: string]: number};
 
+type Credentials = {email: string; password: string; rememberMe: boolean};
+
 export class HTTPService {
     _storageService: StorageService;
     _cache: Cache;
@@ -193,9 +195,11 @@ export class AuthService {
     };
     get storeModuleName(): string;
     get isLoggedin(): boolean;
+    get isAdmin(): boolean;
+    get loggedInUser(): {[key: string]: any};
     /** @param {string} page */
-    set defaultLoggedInPage(arg: string);
-    get defaultLoggedInPage(): string;
+    set defaultLoggedInPageName(arg: string);
+    get defaultLoggedInPageName(): string;
     _defaultLoggedInPage: string;
     /** @param {Component} page*/
     set loginPage(arg: Component<DefaultData<never>, DefaultMethods<never>, DefaultComputed, Record<string, any>>);
@@ -207,12 +211,16 @@ export class AuthService {
      * @param {String} credentials.password the password to login with
      * @param {Boolean} credentials.rememberMe if you want a consistent login
      */
-    login(credentials: {email: string; password: string; rememberMe: boolean}): Promise<AxiosResponse>;
+    login(credentials: Credentials): Promise<AxiosResponse>;
     logout(): Promise<AxiosResponse>;
     goToStandardLoggedInPage(): void;
     sendEmailResetPassword(email: any): Promise<AxiosResponse>;
     resetPassword(data: any): Promise<AxiosResponse>;
     goToLoginPage(): void;
+    /**
+     * Sends a request to the server to get the logged in user
+     */
+    getLoggedInUser(): void;
     get responseErrorMiddleware(): ({response}: {response: any}) => void;
     get routeMiddleware(): (to: any, from: any, next: any) => boolean;
     setRoutes(): void;
@@ -222,46 +230,43 @@ export class StaticDataService {
      * @param {StoreService} storeService
      * @param {HTTPService} httpService the http service for communication with the API
      */
-    constructor(
-        storeService: StoreService,
-        httpService: HTTPService
-    ) 
+    constructor(storeService: StoreService, httpService: HTTPService);
     _storeService: StoreService;
     _httpService: HTTPService;
     _data;
-    
+
     /**
      * initiates the setup for the default store modules
      *
      * @param {[string,Object<string,string>]} storeModuleName Modulenames
      */
-    createStoreModules(data): void
+    createStoreModules(data): void;
 
     /**
      * Creates and registers modules for the staticdata
      *
      * @param {[string,Object<string,string>]} storeModuleName Modulenames
      */
-    createStoreModule(storeModuleName): void
+    createStoreModule(storeModuleName): void;
 
     /**
      * Create module for static data with msg-pack lite(peerDependencies)
      *
      * @param {[string,Object<string,string>]} storeModuleName Modulenames
      */
-    createStoreModuleMsgPack(storeModuleName): void
+    createStoreModuleMsgPack(storeModuleName): void;
 
     /**
      * Sends an action to the store which reads all the staticdata from the server
      */
-    getStaticData(): void
+    getStaticData(): void;
 
     /**
      * Retrieves all entries from the specific data source
      *
      * @param {string} data
      */
-    getAll(data: string): Array<object>
+    getAll(data: string): Array<object>;
 
     /**
      * Retrieves a single row(by ID) from the specific data source
@@ -269,5 +274,5 @@ export class StaticDataService {
      * @param {String} data
      * @param {Number} id
      */
-    getById(data: string, id: number): Object
+    getById(data: string, id: number): Object;
 }
