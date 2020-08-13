@@ -50,6 +50,6 @@ export class AppStarter {
 
         // TODO :: could even do this first and .then(()=>this._authService.getLoggedInUser())
         // or make it a setting
-        this._authService.getLoggedInUser();
+        if (this._authService.isLoggedin) this._authService.getLoggedInUser();
     }
 }
