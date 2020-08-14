@@ -24,6 +24,7 @@ export class FormCreator {
     /** @param {CreateElement} h */
     set h(h) { this._h = h; }
 
+    // TODO :: @Methox define formData, cause it can have a defined set of properties
     /**
      * Generate a form
      * @param {String} subject the subject for which to create something for
@@ -46,31 +47,33 @@ export class FormCreator {
             },
 
             render() {
-                const card = [];
-                for (const data of formData) {
+                const card = formData.map(data => {
                     const cardData = [];
 
-                    const formGroups = [];
-                    for (const child of data.children) {
+                    if (data.header) cardData.push(formCreator.createTitle(data.header));
+
+                    // TODO :: @Methox children may not be the best naming here, maybe formGroups?
+                    const formGroups = data.children.map(child => {
                         const input = [formCreator.typeConverter(child, this.editable)];
 
                         if (this.errors[child.property])
                             input.push(formCreator.createError(this.errors[child.property][0]));
 
-                        formGroups.push(formCreator.createFormGroup(child.label, input));
-                    }
-
-                    if (data.header) cardData.push(formCreator.createTitle(data.header));
+                        return formCreator.createFormGroup(child.label, input);
+                    });
 
                     cardData.push(formGroups);
-                    card.push(formCreator.createCard(cardData));
-                }
+
+                    return formCreator.createCard(cardData);
+                });
+
                 card.push(formCreator.createButton(subject));
                 return formCreator.createForm(card, () => this.$emit('submit'));
             },
         };
     }
 
+    // TODO :: @Methox documentation
     typeConverter(childData, editable) {
         const valueBinding = {
             props: {value: editable[childData.property]},
@@ -94,6 +97,11 @@ export class FormCreator {
             case 'custom':
                 return this._h(childData.component, valueBinding);
         }
+
+        // TODO :: @Methox create custom error for this
+        console.warn(
+            `Invalid type for ${childData.property}, type can be 'string', 'select', 'number', 'checkbox', 'multiselect', 'custom'`
+        );
     }
 
     /** @param {String} title */
@@ -111,16 +119,19 @@ export class FormCreator {
      * @param {VNode[]} children
      */
     createFormGroup(label, children) {
+        // TODO :: @Methox is it possible to not use b-form-group but the actual element it translates to?
         return this._h('b-form-group', {props: {labelColsSm: '3', label: label}}, children);
     }
 
     /** @param {VNode[]} children */
     createCard(children) {
+        // TODO :: @Methox is it possible to not use b-card but the actual element it translates to?
         return this._h('b-card', {class: 'mb-2'}, children);
     }
 
     /** @param {String} subject */
     createButton(subject) {
+        // TODO :: @Methox is it possible to not use b-button but the actual element it translates to?
         return this._h(
             'b-button',
             {props: {type: 'submit', variant: 'primary'}},
