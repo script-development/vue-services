@@ -2103,7 +2103,8 @@ class PageCreator {
                 return {editable: {}};
             },
             render() {
-                if (!this.item) return;
+                // TODO :: notFoundMessage should be clear
+                if (!this.item) return pageCreator._h('div', ['Dit is nog niet gevonden']);
 
                 const containerChildren = [
                     pageCreator.createEditPageTitle(this.item, titleItemProperty),
@@ -2135,7 +2136,6 @@ class PageCreator {
     }
 
     /**
-     *
      * @param {String} subject the subject for which to create the overview page
      * @param {Function} getter the table to show items in
      * @param {Component} table the table to show items in
@@ -2178,6 +2178,36 @@ class PageCreator {
         };
     }
 
+    /**
+     * @param {String} subject the subject for which to create the show page
+     * @param {Function} getter the getter to get the show item to show
+     * @param {Component} showComponent the show component that displays the actual data
+     * @param {String|String[]} [titleItemProperty] the optional titleItemProperty, will show title based on the given property. If nothing is given then the creator will try to resolve a title
+     * @param {Function} [toEditPage] the function to go to the edit page
+     */
+    showPage(subject, getter, showComponent, titleItemProperty, toEditPage) {
+        // define pageCreator here, cause this context get's lost in the return object
+        const pageCreator = this;
+
+        return {
+            name: `show-${subject}`,
+            computed: {
+                item() {
+                    return getter();
+                },
+            },
+            render() {
+                // TODO :: notFoundMessage should be clear
+                if (!this.item) return pageCreator._h('div', ['Dit is nog niet gevonden']);
+
+                return pageCreator.createContainer([
+                    pageCreator.createShowPageTitle(this.item, titleItemProperty, toEditPage),
+                    pageCreator._h(showComponent, {props: {item: this.item}}),
+                ]);
+            },
+        };
+    }
+
     /** @param {String} title */
     createTitle(title) {
         return this._h('h1', [title]);
@@ -2215,16 +2245,36 @@ class PageCreator {
      * @param {Function} [toCreatePage]
      */
     createOverviewPageTitle(subject, toCreatePage) {
-        const translation = this._translatorService.getCapitalizedPlural(subject);
-        if (!toCreatePage) return this.createTitleRow(translation);
+        const title = this._translatorService.getCapitalizedPlural(subject);
+        if (!toCreatePage) return this.createTitleRow(title);
 
-        const titleCol = this.createCol([this.createTitle(translation)], 8);
-        const buttonCol = this._h('div', {class: 'd-flex justify-content-md-end align-items-center col'}, [
-            this._h('button', {class: 'btn overview-add-btn py-2 btn-primary', on: {click: toCreatePage}}, [
-                this._translatorService.getCapitalizedSingular(subject) + ` toevoegen`,
-            ]),
-        ]);
+        const titleCol = this.createCol([this.createTitle(title)], 8);
+        const buttonCol = this.createTitleButton(
+            this._translatorService.getCapitalizedSingular(subject) + ` toevoegen`,
+            toCreatePage
+        );
+
         return this.createRow([titleCol, buttonCol]);
+    }
+
+    /**
+     * @param {Object<string,any>} item the item for which to show the title
+     * @param {String|String[]} [titleItemProperty] the optional titleItemProperty, will show title based on the given property. If nothing is given then the creator will try to resolve a title
+     * @param {Function} [toEditPage] the optional to edit page function
+     */
+    createShowPageTitle(item, titleItemProperty, toEditPage) {
+        const title = this.createTitleFromItemProperties(item, titleItemProperty);
+        if (!toEditPage) return this.createTitleRow(title);
+
+        const titleCol = this.createCol([this.createTitle(title)], 8);
+        const buttonCol = this.createTitleButton(`${title} aanpassen`, toEditPage);
+        return this.createRow([titleCol, buttonCol]);
+    }
+
+    createTitleButton(text, clickFunction) {
+        return this._h('div', {class: 'd-flex justify-content-md-end align-items-center col'}, [
+            this._h('button', {class: 'btn overview-add-btn py-2 btn-primary', on: {click: clickFunction}}, [text]),
+        ]);
     }
 
     /**
@@ -2232,21 +2282,30 @@ class PageCreator {
      * @param {String|String[]} [titleItemProperty] the optional titleItemProperty, will show title based on the given property. If nothing is given then the creator will try to resolve a title
      */
     createEditPageTitle(item, titleItemProperty) {
+        const title = this.createTitleFromItemProperties(item, titleItemProperty);
+
+        if (!title) return this.createTitleRow('Aanpassen');
+
+        return this.createTitleRow(title + ' aanpassen');
+    }
+
+    /**
+     * @param {Object<string,any>} item the item for which to show the title
+     * @param {String|String[]} [titleItemProperty] the optional titleItemProperty, will show title based on the given property. If nothing is given then the creator will try to resolve a title
+     */
+    createTitleFromItemProperties(item, titleItemProperty) {
         // if titleItemProperty is given, create title based on that
         if (titleItemProperty) {
             if (Array.isArray(titleItemProperty)) {
-                return this.createTitleRow(`${titleItemProperty.map(prop => item[prop]).join(' ')} aanpassen`);
+                return titleItemProperty.map(prop => item[prop]).join(' ');
             }
-            return this.createTitleRow(`${item[titleItemProperty]} aanpassen`);
+            return item[titleItemProperty];
         }
 
         // if titleItemProperty is not given, try to resolve it with the most common properties
-        let name = item.name || item.title;
-        if (item.firstname) name = `${item.firstname} ${item.lastname}`;
+        if (item.firstname) return `${item.firstname} ${item.lastname}`;
 
-        if (!name) return this.createTitleRow('Aanpassen');
-
-        return this.createTitleRow(name + ' aanpassen');
+        return item.name || item.title;
     }
 
     /**
