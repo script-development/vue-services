@@ -29,15 +29,16 @@ export class RouteFactory {
      * @param {Boolean} auth if you need to be authenticated to see this route
      * @param {Boolean} admin if you need to be admin to see the route
      * @param {String} title the title of the route
+     * @param {Boolean} [cantSeeWhenLoggedIn] if the page cant be seen when logged in, default = false
      *
      * @returns {RouteConfig}
      */
-    createConfig(path, name, component, auth, admin, title) {
+    createConfig(path, name, component, auth, admin, title, cantSeeWhenLoggedIn = false) {
         return {
             path,
             name,
             component,
-            meta: {auth, admin, title},
+            meta: {auth, admin, title, cantSeeWhenLoggedIn},
         };
     }
 

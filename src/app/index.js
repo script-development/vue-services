@@ -28,15 +28,15 @@ export class AppStarter {
      * Start the app and set required settings
      *
      * @param {Component} mainComponent the main app component
-     * @param {String} defaultLoggedInPage the page to go to when logged in
+     * @param {String} defaultLoggedInPageName the page to go to when logged in
      * @param {Component} loginPage the login page
      * @param {Object<string,BaseController>} controllers the login page
      * @param {[string,Object<string,string>]} [staticData] the static data
      */
-    start(mainComponent, defaultLoggedInPage, loginPage, controllers, staticData) {
+    start(mainComponent, defaultLoggedInPageName, loginPage, controllers, staticData) {
         if (staticData) this._staticDataService.createStoreModules(staticData);
 
-        this._authService.defaultLoggedInPage = defaultLoggedInPage;
+        this._authService.defaultLoggedInPageName = defaultLoggedInPageName;
         this._authService.loginPage = loginPage;
         this._authService.setRoutes();
 
@@ -47,5 +47,9 @@ export class AppStarter {
             router: this._routerService.router,
             render: h => h(mainComponent),
         });
+
+        // TODO :: could even do this first and .then(()=>this._authService.getLoggedInUser())
+        // or make it a setting
+        if (this._authService.isLoggedin) this._authService.getLoggedInUser();
     }
 }
