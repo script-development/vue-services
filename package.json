@@ -37,7 +37,8 @@
         "vuex": "3.5.1"
     },
     "peerDependencies": {
-        "@msgpack/msgpack": "^1.12.2"
+        "@msgpack/msgpack": "^1.12.2",
+        "vue-multiselect": "^2.1.6"
     },
     "publishConfig": {
         "registry": "https://npm.pkg.github.com/"
