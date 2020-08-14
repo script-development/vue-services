@@ -2110,9 +2110,9 @@ class PageCreator {
             data() {
                 return {editable: {}};
             },
-            render() {
+            render(h) {
                 // TODO :: notFoundMessage should be clear
-                if (!this.item) return pageCreator._h('div', ['Dit is nog niet gevonden']);
+                if (!this.item) return h('div', ['Dit is nog niet gevonden']);
 
                 const containerChildren = [
                     pageCreator.createEditPageTitle(this.item, titleItemProperty),
@@ -2123,7 +2123,7 @@ class PageCreator {
                     // TODO :: move to method, when there are more b-links
                     // TODO :: uses Bootstrap-Vue element
                     containerChildren.push(
-                        pageCreator._h(
+                        h(
                             'b-link',
                             {
                                 class: 'text-danger',
@@ -2166,20 +2166,22 @@ class PageCreator {
                     filteredItems: [],
                 };
             },
-            render() {
+            render(h) {
                 const titleElement = pageCreator.createOverviewPageTitle(subject, toCreatePage);
 
                 const containerChildren = [titleElement];
 
                 if (filter)
                     containerChildren.push(
-                        pageCreator._h(filter, {
+                        h(filter, {
                             props: {items: this.items},
                             on: {filter: items => (this.filteredItems = items)},
                         })
                     );
 
-                containerChildren.push(pageCreator._h(table, {props: {items: this.filteredItems}}));
+                const items = filter ? this.filteredItems : this.items;
+
+                containerChildren.push(h(table, {props: {items}}));
 
                 return pageCreator.createContainer(containerChildren);
             },
@@ -2204,13 +2206,13 @@ class PageCreator {
                     return getter();
                 },
             },
-            render() {
+            render(h) {
                 // TODO :: notFoundMessage should be clear
-                if (!this.item) return pageCreator._h('div', ['Dit is nog niet gevonden']);
+                if (!this.item) return h('div', ['Dit is nog niet gevonden']);
 
                 return pageCreator.createContainer([
                     pageCreator.createShowPageTitle(this.item, titleItemProperty, toEditPage),
-                    pageCreator._h(showComponent, {props: {item: this.item}}),
+                    h(showComponent, {props: {item: this.item}}),
                 ]);
             },
         };

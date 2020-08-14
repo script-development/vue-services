@@ -154,7 +154,9 @@ export class PageCreator {
                         })
                     );
 
-                containerChildren.push(h(table, {props: {items: this.filteredItems}}));
+                const items = filter ? this.filteredItems : this.items;
+
+                containerChildren.push(h(table, {props: {items}}));
 
                 return pageCreator.createContainer(containerChildren);
             },
