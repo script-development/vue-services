@@ -14,7 +14,7 @@
         "test": "echo \"Error: no test specified\" && exit 1",
         "build": "rollup src/index.js --file dist/index.js --format iife",
         "dev": "rollup -c scripts/config.js",
-        "watch": "npm run dev -w",
+        "watch": "rollup -c scripts/config.js --watch",
         "pub": "npm publish",
         "docs": "typedoc"
     },
