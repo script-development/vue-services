@@ -3,8 +3,8 @@
 <head>
 	<meta charset="utf-8">
 	<meta http-equiv="X-UA-Compatible" content="IE=edge">
-	<title>ServVue - v0.0.42</title>
-	<meta name="description" content="Documentation for ServVue - v0.0.42">
+	<title>ServVue - v0.0.44</title>
+	<meta name="description" content="Documentation for ServVue - v0.0.44">
 	<meta name="viewport" content="width=device-width, initial-scale=1">
 	<link rel="stylesheet" href="assets/css/main.css">
 </head>
@@ -22,7 +22,7 @@
 						<li class="state loading">Preparing search index...</li>
 						<li class="state failure">The search index is not available</li>
 					</ul>
-					<a href="index.html" class="title">ServVue - v0.0.42</a>
+					<a href="index.html" class="title">ServVue - v0.0.44</a>
 				</div>
 				<div class="table-cell" id="tsd-widgets">
 					<div id="tsd-filter">
@@ -54,7 +54,7 @@
 					<a href="globals.html">Globals</a>
 				</li>
 			</ul>
-			<h1>ServVue - v0.0.42</h1>
+			<h1>ServVue - v0.0.44</h1>
 		</div>
 	</div>
 </header>
@@ -65,6 +65,47 @@
 				<a href="#vue-services" id="vue-services" style="color: inherit; text-decoration: none;">
 					<h1>vue-services</h1>
 				</a>
+				<a href="#frontend-controller" id="frontend-controller" style="color: inherit; text-decoration: none;">
+					<h2>Frontend Controller</h2>
+				</a>
+				<p>Vue Services uses Frontend Controllers.
+				A Controller requires an API Endpoint.</p>
+				<a href="#component-layout" id="component-layout" style="color: inherit; text-decoration: none;">
+					<h2>Component layout</h2>
+				</a>
+				<p>App Component -&gt; Controller Base Component -&gt; Controller Page Component</p>
+				<a href="#route-layout-per-controller" id="route-layout-per-controller" style="color: inherit; text-decoration: none;">
+					<h2>Route layout per Controller</h2>
+				</a>
+				<pre><code>    <span class="hljs-attribute">route</span>: plural translation
+    <span class="hljs-attribute">component</span>: Base Component
+    <span class="hljs-attribute">children</span>:
+
+        <span class="hljs-attribute">page</span>: Overview
+        <span class="hljs-attribute">route</span>: <span class="hljs-string">&#x27;&#x27;</span>
+        <span class="hljs-attribute">name</span>: plural translation + .overview
+        <span class="hljs-attribute">component</span>: Overview Component
+
+        <span class="hljs-attribute">page</span>: Create
+        <span class="hljs-attribute">route</span>: <span class="hljs-string">&#x27;/create&#x27;</span>
+        <span class="hljs-attribute">name</span>: plural translation + .overview
+        <span class="hljs-attribute">component</span>: Create Component
+
+        <span class="hljs-attribute">page</span>: Show
+        <span class="hljs-attribute">route</span>: <span class="hljs-string">&#x27;:id&#x27;</span>
+        <span class="hljs-attribute">name</span>: plural translation + .show
+        <span class="hljs-attribute">component</span>: Show Component
+
+        <span class="hljs-attribute">page</span>: Edit
+        <span class="hljs-attribute">route</span>: <span class="hljs-string">&#x27;:id/edit&#x27;</span>
+        <span class="hljs-attribute">name</span>: plural translation + .edit
+        <span class="hljs-attribute">component</span>: Edit Component</code></pre>
+				<a href="#function-base-component" id="function-base-component" style="color: inherit; text-decoration: none;">
+					<h2>Function Base Component</h2>
+				</a>
+				<p>For every route the Base Component is also being loaded.
+					The Base Component calls the read method from the Controller once it is mounted.
+				This way when you switch from create to overview within the same Controller, the base data is not being loaded again.</p>
 			</div>
 		</div>
 		<div class="col-4 col-menu menu-sticky-wrap menu-highlight">
@@ -130,6 +171,9 @@
 					</li>
 					<li class=" tsd-kind-type-alias">
 						<a href="globals.html#cache" class="tsd-kind-icon">Cache</a>
+					</li>
+					<li class=" tsd-kind-type-alias">
+						<a href="globals.html#credentials" class="tsd-kind-icon">Credentials</a>
 					</li>
 					<li class=" tsd-kind-type-alias">
 						<a href="globals.html#gettermethod" class="tsd-kind-icon">Getter<wbr>Method</a>
