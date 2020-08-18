@@ -2191,11 +2191,11 @@ class PageCreator {
     /**
      * @param {String} subject the subject for which to create the show page
      * @param {Function} getter the getter to get the show item to show
-     * @param {Component} showComponent the show component that displays the actual data
+     * @param {Component} detailList the detail list that displays the actual data
      * @param {String|String[]} [titleItemProperty] the optional titleItemProperty, will show title based on the given property. If nothing is given then the creator will try to resolve a title
      * @param {Function} [toEditPage] the function to go to the edit page
      */
-    showPage(subject, getter, showComponent, titleItemProperty, toEditPage) {
+    showPage(subject, getter, detailList, titleItemProperty, toEditPage) {
         // define pageCreator here, cause this context get's lost in the return object
         const pageCreator = this;
 
@@ -2210,12 +2210,31 @@ class PageCreator {
                 // TODO :: notFoundMessage should be clear
                 if (!this.item) return h('div', ['Dit is nog niet gevonden']);
 
+                const row = pageCreator.createRow(
+                    [
+                        pageCreator.createCol([
+                            pageCreator.createCard([
+                                pageCreator.createSubTitle(
+                                    pageCreator._translatorService.getCapitalizedSingular(subject) + ' gegevens'
+                                ),
+                                h(detailList, {props: {item: this.item}}),
+                            ]),
+                        ]),
+                    ],
+                    3
+                );
+
                 return pageCreator.createContainer([
                     pageCreator.createShowPageTitle(this.item, titleItemProperty, toEditPage),
-                    h(showComponent, {props: {item: this.item}}),
+                    row,
                 ]);
             },
         };
+    }
+
+    /** @param {VNode[]} children */
+    createCard(children) {
+        return this._h('div', {class: 'card'}, [this._h('div', {class: 'card-body'}, children)]);
     }
 
     /** @param {String} title */
@@ -2223,13 +2242,23 @@ class PageCreator {
         return this._h('h1', [title]);
     }
 
+    /** @param {String} title */
+    createSubTitle(title) {
+        return this._h('h4', [title]);
+    }
+
     /** @param {VNode[]} children */
     createContainer(children) {
         return this._h('div', {class: 'ml-0 container'}, children);
     }
-    /** @param {VNode[]} children */
-    createRow(children) {
-        return this._h('div', {class: 'row'}, children);
+    /**
+     * @param {VNode[]} children
+     * @param {number} [mt]
+     */
+    createRow(children, mt) {
+        let classes = 'row';
+        if (mt) classes += ` mt-${mt}`;
+        return this._h('div', {class: classes}, children);
     }
     /**
      * @param {VNode[]} children

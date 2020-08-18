@@ -186,7 +186,17 @@ export class PageCreator {
                 if (!this.item) return h('div', ['Dit is nog niet gevonden']);
 
                 const row = pageCreator.createRow(
-                    pageCreator.createCol(pageCreator.createCard(h(detailList, {props: {item: this.item}})))
+                    [
+                        pageCreator.createCol([
+                            pageCreator.createCard([
+                                pageCreator.createSubTitle(
+                                    pageCreator._translatorService.getCapitalizedSingular(subject) + ' gegevens'
+                                ),
+                                h(detailList, {props: {item: this.item}}),
+                            ]),
+                        ]),
+                    ],
+                    3
                 );
 
                 return pageCreator.createContainer([
@@ -207,13 +217,23 @@ export class PageCreator {
         return this._h('h1', [title]);
     }
 
+    /** @param {String} title */
+    createSubTitle(title) {
+        return this._h('h4', [title]);
+    }
+
     /** @param {VNode[]} children */
     createContainer(children) {
         return this._h('div', {class: 'ml-0 container'}, children);
     }
-    /** @param {VNode[]} children */
-    createRow(children) {
-        return this._h('div', {class: 'row'}, children);
+    /**
+     * @param {VNode[]} children
+     * @param {number} [mt]
+     */
+    createRow(children, mt) {
+        let classes = 'row';
+        if (mt) classes += ` mt-${mt}`;
+        return this._h('div', {class: classes}, children);
     }
     /**
      * @param {VNode[]} children
