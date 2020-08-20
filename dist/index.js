@@ -1032,7 +1032,10 @@ class StoreModuleFactory {
                 }
                 this._storageService.setItem(moduleName + this.allItemsStateName, state[this.allItemsStateName]);
             },
-            [this.deleteMutation]: (state, id) => Vue.delete(state[this.allItemsStateName], id),
+            [this.deleteMutation]: (state, id) => {
+                Vue.delete(state[this.allItemsStateName], id);
+                this._storageService.setItem(moduleName + this.allItemsStateName, state[this.allItemsStateName]);
+            },
         };
     }
 
