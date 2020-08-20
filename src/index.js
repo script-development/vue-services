@@ -10,7 +10,7 @@ import {
     staticDataService,
 } from './services';
 
-import {tableCreator, pageCreator} from './creators';
+export {tableCreator, pageCreator, detailListCreator} from './creators';
 
 import {AppStarter} from './app';
 
@@ -26,8 +26,6 @@ export {
     eventService,
     translatorService,
     staticDataService,
-    tableCreator,
-    pageCreator,
     appStarter,
 };
 

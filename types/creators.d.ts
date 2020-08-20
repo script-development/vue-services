@@ -1,6 +1,6 @@
 import {ErrorService, TranslatorService, EventService} from './services';
 import {RouterService} from './routerService';
-import {CreateElement, Component, VNode} from 'vue';
+import {CreateElement, Component, VNode, VNodeChildren} from 'vue';
 import {BvTableField} from 'bootstrap-vue';
 
 // TODO :: make this complete
@@ -126,4 +126,37 @@ export class TableCreator {
     title(title: string): VNode;
 
     bTable(items: {[key: string]: any}[], perPage: number, fields: BvTableField[], rowClicked?: Function): VNode;
+}
+
+type DetailListFormatter = (key: any, item: {[x: string]: any}) => string;
+
+type ListElementEntry = {key: string; formatter?: DetailListFormatter};
+type DetailListField = {
+    label: string;
+    key?: string;
+    formatter?: DetailListFormatter;
+    unorderedList: ListElementEntry[];
+};
+
+export class DetailListCreator {
+    _h: CreateElement;
+
+    // prettier-ignore
+    /** @param {CreateElement} h */
+    set h(h:CreateElement)
+
+    /**
+     * Create a detail list component based on the given fields
+     * @param {DetailListField[]} fields The fields for the detail list component
+     */
+    detailList(fields: DetailListField[]): Component;
+
+    /** @param {String} label */
+    dt(label: string): VNode;
+
+    /** @param {VNodeChildren} children */
+    dd(children: VNodeChildren): VNode;
+
+    /** @param {VNodeChildren} children */
+    dl(children: VNodeChildren): VNode;
 }

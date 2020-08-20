@@ -3,7 +3,7 @@
  * @typedef {import('../services/event').EventService} EventService
  * @typedef {import('../services/auth').AuthService} AuthService
  * @typedef {import('../services/staticdata').StaticDataService} StaticDataService
- * @typedef {import('../creators/pages').PageCreator} PageCreator
+ * @typedef {import('../creators/page').PageCreator} PageCreator
  * @typedef {import('../controllers').BaseController} BaseController
  * @typedef {import('vue').Component} Component
  */
