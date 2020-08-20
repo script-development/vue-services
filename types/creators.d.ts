@@ -151,7 +151,9 @@ type FormGroup = {
 
 type FormInputData = {
     cardHeader: string;
+    formGroups: FormGroup[];
 };
+
 type DetailListFormatter = (key: any, item: {[x: string]: any}) => string;
 
 type ListElementEntry = {key: string; formatter?: DetailListFormatter};
@@ -175,7 +177,7 @@ export class FormCreator {
 
     /**
      * Generate an input
-     * @param {Object<...string>} inputData the data used to generate an input field
+     * @param {FormGroup} inputData the data used to generate an input field
      * @param {Object<string>} editable the editable property of the form
      */
     typeConverter(inputData: Object<string>, editable: Object<string>): Function;
@@ -188,18 +190,18 @@ export class FormCreator {
 
     /**
      * @param {String} label
-     * @param {VNode[]} inputField
+     * @param {VNodeChildren} inputField
      */
-    createFormGroup(label: string, inputField: VNode[]): VNode[];
+    createFormGroup(label: string, inputField: VNodeChildren): VNodeChildren;
 
-    /** @param {VNode[]} formGroups */
-    createCard(formGroups: VNode[]): VNode[];
+    /** @param {VNodeChildren} formGroups */
+    createCard(formGroups: VNodeChildren): VNodeChildren;
 
     /** @param {String} subject */
     createButton(subject: string): VNode;
 
-    /** @param {VNode[]} cards */
-    createForm(cards: VNode, emitter: function): VNode;
+    /** @param {VNodeChildren} cards */
+    createForm(cards: VNodeChildren, emitter: function): VNode;
 }
 
 export class DetailListCreator {
