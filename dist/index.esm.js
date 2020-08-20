@@ -1024,7 +1024,10 @@ class StoreModuleFactory {
                 }
                 this._storageService.setItem(moduleName + this.allItemsStateName, state[this.allItemsStateName]);
             },
-            [this.deleteMutation]: (state, id) => Vue.delete(state[this.allItemsStateName], id),
+            [this.deleteMutation]: (state, id) => {
+                Vue.delete(state[this.allItemsStateName], id);
+                this._storageService.setItem(moduleName + this.allItemsStateName, state[this.allItemsStateName]);
+            },
         };
     }
 
@@ -2102,8 +2105,9 @@ class PageCreator {
             data() {
                 return {editable: {}};
             },
-            render() {
-                if (!this.item) return;
+            render(h) {
+                // TODO :: notFoundMessage should be clear
+                if (!this.item) return h('div', ['Dit is nog niet gevonden']);
 
                 const containerChildren = [
                     pageCreator.createEditPageTitle(this.item, titleItemProperty),
@@ -2114,7 +2118,7 @@ class PageCreator {
                     // TODO :: move to method, when there are more b-links
                     // TODO :: uses Bootstrap-Vue element
                     containerChildren.push(
-                        pageCreator._h(
+                        h(
                             'b-link',
                             {
                                 class: 'text-danger',
@@ -2135,7 +2139,6 @@ class PageCreator {
     }
 
     /**
-     *
      * @param {String} subject the subject for which to create the overview page
      * @param {Function} getter the table to show items in
      * @param {Component} table the table to show items in
@@ -2158,24 +2161,75 @@ class PageCreator {
                     filteredItems: [],
                 };
             },
-            render() {
+            render(h) {
                 const titleElement = pageCreator.createOverviewPageTitle(subject, toCreatePage);
 
                 const containerChildren = [titleElement];
 
                 if (filter)
                     containerChildren.push(
-                        pageCreator._h(filter, {
+                        h(filter, {
                             props: {items: this.items},
                             on: {filter: items => (this.filteredItems = items)},
                         })
                     );
 
-                containerChildren.push(pageCreator._h(table, {props: {items: this.filteredItems}}));
+                const items = filter ? this.filteredItems : this.items;
+
+                containerChildren.push(h(table, {props: {items}}));
 
                 return pageCreator.createContainer(containerChildren);
             },
         };
+    }
+
+    /**
+     * @param {String} subject the subject for which to create the show page
+     * @param {Function} getter the getter to get the show item to show
+     * @param {Component} detailList the detail list that displays the actual data
+     * @param {String|String[]} [titleItemProperty] the optional titleItemProperty, will show title based on the given property. If nothing is given then the creator will try to resolve a title
+     * @param {Function} [toEditPage] the function to go to the edit page
+     */
+    showPage(subject, getter, detailList, titleItemProperty, toEditPage) {
+        // define pageCreator here, cause this context get's lost in the return object
+        const pageCreator = this;
+
+        return {
+            name: `show-${subject}`,
+            computed: {
+                item() {
+                    return getter();
+                },
+            },
+            render(h) {
+                // TODO :: notFoundMessage should be clear
+                if (!this.item) return h('div', ['Dit is nog niet gevonden']);
+
+                const row = pageCreator.createRow(
+                    [
+                        pageCreator.createCol([
+                            pageCreator.createCard([
+                                pageCreator.createSubTitle(
+                                    pageCreator._translatorService.getCapitalizedSingular(subject) + ' gegevens'
+                                ),
+                                h(detailList, {props: {item: this.item}}),
+                            ]),
+                        ]),
+                    ],
+                    3
+                );
+
+                return pageCreator.createContainer([
+                    pageCreator.createShowPageTitle(this.item, titleItemProperty, toEditPage),
+                    row,
+                ]);
+            },
+        };
+    }
+
+    /** @param {VNode[]} children */
+    createCard(children) {
+        return this._h('div', {class: 'card'}, [this._h('div', {class: 'card-body'}, children)]);
     }
 
     /** @param {String} title */
@@ -2183,13 +2237,23 @@ class PageCreator {
         return this._h('h1', [title]);
     }
 
+    /** @param {String} title */
+    createSubTitle(title) {
+        return this._h('h4', [title]);
+    }
+
     /** @param {VNode[]} children */
     createContainer(children) {
         return this._h('div', {class: 'ml-0 container'}, children);
     }
-    /** @param {VNode[]} children */
-    createRow(children) {
-        return this._h('div', {class: 'row'}, children);
+    /**
+     * @param {VNode[]} children
+     * @param {number} [mt]
+     */
+    createRow(children, mt) {
+        let classes = 'row';
+        if (mt) classes += ` mt-${mt}`;
+        return this._h('div', {class: classes}, children);
     }
     /**
      * @param {VNode[]} children
@@ -2215,16 +2279,36 @@ class PageCreator {
      * @param {Function} [toCreatePage]
      */
     createOverviewPageTitle(subject, toCreatePage) {
-        const translation = this._translatorService.getCapitalizedPlural(subject);
-        if (!toCreatePage) return this.createTitleRow(translation);
+        const title = this._translatorService.getCapitalizedPlural(subject);
+        if (!toCreatePage) return this.createTitleRow(title);
 
-        const titleCol = this.createCol([this.createTitle(translation)], 8);
-        const buttonCol = this._h('div', {class: 'd-flex justify-content-md-end align-items-center col'}, [
-            this._h('button', {class: 'btn overview-add-btn py-2 btn-primary', on: {click: toCreatePage}}, [
-                this._translatorService.getCapitalizedSingular(subject) + ` toevoegen`,
-            ]),
-        ]);
+        const titleCol = this.createCol([this.createTitle(title)], 8);
+        const buttonCol = this.createTitleButton(
+            this._translatorService.getCapitalizedSingular(subject) + ` toevoegen`,
+            toCreatePage
+        );
+
         return this.createRow([titleCol, buttonCol]);
+    }
+
+    /**
+     * @param {Object<string,any>} item the item for which to show the title
+     * @param {String|String[]} [titleItemProperty] the optional titleItemProperty, will show title based on the given property. If nothing is given then the creator will try to resolve a title
+     * @param {Function} [toEditPage] the optional to edit page function
+     */
+    createShowPageTitle(item, titleItemProperty, toEditPage) {
+        const title = this.createTitleFromItemProperties(item, titleItemProperty);
+        if (!toEditPage) return this.createTitleRow(title);
+
+        const titleCol = this.createCol([this.createTitle(title)], 8);
+        const buttonCol = this.createTitleButton(`${title} aanpassen`, toEditPage);
+        return this.createRow([titleCol, buttonCol]);
+    }
+
+    createTitleButton(text, clickFunction) {
+        return this._h('div', {class: 'd-flex justify-content-md-end align-items-center col'}, [
+            this._h('button', {class: 'btn overview-add-btn py-2 btn-primary', on: {click: clickFunction}}, [text]),
+        ]);
     }
 
     /**
@@ -2232,21 +2316,30 @@ class PageCreator {
      * @param {String|String[]} [titleItemProperty] the optional titleItemProperty, will show title based on the given property. If nothing is given then the creator will try to resolve a title
      */
     createEditPageTitle(item, titleItemProperty) {
+        const title = this.createTitleFromItemProperties(item, titleItemProperty);
+
+        if (!title) return this.createTitleRow('Aanpassen');
+
+        return this.createTitleRow(title + ' aanpassen');
+    }
+
+    /**
+     * @param {Object<string,any>} item the item for which to show the title
+     * @param {String|String[]} [titleItemProperty] the optional titleItemProperty, will show title based on the given property. If nothing is given then the creator will try to resolve a title
+     */
+    createTitleFromItemProperties(item, titleItemProperty) {
         // if titleItemProperty is given, create title based on that
         if (titleItemProperty) {
             if (Array.isArray(titleItemProperty)) {
-                return this.createTitleRow(`${titleItemProperty.map(prop => item[prop]).join(' ')} aanpassen`);
+                return titleItemProperty.map(prop => item[prop]).join(' ');
             }
-            return this.createTitleRow(`${item[titleItemProperty]} aanpassen`);
+            return item[titleItemProperty];
         }
 
         // if titleItemProperty is not given, try to resolve it with the most common properties
-        let name = item.name || item.title;
-        if (item.firstname) name = `${item.firstname} ${item.lastname}`;
+        if (item.firstname) return `${item.firstname} ${item.lastname}`;
 
-        if (!name) return this.createTitleRow('Aanpassen');
-
-        return this.createTitleRow(name + ' aanpassen');
+        return item.name || item.title;
     }
 
     /**
@@ -2766,11 +2859,98 @@ class FormCreator {
 
 /**
  * @typedef {import('vue').CreateElement} CreateElement
+ * @typedef {import('vue').VNodeChildren} VNodeChildren
+ *
+ * @typedef {(key:any, item:Object<string,any>) => string} DetailListFormatter
+ *
+ * @typedef {Object} ListElementEntry
+ * @property {string} key The property to show for the list item
+ * @property {DetailListFormatter} [formatter] The optional formatter for how to show the list item
+ *
+ * @typedef {Object} DetailListField
+ * @property {string} label The label for the detail list entry
+ * @property {string} [key] The property to show for the detail list entry
+ * @property {DetailListFormatter} [formatter] The optional formatter for how to show the detail list entry
+ * @property {ListElementEntry[]} [unorderedList] Creates an unordered list based on the given entries and shows it as the detail data (dd)
+ */
+
+class DetailListCreator {
+    constructor() {
+        /** @type {CreateElement} */
+        this._h;
+    }
+
+    // prettier-ignore
+    /** @param {CreateElement} h */
+    set h(h) { this._h = h; }
+
+    /**
+     * Create a detail list component based on the given fields
+     * @param {DetailListField[]} fields The fields for the detail list component
+     */
+    detailList(fields) {
+        const creator = this;
+        return {
+            functional: true,
+            inheritAttrs: false,
+            props: {
+                item: {
+                    type: Object,
+                    required: true,
+                },
+            },
+            render(h, {props}) {
+                const details = fields.reduce((children, field) => {
+                    if (field.unorderedList) {
+                        const ulChildren = field.unorderedList.map(listItem => {
+                            let keyValue = props.item[listItem.key];
+                            if (listItem.formatter) {
+                                keyValue = listItem.formatter(props.item[listItem.key], props.item);
+                            }
+                            return h('li', [keyValue]);
+                        });
+                        children.push(creator.dt(field.label), creator.dd([h('ul', ulChildren)]));
+                        return children;
+                    }
+
+                    let keyValue = props.item[field.key];
+                    if (field.formatter) {
+                        keyValue = field.formatter(props.item[field.key], props.item);
+                    }
+
+                    children.push(creator.dt(field.label), creator.dd(keyValue));
+                    return children;
+                }, []);
+
+                return creator.dl(details);
+            },
+        };
+    }
+
+    /** @param {String} label */
+    dt(label) {
+        return this._h('dt', {class: 'col-sm-3'}, label);
+    }
+
+    /** @param {VNodeChildren} children */
+    dd(children) {
+        return this._h('dd', {class: 'col-sm-9'}, children);
+    }
+
+    /** @param {VNodeChildren} children */
+    dl(children) {
+        return this._h('dl', {class: 'row'}, children);
+    }
+}
+
+/**
+ * @typedef {import('vue').CreateElement} CreateElement
  */
 
 const pageCreator = new PageCreator(errorService, translatorService, eventService, routerService);
 const tableCreator = new TableCreator(translatorService);
 const formCreator = new FormCreator(translatorService);
+const detailListCreator = new DetailListCreator();
 
 // Very cheesy way to bind CreateElement to the creators
 
@@ -2780,21 +2960,17 @@ new Vue({
         pageCreator.h = h;
         tableCreator.h = h;
         formCreator.h = h;
+        detailListCreator.h = h;
         return h('div');
     },
 });
-
-// import {ButtonCreator} from './buttons';
-
-// export const buttonCreator = new ButtonCreator();
-// export const formCreator = new FormCreator(buttonCreator);
 
 /**
  * @typedef {import('../services/router').RouterService} RouterService
  * @typedef {import('../services/event').EventService} EventService
  * @typedef {import('../services/auth').AuthService} AuthService
  * @typedef {import('../services/staticdata').StaticDataService} StaticDataService
- * @typedef {import('../creators/pages').PageCreator} PageCreator
+ * @typedef {import('../creators/page').PageCreator} PageCreator
  * @typedef {import('../controllers').BaseController} BaseController
  * @typedef {import('vue').Component} Component
  */
@@ -3019,6 +3195,7 @@ class BaseController {
     /** base pages */
     get basePage() {
         return {
+            name: `${this.APIEndpoint}-base`,
             render: h => h(MinimalRouterView, {props: {depth: 1}}),
             // TODO #9 @Goosterhof
             mounted: () => this.read(),
@@ -3171,6 +3348,7 @@ export {
     BaseController,
     appStarter,
     authService,
+    detailListCreator,
     errorService,
     eventService,
     httpService,

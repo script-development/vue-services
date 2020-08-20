@@ -1,6 +1,6 @@
 import {ErrorService, TranslatorService, EventService} from './services';
 import {RouterService} from './routerService';
-import {CreateElement, Component, VNode} from 'vue';
+import {CreateElement, Component, VNode, VNodeChildren} from 'vue';
 import {BvTableField} from 'bootstrap-vue';
 
 import StringInput from '../src/components/inputs/String';
@@ -152,14 +152,20 @@ type FormGroup = {
 type FormInputData = {
     cardHeader: string;
 };
+type DetailListFormatter = (key: any, item: {[x: string]: any}) => string;
+
+type ListElementEntry = {key: string; formatter?: DetailListFormatter};
+
+type DetailListField = {
+    label: string;
+    key?: string;
+    formatter?: DetailListFormatter;
+    unorderedList: ListElementEntry[];
+};
+
 export class FormCreator {
     _h: CreateElement;
     _translatorService: TranslatorService;
-
-    // prettier-ignore
-    /** @param {CreateElement} h */
-    set h(h:CreateElement)
-
     /**
      * Generate a form
      * @param {String} subject the subject for which to create something for
@@ -194,4 +200,21 @@ export class FormCreator {
 
     /** @param {VNode[]} cards */
     createForm(cards: VNode, emitter: function): VNode;
+}
+
+export class DetailListCreator {
+    /**
+     * Create a detail list component based on the given fields
+     * @param {DetailListField[]} fields The fields for the detail list component
+     */
+    detailList(fields: DetailListField[]): Component;
+
+    /** @param {String} label */
+    dt(label: string): VNode;
+
+    /** @param {VNodeChildren} children */
+    dd(children: VNodeChildren): VNode;
+
+    /** @param {VNodeChildren} children */
+    dl(children: VNodeChildren): VNode;
 }
