@@ -14,7 +14,7 @@ export default description =>
         render(h, {props, listeners}) {
             return h(
                 'b-checkbox',
-                {props: {checked: props.value, required: true}, on: {input: e => listeners.update(e)}},
+                {props: {checked: props.value, required: true, switch: true}, on: {input: e => listeners.update(e)}},
                 [description[props.value ? 1 : 0]]
             );
         },

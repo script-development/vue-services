@@ -3,7 +3,15 @@ import {RouterService} from './routerService';
 import {CreateElement, Component, VNode} from 'vue';
 import {BvTableField} from 'bootstrap-vue';
 
-// TODO :: make this complete
+import StringInput from '../src/components/inputs/String';
+import SelectInput from '../src/components/inputs/Select';
+import MultiselectInput from '../src/components/inputs/Multiselect';
+import NumberInput from '../src/components/inputs/Number';
+import CheckboxInput from '../src/components/inputs/Checkbox';
+import BaseFormError from '../src/components/FormError';
+
+import {InvalidFormTypeGivenError} from '../src/errors/InvalidFormTypeGivenError';
+
 export class PageCreator {
     _h: CreateElement;
     _errorService: ErrorService;
@@ -126,4 +134,64 @@ export class TableCreator {
     title(title: string): VNode;
 
     bTable(items: {[key: string]: any}[], perPage: number, fields: BvTableField[], rowClicked?: Function): VNode;
+}
+
+type FormGroup = {
+    property: string;
+    label: string;
+    type: string;
+    options: string;
+    valueField: string;
+    textField: string;
+    min: string;
+    max: string;
+    description: Array;
+    component: component;
+};
+
+type FormInputData = {
+    cardHeader: string;
+};
+export class FormCreator {
+    _h: CreateElement;
+    _translatorService: TranslatorService;
+
+    // prettier-ignore
+    /** @param {CreateElement} h */
+    set h(h:CreateElement)
+
+    /**
+     * Generate a form
+     * @param {String} subject the subject for which to create something for
+     * @param {FormInputData[]} formData the data the form consists of
+     */
+    create(subject: string, formData: FormInputData[]): Component;
+
+    /**
+     * Generate an input
+     * @param {Object<...string>} inputData the data used to generate an input field
+     * @param {Object<string>} editable the editable property of the form
+     */
+    typeConverter(inputData: Object<string>, editable: Object<string>): Function;
+
+    /** @param {String} title */
+    title(title: string): VNode;
+
+    /** @param {String} property */
+    createError(property: string): Component;
+
+    /**
+     * @param {String} label
+     * @param {VNode[]} inputField
+     */
+    createFormGroup(label: string, inputField: VNode[]): VNode[];
+
+    /** @param {VNode[]} formGroups */
+    createCard(formGroups: VNode[]): VNode[];
+
+    /** @param {String} subject */
+    createButton(subject: string): VNode;
+
+    /** @param {VNode[]} cards */
+    createForm(cards: VNode, emitter: function): VNode;
 }
