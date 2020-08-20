@@ -73,25 +73,50 @@ export class StoreModuleFactory {
     createDefaultMutations(moduleName) {
         return {
             [this.setAllMutation]: (state, allData) => {
+                const stateName = this.allItemsStateName;
                 if (!allData.length) {
-                    state[this.allItemsStateName] = allData;
-                    this._storageService.setItem(moduleName + this.allItemsStateName, state[this.allItemsStateName]);
-                    return;
+                    // if allData is not an array but the state contains an array
+                    // then allData probably has an id and then you can set it in the state
+                    if (state[stateName].length && allData.id) {
+                        Vue.set(state[stateName], allData.id, allData);
+                    } else {
+                        // else put allData as the state
+                        state[stateName] = allData;
+                    }
+                } else if (allData.length === 1) {
+                    // if allData has an array with 1 entry, put it in the state
+                    Vue.set(state[stateName], allData[0].id, allData[0]);
+                } else {
+                    // if allData has more entries, then that's the new baseline
+                    for (const id in state[stateName]) {
+                        // search for new data entry
+                        const newDataIndex = allData.findIndex(entry => entry.id == id);
+                        // if not found, then delete entry
+                        if (newDataIndex === -1) {
+                            Vue.delete(state[stateName], id);
+                            continue;
+                        }
+                        // remove new entry from allData, so further searches speed up
+                        const newData = allData.splice(newDataIndex, 1)[0];
+
+                        // if the entry for this id is larger then the current entry, do nothing
+                        if (Object.values(state[stateName][id]).length > Object.values(newData).length) continue;
+
+                        Vue.set(state[stateName], newData.id, newData);
+                    }
+
+                    // put all remaining new data in the state
+                    for (const newData of allData) {
+                        Vue.set(state[stateName], newData.id, newData);
+                    }
                 }
 
-                for (const data of allData) {
-                    const idData = state[this.allItemsStateName][data.id];
-
-                    // if the data for this id already exists and is larger then the current entry, do nothing
-                    if (idData && Object.values(idData).length > Object.values(data).length) continue;
-
-                    Vue.set(state[this.allItemsStateName], data.id, data);
-                }
-                this._storageService.setItem(moduleName + this.allItemsStateName, state[this.allItemsStateName]);
+                this._storageService.setItem(moduleName + stateName, state[stateName]);
             },
             [this.deleteMutation]: (state, id) => {
-                Vue.delete(state[this.allItemsStateName], id);
-                this._storageService.setItem(moduleName + this.allItemsStateName, state[this.allItemsStateName]);
+                const stateName = this.allItemsStateName;
+                Vue.delete(state[stateName], id);
+                this._storageService.setItem(moduleName + stateName, state[stateName]);
             },
         };
     }
