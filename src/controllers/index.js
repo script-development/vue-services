@@ -9,7 +9,7 @@
 
 import MinimalRouterView from '../components/MinimalRouterView';
 import {storeService, routerService, eventService, translatorService} from '../services';
-import {pageCreator, tableCreator} from '../creators';
+import {pageCreator, tableCreator, formCreator} from '../creators';
 
 export class BaseController {
     /**
@@ -24,6 +24,7 @@ export class BaseController {
         // Creators
         this._pageCreatorService = pageCreator;
         this._tableCreator = tableCreator;
+        this._formCreator = formCreator;
 
         if (!translation) {
             translation = {singular: APIEndpoint, plural: APIEndpoint};
@@ -87,6 +88,14 @@ export class BaseController {
     /** store service getter functions */
     get getAll() {
         return () => this._storeService.getAllFromStore(this._APIEndpoint);
+    }
+
+    getAllFrom(moduleName) {
+        if (this._storeService._moduleNames.indexOf(moduleName) === -1)
+            return console.warn(
+                `Could not find ${moduleName}, only these modules exists at the moment: ${this._storeService._moduleNames.toString()}`
+            );
+        return this._storeService.getAllFromStore(moduleName);
     }
 
     getById(id) {

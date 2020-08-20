@@ -2455,6 +2455,416 @@ class TableCreator {
     }
 }
 
+let updateTimeout;
+
+const update = (emitter, url, value) => {
+    if (updateTimeout) clearTimeout(updateTimeout);
+    if (url && !value.indexOf('http://') == 0 && !value.indexOf('https://') == 0) {
+        value = `http://${value}`;
+    }
+    updateTimeout = setTimeout(() => emitter(value), 200);
+};
+
+/**
+ * Creates a text input for a create and edit form
+ *
+ * @param {String}  placeholder The placeholder being shown when there is no input
+ * @param {Boolean} url         If the input needs to be a url or not
+ *
+ * @returns {VueComponent}
+ */
+var StringInput = (placeholder, url) => ({
+    functional: true,
+    props: {value: {required: true, type: String}},
+    render(h, {props, listeners}) {
+        return h('b-form-input', {
+            props: {value: props.value, placeholder},
+            on: {update: e => update(listeners.update, url, e)},
+        });
+    },
+});
+
+/**
+ * Creates a select input for a create and edit form
+ *
+ * @param {String}          storeGetter     The getter for the options for the multiselect
+ * @param {String}          valueField      The property of an option object that's used as the value for the option
+ * @param {String}          textField       The property of an option object that will be shown to the user
+ * @param {Boolean}         editable        If the property is editable
+ *
+ * @returns {VueComponent}
+ */
+var SelectInput = (moduleName, valueField, textField) =>
+    Vue.component('select-input', {
+        computed: {
+            options() {
+                return storeService.getAllFromStore(moduleName);
+            },
+        },
+        props: {value: {required: true, type: Number}},
+        render(h) {
+            return h('b-select', {
+                props: {
+                    value: this.value,
+                    valueField: valueField,
+                    textField: textField,
+                    options: this.options,
+                },
+                on: {input: event => this.$emit('update', event)},
+            });
+        },
+    });
+
+let Multiselect;
+
+try {
+    Multiselect = require('vue-multiselect').default;
+} catch (error) {}
+
+/**
+ * Creates a multiselect for a create and edit form
+ *
+ * @param {String}    storeGetter     The getter for the options for the multiselect
+ * @param {string}    valueField      The property of an option object that's used as the value for the option
+ * @param {string}    textField       The property of an option object that will be shown to the user
+ *
+ * @returns {VueComponent}
+ */
+var MultiselectInput = (moduleName, valueField, textField) =>
+    Vue.component('multiselect-input', {
+        props: {value: {required: true, type: Array}},
+        computed: {
+            options() {
+                return storeService.getAllFromStore(moduleName);
+            },
+        },
+        render(h) {
+            if (!Multiselect) {
+                console.error('VUE-MULTISELECT IS NOT INSTALLED');
+                console.warn('run the following command to install vue-multiselect: npm --save vue-multiselect');
+                return h('p', 'VUE-MULTISELECT IS NOT INSTALLED');
+            }
+            return h(Multiselect, {
+                props: {
+                    trackBy: valueField,
+                    label: textField,
+                    options: this.options,
+                    value: this.options.filter(item => this.value.includes(item[valueField])),
+                    placeholder: 'zoeken',
+                    multiple: true,
+                    clearOnSelect: false,
+                    preserveSearch: true,
+                    showLabels: false,
+                    showPointer: false,
+                    closeOnSelect: false,
+                },
+                on: {
+                    input: e =>
+                        this.$emit(
+                            'update',
+                            e.map(item => item[valueField])
+                        ),
+                },
+            });
+        },
+    });
+
+let updateTimeout$1;
+
+const update$1 = (emitter, value) => {
+    if (updateTimeout$1) clearTimeout(updateTimeout$1);
+    updateTimeout$1 = setTimeout(() => {
+        // Check if it's a float or an int
+        if (value.indexOf('.') !== -1) emitter(parseFloat(value));
+        else emitter(parseInt(value));
+    }, 200);
+};
+
+/**
+ * Creates a number input for a create and edit form
+ *
+ * @param {Number}      min         The minimum amount
+ * @param {Number}      max         The maximum amount
+ * @param {Number}      steps       The steps amount, default 1
+ * @param {Function}    formatter   Optional formatter
+ *
+ * @returns {VueComponent}
+ */
+var NumberInput = (min, max, step = 1, formatter) => {
+    const functional = !formatter;
+    return Vue.component('number-input', {
+        // can be functional when it's just a number without a formatter
+        // maybe not the most practical/readable solution, but it's a proof of concept that it can work
+        functional,
+        props: {value: {required: true, type: Number}},
+        data() {
+            return {
+                isInputActive: false,
+            };
+        },
+        render(h, context) {
+            // TODO Vue3 :: make this pretty again, put it in setup
+            // could also still be just a functional component then, requires testing
+            let value, updater;
+            // render get's context when it's a functional component
+            if (functional) {
+                value = context.props.value;
+                updater = context.listeners.update;
+            } else {
+                value = this.value;
+                updater = this.$listeners.update;
+            }
+
+            if (functional || this.isInputActive) {
+                return h('b-input', {
+                    props: {value, type: 'number', min, max, step},
+                    on: {
+                        update: e => update$1(updater, e),
+                        blur: () => {
+                            if (!functional) this.isInputActive = false;
+                        },
+                    },
+                });
+            }
+
+            return h('b-input', {
+                props: {value: formatter(value), type: 'text'},
+                on: {focus: () => (this.isInputActive = true)},
+            });
+        },
+    });
+};
+
+/**
+ * Creates a checkbox for a create and edit form
+ *
+ * @param {String[]} description The description being show when checkbox is checked and not checked, first value in array is checked, second is not checked
+ *
+ * @returns {VueComponent}
+ */
+var CheckboxInput = description =>
+    Vue.component('checkbox-input', {
+        functional: true,
+        props: {value: {required: true, type: Boolean}},
+        render(h, {props, listeners}) {
+            return h(
+                'b-checkbox',
+                {props: {checked: props.value, required: true, switch: true}, on: {input: e => listeners.update(e)}},
+                [description[props.value ? 1 : 0]]
+            );
+        },
+    });
+
+var BaseFormError = {
+    name: 'form-error',
+    functional: true,
+    props: {
+        error: {
+            type: String,
+            required: true,
+        },
+    },
+    render(h, {props}) {
+        if (!props.error) return;
+        return h(
+            'b-form-invalid-feedback',
+            {
+                props: {
+                    state: false,
+                },
+            },
+            [props.error]
+        );
+    },
+};
+
+class InvalidFormTypeGivenError extends Error {
+    constructor(...params) {
+        // Pass remaining arguments (including vendor specific ones) to parent constructor
+        super(...params);
+
+        // Maintains proper stack trace for where our error was thrown (only available on V8)
+        if (Error.captureStackTrace) {
+            Error.captureStackTrace(this, InvalidFormTypeGivenError);
+        }
+
+        this.name = 'InvalidFormTypeGivenError';
+    }
+}
+
+/**
+ * @typedef {import('vue').CreateElement} CreateElement
+ * @typedef {import('vue').VNode} VNode
+ * @typedef {import('vue').Component} Component
+ * @typedef {import('../services/translator').TranslatorService} TranslatorService
+ *
+ * @typedef {Object} FormData
+ * @property {string} cardHeader the header of the card
+ * @property {FormGroup[]} formGroups the formgroups the form consits of
+ *
+ * @typedef {Object} FormGroup the formgroups the form consits of
+ * @property {string} property the property of the formgroup
+ * @property {string} label the label of the formgroup
+ * @property {string} type the type of the formgroup
+ * @property {string} [options] the options in the 'select' or 'multiselect' type formgroup has
+ * @property {string} [valueField] the valueField in the 'select' or 'multiselect' type formgroup has
+ * @property {string} [textField] the textField in the 'select' or 'multiselect' type formgroup has
+ * @property {string} [min] the minimal value a number in the 'numer' type formgroup has
+ * @property {string} [max] the maximal value a number in the 'numer' type formgroup has
+ * @property {[string,string]} [description] the descriptions(options) a checkbox should have
+ * @property {Component} [component] the component the formgroup should use
+ */
+
+class FormCreator {
+    /**
+     * @param {TranslatorService} translatorService
+     */
+    constructor(translatorService) {
+        /** @type {CreateElement} */
+        this._h;
+        this._translatorService = translatorService;
+    }
+
+    // prettier-ignore
+    /** @param {CreateElement} h */
+    set h(h) { this._h = h; }
+
+    /**
+     * Generate a form
+     * @param {String} subject the subject for which to create something for
+     * @param {FormData[]} formData the data the form consists of
+     */
+    create(subject, formData) {
+        // define formCreator here, cause this context get's lost in the return object
+        const formCreator = this;
+
+        return {
+            props: {
+                editable: {
+                    type: Object,
+                    required: true,
+                },
+                errors: {
+                    type: Object,
+                    required: true,
+                },
+            },
+
+            render() {
+                const card = formData.map(data => {
+                    const cardData = [];
+
+                    if (data.cardHeader) cardData.push(formCreator.createTitle(data.cardHeader));
+
+                    const formGroups = data.formGroups.map(formGroup => {
+                        const input = [formCreator.typeConverter(formGroup, this.editable)];
+
+                        if (this.errors[formGroup.property])
+                            input.push(formCreator.createError(this.errors[formGroup.property][0]));
+
+                        return formCreator.createFormGroup(formGroup.label, input);
+                    });
+
+                    cardData.push(formGroups);
+
+                    return formCreator.createCard(cardData);
+                });
+
+                card.push(formCreator.createButton(subject));
+                return formCreator.createForm(card, () => this.$emit('submit'));
+            },
+        };
+    }
+
+    /**
+     * Generate an input
+     * @param {FormGroup} inputData the data used to generate an input field
+     * @param {Object<string>} editable the editable property of the form
+     */
+    typeConverter(inputData, editable) {
+        const valueBinding = {
+            props: {value: editable[inputData.property]},
+            on: {update: e => (editable[inputData.property] = e)},
+        };
+
+        switch (inputData.type) {
+            case 'string':
+                return this._h(StringInput(`Vul hier uw ${inputData.label.toLowerCase()} in`, false), valueBinding);
+            case 'select':
+                return this._h(SelectInput(inputData.options, inputData.valueField, inputData.textField), valueBinding);
+            case 'number':
+                return this._h(NumberInput(inputData.min, inputData.max), valueBinding);
+            case 'checkbox':
+                return this._h(CheckboxInput(inputData.description), valueBinding);
+            case 'multiselect':
+                return this._h(
+                    MultiselectInput(inputData.options, inputData.valueField, inputData.textField),
+                    valueBinding
+                );
+            case 'custom':
+                return this._h(inputData.component, valueBinding);
+        }
+
+        throw new InvalidFormTypeGivenError(
+            `Invalid type for ${inputData.property}, type can be 'string', 'select', 'number', 'checkbox', 'multiselect', 'custom'`
+        );
+    }
+
+    /** @param {String} title */
+    createTitle(title) {
+        return this._h('h3', title);
+    }
+
+    /** @param {String} property */
+    createError(property) {
+        return this._h(BaseFormError, {props: {error: property}});
+    }
+
+    /**
+     * @param {String} label
+     * @param {VNode[]} inputField
+     */
+    createFormGroup(label, inputField) {
+        const labelAndInput = [
+            this._h('legend', {tabindex: '-1', class: 'col-sm-3 bv-no-focus-ring col-form-label'}, label),
+        ];
+        labelAndInput.push(this._h('div', {tabindex: '-1', role: 'group', class: 'bv-no-focus-ring col'}, inputField));
+        const formRow = this._h('div', {class: 'form-row'}, [labelAndInput]);
+        return this._h('fieldset', {class: 'form-group'}, [formRow]);
+    }
+
+    /** @param {VNode[]} formGroups */
+    createCard(formGroups) {
+        const cardBody = this._h('div', {class: 'card-body'}, formGroups);
+        return this._h('div', {class: 'card mb-2'}, [cardBody]);
+    }
+
+    /** @param {String} subject */
+    createButton(subject) {
+        return this._h(
+            'button',
+            {type: 'submit', class: 'btn btn-primary'},
+            this._translatorService.getCapitalizedSingular(subject) + ' opslaan'
+        );
+    }
+
+    /** @param {VNode[]} cards */
+    createForm(cards, emitter) {
+        return this._h(
+            'form',
+            {
+                on: {
+                    submit: e => {
+                        e.preventDefault();
+                        emitter();
+                    },
+                },
+            },
+            cards
+        );
+    }
+}
+
 /**
  * @typedef {import('vue').CreateElement} CreateElement
  * @typedef {import('vue').VNodeChildren} VNodeChildren
@@ -2547,6 +2957,7 @@ class DetailListCreator {
 
 const pageCreator = new PageCreator(errorService, translatorService, eventService, routerService);
 const tableCreator = new TableCreator(translatorService);
+const formCreator = new FormCreator(translatorService);
 const detailListCreator = new DetailListCreator();
 
 // Very cheesy way to bind CreateElement to the creators
@@ -2556,6 +2967,7 @@ new Vue({
     render(h) {
         pageCreator.h = h;
         tableCreator.h = h;
+        formCreator.h = h;
         detailListCreator.h = h;
         return h('div');
     },
@@ -2661,6 +3073,7 @@ class BaseController {
         // Creators
         this._pageCreatorService = pageCreator;
         this._tableCreator = tableCreator;
+        this._formCreator = formCreator;
 
         if (!translation) {
             translation = {singular: APIEndpoint, plural: APIEndpoint};
@@ -2724,6 +3137,14 @@ class BaseController {
     /** store service getter functions */
     get getAll() {
         return () => this._storeService.getAllFromStore(this._APIEndpoint);
+    }
+
+    getAllFrom(moduleName) {
+        if (this._storeService._moduleNames.indexOf(moduleName) === -1)
+            return console.warn(
+                `Could not find ${moduleName}, only these modules exists at the moment: ${this._storeService._moduleNames.toString()}`
+            );
+        return this._storeService.getAllFromStore(moduleName);
     }
 
     getById(id) {
