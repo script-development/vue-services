@@ -54,6 +54,10 @@ export class FormCreator {
         const formCreator = this;
 
         return {
+            name: `${subject}-form`,
+
+            functional: true,
+
             props: {
                 editable: {
                     type: Object,
@@ -65,17 +69,18 @@ export class FormCreator {
                 },
             },
 
-            render() {
+            render(_, {props, listeners}) {
                 const card = formData.map(data => {
                     const cardData = [];
 
                     if (data.cardHeader) cardData.push(formCreator.createTitle(data.cardHeader));
 
                     const formGroups = data.formGroups.map(formGroup => {
-                        const input = [formCreator.typeConverter(formGroup, this.editable)];
+                        const input = [formCreator.typeConverter(formGroup, props.editable)];
 
-                        if (this.errors[formGroup.property])
-                            input.push(formCreator.createError(this.errors[formGroup.property][0]));
+                        if (props.errors[formGroup.property]) {
+                            input.push(formCreator.createError(props.errors[formGroup.property][0]));
+                        }
 
                         return formCreator.createFormGroup(formGroup.label, input);
                     });
@@ -86,7 +91,7 @@ export class FormCreator {
                 });
 
                 card.push(formCreator.createButton(subject));
-                return formCreator.createForm(card, () => this.$emit('submit'));
+                return formCreator.createForm(card, () => listeners.submit());
             },
         };
     }
