@@ -80,4 +80,22 @@ export class ShowPageCreator {
         const buttonCol = this._baseCreator.createTitleButton(`${title} aanpassen`, toEditPage);
         return this._baseCreator.createRow([titleCol, buttonCol]);
     }
+    /**
+     * @param {Object<string,any>} item the item for which to show the title
+     * @param {String|String[]} [titleItemProperty] the optional titleItemProperty, will show title based on the given property. If nothing is given then the creator will try to resolve a title
+     */
+    createTitleFromItemProperties(item, titleItemProperty) {
+        // if titleItemProperty is given, create title based on that
+        if (titleItemProperty) {
+            if (Array.isArray(titleItemProperty)) {
+                return titleItemProperty.map(prop => item[prop]).join(' ');
+            }
+            return item[titleItemProperty];
+        }
+
+        // if titleItemProperty is not given, try to resolve it with the most common properties
+        if (item.firstname) return `${item.firstname} ${item.lastname}`;
+
+        return item.name || item.title;
+    }
 }
