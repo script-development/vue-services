@@ -1,6 +1,6 @@
 {
     "name": "@script-development/vue-services",
-    "version": "0.0.51",
+    "version": "0.0.52",
     "description": "Services for Vue SPA App",
     "main": "dist/index.js",
     "module": "dist/index.esm.js",
@@ -15,7 +15,7 @@
         "build": "rollup src/index.js --file dist/index.js --format iife",
         "dev": "rollup -c scripts/config.js",
         "watch": "rollup -c scripts/config.js --watch",
-        "pub": "npm publish",
+        "pub": "npm version minor && npm publish",
         "docs": "typedoc"
     },
     "author": "Script",

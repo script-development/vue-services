@@ -1,4 +1,8 @@
-import Vue from 'vue';
+/**
+ * @typedef {import("vue").Component} Component
+ *
+ * @typedef {(value:string) => string} FormGroupFormatter
+ */
 
 let updateTimeout;
 
@@ -14,12 +18,12 @@ const update = (emitter, value) => {
 /**
  * Creates a number input for a create and edit form
  *
- * @param {Number}      [min]         The minimum amount
- * @param {Number}      [max]         The maximum amount
- * @param {Number}      [steps]       The steps amount, default 1
- * @param {Function}    [formatter]   Optional formatter
+ * @param {Number}                  [min]         The minimum amount
+ * @param {Number}                  [max]         The maximum amount
+ * @param {Number}                  [steps]       The steps amount
+ * @param {FormGroupFormatter}      [formatter]   Optional formatter
  *
- * @returns {VueComponent}
+ * @returns {Component}
  */
 export default (min, max, step, formatter) => {
     const functional = !formatter;
