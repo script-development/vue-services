@@ -30,7 +30,7 @@
         "typescript": "^3.9.7"
     },
     "dependencies": {
-        "axios": "0.19.2",
+        "axios": "0.20.0",
         "bootstrap-vue": "^2.15.0",
         "vue": "2.6.11",
         "vue-router": "3.3.4",
