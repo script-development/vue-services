@@ -14,10 +14,10 @@ const update = (emitter, value) => {
 /**
  * Creates a number input for a create and edit form
  *
- * @param {Number}      min         The minimum amount
- * @param {Number}      max         The maximum amount
- * @param {Number}      steps       The steps amount, default 1
- * @param {Function}    formatter   Optional formatter
+ * @param {Number}      [min]         The minimum amount
+ * @param {Number}      [max]         The maximum amount
+ * @param {Number}      [steps]       The steps amount, default 1
+ * @param {Function}    [formatter]   Optional formatter
  *
  * @returns {VueComponent}
  */
@@ -47,21 +47,33 @@ export default (min, max, step = 1, formatter) => {
             }
 
             if (functional || this.isInputActive) {
-                return h('b-input', {
-                    props: {value, type: 'number', min, max, step},
+                return h('input', {
+                    class: 'form-control',
+                    attrs: {
+                        value,
+                        type: 'number',
+                        min,
+                        max,
+                        step,
+                    },
                     on: {
-                        update: e => update(updater, e),
+                        input: e => {
+                            if (!e.target.value) e.target.value = '0';
+
+                            update(updater, e.target.value);
+                        },
                         blur: () => {
                             if (!functional) this.isInputActive = false;
                         },
                     },
                 });
+            } else {
+                return h('input', {
+                    class: 'form-control',
+                    attrs: {value: formatter(value), type: 'text'},
+                    on: {focus: () => (this.isInputActive = true)},
+                });
             }
-
-            return h('b-input', {
-                props: {value: formatter(value), type: 'text'},
-                on: {focus: () => (this.isInputActive = true)},
-            });
         },
     });
 };
