@@ -21,9 +21,10 @@ const update = (emitter, value) => {
  *
  * @returns {VueComponent}
  */
-export default (min, max, step = 1, formatter) => {
+export default (min, max, step, formatter) => {
     const functional = !formatter;
-    return Vue.component('number-input', {
+    return {
+        name: 'number-input',
         // can be functional when it's just a number without a formatter
         // maybe not the most practical/readable solution, but it's a proof of concept that it can work
         functional,
@@ -67,13 +68,13 @@ export default (min, max, step = 1, formatter) => {
                         },
                     },
                 });
-            } else {
-                return h('input', {
-                    class: 'form-control',
-                    attrs: {value: formatter(value), type: 'text'},
-                    on: {focus: () => (this.isInputActive = true)},
-                });
             }
+
+            return h('input', {
+                class: 'form-control',
+                attrs: {value: formatter(value), type: 'text'},
+                on: {focus: () => (this.isInputActive = true)},
+            });
         },
-    });
+    };
 };

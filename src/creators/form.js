@@ -6,7 +6,9 @@
  * @typedef {import('vue').Component} Component
  * @typedef {import('../services/translator').TranslatorService} TranslatorService
  *
- * @typedef {Object} FormData
+ * @typedef {(value:string) => string} FormGroupFormatter
+ *
+ * @typedef {Object} FormInputData
  * @property {string} cardHeader the header of the card
  * @property {FormGroup[]} formGroups the formgroups the form consits of
  *
@@ -14,11 +16,13 @@
  * @property {string} property the property of the formgroup
  * @property {string} label the label of the formgroup
  * @property {string} type the type of the formgroup
+ * @property {FormGroupFormatter} [formatter] the formatter for the value in the formgroup input
  * @property {string} [options] the options in the 'select' or 'multiselect' type formgroup has
  * @property {string} [valueField] the valueField in the 'select' or 'multiselect' type formgroup has
  * @property {string} [textField] the textField in the 'select' or 'multiselect' type formgroup has
- * @property {string} [min] the minimal value a number in the 'numer' type formgroup has
- * @property {string} [max] the maximal value a number in the 'numer' type formgroup has
+ * @property {number} [min] the minimal value a number in the 'number' type formgroup has
+ * @property {number} [max] the maximal value a number in the 'number' type formgroup has
+ * @property {number} [step] the step value a number in the 'number' type formgroup has
  * @property {[string,string]} [description] the descriptions(options) a checkbox should have
  * @property {Component} [component] the component the formgroup should use
  */
@@ -49,7 +53,7 @@ export class FormCreator {
     /**
      * Generate a form
      * @param {String} subject the subject for which to create something for
-     * @param {FormData[]} formData the data the form consists of
+     * @param {FormInputData[]} formData the data the form consists of
      */
     create(subject, formData) {
         // define formCreator here, cause this context get's lost in the return object
@@ -115,7 +119,10 @@ export class FormCreator {
             case 'select':
                 return this._h(SelectInput(inputData.options, inputData.valueField, inputData.textField), valueBinding);
             case 'number':
-                return this._h(NumberInput(inputData.min, inputData.max), valueBinding);
+                return this._h(
+                    NumberInput(inputData.min, inputData.max, inputData.step, inputData.formatter),
+                    valueBinding
+                );
             case 'checkbox':
                 return this._h(CheckboxInput(inputData.description), valueBinding);
             case 'multiselect':
