@@ -27,7 +27,7 @@
         "pretty-quick": "^3.0.0",
         "rollup": "^2.26.4",
         "typedoc": "^0.18.0",
-        "typescript": "^3.9.7"
+        "typescript": "^4.0.2"
     },
     "dependencies": {
         "axios": "0.19.2",
