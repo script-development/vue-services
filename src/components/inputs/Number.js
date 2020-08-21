@@ -1,4 +1,8 @@
-import Vue from 'vue';
+/**
+ * @typedef {import("vue").Component} Component
+ *
+ * @typedef {(value:string) => string} FormGroupFormatter
+ */
 
 let updateTimeout;
 
@@ -14,16 +18,17 @@ const update = (emitter, value) => {
 /**
  * Creates a number input for a create and edit form
  *
- * @param {Number}      min         The minimum amount
- * @param {Number}      max         The maximum amount
- * @param {Number}      steps       The steps amount, default 1
- * @param {Function}    formatter   Optional formatter
+ * @param {Number}                  [min]         The minimum amount
+ * @param {Number}                  [max]         The maximum amount
+ * @param {Number}                  [steps]       The steps amount
+ * @param {FormGroupFormatter}      [formatter]   Optional formatter
  *
- * @returns {VueComponent}
+ * @returns {Component}
  */
-export default (min, max, step = 1, formatter) => {
+export default (min, max, step, formatter) => {
     const functional = !formatter;
-    return Vue.component('number-input', {
+    return {
+        name: 'number-input',
         // can be functional when it's just a number without a formatter
         // maybe not the most practical/readable solution, but it's a proof of concept that it can work
         functional,
@@ -47,10 +52,21 @@ export default (min, max, step = 1, formatter) => {
             }
 
             if (functional || this.isInputActive) {
-                return h('b-input', {
-                    props: {value, type: 'number', min, max, step},
+                return h('input', {
+                    class: 'form-control',
+                    attrs: {
+                        value,
+                        type: 'number',
+                        min,
+                        max,
+                        step,
+                    },
                     on: {
-                        update: e => update(updater, e),
+                        input: e => {
+                            if (!e.target.value) e.target.value = '0';
+
+                            update(updater, e.target.value);
+                        },
                         blur: () => {
                             if (!functional) this.isInputActive = false;
                         },
@@ -58,10 +74,11 @@ export default (min, max, step = 1, formatter) => {
                 });
             }
 
-            return h('b-input', {
-                props: {value: formatter(value), type: 'text'},
+            return h('input', {
+                class: 'form-control',
+                attrs: {value: formatter(value), type: 'text'},
                 on: {focus: () => (this.isInputActive = true)},
             });
         },
-    });
+    };
 };

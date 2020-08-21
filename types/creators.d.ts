@@ -220,17 +220,21 @@ export class TableCreator {
     bTable(items: {[key: string]: any}[], perPage: number, fields: BvTableField[], rowClicked?: Function): VNode;
 }
 
+type FormGroupFormatter = (value: string) => string;
+
 type FormGroup = {
     property: string;
     label: string;
     type: string;
-    options: string;
-    valueField: string;
-    textField: string;
-    min: string;
-    max: string;
-    description: Array;
-    component: component;
+    formatter?: FormGroupFormatter;
+    options?: string;
+    valueField?: string;
+    textField?: string;
+    min?: number;
+    max?: number;
+    step?: number;
+    description?: Array;
+    component?: component;
 };
 
 type FormInputData = {

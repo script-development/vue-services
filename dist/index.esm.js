@@ -2627,12 +2627,14 @@ const update = (emitter, url, value) => {
  * @returns {VueComponent}
  */
 var StringInput = (placeholder, url) => ({
+    name: 'string-input',
     functional: true,
     props: {value: {required: true, type: String}},
     render(h, {props, listeners}) {
-        return h('b-form-input', {
-            props: {value: props.value, placeholder},
-            on: {update: e => update(listeners.update, url, e)},
+        return h('input', {
+            class: 'form-control',
+            attrs: {value: props.value, placeholder},
+            on: {input: e => update(listeners.update, url, e.target.value)},
         });
     },
 });
@@ -2643,30 +2645,30 @@ var StringInput = (placeholder, url) => ({
  * @param {String}          storeGetter     The getter for the options for the multiselect
  * @param {String}          valueField      The property of an option object that's used as the value for the option
  * @param {String}          textField       The property of an option object that will be shown to the user
- * @param {Boolean}         editable        If the property is editable
  *
  * @returns {VueComponent}
  */
-var SelectInput = (moduleName, valueField, textField) =>
-    Vue.component('select-input', {
-        computed: {
-            options() {
-                return storeService.getAllFromStore(moduleName);
-            },
+var SelectInput = (moduleName, valueField, textField) => ({
+    name: 'select-input',
+    computed: {
+        options() {
+            return storeService.getAllFromStore(moduleName);
         },
-        props: {value: {required: true, type: Number}},
-        render(h) {
-            return h('b-select', {
-                props: {
-                    value: this.value,
-                    valueField: valueField,
-                    textField: textField,
-                    options: this.options,
-                },
-                on: {input: event => this.$emit('update', event)},
-            });
-        },
-    });
+    },
+    props: {value: {required: true, type: Number}},
+    render(h) {
+        const options = this.options.map(option =>
+            h('option', {attrs: {value: option[valueField], selected: option[valueField] == this.value}}, [
+                option[textField],
+            ])
+        );
+        return h(
+            'select',
+            {class: 'custom-select', on: {input: e => this.$emit('update', parseInt(e.target.value))}},
+            options
+        );
+    },
+});
 
 let Multiselect;
 
@@ -2722,6 +2724,12 @@ var MultiselectInput = (moduleName, valueField, textField) =>
         },
     });
 
+/**
+ * @typedef {import("vue").Component} Component
+ *
+ * @typedef {(value:string) => string} FormGroupFormatter
+ */
+
 let updateTimeout$1;
 
 const update$1 = (emitter, value) => {
@@ -2736,16 +2744,17 @@ const update$1 = (emitter, value) => {
 /**
  * Creates a number input for a create and edit form
  *
- * @param {Number}      min         The minimum amount
- * @param {Number}      max         The maximum amount
- * @param {Number}      steps       The steps amount, default 1
- * @param {Function}    formatter   Optional formatter
+ * @param {Number}                  [min]         The minimum amount
+ * @param {Number}                  [max]         The maximum amount
+ * @param {Number}                  [steps]       The steps amount
+ * @param {FormGroupFormatter}      [formatter]   Optional formatter
  *
- * @returns {VueComponent}
+ * @returns {Component}
  */
-var NumberInput = (min, max, step = 1, formatter) => {
+var NumberInput = (min, max, step, formatter) => {
     const functional = !formatter;
-    return Vue.component('number-input', {
+    return {
+        name: 'number-input',
         // can be functional when it's just a number without a formatter
         // maybe not the most practical/readable solution, but it's a proof of concept that it can work
         functional,
@@ -2769,10 +2778,21 @@ var NumberInput = (min, max, step = 1, formatter) => {
             }
 
             if (functional || this.isInputActive) {
-                return h('b-input', {
-                    props: {value, type: 'number', min, max, step},
+                return h('input', {
+                    class: 'form-control',
+                    attrs: {
+                        value,
+                        type: 'number',
+                        min,
+                        max,
+                        step,
+                    },
                     on: {
-                        update: e => update$1(updater, e),
+                        input: e => {
+                            if (!e.target.value) e.target.value = '0';
+
+                            update$1(updater, e.target.value);
+                        },
                         blur: () => {
                             if (!functional) this.isInputActive = false;
                         },
@@ -2780,12 +2800,13 @@ var NumberInput = (min, max, step = 1, formatter) => {
                 });
             }
 
-            return h('b-input', {
-                props: {value: formatter(value), type: 'text'},
+            return h('input', {
+                class: 'form-control',
+                attrs: {value: formatter(value), type: 'text'},
                 on: {focus: () => (this.isInputActive = true)},
             });
         },
-    });
+    };
 };
 
 /**
@@ -2795,18 +2816,19 @@ var NumberInput = (min, max, step = 1, formatter) => {
  *
  * @returns {VueComponent}
  */
-var CheckboxInput = description =>
-    Vue.component('checkbox-input', {
-        functional: true,
-        props: {value: {required: true, type: Boolean}},
-        render(h, {props, listeners}) {
-            return h(
-                'b-checkbox',
-                {props: {checked: props.value, required: true, switch: true}, on: {input: e => listeners.update(e)}},
-                [description[props.value ? 1 : 0]]
-            );
-        },
-    });
+var CheckboxInput = description => ({
+    name: 'checkbox-input',
+    functional: true,
+    props: {value: {required: true, type: Boolean}},
+    render(h, {props, listeners}) {
+        // TODO :: create normal element instead of Bootstrap Vue element
+        return h(
+            'b-checkbox',
+            {props: {checked: props.value, required: true, switch: true}, on: {input: e => listeners.update(e)}},
+            [description[props.value ? 1 : 0]]
+        );
+    },
+});
 
 var BaseFormError = {
     name: 'form-error',
@@ -2848,11 +2870,15 @@ class InvalidFormTypeGivenError extends Error {
 /**
  * @typedef {import('vue').CreateElement} CreateElement
  * @typedef {import('vue').VNode} VNode
+ * @typedef {import('vue').VNodeChildren} VNodeChildren
+ *
  * @typedef {import('vue').Component} Component
  * @typedef {import('../services/translator').TranslatorService} TranslatorService
  * @typedef {import('./basecreator').BaseCreator} BaseCreator
  *
- * @typedef {Object} FormData
+ * @typedef {(value:string) => string} FormGroupFormatter
+ *
+ * @typedef {Object} FormInputData
  * @property {string} cardHeader the header of the card
  * @property {FormGroup[]} formGroups the formgroups the form consits of
  *
@@ -2860,11 +2886,13 @@ class InvalidFormTypeGivenError extends Error {
  * @property {string} property the property of the formgroup
  * @property {string} label the label of the formgroup
  * @property {string} type the type of the formgroup
+ * @property {FormGroupFormatter} [formatter] the formatter for the value in the formgroup input
  * @property {string} [options] the options in the 'select' or 'multiselect' type formgroup has
  * @property {string} [valueField] the valueField in the 'select' or 'multiselect' type formgroup has
  * @property {string} [textField] the textField in the 'select' or 'multiselect' type formgroup has
- * @property {string} [min] the minimal value a number in the 'numer' type formgroup has
- * @property {string} [max] the maximal value a number in the 'numer' type formgroup has
+ * @property {number} [min] the minimal value a number in the 'number' type formgroup has
+ * @property {number} [max] the maximal value a number in the 'number' type formgroup has
+ * @property {number} [step] the step value a number in the 'number' type formgroup has
  * @property {[string,string]} [description] the descriptions(options) a checkbox should have
  * @property {Component} [component] the component the formgroup should use
  */
@@ -2888,7 +2916,7 @@ class FormCreator {
     /**
      * Generate a form
      * @param {String} subject the subject for which to create something for
-     * @param {FormData[]} formData the data the form consists of
+     * @param {FormInputData[]} formData the data the form consists of
      */
     create(subject, formData) {
         // define formCreator here, cause this context get's lost in the return object
@@ -2911,7 +2939,7 @@ class FormCreator {
             },
 
             render(_, {props, listeners}) {
-                const card = formData.map(data => {
+                const cards = formData.map(data => {
                     const cardData = [];
 
                     if (data.cardHeader) cardData.push(formCreator._baseCreator.createTitle(data.cardHeader, 'h3'));
@@ -2931,8 +2959,8 @@ class FormCreator {
                     return formCreator._baseCreator.createCard(cardData);
                 });
 
-                card.push(formCreator.createButton(subject));
-                return formCreator.createForm(card, () => listeners.submit());
+                cards.push(formCreator.createButton(subject));
+                return formCreator.createForm(cards, () => listeners.submit());
             },
         };
     }
@@ -2956,7 +2984,10 @@ class FormCreator {
             case 'select':
                 return this._h(SelectInput(inputData.options, inputData.valueField, inputData.textField), valueBinding);
             case 'number':
-                return this._h(NumberInput(inputData.min, inputData.max), valueBinding);
+                return this._h(
+                    NumberInput(inputData.min, inputData.max, inputData.step, inputData.formatter),
+                    valueBinding
+                );
             case 'checkbox':
                 return this._h(CheckboxInput(inputData.description), valueBinding);
             case 'multiselect':
@@ -2980,15 +3011,33 @@ class FormCreator {
 
     /**
      * @param {String} label
-     * @param {VNode[]} inputField
+     * @param {VNodeChildren} inputField
      */
     createFormGroup(label, inputField) {
         const labelAndInput = [
-            this._h('legend', {tabindex: '-1', class: 'col-sm-3 bv-no-focus-ring col-form-label'}, label),
+            this._h('legend', {class: 'col-sm-3 bv-no-focus-ring col-form-label'}, [label]),
+            this._h('div', {class: 'bv-no-focus-ring col'}, inputField),
         ];
-        labelAndInput.push(this._h('div', {tabindex: '-1', role: 'group', class: 'bv-no-focus-ring col'}, inputField));
-        const formRow = this._h('div', {class: 'form-row'}, [labelAndInput]);
-        return this._h('fieldset', {class: 'form-group'}, [formRow]);
+
+        return this._h(
+            'fieldset',
+            {
+                class: 'form-group',
+                on: {
+                    click: event => {
+                        if (inputField[0].componentInstance && inputField[0].componentInstance.focus) {
+                            inputField[0].componentInstance.focus();
+                        } else if (inputField[0].elm) {
+                            inputField[0].elm.focus();
+                        } else {
+                            // TODO :: check how everything is focusable
+                            console.log(inputField[0]);
+                        }
+                    },
+                },
+            },
+            [this._h('div', {class: 'form-row'}, labelAndInput)]
+        );
     }
 
     /** @param {String} subject */

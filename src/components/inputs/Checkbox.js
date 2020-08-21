@@ -1,5 +1,3 @@
-import Vue from 'vue';
-
 /**
  * Creates a checkbox for a create and edit form
  *
@@ -7,15 +5,16 @@ import Vue from 'vue';
  *
  * @returns {VueComponent}
  */
-export default description =>
-    Vue.component('checkbox-input', {
-        functional: true,
-        props: {value: {required: true, type: Boolean}},
-        render(h, {props, listeners}) {
-            return h(
-                'b-checkbox',
-                {props: {checked: props.value, required: true, switch: true}, on: {input: e => listeners.update(e)}},
-                [description[props.value ? 1 : 0]]
-            );
-        },
-    });
+export default description => ({
+    name: 'checkbox-input',
+    functional: true,
+    props: {value: {required: true, type: Boolean}},
+    render(h, {props, listeners}) {
+        // TODO :: create normal element instead of Bootstrap Vue element
+        return h(
+            'b-checkbox',
+            {props: {checked: props.value, required: true, switch: true}, on: {input: e => listeners.update(e)}},
+            [description[props.value ? 1 : 0]]
+        );
+    },
+});
