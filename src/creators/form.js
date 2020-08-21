@@ -3,6 +3,7 @@
  * @typedef {import('vue').VNode} VNode
  * @typedef {import('vue').Component} Component
  * @typedef {import('../services/translator').TranslatorService} TranslatorService
+ * @typedef {import('./basecreator').BaseCreator} BaseCreator
  *
  * @typedef {Object} FormData
  * @property {string} cardHeader the header of the card
@@ -33,11 +34,13 @@ import {InvalidFormTypeGivenError} from '../errors/InvalidFormTypeGivenError';
 export class FormCreator {
     /**
      * @param {TranslatorService} translatorService
+     * @param {BaseCreator} baseCreator
      */
-    constructor(translatorService) {
+    constructor(baseCreator, translatorService) {
         /** @type {CreateElement} */
         this._h;
         this._translatorService = translatorService;
+        this._baseCreator = baseCreator;
     }
 
     // prettier-ignore
@@ -73,7 +76,7 @@ export class FormCreator {
                 const card = formData.map(data => {
                     const cardData = [];
 
-                    if (data.cardHeader) cardData.push(formCreator.createTitle(data.cardHeader));
+                    if (data.cardHeader) cardData.push(formCreator._baseCreator.createTitle(data.cardHeader, 'h3'));
 
                     const formGroups = data.formGroups.map(formGroup => {
                         const input = [formCreator.typeConverter(formGroup, props.editable)];
@@ -87,7 +90,7 @@ export class FormCreator {
 
                     cardData.push(formGroups);
 
-                    return formCreator.createCard(cardData);
+                    return formCreator._baseCreator.createCard(cardData);
                 });
 
                 card.push(formCreator.createButton(subject));
@@ -109,7 +112,9 @@ export class FormCreator {
 
         switch (inputData.type) {
             case 'string':
-                return this._h(StringInput(`Vul hier uw ${inputData.label.toLowerCase()} in`, false), valueBinding);
+                let placeholder = `Vul hier uw ${inputData.label.toLowerCase()} in`;
+                if (inputData.placeholder) placeholder = inputData.placeholder;
+                return this._h(StringInput(placeholder, false), valueBinding);
             case 'select':
                 return this._h(SelectInput(inputData.options, inputData.valueField, inputData.textField), valueBinding);
             case 'number':
@@ -130,11 +135,6 @@ export class FormCreator {
         );
     }
 
-    /** @param {String} title */
-    createTitle(title) {
-        return this._h('h3', title);
-    }
-
     /** @param {String} property */
     createError(property) {
         return this._h(BaseFormError, {props: {error: property}});
@@ -151,12 +151,6 @@ export class FormCreator {
         labelAndInput.push(this._h('div', {tabindex: '-1', role: 'group', class: 'bv-no-focus-ring col'}, inputField));
         const formRow = this._h('div', {class: 'form-row'}, [labelAndInput]);
         return this._h('fieldset', {class: 'form-group'}, [formRow]);
-    }
-
-    /** @param {VNode[]} formGroups */
-    createCard(formGroups) {
-        const cardBody = this._h('div', {class: 'card-body'}, formGroups);
-        return this._h('div', {class: 'card mb-2'}, [cardBody]);
     }
 
     /** @param {String} subject */

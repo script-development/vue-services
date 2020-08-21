@@ -10,7 +10,15 @@ import {
     staticDataService,
 } from './services';
 
-export {tableCreator, pageCreator, detailListCreator} from './creators';
+export {
+    formCreator,
+    tableCreator,
+    detailListCreator,
+    overviewPageCreator,
+    createPageCreator,
+    showPageCreator,
+    editPageCreator,
+} from './creators';
 
 import {AppStarter} from './app';
 

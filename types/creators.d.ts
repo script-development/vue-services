@@ -12,66 +12,9 @@ import BaseFormError from '../src/components/FormError';
 
 import {InvalidFormTypeGivenError} from '../src/errors/InvalidFormTypeGivenError';
 
-export class PageCreator {
+export class BaseCreator {
     _h: CreateElement;
-    _errorService: ErrorService;
     _translatorService: TranslatorService;
-    _eventService: EventService;
-    _routerService: RouterService;
-
-    /** @param {CreateElement} h */
-    set h(h: CreateElement);
-
-    /**
-     * Generate a create page
-     * @param {Component} form the form to create stuff with
-     * @param {()=>Object<string,any} modelFactory the factory to create a new instance of a model
-     * @param {String} subject the subject for which to create something for
-     * @param {Function} createAction the action to send the newly created model to the backend
-     * @param {String} [title] the optional title, will generate default one if nothing is given
-     */
-    createPage(
-        form: Component,
-        // TODO :: define model factory function
-        modelFactory: Function,
-        subject: string,
-        createAction: Function,
-        title: string
-    ): Component;
-    /**
-     * Generate an edit page
-     * @param {Component} form the form to create stuff with
-     * @param {()=>Object<string,any} getter the getter to get the instance from the store
-     * @param {String} subject the subject for which to create something for
-     * @param {Function} updateAction the action to send the updated model to the backend
-     * @param {Function} [destroyAction] the optional destroyAction, will attach a destroy button with this action
-     * @param {Function} [showAction] the optional showAction, will get data from the server if given
-     * @param {String|String[]} [titleItemProperty] the optional titleItemProperty, will show title based on the given property. If nothing is given then the creator will try to resolve a title
-     */
-    editPage(
-        form: Component,
-        // TODO :: define getter function
-        getter: Function,
-        subject: string,
-        updateAction?: Function,
-        destroyAction?: Function,
-        titleItemProperty?: string | string[]
-    ): Component;
-    /**
-     *
-     * @param {String} subject the subject for which to create the overview page
-     * @param {Function} getter the table to show items in
-     * @param {Component} table the table to show items in
-     * @param {Component} [filter] the filter to filter the items
-     * @param {Function} [toCreatePage] the function to go to the create page
-     */
-    overviewPage(
-        subject: string,
-        getter: Function,
-        table: Component,
-        filter?: Component,
-        toCreatePage?: Function
-    ): Component;
     /** @param {VNode[]} children */
     createContainer(children: VNode[]): VNode;
     /** @param {VNode[]} children */
@@ -82,8 +25,33 @@ export class PageCreator {
     createTitle(title: string): VNode;
     /** @param {String} title */
     createTitleRow(title: string): VNode;
-    /** @param {String} subject */
-    createCreatePageTitle(subject: string): VNode;
+
+    /** @param {VNode[]} children */
+    createCard(children: VNode[]): VNode;
+    /** @param {String} text */
+    createSubmitButton(text: string): VNode;
+    /**
+     * @param {String} text
+     * @param {Function} clickFunction
+     */
+    createTitleButton(text: string, clickFunction: Function): VNode;
+}
+
+export class OverviewPageCreator {
+    _h: CreateElement;
+    _baseCreator: BaseCreator;
+    _translatorService: TranslatorService;
+
+    /**
+     *
+     * @param {String} subject the subject for which to create the overview page
+     * @param {Function} getter the table to show items in
+     * @param {Component} table the table to show items in
+     * @param {Component} [filter] the filter to filter the items
+     * @param {Function} [toCreatePage] the function to go to the create page
+     */
+    create(subject: string, getter: Function, table: Component, filter?: Component, toCreatePage?: Function): Component;
+
     /**
      * @param {String} subject
      * @param {Function} [toCreatePage]
@@ -93,7 +61,123 @@ export class PageCreator {
      * @param {Object<string,any>} item the item for which to show the title
      * @param {String|String[]} [titleItemProperty] the optional titleItemProperty, will show title based on the given property. If nothing is given then the creator will try to resolve a title
      */
+}
+
+export class ShowPageCreator {
+    _h: CreateElement;
+    _baseCreator: BaseCreator;
+    _translatorService: TranslatorService;
+
+    /**
+     *
+     * @param {String} subject the subject for which to create the overview page
+     * @param {Function} getter the table to show items in
+     * @param {Component} detailList the detail list that displays the actual data
+     * @param {String|String[]} [titleItemProperty] the optional titleItemProperty, will show title based on the given property. If nothing is given then the creator will try to resolve a title
+     * @param {Function} [toEditPage] the function to go to the edit page
+     */
+    create(
+        subject: string,
+        getter: Function,
+        detailList: Component,
+        titleItemProperty?: Component,
+        toEditPage?: Function
+    ): Component;
+
+    /**
+     * @param {String} subject
+     * @param {String|String[]} [titleItemProperty] the optional titleItemProperty, will show title based on the given property. If nothing is given then the creator will try to resolve a title
+     * @param {Function} [toCreatePage]
+     */
+    createShowPageTitle(subject: string, titleItemProperty: String | String[], toEditPage: Function): VNode;
+    /**
+     * @param {Object<string,any>} item the item for which to show the title
+     * @param {String|String[]} [titleItemProperty] the optional titleItemProperty, will show title based on the given property. If nothing is given then the creator will try to resolve a title
+     */
+}
+
+export class CreatePageCreator {
+    _h: CreateElement;
+    _baseCreator: BaseCreator;
+    _errorService: ErrorService;
+    _translatorService: TranslatorService;
+    _routerService: RouterService;
+
+    /**
+     * Generate a create page
+     * @param {Component} form the form to create stuff with
+     * @param {()=>Object<string,any} modelFactory the factory to create a new instance of a model
+     * @param {String} subject the subject for which to create something for
+     * @param {Function} createAction the action to send the newly created model to the backend
+     * @param {String} [title] the optional title, will generate default one if nothing is given
+     */
+    create(
+        form: Component,
+        // TODO :: define model factory function
+        modelFactory: Function,
+        subject: string,
+        createAction: Function,
+        title: string
+    ): Component;
+
+    /** @param {String} subject */
+    createCreatePageTitle(subject: string): VNode;
+
+    /**
+     * @param {Component} form
+     * @param {Object<string,any>} editable
+     * @param {(item:Object<string,any) => void} action
+     */
+    createForm(
+        form: Component,
+        editable: {
+            [x: string]: any;
+        },
+        action: (item: {[x: string]: any}) => void
+    ): VNode;
+    /**
+     * @param {Object<string,any>} editable
+     */
+    checkQuery(editable: {[x: string]: any}): void;
+}
+
+export class EditPageCreator {
+    _h: CreateElement;
+    _baseCreator: BaseCreator;
+    _errorService: ErrorService;
+    _translatorService: TranslatorService;
+
+    /**
+     * Generate an edit page
+     * @param {Component} form the form to create stuff with
+     * @param {()=>Object<string,any} getter the getter to get the instance from the store
+     * @param {String} subject the subject for which to create something for
+     * @param {Function} updateAction the action to send the updated model to the backend
+     * @param {Function} [destroyAction] the optional destroyAction, will attach a destroy button with this action
+     * @param {Function} [showAction] the optional showAction, will get data from the server if given
+     * @param {String|String[]} [titleItemProperty] the optional titleItemProperty, will show title based on the given property. If nothing is given then the creator will try to resolve a title
+     */
+    create(
+        form: Component,
+        // TODO :: define getter function
+        getter: Function,
+        subject: string,
+        updateAction?: Function,
+        destroyAction?: Function,
+        titleItemProperty?: string | string[]
+    ): Component;
+    /**
+     * @param {Object<string,any>} item the item for which to show the title
+     * @param {String|String[]} [titleItemProperty] the optional titleItemProperty, will show title based on the given property. If nothing is given then the creator will try to resolve a title
+     */
     createEditPageTitle(item: {[x: string]: any}, titleItemProperty?: string | string[]): VNode;
+
+    /**
+     * @param {Object<string,any>} item the item for which to show the title
+     * @param {String|String[]} [titleItemProperty] the optional titleItemProperty, will show title based on the given property. If nothing is given then the creator will try to resolve a title
+     */
+
+    createTitleFromItemProperties(item: {[x: string]: any}, titleItemProperty?: string | string[]): VNode;
     /**
      * @param {Component} form
      * @param {Object<string,any>} editable

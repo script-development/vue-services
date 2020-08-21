@@ -1,6 +1,7 @@
 /**
  * @typedef {import('vue').CreateElement} CreateElement
  * @typedef {import('vue').VNodeChildren} VNodeChildren
+ * @typedef {import('./basecreator').BaseCreator} BaseCreator
  *
  * @typedef {(key:any, item:Object<string,any>) => string} DetailListFormatter
  *
@@ -16,9 +17,13 @@
  */
 
 export class DetailListCreator {
-    constructor() {
+    /**
+     * @param {BaseCreator} baseCreator
+     */
+    constructor(baseCreator) {
         /** @type {CreateElement} */
         this._h;
+        this._baseCreator = baseCreator;
     }
 
     // prettier-ignore

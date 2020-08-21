@@ -1,5 +1,6 @@
 /**
  * @typedef {import('../services/translator').TranslatorService} TranslatorService
+ * @typedef {import('./basecreator').BaseCreator} BaseCreator
  * @typedef {import('vue').CreateElement} CreateElement
  * @typedef {import('vue').VNode} VNode
  * @typedef {import('bootstrap-vue').BvTableField} BvTableField
@@ -10,11 +11,13 @@ import {BTable} from 'bootstrap-vue';
 export class TableCreator {
     /**
      * @param {TranslatorService} translatorService
+     * @param {BaseCreator} baseCreator
      */
-    constructor(translatorService) {
+    constructor(baseCreator, translatorService) {
         /** @type {CreateElement} */
         this._h;
         this._translatorService = translatorService;
+        this._baseCreator = baseCreator;
     }
 
     // prettier-ignore
@@ -29,7 +32,10 @@ export class TableCreator {
     table(subject, fields, rowClicked) {
         // define tableCreator here, cause this context get's lost in the return object
         const creator = this;
-        const title = creator.title(creator._translatorService.getCapitalizedPlural(subject) + ' overzicht');
+        const title = creator._baseCreator.createTitle(
+            creator._translatorService.getCapitalizedPlural(subject) + ' overzicht',
+            'h4'
+        );
 
         return {
             props: {items: {type: Array, required: true}},
@@ -49,19 +55,12 @@ export class TableCreator {
                 this.infiniteScroll();
             },
             render() {
-                return creator.card([title, creator.bTable(this.items, this.perPage, fields, rowClicked)]);
+                return creator._baseCreator.createCard([
+                    title,
+                    creator.bTable(this.items, this.perPage, fields, rowClicked),
+                ]);
             },
         };
-    }
-
-    /** @param {VNode[]} children */
-    card(children) {
-        return this._h('div', {class: 'card'}, [this._h('div', {class: 'card-body'}, children)]);
-    }
-
-    /** @param {String} title */
-    title(title) {
-        return this._h('h4', [title]);
     }
 
     bTable(items, perPage, fields, rowClicked) {

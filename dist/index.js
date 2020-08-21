@@ -1016,25 +1016,50 @@ class StoreModuleFactory {
     createDefaultMutations(moduleName) {
         return {
             [this.setAllMutation]: (state, allData) => {
+                const stateName = this.allItemsStateName;
                 if (!allData.length) {
-                    state[this.allItemsStateName] = allData;
-                    this._storageService.setItem(moduleName + this.allItemsStateName, state[this.allItemsStateName]);
-                    return;
+                    // if allData is not an array but the state contains an array
+                    // then allData probably has an id and then you can set it in the state
+                    if (state[stateName].length && allData.id) {
+                        Vue.set(state[stateName], allData.id, allData);
+                    } else {
+                        // else put allData as the state
+                        state[stateName] = allData;
+                    }
+                } else if (allData.length === 1) {
+                    // if allData has an array with 1 entry, put it in the state
+                    Vue.set(state[stateName], allData[0].id, allData[0]);
+                } else {
+                    // if allData has more entries, then that's the new baseline
+                    for (const id in state[stateName]) {
+                        // search for new data entry
+                        const newDataIndex = allData.findIndex(entry => entry.id == id);
+                        // if not found, then delete entry
+                        if (newDataIndex === -1) {
+                            Vue.delete(state[stateName], id);
+                            continue;
+                        }
+                        // remove new entry from allData, so further searches speed up
+                        const newData = allData.splice(newDataIndex, 1)[0];
+
+                        // if the entry for this id is larger then the current entry, do nothing
+                        if (Object.values(state[stateName][id]).length > Object.values(newData).length) continue;
+
+                        Vue.set(state[stateName], newData.id, newData);
+                    }
+
+                    // put all remaining new data in the state
+                    for (const newData of allData) {
+                        Vue.set(state[stateName], newData.id, newData);
+                    }
                 }
 
-                for (const data of allData) {
-                    const idData = state[this.allItemsStateName][data.id];
-
-                    // if the data for this id already exists and is larger then the current entry, do nothing
-                    if (idData && Object.values(idData).length > Object.values(data).length) continue;
-
-                    Vue.set(state[this.allItemsStateName], data.id, data);
-                }
-                this._storageService.setItem(moduleName + this.allItemsStateName, state[this.allItemsStateName]);
+                this._storageService.setItem(moduleName + stateName, state[stateName]);
             },
             [this.deleteMutation]: (state, id) => {
-                Vue.delete(state[this.allItemsStateName], id);
-                this._storageService.setItem(moduleName + this.allItemsStateName, state[this.allItemsStateName]);
+                const stateName = this.allItemsStateName;
+                Vue.delete(state[stateName], id);
+                this._storageService.setItem(moduleName + stateName, state[stateName]);
             },
         };
     }
@@ -2027,29 +2052,104 @@ const staticDataService = new StaticDataService(storeService, httpService);
 const authService = new AuthService(routerService, storeService, storageService, httpService);
 
 /**
+ * @typedef {import('vue').CreateElement} CreateElement
+ * @typedef {import('vue').VNode} VNode
+ * @typedef {import('vue').Component} Component
+ * @typedef {import('../services/translator').TranslatorService} TranslatorService
+ */
+
+class BaseCreator {
+    /**
+     * @param {TranslatorService} translatorService
+     */
+    constructor(translatorService) {
+        /** @type {CreateElement} */
+        this._h;
+        this._translatorService = translatorService;
+    }
+
+    // prettier-ignore
+    /** @param {CreateElement} h */
+    set h(h) { this._h = h; }
+
+    /** @param {VNode[]} children */
+    createContainer(children) {
+        return this._h('div', {class: 'ml-0 container'}, children);
+    }
+
+    /** @param {VNode[]} children */
+    createCard(children) {
+        return this._h('div', {class: 'card mb-2'}, [this._h('div', {class: 'card-body'}, children)]);
+    }
+
+    /** @param {String} title */
+    createTitle(title, header = 'h1') {
+        return this._h(header, [title]);
+    }
+
+    /** @param {String} subject */
+    createSubmitButton(text) {
+        return this._h('button', {type: 'submit', class: 'btn btn-primary'}, text);
+    }
+
+    /**
+     * @param {VNode[]} children
+     * @param {number} [mt]
+     */
+    createRow(children, mt) {
+        let classes = 'row';
+        if (mt) classes += ` mt-${mt}`;
+        return this._h('div', {class: classes}, children);
+    }
+    /**
+     * @param {VNode[]} children
+     * @param {number} [md]
+     */
+    createCol(children, md) {
+        const className = md ? `col-md-${md}` : 'col';
+        return this._h('div', {class: className}, children);
+    }
+
+    /** @param {String} title */
+    createTitleRow(title) {
+        return this.createRow([this.createCol([this.createTitle(title)])]);
+    }
+
+    /**
+     * @param {String} text
+     * @param {Function} clickFunction
+     */
+    createTitleButton(text, clickFunction) {
+        return this._h('div', {class: 'd-flex justify-content-md-end align-items-center col'}, [
+            this._h('button', {class: 'btn overview-add-btn py-2 btn-primary', on: {click: clickFunction}}, [text]),
+        ]);
+    }
+}
+
+/**
+ * @typedef {import('./basecreator').BaseCreator} BaseCreator
  * @typedef {import('../services/error').ErrorService} ErrorService
  * @typedef {import('../services/translator').TranslatorService} TranslatorService
- * @typedef {import('../services/event').EventService} EventService
  * @typedef {import('../services/router').RouterService} RouterService
  * @typedef {import('vue').CreateElement} CreateElement
  * @typedef {import('vue').VNode} VNode
  * @typedef {import('vue').Component} Component
  */
 
-class PageCreator {
+class CreatePageCreator {
     /**
+     * @param {BaseCreator} baseCreator
      * @param {ErrorService} errorService
-     * @param {TranslatorService} translatorService
-     * @param {EventService} eventService
      * @param {RouterService} routerService
+     * @param {TranslatorService} translatorService
      */
-    constructor(errorService, translatorService, eventService, routerService) {
+    constructor(baseCreator, errorService, translatorService, routerService) {
         /** @type {CreateElement} */
         this._h;
         this._errorService = errorService;
-        this._translatorService = translatorService;
-        this._eventService = eventService;
         this._routerService = routerService;
+        this._translatorService = translatorService;
+        this._baseCreator = baseCreator;
     }
 
     // prettier-ignore
@@ -2064,7 +2164,7 @@ class PageCreator {
      * @param {Function} createAction the action to send the newly created model to the backend
      * @param {String} [title] the optional title, will generate default one if nothing is given
      */
-    createPage(form, modelFactory, subject, createAction, title) {
+    create(form, modelFactory, subject, createAction, title) {
         // define pageCreator here, cause this context get's lost in the return object
         const pageCreator = this;
 
@@ -2073,10 +2173,10 @@ class PageCreator {
             data: () => ({editable: modelFactory()}),
             render() {
                 const titleElement = title
-                    ? pageCreator.createTitle(title)
+                    ? pageCreator._baseCreator.createTitle(title)
                     : pageCreator.createCreatePageTitle(subject);
 
-                return pageCreator.createContainer([
+                return pageCreator._baseCreator.createContainer([
                     titleElement,
                     pageCreator.createForm(form, this.editable, createAction),
                 ]);
@@ -2086,6 +2186,72 @@ class PageCreator {
             },
         };
     }
+
+    /** @param {String} subject */
+    createCreatePageTitle(subject) {
+        return this._baseCreator.createTitleRow(this._translatorService.getCapitalizedSingular(subject) + ` toevoegen`);
+    }
+    /**
+     * @param {Component} form
+     * @param {Object<string,any>} editable
+     * @param {(item:Object<string,any) => void} action
+     */
+    createForm(form, editable, action) {
+        return this._h('div', {class: 'row mt-3'}, [
+            this._baseCreator.createCol([
+                this._h(form, {
+                    props: {
+                        editable,
+                        errors: this._errorService.getErrors(),
+                    },
+                    on: {submit: () => action(editable)},
+                }),
+            ]),
+        ]);
+    }
+
+    /** @param {Object<string,any>} editable */
+    checkQuery(editable) {
+        const query = this._routerService.query;
+
+        if (!Object.keys(query).length) return;
+
+        for (const key in query) {
+            if (editable.hasOwnProperty(key)) {
+                editable[key] = query[key];
+            }
+        }
+    }
+}
+
+/**
+ * @typedef {import('./basecreator').BaseCreator} BaseCreator
+ * @typedef {import('../services/error').ErrorService} ErrorService
+ * @typedef {import('../services/translator').TranslatorService} TranslatorService
+ * @typedef {import('../services/router').RouterService} RouterService
+ * @typedef {import('vue').CreateElement} CreateElement
+ * @typedef {import('vue').VNode} VNode
+ * @typedef {import('vue').Component} Component
+ */
+
+class EditPageCreator {
+    /**
+     * @param {BaseCreator} baseCreator
+     * @param {ErrorService} errorService
+     * @param {TranslatorService} translatorService
+     */
+    constructor(baseCreator, errorService, translatorService, routerService) {
+        /** @type {CreateElement} */
+        this._h;
+        this._errorService = errorService;
+        this._translatorService = translatorService;
+        this._baseCreator = baseCreator;
+        this._routerService = routerService;
+    }
+
+    // prettier-ignore
+    /** @param {CreateElement} h */
+    set h(h) { this._h = h; }
 
     /**
      * Generate an edit page
@@ -2097,7 +2263,7 @@ class PageCreator {
      * @param {Function} [showAction] the optional showAction, will get data from the server if given
      * @param {String|String[]} [titleItemProperty] the optional titleItemProperty, will show title based on the given property. If nothing is given then the creator will try to resolve a title
      */
-    editPage(form, getter, subject, updateAction, destroyAction, showAction, titleItemProperty) {
+    create(form, getter, subject, updateAction, destroyAction, showAction, titleItemProperty) {
         // define pageCreator here, cause this context get's lost in the return object
         const pageCreator = this;
 
@@ -2137,7 +2303,7 @@ class PageCreator {
                     );
                 }
 
-                return pageCreator.createContainer(containerChildren);
+                return pageCreator._baseCreator.createContainer(containerChildren);
             },
             mounted() {
                 pageCreator.checkQuery(this.editable);
@@ -2147,13 +2313,100 @@ class PageCreator {
     }
 
     /**
+     * @param {Object<string,any>} item the item for which to show the title
+     * @param {String|String[]} [titleItemProperty] the optional titleItemProperty, will show title based on the given property. If nothing is given then the creator will try to resolve a title
+     */
+    createEditPageTitle(item, titleItemProperty) {
+        const title = this.createTitleFromItemProperties(item, titleItemProperty);
+
+        if (!title) return this._baseCreator.createTitleRow('Aanpassen');
+
+        return this._baseCreator.createTitleRow(title + ' aanpassen');
+    }
+
+    /**
+     * @param {Object<string,any>} item the item for which to show the title
+     * @param {String|String[]} [titleItemProperty] the optional titleItemProperty, will show title based on the given property. If nothing is given then the creator will try to resolve a title
+     */
+    createTitleFromItemProperties(item, titleItemProperty) {
+        // if titleItemProperty is given, create title based on that
+        if (titleItemProperty) {
+            if (Array.isArray(titleItemProperty)) {
+                return titleItemProperty.map(prop => item[prop]).join(' ');
+            }
+            return item[titleItemProperty];
+        }
+
+        // if titleItemProperty is not given, try to resolve it with the most common properties
+        if (item.firstname) return `${item.firstname} ${item.lastname}`;
+
+        return item.name || item.title;
+    }
+    /**
+     * @param {Component} form
+     * @param {Object<string,any>} editable
+     * @param {(item:Object<string,any) => void} action
+     */
+    createForm(form, editable, action) {
+        return this._h('div', {class: 'row mt-3'}, [
+            this._baseCreator.createCol([
+                this._h(form, {
+                    props: {
+                        editable,
+                        errors: this._errorService.getErrors(),
+                    },
+                    on: {submit: () => action(editable)},
+                }),
+            ]),
+        ]);
+    }
+
+    /** @param {Object<string,any>} editable */
+    checkQuery(editable) {
+        const query = this._routerService.query;
+
+        if (!Object.keys(query).length) return;
+
+        for (const key in query) {
+            if (editable.hasOwnProperty(key)) {
+                editable[key] = query[key];
+            }
+        }
+    }
+}
+
+/**
+ * @typedef {import('./basecreator').BaseCreator} BaseCreator
+ * @typedef {import('../services/translator').TranslatorService} TranslatorService
+ * @typedef {import('vue').CreateElement} CreateElement
+ * @typedef {import('vue').VNode} VNode
+ * @typedef {import('vue').Component} Component
+ */
+
+class OverviewPageCreator {
+    /**
+     * @param {BaseCreator} baseCreator
+     * @param {TranslatorService} translatorService
+     */
+    constructor(baseCreator, translatorService) {
+        /** @type {CreateElement} */
+        this._h;
+        this._translatorService = translatorService;
+        this._baseCreator = baseCreator;
+    }
+
+    // prettier-ignore
+    /** @param {CreateElement} h */
+    set h(h) { this._h = h; }
+
+    /**
      * @param {String} subject the subject for which to create the overview page
      * @param {Function} getter the table to show items in
      * @param {Component} table the table to show items in
      * @param {Component} [filter] the filter to filter the items
      * @param {Function} [toCreatePage] the function to go to the create page
      */
-    overviewPage(subject, getter, table, filter, toCreatePage) {
+    create(subject, getter, table, filter, toCreatePage) {
         // define pageCreator here, cause this context get's lost in the return object
         const pageCreator = this;
 
@@ -2186,10 +2439,51 @@ class PageCreator {
 
                 containerChildren.push(h(table, {props: {items}}));
 
-                return pageCreator.createContainer(containerChildren);
+                return pageCreator._baseCreator.createContainer(containerChildren);
             },
         };
     }
+    /**
+     * @param {String} subject
+     * @param {Function} [toCreatePage]
+     */
+    createOverviewPageTitle(subject, toCreatePage) {
+        const title = this._translatorService.getCapitalizedPlural(subject);
+        if (!toCreatePage) return this._baseCreator.createTitleRow(title);
+
+        const titleCol = this._baseCreator.createCol([this._baseCreator.createTitle(title)], 8);
+        const buttonCol = this._baseCreator.createTitleButton(
+            this._translatorService.getCapitalizedSingular(subject) + ` toevoegen`,
+            toCreatePage
+        );
+
+        return this._baseCreator.createRow([titleCol, buttonCol]);
+    }
+}
+
+/**
+ * @typedef {import('./basecreator').BaseCreator} BaseCreator
+ * @typedef {import('../services/translator').TranslatorService} TranslatorService
+ * @typedef {import('vue').CreateElement} CreateElement
+ * @typedef {import('vue').VNode} VNode
+ * @typedef {import('vue').Component} Component
+ */
+
+class ShowPageCreator {
+    /**
+     * @param {BaseCreator} baseCreator
+     * @param {TranslatorService} translatorService
+     */
+    constructor(baseCreator, translatorService) {
+        /** @type {CreateElement} */
+        this._h;
+        this._translatorService = translatorService;
+        this._baseCreator = baseCreator;
+    }
+
+    // prettier-ignore
+    /** @param {CreateElement} h */
+    set h(h) { this._h = h; }
 
     /**
      * @param {String} subject the subject for which to create the show page
@@ -2198,7 +2492,7 @@ class PageCreator {
      * @param {String|String[]} [titleItemProperty] the optional titleItemProperty, will show title based on the given property. If nothing is given then the creator will try to resolve a title
      * @param {Function} [toEditPage] the function to go to the edit page
      */
-    showPage(subject, getter, detailList, titleItemProperty, toEditPage) {
+    create(subject, getter, detailList, titleItemProperty, toEditPage) {
         // define pageCreator here, cause this context get's lost in the return object
         const pageCreator = this;
 
@@ -2213,12 +2507,13 @@ class PageCreator {
                 // TODO :: notFoundMessage should be clear
                 if (!this.item) return h('div', ['Dit is nog niet gevonden']);
 
-                const row = pageCreator.createRow(
+                const row = pageCreator._baseCreator.createRow(
                     [
-                        pageCreator.createCol([
-                            pageCreator.createCard([
-                                pageCreator.createSubTitle(
-                                    pageCreator._translatorService.getCapitalizedSingular(subject) + ' gegevens'
+                        pageCreator._baseCreator.createCol([
+                            pageCreator._baseCreator.createCard([
+                                pageCreator._baseCreator.createTitle(
+                                    pageCreator._translatorService.getCapitalizedSingular(subject) + ' gegevens',
+                                    'h4'
                                 ),
                                 h(detailList, {props: {item: this.item}}),
                             ]),
@@ -2227,76 +2522,12 @@ class PageCreator {
                     3
                 );
 
-                return pageCreator.createContainer([
+                return pageCreator._baseCreator.createContainer([
                     pageCreator.createShowPageTitle(this.item, titleItemProperty, toEditPage),
                     row,
                 ]);
             },
         };
-    }
-
-    /** @param {VNode[]} children */
-    createCard(children) {
-        return this._h('div', {class: 'card'}, [this._h('div', {class: 'card-body'}, children)]);
-    }
-
-    /** @param {String} title */
-    createTitle(title) {
-        return this._h('h1', [title]);
-    }
-
-    /** @param {String} title */
-    createSubTitle(title) {
-        return this._h('h4', [title]);
-    }
-
-    /** @param {VNode[]} children */
-    createContainer(children) {
-        return this._h('div', {class: 'ml-0 container'}, children);
-    }
-    /**
-     * @param {VNode[]} children
-     * @param {number} [mt]
-     */
-    createRow(children, mt) {
-        let classes = 'row';
-        if (mt) classes += ` mt-${mt}`;
-        return this._h('div', {class: classes}, children);
-    }
-    /**
-     * @param {VNode[]} children
-     * @param {number} [md]
-     */
-    createCol(children, md) {
-        const className = md ? `col-md-${md}` : 'col';
-        return this._h('div', {class: className}, children);
-    }
-
-    /** @param {String} title */
-    createTitleRow(title) {
-        return this.createRow([this.createCol([this.createTitle(title)])]);
-    }
-
-    /** @param {String} subject */
-    createCreatePageTitle(subject) {
-        return this.createTitleRow(this._translatorService.getCapitalizedSingular(subject) + ` toevoegen`);
-    }
-
-    /**
-     * @param {String} subject
-     * @param {Function} [toCreatePage]
-     */
-    createOverviewPageTitle(subject, toCreatePage) {
-        const title = this._translatorService.getCapitalizedPlural(subject);
-        if (!toCreatePage) return this.createTitleRow(title);
-
-        const titleCol = this.createCol([this.createTitle(title)], 8);
-        const buttonCol = this.createTitleButton(
-            this._translatorService.getCapitalizedSingular(subject) + ` toevoegen`,
-            toCreatePage
-        );
-
-        return this.createRow([titleCol, buttonCol]);
     }
 
     /**
@@ -2306,85 +2537,17 @@ class PageCreator {
      */
     createShowPageTitle(item, titleItemProperty, toEditPage) {
         const title = this.createTitleFromItemProperties(item, titleItemProperty);
-        if (!toEditPage) return this.createTitleRow(title);
+        if (!toEditPage) return this._baseCreator.createTitleRow(title);
 
-        const titleCol = this.createCol([this.createTitle(title)], 8);
-        const buttonCol = this.createTitleButton(`${title} aanpassen`, toEditPage);
-        return this.createRow([titleCol, buttonCol]);
-    }
-
-    createTitleButton(text, clickFunction) {
-        return this._h('div', {class: 'd-flex justify-content-md-end align-items-center col'}, [
-            this._h('button', {class: 'btn overview-add-btn py-2 btn-primary', on: {click: clickFunction}}, [text]),
-        ]);
-    }
-
-    /**
-     * @param {Object<string,any>} item the item for which to show the title
-     * @param {String|String[]} [titleItemProperty] the optional titleItemProperty, will show title based on the given property. If nothing is given then the creator will try to resolve a title
-     */
-    createEditPageTitle(item, titleItemProperty) {
-        const title = this.createTitleFromItemProperties(item, titleItemProperty);
-
-        if (!title) return this.createTitleRow('Aanpassen');
-
-        return this.createTitleRow(title + ' aanpassen');
-    }
-
-    /**
-     * @param {Object<string,any>} item the item for which to show the title
-     * @param {String|String[]} [titleItemProperty] the optional titleItemProperty, will show title based on the given property. If nothing is given then the creator will try to resolve a title
-     */
-    createTitleFromItemProperties(item, titleItemProperty) {
-        // if titleItemProperty is given, create title based on that
-        if (titleItemProperty) {
-            if (Array.isArray(titleItemProperty)) {
-                return titleItemProperty.map(prop => item[prop]).join(' ');
-            }
-            return item[titleItemProperty];
-        }
-
-        // if titleItemProperty is not given, try to resolve it with the most common properties
-        if (item.firstname) return `${item.firstname} ${item.lastname}`;
-
-        return item.name || item.title;
-    }
-
-    /**
-     * @param {Component} form
-     * @param {Object<string,any>} editable
-     * @param {(item:Object<string,any) => void} action
-     */
-    createForm(form, editable, action) {
-        return this._h('div', {class: 'row mt-3'}, [
-            this.createCol([
-                this._h(form, {
-                    props: {
-                        editable,
-                        errors: this._errorService.getErrors(),
-                    },
-                    on: {submit: () => action(editable)},
-                }),
-            ]),
-        ]);
-    }
-
-    /** @param {Object<string,any>} editable */
-    checkQuery(editable) {
-        const query = this._routerService.query;
-
-        if (!Object.keys(query).length) return;
-
-        for (const key in query) {
-            if (editable.hasOwnProperty(key)) {
-                editable[key] = query[key];
-            }
-        }
+        const titleCol = this._baseCreator.createCol([this._baseCreator.createTitle(title)], 8);
+        const buttonCol = this._baseCreator.createTitleButton(`${title} aanpassen`, toEditPage);
+        return this._baseCreator.createRow([titleCol, buttonCol]);
     }
 }
 
 /**
  * @typedef {import('../services/translator').TranslatorService} TranslatorService
+ * @typedef {import('./basecreator').BaseCreator} BaseCreator
  * @typedef {import('vue').CreateElement} CreateElement
  * @typedef {import('vue').VNode} VNode
  * @typedef {import('bootstrap-vue').BvTableField} BvTableField
@@ -2393,11 +2556,13 @@ class PageCreator {
 class TableCreator {
     /**
      * @param {TranslatorService} translatorService
+     * @param {BaseCreator} baseCreator
      */
-    constructor(translatorService) {
+    constructor(baseCreator, translatorService) {
         /** @type {CreateElement} */
         this._h;
         this._translatorService = translatorService;
+        this._baseCreator = baseCreator;
     }
 
     // prettier-ignore
@@ -2412,7 +2577,10 @@ class TableCreator {
     table(subject, fields, rowClicked) {
         // define tableCreator here, cause this context get's lost in the return object
         const creator = this;
-        const title = creator.title(creator._translatorService.getCapitalizedPlural(subject) + ' overzicht');
+        const title = creator._baseCreator.createTitle(
+            creator._translatorService.getCapitalizedPlural(subject) + ' overzicht',
+            'h4'
+        );
 
         return {
             props: {items: {type: Array, required: true}},
@@ -2432,19 +2600,12 @@ class TableCreator {
                 this.infiniteScroll();
             },
             render() {
-                return creator.card([title, creator.bTable(this.items, this.perPage, fields, rowClicked)]);
+                return creator._baseCreator.createCard([
+                    title,
+                    creator.bTable(this.items, this.perPage, fields, rowClicked),
+                ]);
             },
         };
-    }
-
-    /** @param {VNode[]} children */
-    card(children) {
-        return this._h('div', {class: 'card'}, [this._h('div', {class: 'card-body'}, children)]);
-    }
-
-    /** @param {String} title */
-    title(title) {
-        return this._h('h4', [title]);
     }
 
     bTable(items, perPage, fields, rowClicked) {
@@ -2697,6 +2858,7 @@ class InvalidFormTypeGivenError extends Error {
  * @typedef {import('vue').VNode} VNode
  * @typedef {import('vue').Component} Component
  * @typedef {import('../services/translator').TranslatorService} TranslatorService
+ * @typedef {import('./basecreator').BaseCreator} BaseCreator
  *
  * @typedef {Object} FormData
  * @property {string} cardHeader the header of the card
@@ -2718,11 +2880,13 @@ class InvalidFormTypeGivenError extends Error {
 class FormCreator {
     /**
      * @param {TranslatorService} translatorService
+     * @param {BaseCreator} baseCreator
      */
-    constructor(translatorService) {
+    constructor(baseCreator, translatorService) {
         /** @type {CreateElement} */
         this._h;
         this._translatorService = translatorService;
+        this._baseCreator = baseCreator;
     }
 
     // prettier-ignore
@@ -2739,6 +2903,10 @@ class FormCreator {
         const formCreator = this;
 
         return {
+            name: `${subject}-form`,
+
+            functional: true,
+
             props: {
                 editable: {
                     type: Object,
@@ -2750,28 +2918,29 @@ class FormCreator {
                 },
             },
 
-            render() {
+            render(_, {props, listeners}) {
                 const card = formData.map(data => {
                     const cardData = [];
 
-                    if (data.cardHeader) cardData.push(formCreator.createTitle(data.cardHeader));
+                    if (data.cardHeader) cardData.push(formCreator._baseCreator.createTitle(data.cardHeader, 'h3'));
 
                     const formGroups = data.formGroups.map(formGroup => {
-                        const input = [formCreator.typeConverter(formGroup, this.editable)];
+                        const input = [formCreator.typeConverter(formGroup, props.editable)];
 
-                        if (this.errors[formGroup.property])
-                            input.push(formCreator.createError(this.errors[formGroup.property][0]));
+                        if (props.errors[formGroup.property]) {
+                            input.push(formCreator.createError(props.errors[formGroup.property][0]));
+                        }
 
                         return formCreator.createFormGroup(formGroup.label, input);
                     });
 
                     cardData.push(formGroups);
 
-                    return formCreator.createCard(cardData);
+                    return formCreator._baseCreator.createCard(cardData);
                 });
 
                 card.push(formCreator.createButton(subject));
-                return formCreator.createForm(card, () => this.$emit('submit'));
+                return formCreator.createForm(card, () => listeners.submit());
             },
         };
     }
@@ -2789,7 +2958,9 @@ class FormCreator {
 
         switch (inputData.type) {
             case 'string':
-                return this._h(StringInput(`Vul hier uw ${inputData.label.toLowerCase()} in`, false), valueBinding);
+                let placeholder = `Vul hier uw ${inputData.label.toLowerCase()} in`;
+                if (inputData.placeholder) placeholder = inputData.placeholder;
+                return this._h(StringInput(placeholder, false), valueBinding);
             case 'select':
                 return this._h(SelectInput(inputData.options, inputData.valueField, inputData.textField), valueBinding);
             case 'number':
@@ -2810,11 +2981,6 @@ class FormCreator {
         );
     }
 
-    /** @param {String} title */
-    createTitle(title) {
-        return this._h('h3', title);
-    }
-
     /** @param {String} property */
     createError(property) {
         return this._h(BaseFormError, {props: {error: property}});
@@ -2831,12 +2997,6 @@ class FormCreator {
         labelAndInput.push(this._h('div', {tabindex: '-1', role: 'group', class: 'bv-no-focus-ring col'}, inputField));
         const formRow = this._h('div', {class: 'form-row'}, [labelAndInput]);
         return this._h('fieldset', {class: 'form-group'}, [formRow]);
-    }
-
-    /** @param {VNode[]} formGroups */
-    createCard(formGroups) {
-        const cardBody = this._h('div', {class: 'card-body'}, formGroups);
-        return this._h('div', {class: 'card mb-2'}, [cardBody]);
     }
 
     /** @param {String} subject */
@@ -2868,6 +3028,7 @@ class FormCreator {
 /**
  * @typedef {import('vue').CreateElement} CreateElement
  * @typedef {import('vue').VNodeChildren} VNodeChildren
+ * @typedef {import('./basecreator').BaseCreator} BaseCreator
  *
  * @typedef {(key:any, item:Object<string,any>) => string} DetailListFormatter
  *
@@ -2883,9 +3044,13 @@ class FormCreator {
  */
 
 class DetailListCreator {
-    constructor() {
+    /**
+     * @param {BaseCreator} baseCreator
+     */
+    constructor(baseCreator) {
         /** @type {CreateElement} */
         this._h;
+        this._baseCreator = baseCreator;
     }
 
     // prettier-ignore
@@ -2955,17 +3120,27 @@ class DetailListCreator {
  * @typedef {import('vue').CreateElement} CreateElement
  */
 
-const pageCreator = new PageCreator(errorService, translatorService, eventService, routerService);
-const tableCreator = new TableCreator(translatorService);
-const formCreator = new FormCreator(translatorService);
-const detailListCreator = new DetailListCreator();
+const baseCreator = new BaseCreator(translatorService);
+
+const createPageCreator = new CreatePageCreator(baseCreator, errorService, translatorService, routerService);
+const editPageCreator = new EditPageCreator(baseCreator, errorService, translatorService, routerService);
+const overviewPageCreator = new OverviewPageCreator(baseCreator, translatorService);
+const showPageCreator = new ShowPageCreator(baseCreator, translatorService);
+
+const tableCreator = new TableCreator(baseCreator, translatorService);
+const formCreator = new FormCreator(baseCreator, translatorService);
+const detailListCreator = new DetailListCreator(baseCreator);
 
 // Very cheesy way to bind CreateElement to the creators
 
 new Vue({
     el: document.createElement('div'),
     render(h) {
-        pageCreator.h = h;
+        baseCreator.h = h;
+        createPageCreator.h = h;
+        editPageCreator.h = h;
+        overviewPageCreator.h = h;
+        showPageCreator.h = h;
         tableCreator.h = h;
         formCreator.h = h;
         detailListCreator.h = h;
@@ -2978,7 +3153,6 @@ new Vue({
  * @typedef {import('../services/event').EventService} EventService
  * @typedef {import('../services/auth').AuthService} AuthService
  * @typedef {import('../services/staticdata').StaticDataService} StaticDataService
- * @typedef {import('../creators/page').PageCreator} PageCreator
  * @typedef {import('../controllers').BaseController} BaseController
  * @typedef {import('vue').Component} Component
  */
@@ -3070,10 +3244,6 @@ class BaseController {
         this._routerService = routerService;
         this._eventService = eventService;
         this._translatorService = translatorService;
-        // Creators
-        this._pageCreatorService = pageCreator;
-        this._tableCreator = tableCreator;
-        this._formCreator = formCreator;
 
         if (!translation) {
             translation = {singular: APIEndpoint, plural: APIEndpoint};
@@ -3355,13 +3525,17 @@ const appStarter = new AppStarter(routerService, eventService, authService, stat
 exports.BaseController = BaseController;
 exports.appStarter = appStarter;
 exports.authService = authService;
+exports.createPageCreator = createPageCreator;
 exports.detailListCreator = detailListCreator;
+exports.editPageCreator = editPageCreator;
 exports.errorService = errorService;
 exports.eventService = eventService;
+exports.formCreator = formCreator;
 exports.httpService = httpService;
 exports.loadingService = loadingService;
-exports.pageCreator = pageCreator;
+exports.overviewPageCreator = overviewPageCreator;
 exports.routerService = routerService;
+exports.showPageCreator = showPageCreator;
 exports.staticDataService = staticDataService;
 exports.storeService = storeService;
 exports.tableCreator = tableCreator;
