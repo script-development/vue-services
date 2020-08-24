@@ -45,10 +45,10 @@ export class CreatePageCreator {
             data: () => ({editable: modelFactory()}),
             render() {
                 const titleElement = title
-                    ? pageCreator._baseCreator.createTitle(title)
+                    ? pageCreator._baseCreator.title(title)
                     : pageCreator.createCreatePageTitle(subject);
 
-                return pageCreator._baseCreator.createContainer([
+                return pageCreator._baseCreator.container([
                     titleElement,
                     pageCreator.createForm(form, this.editable, createAction),
                 ]);
@@ -61,7 +61,7 @@ export class CreatePageCreator {
 
     /** @param {String} subject */
     createCreatePageTitle(subject) {
-        return this._baseCreator.createTitleRow(this._translatorService.getCapitalizedSingular(subject) + ` toevoegen`);
+        return this._baseCreator.titleRow(this._translatorService.getCapitalizedSingular(subject) + ` toevoegen`);
     }
     /**
      * @param {Component} form
@@ -70,7 +70,7 @@ export class CreatePageCreator {
      */
     createForm(form, editable, action) {
         return this._h('div', {class: 'row mt-3'}, [
-            this._baseCreator.createCol([
+            this._baseCreator.col([
                 this._h(form, {
                     props: {
                         editable,

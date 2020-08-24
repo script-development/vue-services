@@ -32,7 +32,7 @@ export class TableCreator {
     table(subject, fields, rowClicked) {
         // define tableCreator here, cause this context get's lost in the return object
         const creator = this;
-        const title = creator._baseCreator.createTitle(
+        const title = creator._baseCreator.title(
             creator._translatorService.getCapitalizedPlural(subject) + ' overzicht',
             'h4'
         );
@@ -55,10 +55,7 @@ export class TableCreator {
                 this.infiniteScroll();
             },
             render() {
-                return creator._baseCreator.createCard([
-                    title,
-                    creator.bTable(this.items, this.perPage, fields, rowClicked),
-                ]);
+                return creator._baseCreator.card([title, creator.bTable(this.items, this.perPage, fields, rowClicked)]);
             },
         };
     }

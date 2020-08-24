@@ -82,7 +82,7 @@ export class FormCreator {
                 const cards = formData.map(data => {
                     const cardData = [];
 
-                    if (data.cardHeader) cardData.push(formCreator._baseCreator.createTitle(data.cardHeader, 'h3'));
+                    if (data.cardHeader) cardData.push(formCreator._baseCreator.title(data.cardHeader, 'h3'));
 
                     const formGroups = data.formGroups.map(formGroup => {
                         const input = [formCreator.typeConverter(formGroup, props.editable)];
@@ -96,10 +96,10 @@ export class FormCreator {
 
                     cardData.push(formGroups);
 
-                    return formCreator._baseCreator.createCard(cardData);
+                    return formCreator._baseCreator.card(cardData);
                 });
 
-                cards.push(formCreator.createButton(subject));
+                cards.push(formCreator.submitButton(subject));
                 return formCreator.createForm(cards, () => listeners.submit());
             },
         };
@@ -181,7 +181,7 @@ export class FormCreator {
     }
 
     /** @param {String} subject */
-    createButton(subject) {
+    submitButton(subject) {
         return this._h(
             'button',
             {type: 'submit', class: 'btn btn-primary'},

@@ -62,7 +62,7 @@ export class OverviewPageCreator {
 
                 containerChildren.push(h(table, {props: {items}}));
 
-                return pageCreator._baseCreator.createContainer(containerChildren);
+                return pageCreator._baseCreator.container(containerChildren);
             },
         };
     }
@@ -72,14 +72,14 @@ export class OverviewPageCreator {
      */
     createOverviewPageTitle(subject, toCreatePage) {
         const title = this._translatorService.getCapitalizedPlural(subject);
-        if (!toCreatePage) return this._baseCreator.createTitleRow(title);
+        if (!toCreatePage) return this._baseCreator.titleRow(title);
 
-        const titleCol = this._baseCreator.createCol([this._baseCreator.createTitle(title)], 8);
-        const buttonCol = this._baseCreator.createTitleButton(
+        const titleCol = this._baseCreator.col([this._baseCreator.title(title)], 8);
+        const buttonCol = this._baseCreator.titleButton(
             this._translatorService.getCapitalizedSingular(subject) + ` toevoegen`,
             toCreatePage
         );
 
-        return this._baseCreator.createRow([titleCol, buttonCol]);
+        return this._baseCreator.row([titleCol, buttonCol]);
     }
 }

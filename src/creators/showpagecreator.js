@@ -44,11 +44,11 @@ export class ShowPageCreator {
                 // TODO :: notFoundMessage should be clear
                 if (!this.item) return h('div', ['Dit is nog niet gevonden']);
 
-                const row = pageCreator._baseCreator.createRow(
+                const row = pageCreator._baseCreator.row(
                     [
-                        pageCreator._baseCreator.createCol([
-                            pageCreator._baseCreator.createCard([
-                                pageCreator._baseCreator.createTitle(
+                        pageCreator._baseCreator.col([
+                            pageCreator._baseCreator.card([
+                                pageCreator._baseCreator.title(
                                     pageCreator._translatorService.getCapitalizedSingular(subject) + ' gegevens',
                                     'h4'
                                 ),
@@ -59,7 +59,7 @@ export class ShowPageCreator {
                     3
                 );
 
-                return pageCreator._baseCreator.createContainer([
+                return pageCreator._baseCreator.container([
                     pageCreator.createShowPageTitle(this.item, titleItemProperty, toEditPage),
                     row,
                 ]);
@@ -74,11 +74,11 @@ export class ShowPageCreator {
      */
     createShowPageTitle(item, titleItemProperty, toEditPage) {
         const title = this.createTitleFromItemProperties(item, titleItemProperty);
-        if (!toEditPage) return this._baseCreator.createTitleRow(title);
+        if (!toEditPage) return this._baseCreator.titleRow(title);
 
-        const titleCol = this._baseCreator.createCol([this._baseCreator.createTitle(title)], 8);
-        const buttonCol = this._baseCreator.createTitleButton(`${title} aanpassen`, toEditPage);
-        return this._baseCreator.createRow([titleCol, buttonCol]);
+        const titleCol = this._baseCreator.col([this._baseCreator.title(title)], 8);
+        const buttonCol = this._baseCreator.titleButton(`${title} aanpassen`, toEditPage);
+        return this._baseCreator.row([titleCol, buttonCol]);
     }
     /**
      * @param {Object<string,any>} item the item for which to show the title

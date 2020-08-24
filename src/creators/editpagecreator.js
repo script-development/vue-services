@@ -1,5 +1,3 @@
-import {routerService} from '../services';
-
 /**
  * @typedef {import('./basecreator').BaseCreator} BaseCreator
  * @typedef {import('../services/error').ErrorService} ErrorService
@@ -79,7 +77,7 @@ export class EditPageCreator {
                     );
                 }
 
-                return pageCreator._baseCreator.createContainer(containerChildren);
+                return pageCreator._baseCreator.container(containerChildren);
             },
             mounted() {
                 pageCreator.checkQuery(this.editable);
@@ -95,9 +93,9 @@ export class EditPageCreator {
     createEditPageTitle(item, titleItemProperty) {
         const title = this.createTitleFromItemProperties(item, titleItemProperty);
 
-        if (!title) return this._baseCreator.createTitleRow('Aanpassen');
+        if (!title) return this._baseCreator.titleRow('Aanpassen');
 
-        return this._baseCreator.createTitleRow(title + ' aanpassen');
+        return this._baseCreator.titleRow(title + ' aanpassen');
     }
 
     /**
@@ -125,7 +123,7 @@ export class EditPageCreator {
      */
     createForm(form, editable, action) {
         return this._h('div', {class: 'row mt-3'}, [
-            this._baseCreator.createCol([
+            this._baseCreator.col([
                 this._h(form, {
                     props: {
                         editable,

@@ -16,30 +16,25 @@ export class BaseCreator {
     set h(h) { this._h = h; }
 
     /** @param {VNode[]} children */
-    createContainer(children) {
+    container(children) {
         return this._h('div', {class: 'ml-0 container'}, children);
     }
 
     /** @param {VNode[]} children */
-    createCard(children) {
+    card(children) {
         return this._h('div', {class: 'card mb-2'}, [this._h('div', {class: 'card-body'}, children)]);
     }
 
     /** @param {String} title */
-    createTitle(title, header = 'h1') {
+    title(title, header = 'h1') {
         return this._h(header, [title]);
-    }
-
-    /** @param {String} subject */
-    createSubmitButton(text) {
-        return this._h('button', {type: 'submit', class: 'btn btn-primary'}, text);
     }
 
     /**
      * @param {VNode[]} children
      * @param {number} [mt]
      */
-    createRow(children, mt) {
+    row(children, mt) {
         let classes = 'row';
         if (mt) classes += ` mt-${mt}`;
         return this._h('div', {class: classes}, children);
@@ -48,21 +43,21 @@ export class BaseCreator {
      * @param {VNode[]} children
      * @param {number} [md]
      */
-    createCol(children, md) {
+    col(children, md) {
         const className = md ? `col-md-${md}` : 'col';
         return this._h('div', {class: className}, children);
     }
 
     /** @param {String} title */
-    createTitleRow(title) {
-        return this.createRow([this.createCol([this.createTitle(title)])]);
+    titleRow(title) {
+        return this.row([this.col([this.title(title)])]);
     }
 
     /**
      * @param {String} text
      * @param {Function} clickFunction
      */
-    createTitleButton(text, clickFunction) {
+    titleButton(text, clickFunction) {
         return this._h('div', {class: 'd-flex justify-content-md-end align-items-center col'}, [
             this._h('button', {class: 'btn overview-add-btn py-2 btn-primary', on: {click: clickFunction}}, [text]),
         ]);

@@ -7,25 +7,23 @@ export class BaseCreator {
     _h: CreateElement;
 
     /** @param {VNode[]} children */
-    createContainer(children: VNode[]): VNode;
+    container(children: VNode[]): VNode;
     /** @param {VNode[]} children */
-    createRow(children: VNode[]): VNode;
+    row(children: VNode[]): VNode;
     /** @param {VNode[]} children */
-    createCol(children: VNode[]): VNode;
+    col(children: VNode[]): VNode;
     /** @param {String} title */
-    createTitle(title: string): VNode;
+    title(title: string): VNode;
     /** @param {String} title */
-    createTitleRow(title: string): VNode;
+    titleRow(title: string): VNode;
 
     /** @param {VNode[]} children */
-    createCard(children: VNode[]): VNode;
-    /** @param {String} text */
-    createSubmitButton(text: string): VNode;
+    card(children: VNode[]): VNode;
     /**
      * @param {String} text
      * @param {Function} clickFunction
      */
-    createTitleButton(text: string, clickFunction: Function): VNode;
+    titleButton(text: string, clickFunction: Function): VNode;
 }
 
 export class OverviewPageCreator {
@@ -273,11 +271,8 @@ export class FormCreator {
      */
     createFormGroup(label: string, inputField: VNodeChildren): VNodeChildren;
 
-    /** @param {VNodeChildren} formGroups */
-    createCard(formGroups: VNodeChildren): VNodeChildren;
-
     /** @param {String} subject */
-    createButton(subject: string): VNode;
+    submitButton(subject: string): VNode;
 
     /** @param {VNodeChildren} cards */
     createForm(cards: VNodeChildren, emitter: Function): VNode;

@@ -2076,30 +2076,25 @@ class BaseCreator {
     set h(h) { this._h = h; }
 
     /** @param {VNode[]} children */
-    createContainer(children) {
+    container(children) {
         return this._h('div', {class: 'ml-0 container'}, children);
     }
 
     /** @param {VNode[]} children */
-    createCard(children) {
+    card(children) {
         return this._h('div', {class: 'card mb-2'}, [this._h('div', {class: 'card-body'}, children)]);
     }
 
     /** @param {String} title */
-    createTitle(title, header = 'h1') {
+    title(title, header = 'h1') {
         return this._h(header, [title]);
-    }
-
-    /** @param {String} subject */
-    createSubmitButton(text) {
-        return this._h('button', {type: 'submit', class: 'btn btn-primary'}, text);
     }
 
     /**
      * @param {VNode[]} children
      * @param {number} [mt]
      */
-    createRow(children, mt) {
+    row(children, mt) {
         let classes = 'row';
         if (mt) classes += ` mt-${mt}`;
         return this._h('div', {class: classes}, children);
@@ -2108,21 +2103,21 @@ class BaseCreator {
      * @param {VNode[]} children
      * @param {number} [md]
      */
-    createCol(children, md) {
+    col(children, md) {
         const className = md ? `col-md-${md}` : 'col';
         return this._h('div', {class: className}, children);
     }
 
     /** @param {String} title */
-    createTitleRow(title) {
-        return this.createRow([this.createCol([this.createTitle(title)])]);
+    titleRow(title) {
+        return this.row([this.col([this.title(title)])]);
     }
 
     /**
      * @param {String} text
      * @param {Function} clickFunction
      */
-    createTitleButton(text, clickFunction) {
+    titleButton(text, clickFunction) {
         return this._h('div', {class: 'd-flex justify-content-md-end align-items-center col'}, [
             this._h('button', {class: 'btn overview-add-btn py-2 btn-primary', on: {click: clickFunction}}, [text]),
         ]);
@@ -2176,10 +2171,10 @@ class CreatePageCreator {
             data: () => ({editable: modelFactory()}),
             render() {
                 const titleElement = title
-                    ? pageCreator._baseCreator.createTitle(title)
+                    ? pageCreator._baseCreator.title(title)
                     : pageCreator.createCreatePageTitle(subject);
 
-                return pageCreator._baseCreator.createContainer([
+                return pageCreator._baseCreator.container([
                     titleElement,
                     pageCreator.createForm(form, this.editable, createAction),
                 ]);
@@ -2192,7 +2187,7 @@ class CreatePageCreator {
 
     /** @param {String} subject */
     createCreatePageTitle(subject) {
-        return this._baseCreator.createTitleRow(this._translatorService.getCapitalizedSingular(subject) + ` toevoegen`);
+        return this._baseCreator.titleRow(this._translatorService.getCapitalizedSingular(subject) + ` toevoegen`);
     }
     /**
      * @param {Component} form
@@ -2201,7 +2196,7 @@ class CreatePageCreator {
      */
     createForm(form, editable, action) {
         return this._h('div', {class: 'row mt-3'}, [
-            this._baseCreator.createCol([
+            this._baseCreator.col([
                 this._h(form, {
                     props: {
                         editable,
@@ -2306,7 +2301,7 @@ class EditPageCreator {
                     );
                 }
 
-                return pageCreator._baseCreator.createContainer(containerChildren);
+                return pageCreator._baseCreator.container(containerChildren);
             },
             mounted() {
                 pageCreator.checkQuery(this.editable);
@@ -2322,9 +2317,9 @@ class EditPageCreator {
     createEditPageTitle(item, titleItemProperty) {
         const title = this.createTitleFromItemProperties(item, titleItemProperty);
 
-        if (!title) return this._baseCreator.createTitleRow('Aanpassen');
+        if (!title) return this._baseCreator.titleRow('Aanpassen');
 
-        return this._baseCreator.createTitleRow(title + ' aanpassen');
+        return this._baseCreator.titleRow(title + ' aanpassen');
     }
 
     /**
@@ -2352,7 +2347,7 @@ class EditPageCreator {
      */
     createForm(form, editable, action) {
         return this._h('div', {class: 'row mt-3'}, [
-            this._baseCreator.createCol([
+            this._baseCreator.col([
                 this._h(form, {
                     props: {
                         editable,
@@ -2442,7 +2437,7 @@ class OverviewPageCreator {
 
                 containerChildren.push(h(table, {props: {items}}));
 
-                return pageCreator._baseCreator.createContainer(containerChildren);
+                return pageCreator._baseCreator.container(containerChildren);
             },
         };
     }
@@ -2452,15 +2447,15 @@ class OverviewPageCreator {
      */
     createOverviewPageTitle(subject, toCreatePage) {
         const title = this._translatorService.getCapitalizedPlural(subject);
-        if (!toCreatePage) return this._baseCreator.createTitleRow(title);
+        if (!toCreatePage) return this._baseCreator.titleRow(title);
 
-        const titleCol = this._baseCreator.createCol([this._baseCreator.createTitle(title)], 8);
-        const buttonCol = this._baseCreator.createTitleButton(
+        const titleCol = this._baseCreator.col([this._baseCreator.title(title)], 8);
+        const buttonCol = this._baseCreator.titleButton(
             this._translatorService.getCapitalizedSingular(subject) + ` toevoegen`,
             toCreatePage
         );
 
-        return this._baseCreator.createRow([titleCol, buttonCol]);
+        return this._baseCreator.row([titleCol, buttonCol]);
     }
 }
 
@@ -2510,11 +2505,11 @@ class ShowPageCreator {
                 // TODO :: notFoundMessage should be clear
                 if (!this.item) return h('div', ['Dit is nog niet gevonden']);
 
-                const row = pageCreator._baseCreator.createRow(
+                const row = pageCreator._baseCreator.row(
                     [
-                        pageCreator._baseCreator.createCol([
-                            pageCreator._baseCreator.createCard([
-                                pageCreator._baseCreator.createTitle(
+                        pageCreator._baseCreator.col([
+                            pageCreator._baseCreator.card([
+                                pageCreator._baseCreator.title(
                                     pageCreator._translatorService.getCapitalizedSingular(subject) + ' gegevens',
                                     'h4'
                                 ),
@@ -2525,7 +2520,7 @@ class ShowPageCreator {
                     3
                 );
 
-                return pageCreator._baseCreator.createContainer([
+                return pageCreator._baseCreator.container([
                     pageCreator.createShowPageTitle(this.item, titleItemProperty, toEditPage),
                     row,
                 ]);
@@ -2540,11 +2535,11 @@ class ShowPageCreator {
      */
     createShowPageTitle(item, titleItemProperty, toEditPage) {
         const title = this.createTitleFromItemProperties(item, titleItemProperty);
-        if (!toEditPage) return this._baseCreator.createTitleRow(title);
+        if (!toEditPage) return this._baseCreator.titleRow(title);
 
-        const titleCol = this._baseCreator.createCol([this._baseCreator.createTitle(title)], 8);
-        const buttonCol = this._baseCreator.createTitleButton(`${title} aanpassen`, toEditPage);
-        return this._baseCreator.createRow([titleCol, buttonCol]);
+        const titleCol = this._baseCreator.col([this._baseCreator.title(title)], 8);
+        const buttonCol = this._baseCreator.titleButton(`${title} aanpassen`, toEditPage);
+        return this._baseCreator.row([titleCol, buttonCol]);
     }
     /**
      * @param {Object<string,any>} item the item for which to show the title
@@ -2598,7 +2593,7 @@ class TableCreator {
     table(subject, fields, rowClicked) {
         // define tableCreator here, cause this context get's lost in the return object
         const creator = this;
-        const title = creator._baseCreator.createTitle(
+        const title = creator._baseCreator.title(
             creator._translatorService.getCapitalizedPlural(subject) + ' overzicht',
             'h4'
         );
@@ -2621,10 +2616,7 @@ class TableCreator {
                 this.infiniteScroll();
             },
             render() {
-                return creator._baseCreator.createCard([
-                    title,
-                    creator.bTable(this.items, this.perPage, fields, rowClicked),
-                ]);
+                return creator._baseCreator.card([title, creator.bTable(this.items, this.perPage, fields, rowClicked)]);
             },
         };
     }
@@ -2971,7 +2963,7 @@ class FormCreator {
                 const cards = formData.map(data => {
                     const cardData = [];
 
-                    if (data.cardHeader) cardData.push(formCreator._baseCreator.createTitle(data.cardHeader, 'h3'));
+                    if (data.cardHeader) cardData.push(formCreator._baseCreator.title(data.cardHeader, 'h3'));
 
                     const formGroups = data.formGroups.map(formGroup => {
                         const input = [formCreator.typeConverter(formGroup, props.editable)];
@@ -2985,10 +2977,10 @@ class FormCreator {
 
                     cardData.push(formGroups);
 
-                    return formCreator._baseCreator.createCard(cardData);
+                    return formCreator._baseCreator.card(cardData);
                 });
 
-                cards.push(formCreator.createButton(subject));
+                cards.push(formCreator.submitButton(subject));
                 return formCreator.createForm(cards, () => listeners.submit());
             },
         };
@@ -3070,7 +3062,7 @@ class FormCreator {
     }
 
     /** @param {String} subject */
-    createButton(subject) {
+    submitButton(subject) {
         return this._h(
             'button',
             {type: 'submit', class: 'btn btn-primary'},
