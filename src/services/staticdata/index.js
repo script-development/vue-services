@@ -26,7 +26,10 @@ export class StaticDataService {
         this._storeService = storeService;
         this._httpService = httpService;
 
-        this._data;
+        this._data = {
+            normal: [],
+            msgpack: [],
+        };
     }
     /**
      * initiates the setup for the default store modules
@@ -34,8 +37,7 @@ export class StaticDataService {
      * @param {[string,Object<string,string>]} storeModuleName Modulenames
      */
     createStoreModules(data) {
-        this._data = data;
-        for (const moduleName of this._data) {
+        for (const moduleName of data) {
             if (typeof moduleName == 'string') {
                 this.createStoreModule(moduleName);
             } else if (typeof moduleName == 'object' && Object.values(moduleName) == 'msg-pack') {
@@ -50,6 +52,8 @@ export class StaticDataService {
      * @param {[string,Object<string,string>]} storeModuleName Modulenames
      */
     createStoreModule(storeModuleName) {
+        this._data.normal.push(moduleName);
+
         this._storeService.generateAndSetDefaultStoreModule(storeModuleName);
     }
 
@@ -63,6 +67,8 @@ export class StaticDataService {
             console.error('MESSAGE PACK NOT INSTALLED');
             return console.warn('run the following command to install messagepack: npm --save @msgpack/msgpack');
         }
+        this._data.msgpack.push(moduleName);
+
         const storeModule = this._storeService._factory.createDefaultStore(storeModuleName);
         storeModule.actions[this._storeService._factory.readAction] = () =>
             this._httpService.get(storeModuleName, {responseType: 'arraybuffer'}).then(response => {
@@ -77,10 +83,9 @@ export class StaticDataService {
      */
     getStaticData() {
         this._httpService.get('staticdata');
-        for (const staticDataName of this._data) {
-            if (typeof staticDataName == 'object') {
-                this._storeService.read(Object.keys(staticDataName).toString());
-            }
+
+        for (const staticDataName of this._data.msgpack) {
+            this._storeService.read(staticDataName);
         }
     }
 

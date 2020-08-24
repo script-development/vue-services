@@ -2,7 +2,7 @@ import Vue from 'vue';
 import Vuex from 'vuex';
 import axios from 'axios';
 import VueRouter from 'vue-router';
-import {BTable} from 'bootstrap-vue';
+import { BTable } from 'bootstrap-vue';
 
 const keepALiveKey = 'keepALive';
 /** setting keepALive here so we don't have to Parse it each time we get it */
@@ -300,9 +300,8 @@ class TranslatorService {
     getTranslation(value, pluralOrSingular) {
         const translation = this._translations[value];
 
-        if (!translation) throw new MissingTranslationError(`Missing translation for ${value}`);
-        if (!translation[pluralOrSingular])
-            throw new MissingTranslationError(`Missing ${pluralOrSingular} translation for ${value}`);
+        if(!translation) throw new MissingTranslationError(`Missing translation for ${value}`)
+        if(!translation[pluralOrSingular]) throw new MissingTranslationError(`Missing ${pluralOrSingular} translation for ${value}`)
 
         return translation[pluralOrSingular];
     }
@@ -1458,9 +1457,9 @@ class StoreService {
 }
 
 var NotFoundPage = {
-    render(h) {
-        return h('div', ['ERROR 404']);
-    },
+  render(h) {
+    return h("div", ["ERROR 404"]);
+  },
 };
 
 /**
@@ -1631,7 +1630,10 @@ class StaticDataService {
         this._storeService = storeService;
         this._httpService = httpService;
 
-        this._data;
+        this._data = {
+            normal: [],
+            msgpack: [],
+        };
     }
     /**
      * initiates the setup for the default store modules
@@ -1639,8 +1641,7 @@ class StaticDataService {
      * @param {[string,Object<string,string>]} storeModuleName Modulenames
      */
     createStoreModules(data) {
-        this._data = data;
-        for (const moduleName of this._data) {
+        for (const moduleName of data) {
             if (typeof moduleName == 'string') {
                 this.createStoreModule(moduleName);
             } else if (typeof moduleName == 'object' && Object.values(moduleName) == 'msg-pack') {
@@ -1655,6 +1656,8 @@ class StaticDataService {
      * @param {[string,Object<string,string>]} storeModuleName Modulenames
      */
     createStoreModule(storeModuleName) {
+        this._data.normal.push(moduleName);
+
         this._storeService.generateAndSetDefaultStoreModule(storeModuleName);
     }
 
@@ -1668,6 +1671,8 @@ class StaticDataService {
             console.error('MESSAGE PACK NOT INSTALLED');
             return console.warn('run the following command to install messagepack: npm --save @msgpack/msgpack');
         }
+        this._data.msgpack.push(moduleName);
+
         const storeModule = this._storeService._factory.createDefaultStore(storeModuleName);
         storeModule.actions[this._storeService._factory.readAction] = () =>
             this._httpService.get(storeModuleName, {responseType: 'arraybuffer'}).then(response => {
@@ -1682,10 +1687,9 @@ class StaticDataService {
      */
     getStaticData() {
         this._httpService.get('staticdata');
-        for (const staticDataName of this._data) {
-            if (typeof staticDataName == 'object') {
-                this._storeService.read(Object.keys(staticDataName).toString());
-            }
+
+        for (const staticDataName of this._data.msgpack) {
+            this._storeService.read(staticDataName);
         }
     }
 
@@ -1802,22 +1806,22 @@ var storeModule = (storageService, httpService, authService) => {
 };
 
 var LoginPage = {
-    render(h) {
-        h('div', ['Implement your own login page!']);
-    },
+  render(h) {
+    h("div", ["Implement your own login page!"]);
+  },
 };
 
 var ForgotPasswordPage = {
     render(h) {
-        h('div', ['Implement your own forgot password page!']);
+      h("div", ["Implement your own forgot password page!"]);
     },
-};
+  };
 
 var ResetPasswordPage = {
     render(h) {
-        h('div', ['Implement your own reset password page!']);
+      h("div", ["Implement your own reset password page!"]);
     },
-};
+  };
 
 class MissingDefaultLoggedinPageError extends Error {
     constructor(...params) {
@@ -3271,7 +3275,12 @@ var MinimalRouterView = {
             default: 0,
         },
     },
-    render(h, {props, children, parent, data}) {
+    render(h, {
+        props,
+        children,
+        parent,
+        data
+    }) {
         const route = parent.$route;
         const matched = route.matched[props.depth];
         const component = matched && matched.components[name];
@@ -3581,23 +3590,4 @@ class BaseController {
 
 const appStarter = new AppStarter(routerService, eventService, authService, staticDataService);
 
-export {
-    BaseController,
-    appStarter,
-    authService,
-    createPageCreator,
-    detailListCreator,
-    editPageCreator,
-    errorService,
-    eventService,
-    formCreator,
-    httpService,
-    loadingService,
-    overviewPageCreator,
-    routerService,
-    showPageCreator,
-    staticDataService,
-    storeService,
-    tableCreator,
-    translatorService,
-};
+export { BaseController, appStarter, authService, createPageCreator, detailListCreator, editPageCreator, errorService, eventService, formCreator, httpService, loadingService, overviewPageCreator, routerService, showPageCreator, staticDataService, storeService, tableCreator, translatorService };
