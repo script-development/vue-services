@@ -6,13 +6,9 @@
  */
 
 export class BaseCreator {
-    /**
-     * @param {TranslatorService} translatorService
-     */
-    constructor(translatorService) {
+    constructor() {
         /** @type {CreateElement} */
         this._h;
-        this._translatorService = translatorService;
     }
 
     // prettier-ignore

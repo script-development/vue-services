@@ -108,7 +108,7 @@ export class FormCreator {
     /**
      * Generate an input
      * @param {FormGroup} inputData the data used to generate an input field
-     * @param {Object<string>} editable the editable property of the form
+     * @param {Object<string, any>} editable the editable property of the form
      */
     typeConverter(inputData, editable) {
         const valueBinding = {

@@ -233,28 +233,28 @@ export class StaticDataService {
     constructor(storeService: StoreService, httpService: HTTPService);
     _storeService: StoreService;
     _httpService: HTTPService;
-    _data;
+    _data: {normal: string[]; msgpack: string[]};
 
     /**
      * initiates the setup for the default store modules
      *
-     * @param {[string,Object<string,string>]} storeModuleName Modulenames
+     * @param {[string,Object<string,string>]} data Modulenames
      */
-    createStoreModules(data): void;
+    createStoreModules(data: [string | {[moduleName: string]: string}]): void;
 
     /**
      * Creates and registers modules for the staticdata
      *
-     * @param {[string,Object<string,string>]} storeModuleName Modulenames
+     * @param {string} storeModuleName Modulenames
      */
-    createStoreModule(storeModuleName): void;
+    createStoreModule(storeModuleName: string): void;
 
     /**
      * Create module for static data with msg-pack lite(peerDependencies)
      *
-     * @param {[string,Object<string,string>]} storeModuleName Modulenames
+     * @param {string} storeModuleName Modulenames
      */
-    createStoreModuleMsgPack(storeModuleName): void;
+    createStoreModuleMsgPack(storeModuleName: string): void;
 
     /**
      * Sends an action to the store which reads all the staticdata from the server

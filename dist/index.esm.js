@@ -1638,7 +1638,7 @@ class StaticDataService {
     /**
      * initiates the setup for the default store modules
      *
-     * @param {[string,Object<string,string>]} storeModuleName Modulenames
+     * @param {[string,Object<string,string>]} data Modulenames
      */
     createStoreModules(data) {
         for (const moduleName of data) {
@@ -1653,7 +1653,7 @@ class StaticDataService {
     /**
      * Creates and registers modules for the staticdata
      *
-     * @param {[string,Object<string,string>]} storeModuleName Modulenames
+     * @param {string} storeModuleName Modulenames
      */
     createStoreModule(storeModuleName) {
         this._data.normal.push(moduleName);
@@ -1664,7 +1664,7 @@ class StaticDataService {
     /**
      * Create module for static data with msg-pack lite(peerDependencies)
      *
-     * @param {[string,Object<string,string>]} storeModuleName Modulenames
+     * @param {string} storeModuleName Modulenames
      */
     createStoreModuleMsgPack(storeModuleName) {
         if (!msgpack) {
@@ -1706,7 +1706,7 @@ class StaticDataService {
      * Get all data from the given store module by id
      *
      * @param {String} data the module from which to get all
-     * @param {String} id the id of the data object to get
+     * @param {Number} id the id of the data object to get
      */
     getById(data, id) {
         return this._storeService.getByIdFromStore(data, id);
@@ -2055,13 +2055,9 @@ const authService = new AuthService(routerService, storeService, storageService,
  */
 
 class BaseCreator {
-    /**
-     * @param {TranslatorService} translatorService
-     */
-    constructor(translatorService) {
+    constructor() {
         /** @type {CreateElement} */
         this._h;
-        this._translatorService = translatorService;
     }
 
     // prettier-ignore
@@ -2990,7 +2986,7 @@ class FormCreator {
     /**
      * Generate an input
      * @param {FormGroup} inputData the data used to generate an input field
-     * @param {Object<string>} editable the editable property of the form
+     * @param {Object<string, any>} editable the editable property of the form
      */
     typeConverter(inputData, editable) {
         const valueBinding = {

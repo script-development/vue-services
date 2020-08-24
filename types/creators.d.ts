@@ -1,20 +1,11 @@
-import {ErrorService, TranslatorService, EventService} from './services';
+import {ErrorService, TranslatorService} from './services';
 import {RouterService} from './routerService';
 import {CreateElement, Component, VNode, VNodeChildren} from 'vue';
 import {BvTableField} from 'bootstrap-vue';
 
-import StringInput from '../src/components/inputs/String';
-import SelectInput from '../src/components/inputs/Select';
-import MultiselectInput from '../src/components/inputs/Multiselect';
-import NumberInput from '../src/components/inputs/Number';
-import CheckboxInput from '../src/components/inputs/Checkbox';
-import BaseFormError from '../src/components/FormError';
-
-import {InvalidFormTypeGivenError} from '../src/errors/InvalidFormTypeGivenError';
-
 export class BaseCreator {
     _h: CreateElement;
-    _translatorService: TranslatorService;
+
     /** @param {VNode[]} children */
     createContainer(children: VNode[]): VNode;
     /** @param {VNode[]} children */
@@ -233,8 +224,8 @@ type FormGroup = {
     min?: number;
     max?: number;
     step?: number;
-    description?: Array;
-    component?: component;
+    description?: [string, string];
+    component?: Component;
 };
 
 type FormInputData = {
@@ -268,7 +259,7 @@ export class FormCreator {
      * @param {FormGroup} inputData the data used to generate an input field
      * @param {Object<string>} editable the editable property of the form
      */
-    typeConverter(inputData: Object<string>, editable: Object<string>): Function;
+    typeConverter(inputData: FormGroup, editable: {[key: string]: any}): Function;
 
     /** @param {String} title */
     title(title: string): VNode;
@@ -289,7 +280,7 @@ export class FormCreator {
     createButton(subject: string): VNode;
 
     /** @param {VNodeChildren} cards */
-    createForm(cards: VNodeChildren, emitter: function): VNode;
+    createForm(cards: VNodeChildren, emitter: Function): VNode;
 }
 
 export class DetailListCreator {
