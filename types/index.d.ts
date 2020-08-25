@@ -16,7 +16,16 @@ import {StoreService} from './storeService';
 export {BaseController} from './controllers';
 export {Translation} from './services';
 
-export {PageCreator, TableCreator} from './creators';
+export {
+    BaseCreator,
+    TableCreator,
+    CreatePageCreator,
+    DetailListCreator,
+    FormCreator,
+    OverviewPageCreator,
+    ShowPageCreator,
+    EditPageCreator,
+} from './creators';
 
 export const appStarter: AppStarter;
 

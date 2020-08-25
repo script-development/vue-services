@@ -1,5 +1,7 @@
 # vue-services
 
+Documentation: https://script-development.github.io/vue-services/
+
 To work locally run the following command in this directory:
 
 -   npm link
