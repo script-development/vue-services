@@ -2,18 +2,13 @@
 
 Object.defineProperty(exports, '__esModule', { value: true });
 
-var Vue = require('vue');
-var Vuex = require('vuex');
-var axios = require('axios');
-var VueRouter = require('vue-router');
+function _interopDefault (ex) { return (ex && (typeof ex === 'object') && 'default' in ex) ? ex['default'] : ex; }
+
+var Vue = _interopDefault(require('vue'));
+var Vuex = _interopDefault(require('vuex'));
+var axios = _interopDefault(require('axios'));
+var VueRouter = _interopDefault(require('vue-router'));
 var bootstrapVue = require('bootstrap-vue');
-
-function _interopDefaultLegacy (e) { return e && typeof e === 'object' && 'default' in e ? e : { 'default': e }; }
-
-var Vue__default = /*#__PURE__*/_interopDefaultLegacy(Vue);
-var Vuex__default = /*#__PURE__*/_interopDefaultLegacy(Vuex);
-var axios__default = /*#__PURE__*/_interopDefaultLegacy(axios);
-var VueRouter__default = /*#__PURE__*/_interopDefaultLegacy(VueRouter);
 
 const keepALiveKey = 'keepALive';
 /** setting keepALive here so we don't have to Parse it each time we get it */
@@ -70,7 +65,7 @@ class HTTPService {
         this._cache = storedCache ? JSON.parse(storedCache) : {};
         this._cacheDuration = 10;
 
-        this._http = axios__default['default'].create({
+        this._http = axios.create({
             baseURL: API_URL,
             withCredentials: false,
             headers: {
@@ -355,9 +350,9 @@ class TranslatorService {
  * @typedef {import("./factory").RouteFactory} RouteFactory
  * @typedef {import("./settings").RouteSettings} RouteSettings
  */
-Vue__default['default'].use(VueRouter__default['default']);
+Vue.use(VueRouter);
 
-const router = new VueRouter__default['default']({
+const router = new VueRouter({
     mode: 'history',
     routes: [],
 });
@@ -1023,14 +1018,14 @@ class StoreModuleFactory {
                     // if allData is not an array but the state contains an array
                     // then allData probably has an id and then you can set it in the state
                     if (state[stateName].length && allData.id) {
-                        Vue__default['default'].set(state[stateName], allData.id, allData);
+                        Vue.set(state[stateName], allData.id, allData);
                     } else {
                         // else put allData as the state
                         state[stateName] = allData;
                     }
                 } else if (allData.length === 1) {
                     // if allData has an array with 1 entry, put it in the state
-                    Vue__default['default'].set(state[stateName], allData[0].id, allData[0]);
+                    Vue.set(state[stateName], allData[0].id, allData[0]);
                 } else {
                     // if allData has more entries, then that's the new baseline
                     for (const id in state[stateName]) {
@@ -1038,7 +1033,7 @@ class StoreModuleFactory {
                         const newDataIndex = allData.findIndex(entry => entry.id == id);
                         // if not found, then delete entry
                         if (newDataIndex === -1) {
-                            Vue__default['default'].delete(state[stateName], id);
+                            Vue.delete(state[stateName], id);
                             continue;
                         }
                         // remove new entry from allData, so further searches speed up
@@ -1047,12 +1042,12 @@ class StoreModuleFactory {
                         // if the entry for this id is larger then the current entry, do nothing
                         if (Object.values(state[stateName][id]).length > Object.values(newData).length) continue;
 
-                        Vue__default['default'].set(state[stateName], newData.id, newData);
+                        Vue.set(state[stateName], newData.id, newData);
                     }
 
                     // put all remaining new data in the state
                     for (const newData of allData) {
-                        Vue__default['default'].set(state[stateName], newData.id, newData);
+                        Vue.set(state[stateName], newData.id, newData);
                     }
                 }
 
@@ -1060,7 +1055,7 @@ class StoreModuleFactory {
             },
             [this.deleteMutation]: (state, id) => {
                 const stateName = this.allItemsStateName;
-                Vue__default['default'].delete(state[stateName], id);
+                Vue.delete(state[stateName], id);
                 this._storageService.setItem(moduleName + stateName, state[stateName]);
             },
         };
@@ -1667,7 +1662,7 @@ class StaticDataService {
      * @param {string} storeModuleName Modulenames
      */
     createStoreModule(storeModuleName) {
-        this._data.normal.push(moduleName);
+        this._data.normal.push(storeModuleName);
 
         this._storeService.generateAndSetDefaultStoreModule(storeModuleName);
     }
@@ -1682,7 +1677,7 @@ class StaticDataService {
             console.error('MESSAGE PACK NOT INSTALLED');
             return console.warn('run the following command to install messagepack: npm --save @msgpack/msgpack');
         }
-        this._data.msgpack.push(moduleName);
+        this._data.msgpack.push(storeModuleName);
 
         const storeModule = this._storeService._factory.createDefaultStore(storeModuleName);
         storeModule.actions[this._storeService._factory.readAction] = () =>
@@ -1878,6 +1873,9 @@ class AuthService {
 
         this._defaultLoggedInPageName;
         this._loginPage = LoginPage;
+        this._forgotPasswordPage = ForgotPasswordPage;
+        this._resetPasswordPage = ResetPasswordPage;
+        this._setPasswordPage;
 
         this._httpService.registerResponseErrorMiddleware(this.responseErrorMiddleware);
         this._routerService.registerBeforeMiddleware(this.routeMiddleware);
@@ -1921,6 +1919,27 @@ class AuthService {
     // prettier-ignore
     /** @param {Component} page*/
     set loginPage(page) {this._loginPage = page;}
+
+    // prettier-ignore
+    get forgotPasswordPage() {return this._forgotPasswordPage}
+
+    // prettier-ignore
+    /** @param {Component} page*/
+    set forgotPasswordPage(page) {this._forgotPasswordPage = page;}
+
+    // prettier-ignore
+    get resetPasswordPage() {return this._resetPasswordPage}
+
+    // prettier-ignore
+    /** @param {Component} page*/
+    set resetPasswordPage(page) {this._resetPasswordPage = page;}
+
+    // prettier-ignore
+    get setPasswordPage() {return this._setPasswordPage}
+
+    // prettier-ignore
+    /** @param {Component} page*/
+    set setPasswordPage(page) {this._setPasswordPage = page;}
 
     /**
      * Login to the app
@@ -2004,44 +2023,58 @@ class AuthService {
     }
 
     setRoutes() {
-        const loginRoute = this._routerService._factory.createConfig(
-            '/inloggen',
-            LOGIN_ROUTE_NAME,
-            this.loginPage,
-            false,
-            false,
-            'Login',
-            true
-        );
+        const routes = [
+            this._routerService._factory.createConfig(
+                '/inloggen',
+                LOGIN_ROUTE_NAME,
+                this.loginPage,
+                false,
+                false,
+                'Login',
+                true
+            ),
+            this._routerService._factory.createConfig(
+                '/wachtwoord-vergeten',
+                'ForgotPassword',
+                this.forgotPasswordPage,
+                false,
+                false,
+                'Wachtwoord vergeten',
+                true
+            ),
+            this._routerService._factory.createConfig(
+                '/wachtwoord-resetten',
+                'ResetPassword',
+                this.resetPasswordPage,
+                false,
+                false,
+                'Wachtwoord resetten',
+                true
+            ),
+        ];
 
-        const forgotPasswordRoute = this._routerService._factory.createConfig(
-            '/wachtwoord-vergeten',
-            'ForgotPassword',
-            ForgotPasswordPage,
-            false,
-            false,
-            'Wachtwoord vergeten',
-            true
-        );
+        if (this.setPasswordPage) {
+            routes.push(
+                this._routerService._factory.createConfig(
+                    '/wachtwoord-setten',
+                    'SetPassword',
+                    this.setPasswordPage,
+                    false,
+                    false,
+                    'Wachtwoord setten',
+                    true
+                )
+            );
+        }
 
-        const resetPasswordRoute = this._routerService._factory.createConfig(
-            '/wachtwoord-resetten',
-            'ResetPassword',
-            ResetPasswordPage,
-            false,
-            false,
-            'Wachtwoord resetten',
-            true
-        );
-
-        this._routerService.addRoutes([loginRoute, forgotPasswordRoute, resetPasswordRoute]);
+        this._routerService.addRoutes(routes);
     }
 }
 
 const storageService = new StorageService();
 // Bind the store to Vue and generate empty store
-Vue__default['default'].use(Vuex__default['default']);
-const store = new Vuex__default['default'].Store();
+Vue.use(Vuex);
+const store = new Vuex.Store();
 const httpService = new HTTPService(storageService);
 const eventService = new EventService(httpService);
 const translatorService = new TranslatorService();
@@ -2707,7 +2740,7 @@ try {
  * @returns {VueComponent}
  */
 var MultiselectInput = (moduleName, valueField, textField) =>
-    Vue__default['default'].component('multiselect-input', {
+    Vue.component('multiselect-input', {
         props: {value: {required: true, type: Array}},
         computed: {
             options() {
@@ -3195,7 +3228,7 @@ const detailListCreator = new DetailListCreator(baseCreator);
 
 // Very cheesy way to bind CreateElement to the creators
 
-new Vue__default['default']({
+new Vue({
     el: document.createElement('div'),
     render(h) {
         baseCreator.h = h;
@@ -3251,7 +3284,7 @@ class AppStarter {
 
         for (const controller in controllers) controllers[controller].init();
 
-        this._eventService.app = new Vue__default['default']({
+        this._eventService.app = new Vue({
             el: '#app',
             router: this._routerService.router,
             render: h => h(mainComponent),

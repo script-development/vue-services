@@ -190,9 +190,11 @@ export class AuthService {
     _storeService: StoreService;
     _storageService: StorageService;
     _httpService: HTTPService;
-    _loginPage: {
-        render(h: any): void;
-    };
+    _loginPage: Component;
+    _forgotPasswordPage: Component;
+    _resetPasswordPage: Component;
+    _setPasswordPage: Component;
+
     get storeModuleName(): string;
     get isLoggedin(): boolean;
     get isAdmin(): boolean;
@@ -202,8 +204,17 @@ export class AuthService {
     get defaultLoggedInPageName(): string;
     _defaultLoggedInPage: string;
     /** @param {Component} page*/
-    set loginPage(arg: Component<DefaultData<never>, DefaultMethods<never>, DefaultComputed, Record<string, any>>);
-    get loginPage(): Component<DefaultData<never>, DefaultMethods<never>, DefaultComputed, Record<string, any>>;
+    set loginPage(page: Component);
+    get loginPage(): Component;
+    /** @param {Component} page*/
+    set forgotPasswordPage(page: Component);
+    get forgotPasswordPage(): Component;
+    /** @param {Component} page*/
+    set resetPasswordPage(page: Component);
+    get resetPasswordPage(): Component;
+    /** @param {Component} page*/
+    set setPasswordPage(page: Component);
+    get setPasswordPage(): Component;
     /**
      * Login to the app
      * @param {Object} credentials the credentials to login with

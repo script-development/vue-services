@@ -1656,7 +1656,7 @@ class StaticDataService {
      * @param {string} storeModuleName Modulenames
      */
     createStoreModule(storeModuleName) {
-        this._data.normal.push(moduleName);
+        this._data.normal.push(storeModuleName);
 
         this._storeService.generateAndSetDefaultStoreModule(storeModuleName);
     }
@@ -1671,7 +1671,7 @@ class StaticDataService {
             console.error('MESSAGE PACK NOT INSTALLED');
             return console.warn('run the following command to install messagepack: npm --save @msgpack/msgpack');
         }
-        this._data.msgpack.push(moduleName);
+        this._data.msgpack.push(storeModuleName);
 
         const storeModule = this._storeService._factory.createDefaultStore(storeModuleName);
         storeModule.actions[this._storeService._factory.readAction] = () =>
@@ -1867,6 +1867,9 @@ class AuthService {
 
         this._defaultLoggedInPageName;
         this._loginPage = LoginPage;
+        this._forgotPasswordPage = ForgotPasswordPage;
+        this._resetPasswordPage = ResetPasswordPage;
+        this._setPasswordPage;
 
         this._httpService.registerResponseErrorMiddleware(this.responseErrorMiddleware);
         this._routerService.registerBeforeMiddleware(this.routeMiddleware);
@@ -1910,6 +1913,27 @@ class AuthService {
     // prettier-ignore
     /** @param {Component} page*/
     set loginPage(page) {this._loginPage = page;}
+
+    // prettier-ignore
+    get forgotPasswordPage() {return this._forgotPasswordPage}
+
+    // prettier-ignore
+    /** @param {Component} page*/
+    set forgotPasswordPage(page) {this._forgotPasswordPage = page;}
+
+    // prettier-ignore
+    get resetPasswordPage() {return this._resetPasswordPage}
+
+    // prettier-ignore
+    /** @param {Component} page*/
+    set resetPasswordPage(page) {this._resetPasswordPage = page;}
+
+    // prettier-ignore
+    get setPasswordPage() {return this._setPasswordPage}
+
+    // prettier-ignore
+    /** @param {Component} page*/
+    set setPasswordPage(page) {this._setPasswordPage = page;}
 
     /**
      * Login to the app
@@ -1993,37 +2017,51 @@ class AuthService {
     }
 
     setRoutes() {
-        const loginRoute = this._routerService._factory.createConfig(
-            '/inloggen',
-            LOGIN_ROUTE_NAME,
-            this.loginPage,
-            false,
-            false,
-            'Login',
-            true
-        );
+        const routes = [
+            this._routerService._factory.createConfig(
+                '/inloggen',
+                LOGIN_ROUTE_NAME,
+                this.loginPage,
+                false,
+                false,
+                'Login',
+                true
+            ),
+            this._routerService._factory.createConfig(
+                '/wachtwoord-vergeten',
+                'ForgotPassword',
+                this.forgotPasswordPage,
+                false,
+                false,
+                'Wachtwoord vergeten',
+                true
+            ),
+            this._routerService._factory.createConfig(
+                '/wachtwoord-resetten',
+                'ResetPassword',
+                this.resetPasswordPage,
+                false,
+                false,
+                'Wachtwoord resetten',
+                true
+            ),
+        ];
 
-        const forgotPasswordRoute = this._routerService._factory.createConfig(
-            '/wachtwoord-vergeten',
-            'ForgotPassword',
-            ForgotPasswordPage,
-            false,
-            false,
-            'Wachtwoord vergeten',
-            true
-        );
+        if (this.setPasswordPage) {
+            routes.push(
+                this._routerService._factory.createConfig(
+                    '/wachtwoord-setten',
+                    'SetPassword',
+                    this.setPasswordPage,
+                    false,
+                    false,
+                    'Wachtwoord setten',
+                    true
+                )
+            );
+        }
 
-        const resetPasswordRoute = this._routerService._factory.createConfig(
-            '/wachtwoord-resetten',
-            'ResetPassword',
-            ResetPasswordPage,
-            false,
-            false,
-            'Wachtwoord resetten',
-            true
-        );
-
-        this._routerService.addRoutes([loginRoute, forgotPasswordRoute, resetPasswordRoute]);
+        this._routerService.addRoutes(routes);
     }
 }
 

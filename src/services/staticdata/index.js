@@ -52,7 +52,7 @@ export class StaticDataService {
      * @param {string} storeModuleName Modulenames
      */
     createStoreModule(storeModuleName) {
-        this._data.normal.push(moduleName);
+        this._data.normal.push(storeModuleName);
 
         this._storeService.generateAndSetDefaultStoreModule(storeModuleName);
     }
@@ -67,7 +67,7 @@ export class StaticDataService {
             console.error('MESSAGE PACK NOT INSTALLED');
             return console.warn('run the following command to install messagepack: npm --save @msgpack/msgpack');
         }
-        this._data.msgpack.push(moduleName);
+        this._data.msgpack.push(storeModuleName);
 
         const storeModule = this._storeService._factory.createDefaultStore(storeModuleName);
         storeModule.actions[this._storeService._factory.readAction] = () =>
