@@ -44,7 +44,11 @@ class StorageService {
 /**
  * @typedef {import('axios').AxiosRequestConfig} AxiosRequestConfig
  * @typedef {import('../storage').StorageService} StorageService
+ * @typedef {import('axios').AxiosResponse} AxiosResponse
+ *
  * @typedef {Object<string,number>} Cache
+ *
+ * @typedef {(response: AxiosResponse) => void} ResponseMiddleware
  */
 // TODO :: heavilly dependant on webpack and laravel mix
 const API_URL = process.env.MIX_APP_URL ? `${process.env.MIX_APP_URL}/api` : '/api';
@@ -1185,6 +1189,7 @@ class StoreService {
         this._factory = factory;
         this._httpService = httpService;
 
+        /** @type {String[]} */
         this._moduleNames = [];
 
         this.setFactorySettings();
@@ -1192,6 +1197,10 @@ class StoreService {
         this._httpService.registerResponseMiddleware(this.responseMiddleware);
     }
 
+    /**
+     * The store service response middleware checks if any of the known modulenames is in the data of the response
+     * When there is a modulename in the response it dispatches an action to that module to set the response data in the store
+     */
     get responseMiddleware() {
         return ({data}) => {
             if (!data) return;
@@ -1264,7 +1273,7 @@ class StoreService {
      * dispatch an action to the store, which updates an item on the server
      *
      * @param {String} storeModule the store module for which an item must be updated
-     * @param {Object} item the item to be updated
+     * @param {Item} item the item to be updated
      */
     update(storeModule, item) {
         return this._store.dispatch(storeModule + this.getUpdateAction(), item);
@@ -1274,7 +1283,7 @@ class StoreService {
      * dispatch an action to the store, which creates an item on the server
      *
      * @param {String} storeModule the store module for which an item must be created
-     * @param {Object} item the item to be created
+     * @param {Item} item the item to be created
      */
     create(storeModule, item) {
         return this._store.dispatch(storeModule + this.getCreateAction(), item);
@@ -1303,7 +1312,7 @@ class StoreService {
      * Set all the data in the store module
      *
      * @param {String} storeModule the module to fill the data with
-     * @param {*} data data to fill the store with
+     * @param {Item | Item[]} data data to fill the store with
      */
     setAllInStore(storeModule, data) {
         return this._store.dispatch(storeModule + this.getSetAllInStoreAction(), data);

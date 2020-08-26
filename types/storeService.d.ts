@@ -1,5 +1,5 @@
 import {AxiosResponse, AxiosRequestConfig} from 'axios';
-import {HTTPService, StorageService} from './services';
+import {HTTPService, StorageService, ResponseMiddleware} from './services';
 import {Store, Module} from 'vuex';
 import {Item} from './controllers';
 
@@ -134,17 +134,21 @@ export class StoreModuleFactory {
 }
 export class StoreService {
     /**
-     *
      * @param {Store} store the store being used
      * @param {StoreModuleFactory} factory the factory being used to create store modules
      * @param {HTTPService} httpService the http service for communication with the API
      */
-    constructor(store: import('vuex').Store<any>, factory: StoreModuleFactory, httpService: HTTPService);
+    constructor(store: Store<any>, factory: StoreModuleFactory, httpService: HTTPService);
     _store: Store<any>;
     _factory: StoreModuleFactory;
     _httpService: HTTPService;
-    _moduleNames: any[];
-    get responseMiddleware(): ({data}: {data: any}) => void;
+    _moduleNames: string[];
+
+    /**
+     * The store service response middleware checks if any of the known modulenames is in the data of the response
+     * When there is a modulename in the response it dispatches an action to that module to set the response data in the store
+     */
+    get responseMiddleware(): ResponseMiddleware;
     /**
      * get something from the store
      *
@@ -184,16 +188,16 @@ export class StoreService {
      * dispatch an action to the store, which updates an item on the server
      *
      * @param {String} storeModule the store module for which an item must be updated
-     * @param {Object} item the item to be updated
+     * @param {Item} item the item to be updated
      */
-    update(storeModule: string, item: any): Promise<any>;
+    update(storeModule: string, item: Item): Promise<any>;
     /**
      * dispatch an action to the store, which creates an item on the server
      *
      * @param {String} storeModule the store module for which an item must be created
-     * @param {Object} item the item to be created
+     * @param {Item} item the item to be created
      */
-    create(storeModule: string, item: any): Promise<any>;
+    create(storeModule: string, item: Item): Promise<any>;
     /**
      * dispatch an action to the store, which reads all items on the server
      *
@@ -211,9 +215,9 @@ export class StoreService {
      * Set all the data in the store module
      *
      * @param {String} storeModule the module to fill the data with
-     * @param {*} data data to fill the store with
+     * @param {Item | Item[]} data data to fill the store with
      */
-    setAllInStore(storeModule: string, data: any): Promise<any>;
+    setAllInStore(storeModule: string, data: Item | Item[]): Promise<any>;
     /**
      *  get the read all from store getter with or without seperator
      * @param {Boolean} [seperator] with or without seperator, default true

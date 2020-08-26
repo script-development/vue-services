@@ -1,7 +1,11 @@
 /**
  * @typedef {import('axios').AxiosRequestConfig} AxiosRequestConfig
  * @typedef {import('../storage').StorageService} StorageService
+ * @typedef {import('axios').AxiosResponse} AxiosResponse
+ *
  * @typedef {Object<string,number>} Cache
+ *
+ * @typedef {(response: AxiosResponse) => void} ResponseMiddleware
  */
 
 import axios from 'axios';

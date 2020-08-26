@@ -3,8 +3,7 @@ import {Vue} from 'vue/types/vue';
 import {RouterService} from './routerService';
 import {StoreService} from './storeService';
 
-import {Component, CreateElement, VNode} from 'vue/types/index';
-import {DefaultData, DefaultMethods, DefaultComputed} from 'vue/types/options';
+import {Component} from 'vue/types/index';
 
 export type Translation = {
     /**
@@ -21,13 +20,15 @@ type Cache = {[key: string]: number};
 
 type Credentials = {email: string; password: string; rememberMe: boolean};
 
+export type ResponseMiddleware = (response: AxiosResponse) => void;
+
 export class HTTPService {
     _storageService: StorageService;
     _cache: Cache;
     _cahceDuration: number;
     _http: AxiosInstance;
     _requestMiddleware: any[];
-    _responseMiddleware: any[];
+    _responseMiddleware: ResponseMiddleware[];
     _responseErrorMiddleware: any[];
 
     get cacheDuration(): number;
