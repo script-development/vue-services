@@ -23,7 +23,7 @@
     "devDependencies": {
         "@rollup/plugin-node-resolve": "^9.0.0",
         "husky": "^4.2.5",
-        "prettier": "^2.1.0",
+        "prettier": "^2.1.1",
         "pretty-quick": "^3.0.0",
         "rollup": "^2.26.5",
         "typedoc": "^0.18.0",
