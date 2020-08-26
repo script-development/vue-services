@@ -1,4 +1,4 @@
-import {AxiosResponse, AxiosRequestConfig, AxiosInstance} from 'axios';
+import {AxiosResponse, AxiosRequestConfig, AxiosInstance, AxiosError} from 'axios';
 import {Vue} from 'vue/types/vue';
 import {RouterService} from './routerService';
 import {StoreService} from './storeService';
@@ -20,16 +20,18 @@ type Cache = {[key: string]: number};
 
 type Credentials = {email: string; password: string; rememberMe: boolean};
 
+export type RequestMiddleware = (request: AxiosRequestConfig) => void;
 export type ResponseMiddleware = (response: AxiosResponse) => void;
+export type ResponseErrorMiddleware = (error: AxiosError) => void;
 
 export class HTTPService {
     _storageService: StorageService;
     _cache: Cache;
     _cahceDuration: number;
     _http: AxiosInstance;
-    _requestMiddleware: any[];
+    _requestMiddleware: RequestMiddleware[];
     _responseMiddleware: ResponseMiddleware[];
-    _responseErrorMiddleware: any[];
+    _responseErrorMiddleware: ResponseErrorMiddleware[];
 
     get cacheDuration(): number;
     set cacheDuration(value: number);
@@ -42,14 +44,9 @@ export class HTTPService {
     /**
      * send a post request to the given endpoint with the given data
      * @param {String} endpoint the endpoint for the post
-     * @param {Object.<string,*>} data the data to be send to the server
+     * @param {any} data the data to be send to the server
      */
-    post(
-        endpoint: string,
-        data: {
-            [x: string]: any;
-        }
-    ): Promise<AxiosResponse>;
+    post(endpoint: string, data: any): Promise<AxiosResponse>;
     /**
      * send a delete request to the given endpoint
      * @param {String} endpoint the endpoint for the get
@@ -70,16 +67,17 @@ export class HTTPService {
 
 export class EventService {
     /**
-     *
      * @param {HTTPService} httpService the http service for communication with the API
      */
     constructor(httpService: HTTPService);
     _httpService: HTTPService;
-    set app(arg: Vue);
-    get app(): Vue;
     _app: Vue;
-    get responseMiddleware(): ({data}: {data: any}) => void;
-    get responseErrorMiddleware(): ({response}: {response: any}) => void;
+
+    set app(app: Vue);
+    get app(): Vue;
+
+    get responseMiddleware(): ResponseMiddleware;
+    get responseErrorMiddleware(): ResponseErrorMiddleware;
     /**
      * pops up a toast with given message in the given variance
      * @param {String} message the message being shown by the toast

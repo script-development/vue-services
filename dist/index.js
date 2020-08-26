@@ -7,8 +7,8 @@ function _interopDefault (ex) { return (ex && (typeof ex === 'object') && 'defau
 var Vue = _interopDefault(require('vue'));
 var Vuex = _interopDefault(require('vuex'));
 var axios = _interopDefault(require('axios'));
-var VueRouter = _interopDefault(require('vue-router'));
 var bootstrapVue = require('bootstrap-vue');
+var VueRouter = _interopDefault(require('vue-router'));
 
 const keepALiveKey = 'keepALive';
 /** setting keepALive here so we don't have to Parse it each time we get it */
@@ -45,10 +45,14 @@ class StorageService {
  * @typedef {import('axios').AxiosRequestConfig} AxiosRequestConfig
  * @typedef {import('../storage').StorageService} StorageService
  * @typedef {import('axios').AxiosResponse} AxiosResponse
+ * @typedef {import('axios').AxiosRequestConfig} AxiosRequestConfig
+ * @typedef {import('axios').AxiosError} AxiosError
  *
  * @typedef {Object<string,number>} Cache
  *
+ * @typedef {(response: AxiosRequestConfig) => void} RequestMiddleware
  * @typedef {(response: AxiosResponse) => void} ResponseMiddleware
+ * @typedef {(response: AxiosError) => void} ResponseErrorMiddleware
  */
 // TODO :: heavilly dependant on webpack and laravel mix
 const API_URL = process.env.MIX_APP_URL ? `${process.env.MIX_APP_URL}/api` : '/api';
@@ -78,7 +82,15 @@ class HTTPService {
             },
         });
 
+        /** @type {RequestMiddleware[]} */
         this._requestMiddleware = [];
+
+        /** @type {ResponseMiddleware[]} */
+        this._responseMiddleware = [];
+
+        /** @type {ResponseErrorMiddleware[]} */
+        this._responseErrorMiddleware = [];
+
         this._http.interceptors.request.use(request => {
             for (const middleware of this._requestMiddleware) {
                 middleware(request);
@@ -86,8 +98,6 @@ class HTTPService {
             return request;
         });
 
-        this._responseMiddleware = [];
-        this._responseErrorMiddleware = [];
         this._http.interceptors.response.use(
             response => {
                 for (const middleware of this._responseMiddleware) {
@@ -135,7 +145,7 @@ class HTTPService {
     /**
      * send a post request to the given endpoint with the given data
      * @param {String} endpoint the endpoint for the post
-     * @param {Object.<string,*>} data the data to be send to the server
+     * @param {any} data the data to be send to the server
      */
     post(endpoint, data) {
         return this._http.post(endpoint, data);
@@ -184,9 +194,10 @@ class HTTPService {
 /**
  * @typedef {import("vue/types/vue").Vue} VueInstance
  * @typedef {import('../http').HTTPService} HTTPService
+ * @typedef {import('../http').ResponseMiddleware} ResponseMiddleware
+ * @typedef {import('../http').ResponseErrorMiddleware} ResponseErrorMiddleware
  */
 
-//  TODO :: it's BootstrapVue dependent
 class EventService {
     /**
      *
@@ -200,21 +211,29 @@ class EventService {
         this._httpService.registerResponseErrorMiddleware(this.responseErrorMiddleware);
     }
 
+    // prettier-ignore
     /** @returns {VueInstance} */
-    get app() {
-        return this._app;
-    }
+    get app() { return this._app; }
 
     set app(app) {
+        if (!app.$bvToast) {
+            Vue.use(bootstrapVue.ToastPlugin);
+        }
+
+        if (!app.$bvModal) {
+            Vue.user(bootstrapVue.ModalPlugin);
+        }
         this._app = app;
     }
 
+    /** @returns {ResponseMiddleware} */
     get responseMiddleware() {
         return ({data}) => {
             if (data && data.message) this.successToast(data.message);
         };
     }
 
+    /** @returns {ResponseErrorMiddleware} */
     get responseErrorMiddleware() {
         return ({response}) => {
             if (response && response.data.message) this.dangerToast(response.data.message);

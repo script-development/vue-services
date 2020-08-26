@@ -2,10 +2,14 @@
  * @typedef {import('axios').AxiosRequestConfig} AxiosRequestConfig
  * @typedef {import('../storage').StorageService} StorageService
  * @typedef {import('axios').AxiosResponse} AxiosResponse
+ * @typedef {import('axios').AxiosRequestConfig} AxiosRequestConfig
+ * @typedef {import('axios').AxiosError} AxiosError
  *
  * @typedef {Object<string,number>} Cache
  *
+ * @typedef {(response: AxiosRequestConfig) => void} RequestMiddleware
  * @typedef {(response: AxiosResponse) => void} ResponseMiddleware
+ * @typedef {(response: AxiosError) => void} ResponseErrorMiddleware
  */
 
 import axios from 'axios';
@@ -37,7 +41,15 @@ export class HTTPService {
             },
         });
 
+        /** @type {RequestMiddleware[]} */
         this._requestMiddleware = [];
+
+        /** @type {ResponseMiddleware[]} */
+        this._responseMiddleware = [];
+
+        /** @type {ResponseErrorMiddleware[]} */
+        this._responseErrorMiddleware = [];
+
         this._http.interceptors.request.use(request => {
             for (const middleware of this._requestMiddleware) {
                 middleware(request);
@@ -45,8 +57,6 @@ export class HTTPService {
             return request;
         });
 
-        this._responseMiddleware = [];
-        this._responseErrorMiddleware = [];
         this._http.interceptors.response.use(
             response => {
                 for (const middleware of this._responseMiddleware) {
@@ -94,7 +104,7 @@ export class HTTPService {
     /**
      * send a post request to the given endpoint with the given data
      * @param {String} endpoint the endpoint for the post
-     * @param {Object.<string,*>} data the data to be send to the server
+     * @param {any} data the data to be send to the server
      */
     post(endpoint, data) {
         return this._http.post(endpoint, data);
