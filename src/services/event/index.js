@@ -1,9 +1,13 @@
 /**
  * @typedef {import("vue/types/vue").Vue} VueInstance
  * @typedef {import('../http').HTTPService} HTTPService
+ * @typedef {import('../http').ResponseMiddleware} ResponseMiddleware
+ * @typedef {import('../http').ResponseErrorMiddleware} ResponseErrorMiddleware
  */
 
-//  TODO :: it's BootstrapVue dependent
+import {ToastPlugin, ModalPlugin} from 'bootstrap-vue';
+import Vue from 'vue';
+
 export class EventService {
     /**
      *
@@ -17,21 +21,29 @@ export class EventService {
         this._httpService.registerResponseErrorMiddleware(this.responseErrorMiddleware);
     }
 
+    // prettier-ignore
     /** @returns {VueInstance} */
-    get app() {
-        return this._app;
-    }
+    get app() { return this._app; }
 
     set app(app) {
+        if (!app.$bvToast) {
+            Vue.use(ToastPlugin);
+        }
+
+        if (!app.$bvModal) {
+            Vue.user(ModalPlugin);
+        }
         this._app = app;
     }
 
+    /** @returns {ResponseMiddleware} */
     get responseMiddleware() {
         return ({data}) => {
             if (data && data.message) this.successToast(data.message);
         };
     }
 
+    /** @returns {ResponseErrorMiddleware} */
     get responseErrorMiddleware() {
         return ({response}) => {
             if (response && response.data.message) this.dangerToast(response.data.message);
