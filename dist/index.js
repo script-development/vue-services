@@ -1170,6 +1170,8 @@ class StoreModuleFactory {
  * @typedef {import('vuex').Store} Store
  * @typedef {import('vuex').Module} Module
  * @typedef {import('axios').AxiosRequestConfig} AxiosRequestConfig
+ *
+ * @typedef {import('../../controllers').Item} Item
  */
 
 class StoreService {
@@ -1226,6 +1228,8 @@ class StoreService {
      * Get all from data from the given store module
      *
      * @param {String} storeModule the module from which to get all
+     *
+     * @returns {Item[]}
      */
     getAllFromStore(storeModule) {
         return this._store.getters[storeModule + this.getReadAllGetter()];
@@ -1236,6 +1240,8 @@ class StoreService {
      *
      * @param {String} storeModule the module from which to get all
      * @param {String} id the id of the data object to get
+     *
+     * @return {Item}
      */
     getByIdFromStore(storeModule, id) {
         return this._store.getters[storeModule + this.getReadByIdGetter()](id);
@@ -3325,13 +3331,30 @@ var MinimalRouterView = {
     },
 };
 
+class StoreModuleNotFoundError extends Error {
+    constructor(...params) {
+        // Pass remaining arguments (including vendor specific ones) to parent constructor
+        super(...params);
+
+        // Maintains proper stack trace for where our error was thrown (only available on V8)
+        if (Error.captureStackTrace) {
+            Error.captureStackTrace(this, StoreModuleNotFoundError);
+        }
+
+        this.name = 'StoreModuleNotFoundError';
+    }
+}
+
 /**
  * @typedef {import('../services/translator').Translation} Translation
  * @typedef {import('vuex').Module} Module
  * @typedef {import('vuex').ActionMethod} ActionMethod
  * @typedef {import('vuex').Mutation} MutationMethod
+ * @typedef {import('../errors/StoreModuleNotFoundError').StoreModuleNotFoundError} StoreModuleNotFoundError
  *
  * @typedef {(State) => any} GetterMethod
+ *
+ * @typedef {Object<string,any>} Item
  */
 
 class BaseController {
@@ -3377,11 +3400,16 @@ class BaseController {
     // prettier-ignore
     get APIEndpoint() {return this._APIEndpoint}
 
-    /** go to pages functions */
+    /** go to the overview page from this controller */
     goToOverviewPage() {
         this._routerService.goToRoute(this.routeSettings.overviewName);
     }
 
+    /**
+     * go the the show page for the given item of the given id
+     *
+     * @param {String|Number} id id of item to go to the show page
+     */
     goToShowPage(id) {
         this._routerService.goToRoute(this.routeSettings.showName, id);
     }
@@ -3404,28 +3432,51 @@ class BaseController {
         this._routerService.goToRoute(this.routeSettings.createName, undefined, query);
     }
 
-    /** store service getter functions */
+    /**
+     * get all items from the store from this controller
+     */
     get getAll() {
         return () => this._storeService.getAllFromStore(this._APIEndpoint);
     }
 
+    /**
+     * Get alle items from the given moduleName
+     * If moduleName is not found throws a StoreModuleNotFoundError
+     *
+     * @param {String} moduleName moduleName to get all items from
+     *
+     * @returns {Item[]}
+     * @throws {StoreModuleNotFoundError}
+     */
     getAllFrom(moduleName) {
-        if (this._storeService._moduleNames.indexOf(moduleName) === -1)
-            return console.warn(
+        if (this._storeService._moduleNames.indexOf(moduleName) === -1) {
+            throw new StoreModuleNotFoundError(
                 `Could not find ${moduleName}, only these modules exists at the moment: ${this._storeService._moduleNames.toString()}`
             );
+        }
         return this._storeService.getAllFromStore(moduleName);
     }
 
+    /**
+     * Get an item from the store based on the given id
+     * @param {String|Number} id get the item from the store base don id
+     */
     getById(id) {
         return this._storeService.getByIdFromStore(this._APIEndpoint, id);
     }
 
+    /**
+     * Get an item based on the current route id
+     */
     get getByCurrentRouteId() {
         return () => this.getById(this._routerService.id);
     }
 
-    /** store service action functions */
+    /**
+     * Send an update to the api
+     * @param {Item} item The item with the information to be updated
+     * @param {String} [goToRouteName] the optional route to go to after the item has been succesfully updated
+     */
     get update() {
         return (item, goToRouteName) =>
             this._storeService.update(this._APIEndpoint, item).then(() => {
@@ -3434,6 +3485,11 @@ class BaseController {
             });
     }
 
+    /**
+     * Send a create to the api
+     * @param {Item} item The item with the information to be created
+     * @param {String} [goToRouteName] the optional route to go to after the item has been succesfully created
+     */
     get create() {
         return (item, goToRouteName) =>
             this._storeService.create(this._APIEndpoint, item).then(() => {
@@ -3442,6 +3498,11 @@ class BaseController {
             });
     }
 
+    /**
+     * Send a delete to the api
+     * @param {String|Number} id The id of the item to be deleted
+     * @param {String} [goToRouteName] the optional route to go to after the item has been succesfully deleted
+     */
     get destroy() {
         return (id, goToRouteName) =>
             this._storeService.destroy(this._APIEndpoint, id).then(() => {
@@ -3450,27 +3511,52 @@ class BaseController {
             });
     }
 
+    /**
+     * Send a delete to the api without changing route afterwards
+     *
+     * @param {String|Number} id The id of the item to be deleted
+     */
     get destroyByIdWithoutRouteChange() {
         return id => this._storeService.destroy(this._APIEndpoint, id);
     }
 
+    /**
+     * Send a delete with current route id to the api
+     */
     get destroyByCurrentRouteId() {
         return () => this.destroy(this._routerService.id);
     }
 
+    /**
+     * Send a read request for the current controller
+     * StoreService will catch the data and put it in store
+     */
     get read() {
         return () => this._storeService.read(this._APIEndpoint);
     }
 
+    /**
+     * Send a read request for an item with id of the current route
+     * StoreService will catch the data and put it in store
+     */
     get showByCurrentRouteId() {
-        return () => this._storeService.show(this._APIEndpoint, this._routerService.id);
+        return () => this.show(this._routerService.id);
     }
 
+    /**
+     * Send a read request for an item with the given id
+     * StoreService will catch the data and put it in store
+     *
+     * @param {String|Number} id the id of the item to read from the server
+     */
     get show() {
         return id => this._storeService.show(this._APIEndpoint, id);
     }
 
-    /** base pages */
+    /**
+     * The base page for the current controller
+     * Sned a read request to the server on mount
+     */
     get basePage() {
         return {
             name: `${this.APIEndpoint}-base`,
@@ -3528,14 +3614,20 @@ class BaseController {
     // prettier-ignore
     get routeSettings() { return this._routeSettings; }
 
+    /** The standard message to show in the destroy modal */
     get destroyModalMessage() {
         return `Weet je zeker dat je deze ${this._translatorService.getSingular(this.APIEndpoint)} wil verwijderen?`;
     }
 
+    /** Shows a modal with the standard destroy modal message. On OK will send a destroy request based on the current route id */
     get destroyByCurrentRouteIdModal() {
         return () => this._eventService.modal(this.destroyModalMessage, this.destroyByCurrentRouteId);
     }
 
+    /**
+     * Shows a modal with the standard destroy modal message. On OK will send a destroy request based on the given id
+     * @param {String|Number} id
+     */
     get destroyByIdModal() {
         return id => this._eventService.modal(this.destroyModalMessage, () => this.destroyByIdWithoutRouteChange(id));
     }

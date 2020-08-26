@@ -15,7 +15,7 @@
         "build": "rollup src/index.js --file dist/index.js --format iife",
         "dev": "rollup -c scripts/config.js",
         "watch": "rollup -c scripts/config.js --watch",
-        "pub": "npm version minor && npm publish",
+        "pub": "npm version patch && npm publish",
         "docs": "typedoc"
     },
     "author": "Script",

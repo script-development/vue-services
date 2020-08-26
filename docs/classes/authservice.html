@@ -3,8 +3,8 @@
 <head>
 	<meta charset="utf-8">
 	<meta http-equiv="X-UA-Compatible" content="IE=edge">
-	<title>AuthService | ServVue - v0.1.0</title>
-	<meta name="description" content="Documentation for ServVue - v0.1.0">
+	<title>AuthService | ServVue - v0.2.0</title>
+	<meta name="description" content="Documentation for ServVue - v0.2.0">
 	<meta name="viewport" content="width=device-width, initial-scale=1">
 	<link rel="stylesheet" href="../assets/css/main.css">
 </head>
@@ -22,7 +22,7 @@
 						<li class="state loading">Preparing search index...</li>
 						<li class="state failure">The search index is not available</li>
 					</ul>
-					<a href="../index.html" class="title">ServVue - v0.1.0</a>
+					<a href="../index.html" class="title">ServVue - v0.2.0</a>
 				</div>
 				<div class="table-cell" id="tsd-widgets">
 					<div id="tsd-filter">
@@ -86,9 +86,12 @@
 							<h3>Properties</h3>
 							<ul class="tsd-index-list">
 								<li class="tsd-kind-property tsd-parent-kind-class"><a href="authservice.html#_defaultloggedinpage" class="tsd-kind-icon">_default<wbr>Logged<wbr>InPage</a></li>
+								<li class="tsd-kind-property tsd-parent-kind-class"><a href="authservice.html#_forgotpasswordpage" class="tsd-kind-icon">_forgot<wbr>Password<wbr>Page</a></li>
 								<li class="tsd-kind-property tsd-parent-kind-class"><a href="authservice.html#_httpservice" class="tsd-kind-icon">_http<wbr>Service</a></li>
 								<li class="tsd-kind-property tsd-parent-kind-class"><a href="authservice.html#_loginpage" class="tsd-kind-icon">_login<wbr>Page</a></li>
+								<li class="tsd-kind-property tsd-parent-kind-class"><a href="authservice.html#_resetpasswordpage" class="tsd-kind-icon">_reset<wbr>Password<wbr>Page</a></li>
 								<li class="tsd-kind-property tsd-parent-kind-class"><a href="authservice.html#_routerservice" class="tsd-kind-icon">_router<wbr>Service</a></li>
+								<li class="tsd-kind-property tsd-parent-kind-class"><a href="authservice.html#_setpasswordpage" class="tsd-kind-icon">_set<wbr>Password<wbr>Page</a></li>
 								<li class="tsd-kind-property tsd-parent-kind-class"><a href="authservice.html#_storageservice" class="tsd-kind-icon">_storage<wbr>Service</a></li>
 								<li class="tsd-kind-property tsd-parent-kind-class"><a href="authservice.html#_storeservice" class="tsd-kind-icon">_store<wbr>Service</a></li>
 							</ul>
@@ -97,12 +100,15 @@
 							<h3>Accessors</h3>
 							<ul class="tsd-index-list">
 								<li class="tsd-kind-accessor tsd-parent-kind-class"><a href="authservice.html#defaultloggedinpagename" class="tsd-kind-icon">default<wbr>Logged<wbr>InPage<wbr>Name</a></li>
+								<li class="tsd-kind-accessor tsd-parent-kind-class"><a href="authservice.html#forgotpasswordpage" class="tsd-kind-icon">forgot<wbr>Password<wbr>Page</a></li>
 								<li class="tsd-kind-get-signature tsd-parent-kind-class"><a href="authservice.html#isadmin" class="tsd-kind-icon">is<wbr>Admin</a></li>
 								<li class="tsd-kind-get-signature tsd-parent-kind-class"><a href="authservice.html#isloggedin" class="tsd-kind-icon">is<wbr>Loggedin</a></li>
 								<li class="tsd-kind-get-signature tsd-parent-kind-class"><a href="authservice.html#loggedinuser" class="tsd-kind-icon">logged<wbr>InUser</a></li>
 								<li class="tsd-kind-accessor tsd-parent-kind-class"><a href="authservice.html#loginpage" class="tsd-kind-icon">login<wbr>Page</a></li>
+								<li class="tsd-kind-accessor tsd-parent-kind-class"><a href="authservice.html#resetpasswordpage" class="tsd-kind-icon">reset<wbr>Password<wbr>Page</a></li>
 								<li class="tsd-kind-get-signature tsd-parent-kind-class"><a href="authservice.html#responseerrormiddleware" class="tsd-kind-icon">response<wbr>Error<wbr>Middleware</a></li>
 								<li class="tsd-kind-get-signature tsd-parent-kind-class"><a href="authservice.html#routemiddleware" class="tsd-kind-icon">route<wbr>Middleware</a></li>
+								<li class="tsd-kind-accessor tsd-parent-kind-class"><a href="authservice.html#setpasswordpage" class="tsd-kind-icon">set<wbr>Password<wbr>Page</a></li>
 								<li class="tsd-kind-get-signature tsd-parent-kind-class"><a href="authservice.html#storemodulename" class="tsd-kind-icon">store<wbr>Module<wbr>Name</a></li>
 							</ul>
 						</section>
@@ -134,7 +140,7 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/script-development/vue-services/blob/fd053d4/types/services.d.ts#L176">services.d.ts:176</a></li>
+									<li>Defined in <a href="https://github.com/script-development/vue-services/blob/f7888d5/types/services.d.ts#L176">services.d.ts:176</a></li>
 								</ul>
 							</aside>
 							<div class="tsd-comment tsd-typography">
@@ -171,7 +177,17 @@
 					<div class="tsd-signature tsd-kind-icon">_default<wbr>Logged<wbr>InPage<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">string</span></div>
 					<aside class="tsd-sources">
 						<ul>
-							<li>Defined in <a href="https://github.com/script-development/vue-services/blob/fd053d4/types/services.d.ts#L203">services.d.ts:203</a></li>
+							<li>Defined in <a href="https://github.com/script-development/vue-services/blob/f7888d5/types/services.d.ts#L205">services.d.ts:205</a></li>
+						</ul>
+					</aside>
+				</section>
+				<section class="tsd-panel tsd-member tsd-kind-property tsd-parent-kind-class">
+					<a name="_forgotpasswordpage" class="tsd-anchor"></a>
+					<h3>_forgot<wbr>Password<wbr>Page</h3>
+					<div class="tsd-signature tsd-kind-icon">_forgot<wbr>Password<wbr>Page<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">Component</span></div>
+					<aside class="tsd-sources">
+						<ul>
+							<li>Defined in <a href="https://github.com/script-development/vue-services/blob/f7888d5/types/services.d.ts#L194">services.d.ts:194</a></li>
 						</ul>
 					</aside>
 				</section>
@@ -181,46 +197,29 @@
 					<div class="tsd-signature tsd-kind-icon">_http<wbr>Service<span class="tsd-signature-symbol">:</span> <a href="httpservice.html" class="tsd-signature-type">HTTPService</a></div>
 					<aside class="tsd-sources">
 						<ul>
-							<li>Defined in <a href="https://github.com/script-development/vue-services/blob/fd053d4/types/services.d.ts#L192">services.d.ts:192</a></li>
+							<li>Defined in <a href="https://github.com/script-development/vue-services/blob/f7888d5/types/services.d.ts#L192">services.d.ts:192</a></li>
 						</ul>
 					</aside>
 				</section>
 				<section class="tsd-panel tsd-member tsd-kind-property tsd-parent-kind-class">
 					<a name="_loginpage" class="tsd-anchor"></a>
 					<h3>_login<wbr>Page</h3>
-					<div class="tsd-signature tsd-kind-icon">_login<wbr>Page<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-symbol">{ </span>render<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">any</span><span class="tsd-signature-symbol"> }</span></div>
+					<div class="tsd-signature tsd-kind-icon">_login<wbr>Page<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">Component</span></div>
 					<aside class="tsd-sources">
 						<ul>
-							<li>Defined in <a href="https://github.com/script-development/vue-services/blob/fd053d4/types/services.d.ts#L193">services.d.ts:193</a></li>
+							<li>Defined in <a href="https://github.com/script-development/vue-services/blob/f7888d5/types/services.d.ts#L193">services.d.ts:193</a></li>
 						</ul>
 					</aside>
-					<div class="tsd-type-declaration">
-						<h4>Type declaration</h4>
-						<ul class="tsd-parameters">
-							<li class="tsd-parameter">
-								<h5>render<span class="tsd-signature-symbol">: </span>function</h5>
-								<ul class="tsd-signatures tsd-kind-function tsd-parent-kind-type-literal">
-									<li class="tsd-signature tsd-kind-icon">render<span class="tsd-signature-symbol">(</span>h<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">any</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">void</span></li>
-								</ul>
-								<ul class="tsd-descriptions">
-									<li class="tsd-description">
-										<aside class="tsd-sources">
-											<ul>
-												<li>Defined in <a href="https://github.com/script-development/vue-services/blob/fd053d4/types/services.d.ts#L194">services.d.ts:194</a></li>
-											</ul>
-										</aside>
-										<h4 class="tsd-parameters-title">Parameters</h4>
-										<ul class="tsd-parameters">
-											<li>
-												<h5>h: <span class="tsd-signature-type">any</span></h5>
-											</li>
-										</ul>
-										<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">void</span></h4>
-									</li>
-								</ul>
-							</li>
+				</section>
+				<section class="tsd-panel tsd-member tsd-kind-property tsd-parent-kind-class">
+					<a name="_resetpasswordpage" class="tsd-anchor"></a>
+					<h3>_reset<wbr>Password<wbr>Page</h3>
+					<div class="tsd-signature tsd-kind-icon">_reset<wbr>Password<wbr>Page<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">Component</span></div>
+					<aside class="tsd-sources">
+						<ul>
+							<li>Defined in <a href="https://github.com/script-development/vue-services/blob/f7888d5/types/services.d.ts#L195">services.d.ts:195</a></li>
 						</ul>
-					</div>
+					</aside>
 				</section>
 				<section class="tsd-panel tsd-member tsd-kind-property tsd-parent-kind-class">
 					<a name="_routerservice" class="tsd-anchor"></a>
@@ -228,7 +227,17 @@
 					<div class="tsd-signature tsd-kind-icon">_router<wbr>Service<span class="tsd-signature-symbol">:</span> <a href="routerservice.html" class="tsd-signature-type">RouterService</a></div>
 					<aside class="tsd-sources">
 						<ul>
-							<li>Defined in <a href="https://github.com/script-development/vue-services/blob/fd053d4/types/services.d.ts#L189">services.d.ts:189</a></li>
+							<li>Defined in <a href="https://github.com/script-development/vue-services/blob/f7888d5/types/services.d.ts#L189">services.d.ts:189</a></li>
+						</ul>
+					</aside>
+				</section>
+				<section class="tsd-panel tsd-member tsd-kind-property tsd-parent-kind-class">
+					<a name="_setpasswordpage" class="tsd-anchor"></a>
+					<h3>_set<wbr>Password<wbr>Page</h3>
+					<div class="tsd-signature tsd-kind-icon">_set<wbr>Password<wbr>Page<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">Component</span></div>
+					<aside class="tsd-sources">
+						<ul>
+							<li>Defined in <a href="https://github.com/script-development/vue-services/blob/f7888d5/types/services.d.ts#L196">services.d.ts:196</a></li>
 						</ul>
 					</aside>
 				</section>
@@ -238,7 +247,7 @@
 					<div class="tsd-signature tsd-kind-icon">_storage<wbr>Service<span class="tsd-signature-symbol">:</span> <a href="storageservice.html" class="tsd-signature-type">StorageService</a></div>
 					<aside class="tsd-sources">
 						<ul>
-							<li>Defined in <a href="https://github.com/script-development/vue-services/blob/fd053d4/types/services.d.ts#L191">services.d.ts:191</a></li>
+							<li>Defined in <a href="https://github.com/script-development/vue-services/blob/f7888d5/types/services.d.ts#L191">services.d.ts:191</a></li>
 						</ul>
 					</aside>
 				</section>
@@ -248,7 +257,7 @@
 					<div class="tsd-signature tsd-kind-icon">_store<wbr>Service<span class="tsd-signature-symbol">:</span> <a href="storeservice.html" class="tsd-signature-type">StoreService</a></div>
 					<aside class="tsd-sources">
 						<ul>
-							<li>Defined in <a href="https://github.com/script-development/vue-services/blob/fd053d4/types/services.d.ts#L190">services.d.ts:190</a></li>
+							<li>Defined in <a href="https://github.com/script-development/vue-services/blob/f7888d5/types/services.d.ts#L190">services.d.ts:190</a></li>
 						</ul>
 					</aside>
 				</section>
@@ -266,7 +275,7 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/script-development/vue-services/blob/fd053d4/types/services.d.ts#L202">services.d.ts:202</a></li>
+									<li>Defined in <a href="https://github.com/script-development/vue-services/blob/f7888d5/types/services.d.ts#L204">services.d.ts:204</a></li>
 								</ul>
 							</aside>
 							<div class="tsd-comment tsd-typography">
@@ -276,7 +285,7 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/script-development/vue-services/blob/fd053d4/types/services.d.ts#L201">services.d.ts:201</a></li>
+									<li>Defined in <a href="https://github.com/script-development/vue-services/blob/f7888d5/types/services.d.ts#L203">services.d.ts:203</a></li>
 								</ul>
 							</aside>
 							<div class="tsd-comment tsd-typography">
@@ -285,6 +294,42 @@
 							<ul class="tsd-parameters">
 								<li>
 									<h5>arg: <span class="tsd-signature-type">string</span></h5>
+								</li>
+							</ul>
+							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">any</span></h4>
+						</li>
+					</ul>
+				</section>
+				<section class="tsd-panel tsd-member tsd-kind-accessor tsd-parent-kind-class">
+					<a name="forgotpasswordpage" class="tsd-anchor"></a>
+					<h3>forgot<wbr>Password<wbr>Page</h3>
+					<ul class="tsd-signatures tsd-kind-accessor tsd-parent-kind-class">
+						<li class="tsd-signature tsd-kind-icon"><span class="tsd-signature-symbol">get</span> forgotPasswordPage<span class="tsd-signature-symbol">(</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">Component</span></li>
+						<li class="tsd-signature tsd-kind-icon"><span class="tsd-signature-symbol">set</span> forgotPasswordPage<span class="tsd-signature-symbol">(</span>page<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">Component</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">any</span></li>
+					</ul>
+					<ul class="tsd-descriptions">
+						<li class="tsd-description">
+							<aside class="tsd-sources">
+								<ul>
+									<li>Defined in <a href="https://github.com/script-development/vue-services/blob/f7888d5/types/services.d.ts#L211">services.d.ts:211</a></li>
+								</ul>
+							</aside>
+							<div class="tsd-comment tsd-typography">
+							</div>
+							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">Component</span></h4>
+						</li>
+						<li class="tsd-description">
+							<aside class="tsd-sources">
+								<ul>
+									<li>Defined in <a href="https://github.com/script-development/vue-services/blob/f7888d5/types/services.d.ts#L210">services.d.ts:210</a></li>
+								</ul>
+							</aside>
+							<div class="tsd-comment tsd-typography">
+							</div>
+							<h4 class="tsd-parameters-title">Parameters</h4>
+							<ul class="tsd-parameters">
+								<li>
+									<h5>page: <span class="tsd-signature-type">Component</span></h5>
 								</li>
 							</ul>
 							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">any</span></h4>
@@ -301,7 +346,7 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/script-development/vue-services/blob/fd053d4/types/services.d.ts#L198">services.d.ts:198</a></li>
+									<li>Defined in <a href="https://github.com/script-development/vue-services/blob/f7888d5/types/services.d.ts#L200">services.d.ts:200</a></li>
 								</ul>
 							</aside>
 							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">boolean</span></h4>
@@ -318,7 +363,7 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/script-development/vue-services/blob/fd053d4/types/services.d.ts#L197">services.d.ts:197</a></li>
+									<li>Defined in <a href="https://github.com/script-development/vue-services/blob/f7888d5/types/services.d.ts#L199">services.d.ts:199</a></li>
 								</ul>
 							</aside>
 							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">boolean</span></h4>
@@ -335,7 +380,7 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/script-development/vue-services/blob/fd053d4/types/services.d.ts#L199">services.d.ts:199</a></li>
+									<li>Defined in <a href="https://github.com/script-development/vue-services/blob/f7888d5/types/services.d.ts#L201">services.d.ts:201</a></li>
 								</ul>
 							</aside>
 							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-symbol">{}</span></h4>
@@ -351,24 +396,24 @@
 					<a name="loginpage" class="tsd-anchor"></a>
 					<h3>login<wbr>Page</h3>
 					<ul class="tsd-signatures tsd-kind-accessor tsd-parent-kind-class">
-						<li class="tsd-signature tsd-kind-icon"><span class="tsd-signature-symbol">get</span> loginPage<span class="tsd-signature-symbol">(</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">Component</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">DefaultData</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">never</span><span class="tsd-signature-symbol">&gt;</span><span class="tsd-signature-symbol">, </span><span class="tsd-signature-type">DefaultMethods</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">never</span><span class="tsd-signature-symbol">&gt;</span><span class="tsd-signature-symbol">, </span><span class="tsd-signature-type">DefaultComputed</span><span class="tsd-signature-symbol">, </span><span class="tsd-signature-type">Record</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">string</span><span class="tsd-signature-symbol">, </span><span class="tsd-signature-type">any</span><span class="tsd-signature-symbol">&gt;</span><span class="tsd-signature-symbol">&gt;</span></li>
-						<li class="tsd-signature tsd-kind-icon"><span class="tsd-signature-symbol">set</span> loginPage<span class="tsd-signature-symbol">(</span>arg<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">Component</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">DefaultData</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">never</span><span class="tsd-signature-symbol">&gt;</span><span class="tsd-signature-symbol">, </span><span class="tsd-signature-type">DefaultMethods</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">never</span><span class="tsd-signature-symbol">&gt;</span><span class="tsd-signature-symbol">, </span><span class="tsd-signature-type">DefaultComputed</span><span class="tsd-signature-symbol">, </span><span class="tsd-signature-type">Record</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">string</span><span class="tsd-signature-symbol">, </span><span class="tsd-signature-type">any</span><span class="tsd-signature-symbol">&gt;</span><span class="tsd-signature-symbol">&gt;</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">any</span></li>
+						<li class="tsd-signature tsd-kind-icon"><span class="tsd-signature-symbol">get</span> loginPage<span class="tsd-signature-symbol">(</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">Component</span></li>
+						<li class="tsd-signature tsd-kind-icon"><span class="tsd-signature-symbol">set</span> loginPage<span class="tsd-signature-symbol">(</span>page<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">Component</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">any</span></li>
 					</ul>
 					<ul class="tsd-descriptions">
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/script-development/vue-services/blob/fd053d4/types/services.d.ts#L206">services.d.ts:206</a></li>
+									<li>Defined in <a href="https://github.com/script-development/vue-services/blob/f7888d5/types/services.d.ts#L208">services.d.ts:208</a></li>
 								</ul>
 							</aside>
 							<div class="tsd-comment tsd-typography">
 							</div>
-							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">Component</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">DefaultData</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">never</span><span class="tsd-signature-symbol">&gt;</span><span class="tsd-signature-symbol">, </span><span class="tsd-signature-type">DefaultMethods</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">never</span><span class="tsd-signature-symbol">&gt;</span><span class="tsd-signature-symbol">, </span><span class="tsd-signature-type">DefaultComputed</span><span class="tsd-signature-symbol">, </span><span class="tsd-signature-type">Record</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">string</span><span class="tsd-signature-symbol">, </span><span class="tsd-signature-type">any</span><span class="tsd-signature-symbol">&gt;</span><span class="tsd-signature-symbol">&gt;</span></h4>
+							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">Component</span></h4>
 						</li>
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/script-development/vue-services/blob/fd053d4/types/services.d.ts#L205">services.d.ts:205</a></li>
+									<li>Defined in <a href="https://github.com/script-development/vue-services/blob/f7888d5/types/services.d.ts#L207">services.d.ts:207</a></li>
 								</ul>
 							</aside>
 							<div class="tsd-comment tsd-typography">
@@ -376,7 +421,43 @@
 							<h4 class="tsd-parameters-title">Parameters</h4>
 							<ul class="tsd-parameters">
 								<li>
-									<h5>arg: <span class="tsd-signature-type">Component</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">DefaultData</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">never</span><span class="tsd-signature-symbol">&gt;</span><span class="tsd-signature-symbol">, </span><span class="tsd-signature-type">DefaultMethods</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">never</span><span class="tsd-signature-symbol">&gt;</span><span class="tsd-signature-symbol">, </span><span class="tsd-signature-type">DefaultComputed</span><span class="tsd-signature-symbol">, </span><span class="tsd-signature-type">Record</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">string</span><span class="tsd-signature-symbol">, </span><span class="tsd-signature-type">any</span><span class="tsd-signature-symbol">&gt;</span><span class="tsd-signature-symbol">&gt;</span></h5>
+									<h5>page: <span class="tsd-signature-type">Component</span></h5>
+								</li>
+							</ul>
+							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">any</span></h4>
+						</li>
+					</ul>
+				</section>
+				<section class="tsd-panel tsd-member tsd-kind-accessor tsd-parent-kind-class">
+					<a name="resetpasswordpage" class="tsd-anchor"></a>
+					<h3>reset<wbr>Password<wbr>Page</h3>
+					<ul class="tsd-signatures tsd-kind-accessor tsd-parent-kind-class">
+						<li class="tsd-signature tsd-kind-icon"><span class="tsd-signature-symbol">get</span> resetPasswordPage<span class="tsd-signature-symbol">(</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">Component</span></li>
+						<li class="tsd-signature tsd-kind-icon"><span class="tsd-signature-symbol">set</span> resetPasswordPage<span class="tsd-signature-symbol">(</span>page<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">Component</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">any</span></li>
+					</ul>
+					<ul class="tsd-descriptions">
+						<li class="tsd-description">
+							<aside class="tsd-sources">
+								<ul>
+									<li>Defined in <a href="https://github.com/script-development/vue-services/blob/f7888d5/types/services.d.ts#L214">services.d.ts:214</a></li>
+								</ul>
+							</aside>
+							<div class="tsd-comment tsd-typography">
+							</div>
+							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">Component</span></h4>
+						</li>
+						<li class="tsd-description">
+							<aside class="tsd-sources">
+								<ul>
+									<li>Defined in <a href="https://github.com/script-development/vue-services/blob/f7888d5/types/services.d.ts#L213">services.d.ts:213</a></li>
+								</ul>
+							</aside>
+							<div class="tsd-comment tsd-typography">
+							</div>
+							<h4 class="tsd-parameters-title">Parameters</h4>
+							<ul class="tsd-parameters">
+								<li>
+									<h5>page: <span class="tsd-signature-type">Component</span></h5>
 								</li>
 							</ul>
 							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">any</span></h4>
@@ -393,7 +474,7 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/script-development/vue-services/blob/fd053d4/types/services.d.ts#L224">services.d.ts:224</a></li>
+									<li>Defined in <a href="https://github.com/script-development/vue-services/blob/f7888d5/types/services.d.ts#L235">services.d.ts:235</a></li>
 								</ul>
 							</aside>
 							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-symbol">(</span>__namedParameters<span class="tsd-signature-symbol">: </span><span class="tsd-signature-symbol">{ </span>response<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">any</span><span class="tsd-signature-symbol"> }</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol"> =&gt; </span><span class="tsd-signature-type">void</span></h4>
@@ -433,7 +514,7 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/script-development/vue-services/blob/fd053d4/types/services.d.ts#L225">services.d.ts:225</a></li>
+									<li>Defined in <a href="https://github.com/script-development/vue-services/blob/f7888d5/types/services.d.ts#L236">services.d.ts:236</a></li>
 								</ul>
 							</aside>
 							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-symbol">(</span>to<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">any</span>, from<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">any</span>, next<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">any</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol"> =&gt; </span><span class="tsd-signature-type">boolean</span></h4>
@@ -464,6 +545,42 @@
 						</li>
 					</ul>
 				</section>
+				<section class="tsd-panel tsd-member tsd-kind-accessor tsd-parent-kind-class">
+					<a name="setpasswordpage" class="tsd-anchor"></a>
+					<h3>set<wbr>Password<wbr>Page</h3>
+					<ul class="tsd-signatures tsd-kind-accessor tsd-parent-kind-class">
+						<li class="tsd-signature tsd-kind-icon"><span class="tsd-signature-symbol">get</span> setPasswordPage<span class="tsd-signature-symbol">(</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">Component</span></li>
+						<li class="tsd-signature tsd-kind-icon"><span class="tsd-signature-symbol">set</span> setPasswordPage<span class="tsd-signature-symbol">(</span>page<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">Component</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">any</span></li>
+					</ul>
+					<ul class="tsd-descriptions">
+						<li class="tsd-description">
+							<aside class="tsd-sources">
+								<ul>
+									<li>Defined in <a href="https://github.com/script-development/vue-services/blob/f7888d5/types/services.d.ts#L217">services.d.ts:217</a></li>
+								</ul>
+							</aside>
+							<div class="tsd-comment tsd-typography">
+							</div>
+							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">Component</span></h4>
+						</li>
+						<li class="tsd-description">
+							<aside class="tsd-sources">
+								<ul>
+									<li>Defined in <a href="https://github.com/script-development/vue-services/blob/f7888d5/types/services.d.ts#L216">services.d.ts:216</a></li>
+								</ul>
+							</aside>
+							<div class="tsd-comment tsd-typography">
+							</div>
+							<h4 class="tsd-parameters-title">Parameters</h4>
+							<ul class="tsd-parameters">
+								<li>
+									<h5>page: <span class="tsd-signature-type">Component</span></h5>
+								</li>
+							</ul>
+							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">any</span></h4>
+						</li>
+					</ul>
+				</section>
 				<section class="tsd-panel tsd-member tsd-kind-get-signature tsd-parent-kind-class">
 					<a name="storemodulename" class="tsd-anchor"></a>
 					<h3>store<wbr>Module<wbr>Name</h3>
@@ -474,7 +591,7 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/script-development/vue-services/blob/fd053d4/types/services.d.ts#L196">services.d.ts:196</a></li>
+									<li>Defined in <a href="https://github.com/script-development/vue-services/blob/f7888d5/types/services.d.ts#L198">services.d.ts:198</a></li>
 								</ul>
 							</aside>
 							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">string</span></h4>
@@ -494,7 +611,7 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/script-development/vue-services/blob/fd053d4/types/services.d.ts#L223">services.d.ts:223</a></li>
+									<li>Defined in <a href="https://github.com/script-development/vue-services/blob/f7888d5/types/services.d.ts#L234">services.d.ts:234</a></li>
 								</ul>
 							</aside>
 							<div class="tsd-comment tsd-typography">
@@ -516,7 +633,7 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/script-development/vue-services/blob/fd053d4/types/services.d.ts#L219">services.d.ts:219</a></li>
+									<li>Defined in <a href="https://github.com/script-development/vue-services/blob/f7888d5/types/services.d.ts#L230">services.d.ts:230</a></li>
 								</ul>
 							</aside>
 							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">void</span></h4>
@@ -533,7 +650,7 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/script-development/vue-services/blob/fd053d4/types/services.d.ts#L216">services.d.ts:216</a></li>
+									<li>Defined in <a href="https://github.com/script-development/vue-services/blob/f7888d5/types/services.d.ts#L227">services.d.ts:227</a></li>
 								</ul>
 							</aside>
 							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">void</span></h4>
@@ -550,7 +667,7 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/script-development/vue-services/blob/fd053d4/types/services.d.ts#L214">services.d.ts:214</a></li>
+									<li>Defined in <a href="https://github.com/script-development/vue-services/blob/f7888d5/types/services.d.ts#L225">services.d.ts:225</a></li>
 								</ul>
 							</aside>
 							<div class="tsd-comment tsd-typography">
@@ -581,7 +698,7 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/script-development/vue-services/blob/fd053d4/types/services.d.ts#L215">services.d.ts:215</a></li>
+									<li>Defined in <a href="https://github.com/script-development/vue-services/blob/f7888d5/types/services.d.ts#L226">services.d.ts:226</a></li>
 								</ul>
 							</aside>
 							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">Promise</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">AxiosResponse</span><span class="tsd-signature-symbol">&gt;</span></h4>
@@ -598,7 +715,7 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/script-development/vue-services/blob/fd053d4/types/services.d.ts#L218">services.d.ts:218</a></li>
+									<li>Defined in <a href="https://github.com/script-development/vue-services/blob/f7888d5/types/services.d.ts#L229">services.d.ts:229</a></li>
 								</ul>
 							</aside>
 							<h4 class="tsd-parameters-title">Parameters</h4>
@@ -621,7 +738,7 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/script-development/vue-services/blob/fd053d4/types/services.d.ts#L217">services.d.ts:217</a></li>
+									<li>Defined in <a href="https://github.com/script-development/vue-services/blob/f7888d5/types/services.d.ts#L228">services.d.ts:228</a></li>
 								</ul>
 							</aside>
 							<h4 class="tsd-parameters-title">Parameters</h4>
@@ -644,7 +761,7 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/script-development/vue-services/blob/fd053d4/types/services.d.ts#L226">services.d.ts:226</a></li>
+									<li>Defined in <a href="https://github.com/script-development/vue-services/blob/f7888d5/types/services.d.ts#L237">services.d.ts:237</a></li>
 								</ul>
 							</aside>
 							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">void</span></h4>
@@ -675,13 +792,22 @@
 								<a href="authservice.html#_defaultloggedinpage" class="tsd-kind-icon">_default<wbr>Logged<wbr>InPage</a>
 							</li>
 							<li class=" tsd-kind-property tsd-parent-kind-class">
+								<a href="authservice.html#_forgotpasswordpage" class="tsd-kind-icon">_forgot<wbr>Password<wbr>Page</a>
+							</li>
+							<li class=" tsd-kind-property tsd-parent-kind-class">
 								<a href="authservice.html#_httpservice" class="tsd-kind-icon">_http<wbr>Service</a>
 							</li>
 							<li class=" tsd-kind-property tsd-parent-kind-class">
 								<a href="authservice.html#_loginpage" class="tsd-kind-icon">_login<wbr>Page</a>
 							</li>
 							<li class=" tsd-kind-property tsd-parent-kind-class">
+								<a href="authservice.html#_resetpasswordpage" class="tsd-kind-icon">_reset<wbr>Password<wbr>Page</a>
+							</li>
+							<li class=" tsd-kind-property tsd-parent-kind-class">
 								<a href="authservice.html#_routerservice" class="tsd-kind-icon">_router<wbr>Service</a>
+							</li>
+							<li class=" tsd-kind-property tsd-parent-kind-class">
+								<a href="authservice.html#_setpasswordpage" class="tsd-kind-icon">_set<wbr>Password<wbr>Page</a>
 							</li>
 							<li class=" tsd-kind-property tsd-parent-kind-class">
 								<a href="authservice.html#_storageservice" class="tsd-kind-icon">_storage<wbr>Service</a>
@@ -691,6 +817,9 @@
 							</li>
 							<li class=" tsd-kind-accessor tsd-parent-kind-class">
 								<a href="authservice.html#defaultloggedinpagename" class="tsd-kind-icon">default<wbr>Logged<wbr>InPage<wbr>Name</a>
+							</li>
+							<li class=" tsd-kind-accessor tsd-parent-kind-class">
+								<a href="authservice.html#forgotpasswordpage" class="tsd-kind-icon">forgot<wbr>Password<wbr>Page</a>
 							</li>
 							<li class=" tsd-kind-get-signature tsd-parent-kind-class">
 								<a href="authservice.html#isadmin" class="tsd-kind-icon">is<wbr>Admin</a>
@@ -704,11 +833,17 @@
 							<li class=" tsd-kind-accessor tsd-parent-kind-class">
 								<a href="authservice.html#loginpage" class="tsd-kind-icon">login<wbr>Page</a>
 							</li>
+							<li class=" tsd-kind-accessor tsd-parent-kind-class">
+								<a href="authservice.html#resetpasswordpage" class="tsd-kind-icon">reset<wbr>Password<wbr>Page</a>
+							</li>
 							<li class=" tsd-kind-get-signature tsd-parent-kind-class">
 								<a href="authservice.html#responseerrormiddleware" class="tsd-kind-icon">response<wbr>Error<wbr>Middleware</a>
 							</li>
 							<li class=" tsd-kind-get-signature tsd-parent-kind-class">
 								<a href="authservice.html#routemiddleware" class="tsd-kind-icon">route<wbr>Middleware</a>
+							</li>
+							<li class=" tsd-kind-accessor tsd-parent-kind-class">
+								<a href="authservice.html#setpasswordpage" class="tsd-kind-icon">set<wbr>Password<wbr>Page</a>
 							</li>
 							<li class=" tsd-kind-get-signature tsd-parent-kind-class">
 								<a href="authservice.html#storemodulename" class="tsd-kind-icon">store<wbr>Module<wbr>Name</a>

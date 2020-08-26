@@ -4,6 +4,8 @@
  * @typedef {import('vuex').Store} Store
  * @typedef {import('vuex').Module} Module
  * @typedef {import('axios').AxiosRequestConfig} AxiosRequestConfig
+ *
+ * @typedef {import('../../controllers').Item} Item
  */
 
 export class StoreService {
@@ -60,6 +62,8 @@ export class StoreService {
      * Get all from data from the given store module
      *
      * @param {String} storeModule the module from which to get all
+     *
+     * @returns {Item[]}
      */
     getAllFromStore(storeModule) {
         return this._store.getters[storeModule + this.getReadAllGetter()];
@@ -70,6 +74,8 @@ export class StoreService {
      *
      * @param {String} storeModule the module from which to get all
      * @param {String} id the id of the data object to get
+     *
+     * @return {Item}
      */
     getByIdFromStore(storeModule, id) {
         return this._store.getters[storeModule + this.getReadByIdGetter()](id);

@@ -1,6 +1,7 @@
 import {AxiosResponse, AxiosRequestConfig} from 'axios';
 import {HTTPService, StorageService} from './services';
 import {Store, Module} from 'vuex';
+import {Item} from './controllers';
 
 export class StoreModuleFactory {
     /**
@@ -164,14 +165,14 @@ export class StoreService {
      *
      * @param {String} storeModule the module from which to get all
      */
-    getAllFromStore(storeModule: string): any;
+    getAllFromStore(storeModule: string): Item[];
     /**
      * Get all data from the given store module by id
      *
      * @param {String} storeModule the module from which to get all
      * @param {String} id the id of the data object to get
      */
-    getByIdFromStore(storeModule: string, id: string): any;
+    getByIdFromStore(storeModule: string, id: string): Item;
     /**
      * dispatch an action to the store, which deletes an item on the server
      *
