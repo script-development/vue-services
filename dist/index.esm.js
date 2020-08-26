@@ -9,6 +9,7 @@ const keepALiveKey = 'keepALive';
 let keepALive = JSON.parse(localStorage.getItem(keepALiveKey));
 
 class StorageService {
+    /** @param {Boolean} value */
     set keepALive(value) {
         localStorage.setItem(keepALiveKey, value);
         keepALive = value;
@@ -18,17 +19,32 @@ class StorageService {
         return keepALive;
     }
 
+    /**
+     * Set the given value in the storage under the given key
+     * If the value is not of type String, it will be converted to String
+     *
+     * @param {String} key
+     * @param {String | any} value
+     */
     setItem(key, value) {
         if (!this.keepALive) return;
         if (typeof value !== 'string') value = JSON.stringify(value);
         localStorage.setItem(key, value);
     }
 
+    /**
+     * Get the value from the storage under the given key
+     *
+     * @param {String} key
+     */
     getItem(key) {
         if (!this.keepALive) return null;
         return localStorage.getItem(key);
     }
 
+    /**
+     * Empty the storage
+     */
     clear() {
         if (!this.keepALive) return;
         localStorage.clear();
@@ -172,14 +188,17 @@ class HTTPService {
         });
     }
 
+    /** @param {RequestMiddleware} middlewareFunc */
     registerRequestMiddleware(middlewareFunc) {
         this._requestMiddleware.push(middlewareFunc);
     }
 
+    /** @param {ResponseMiddleware} middlewareFunc */
     registerResponseMiddleware(middlewareFunc) {
         this._responseMiddleware.push(middlewareFunc);
     }
 
+    /** @param {ResponseErrorMiddleware} middlewareFunc */
     registerResponseErrorMiddleware(middlewareFunc) {
         this._responseErrorMiddleware.push(middlewareFunc);
     }
@@ -307,11 +326,17 @@ class MissingTranslationError extends Error {
  * @typedef {Object} Translation
  * @property {string} singular the singular translation
  * @property {string} plural the plural translation
+ *
+ * @typedef {import('../../errors/MissingTranslationError').MissingTranslationError} MissingTranslationError
  */
 
 const PLURAL = 'plural';
 const SINGULAR = 'singular';
 
+/**
+ * Capitalize the give value
+ * @param {String} value
+ */
 const capitalize = value => `${value[0].toUpperCase()}${value.substr(1)}`;
 
 class TranslatorService {
@@ -320,31 +345,77 @@ class TranslatorService {
         this._translations = {};
     }
 
+    /**
+     * Get plural or singular translation for given value
+     *
+     * @param {String} value
+     * @param {PLURAL | SINGULAR} pluralOrSingular
+     *
+     * @throws {MissingTranslationError}
+     */
     getTranslation(value, pluralOrSingular) {
         const translation = this._translations[value];
 
-        if(!translation) throw new MissingTranslationError(`Missing translation for ${value}`)
-        if(!translation[pluralOrSingular]) throw new MissingTranslationError(`Missing ${pluralOrSingular} translation for ${value}`)
+        if (!translation) throw new MissingTranslationError(`Missing translation for ${value}`);
+        if (!translation[pluralOrSingular])
+            throw new MissingTranslationError(`Missing ${pluralOrSingular} translation for ${value}`);
 
         return translation[pluralOrSingular];
     }
 
+    /**
+     * Get the plural translation for the given value
+     *
+     * @param {String} value
+     *
+     * @throws {MissingTranslationError}
+     */
     getPlural(value) {
         return this.getTranslation(value, PLURAL);
     }
 
+    /**
+     * Get the singular translation for the given value
+     *
+     * @param {String} value
+     *
+     * @throws {MissingTranslationError}
+     */
     getSingular(value) {
         return this.getTranslation(value, SINGULAR);
     }
 
+    /**
+     * Get the singular translation for the given value and capitalize it
+     *
+     * @param {String} value
+     *
+     * @throws {MissingTranslationError}
+     */
     getCapitalizedSingular(value) {
         return capitalize(this.getSingular(value));
     }
 
+    /**
+     * Get the plural translation for the given value and capitalize it
+     *
+     * @param {String} value
+     *
+     * @throws {MissingTranslationError}
+     */
     getCapitalizedPlural(value) {
         return capitalize(this.getPlural(value));
     }
 
+    /**
+     * Get the either the singular or plural translation, based on the given count
+     * Return the string `${count} ${translation}`
+     *
+     * @param {Number} count
+     * @param {String} value
+     *
+     * @throws {MissingTranslationError}
+     */
     maybePluralize(count, value) {
         const baseString = `${count} `;
         if (count == 1) return baseString + this.getSingular(value);
@@ -363,9 +434,13 @@ class TranslatorService {
 /**
  * @typedef {import("vue-router").RouteConfig} RouteConfig
  * @typedef {import("vue-router").Route} Route
+ * @typedef {import("vue-router").NavigationGuardNext} NavigationGuardNext
  * @typedef {import("vue-router").default} VueRouter
  * @typedef {import("./factory").RouteFactory} RouteFactory
  * @typedef {import("./settings").RouteSettings} RouteSettings
+ *
+ * @typedef {(to:Route, from:Route, next:NavigationGuardNext) => Boolean} BeforeMiddleware
+ * @typedef {(to:Route, from:Route) => void} AfterMiddleware
  */
 Vue.use(VueRouter);
 
@@ -390,6 +465,7 @@ class RouterService {
         this._factory = factory;
         this._settings = settings;
 
+        /** @type {BeforeMiddleware[]} */
         this._routerBeforeMiddleware = [this.beforeMiddleware];
         router.beforeEach((to, from, next) => {
             for (const middlewareFunc of this._routerBeforeMiddleware) {
@@ -399,6 +475,7 @@ class RouterService {
             return next();
         });
 
+        /** @type {AfterMiddleware[]} */
         this._routerAfterMiddleware = [];
         router.afterEach((to, from) => {
             for (const middlewareFunc of this._routerAfterMiddleware) {
@@ -420,7 +497,7 @@ class RouterService {
 
     /**
      * register middleware for the router before entering the route
-     * @param {Function} middlewareFunc the middleware function
+     * @param {BeforeMiddleware} middlewareFunc the middleware function
      */
     registerBeforeMiddleware(middlewareFunc) {
         this._routerBeforeMiddleware.push(middlewareFunc);
@@ -428,7 +505,7 @@ class RouterService {
 
     /**
      * register middleware for the router after entering a route
-     * @param {Function} middlewareFunc the middleware function
+     * @param {AfterMiddleware} middlewareFunc the middleware function
      */
     registerAfterMiddleware(middlewareFunc) {
         this._routerAfterMiddleware.push(middlewareFunc);
@@ -503,9 +580,7 @@ class RouterService {
         return this._settings.createNew(baseRouteName);
     }
 
-    /**
-     * @returns {(to:Route, from:Route, next:any) => Boolean}
-     */
+    /** @returns {BeforeMiddleware} */
     get beforeMiddleware() {
         return (to, from, next) => {
             const fromQuery = from.query.from;
@@ -1499,22 +1574,26 @@ var NotFoundPage = {
 /**
  * @typedef {import('../store').StoreService} StoreService
  * @typedef {import('../router').RouterService} RouterService
+ * @typedef {import('../router').AfterMiddleware} AfterMiddleware
  * @typedef {import('../http').HTTPService} HTTPService
+ * @typedef {import('../http').ResponseErrorMiddleware} ResponseErrorMiddleware
+ *
+ * @typedef {Object.<string, string[]} ErrorBag
  */
+
+const STORE_MODULE_NAME = 'errors';
 
 class ErrorService {
     /**
-     *
      * @param {StoreService} storeService
      * @param {RouterService} routerService
      * @param {HTTPService} httpService the http service for communication with the API
      */
     constructor(storeService, routerService, httpService) {
-        this._storeModuleName = 'errors';
         this._storeService = storeService;
 
-        this._storeService.generateAndSetDefaultStoreModule(this._storeModuleName, '', {
-            getters: {[this._storeModuleName]: state => state[this._storeService.getAllItemsStateName(false)]},
+        this._storeService.generateAndSetDefaultStoreModule(STORE_MODULE_NAME, '', {
+            getters: {[STORE_MODULE_NAME]: state => state[this._storeService.getAllItemsStateName(false)]},
         });
 
         this._routerService = routerService;
@@ -1535,24 +1614,35 @@ class ErrorService {
         this._httpService.registerResponseErrorMiddleware(this.responseErrorMiddleware);
     }
 
+    /**
+     * Get all the known errors
+     * @returns {ErrorBag}
+     */
     getErrors() {
-        return this._storeService.get(this._storeModuleName, this._storeModuleName);
+        return this._storeService.get(STORE_MODULE_NAME, STORE_MODULE_NAME);
     }
 
+    /**
+     * Store the given errors, overriding every known error
+     *
+     * @param {ErrorBag} errors
+     */
     setErrors(errors) {
-        this._storeService.setAllInStore(this._storeModuleName, errors);
+        this._storeService.setAllInStore(STORE_MODULE_NAME, errors);
     }
 
-    destroyErrors() {
-        this.setErrors({});
-    }
+    // prettier-ignore
+    /** Clear every known error */
+    destroyErrors() { this.setErrors({}); }
 
+    /** @returns {ResponseErrorMiddleware} */
     get responseErrorMiddleware() {
         return ({response}) => {
             if (response && response.data.errors) this.setErrors(response.data.errors);
         };
     }
 
+    /** @returns {AfterMiddleware} */
     get routeMiddleware() {
         return (to, from) => this.setErrors({});
     }

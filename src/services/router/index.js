@@ -1,9 +1,13 @@
 /**
  * @typedef {import("vue-router").RouteConfig} RouteConfig
  * @typedef {import("vue-router").Route} Route
+ * @typedef {import("vue-router").NavigationGuardNext} NavigationGuardNext
  * @typedef {import("vue-router").default} VueRouter
  * @typedef {import("./factory").RouteFactory} RouteFactory
  * @typedef {import("./settings").RouteSettings} RouteSettings
+ *
+ * @typedef {(to:Route, from:Route, next:NavigationGuardNext) => Boolean} BeforeMiddleware
+ * @typedef {(to:Route, from:Route) => void} AfterMiddleware
  */
 
 import Vue from 'vue';
@@ -31,6 +35,7 @@ export class RouterService {
         this._factory = factory;
         this._settings = settings;
 
+        /** @type {BeforeMiddleware[]} */
         this._routerBeforeMiddleware = [this.beforeMiddleware];
         router.beforeEach((to, from, next) => {
             for (const middlewareFunc of this._routerBeforeMiddleware) {
@@ -40,6 +45,7 @@ export class RouterService {
             return next();
         });
 
+        /** @type {AfterMiddleware[]} */
         this._routerAfterMiddleware = [];
         router.afterEach((to, from) => {
             for (const middlewareFunc of this._routerAfterMiddleware) {
@@ -61,7 +67,7 @@ export class RouterService {
 
     /**
      * register middleware for the router before entering the route
-     * @param {Function} middlewareFunc the middleware function
+     * @param {BeforeMiddleware} middlewareFunc the middleware function
      */
     registerBeforeMiddleware(middlewareFunc) {
         this._routerBeforeMiddleware.push(middlewareFunc);
@@ -69,7 +75,7 @@ export class RouterService {
 
     /**
      * register middleware for the router after entering a route
-     * @param {Function} middlewareFunc the middleware function
+     * @param {AfterMiddleware} middlewareFunc the middleware function
      */
     registerAfterMiddleware(middlewareFunc) {
         this._routerAfterMiddleware.push(middlewareFunc);
@@ -144,9 +150,7 @@ export class RouterService {
         return this._settings.createNew(baseRouteName);
     }
 
-    /**
-     * @returns {(to:Route, from:Route, next:any) => Boolean}
-     */
+    /** @returns {BeforeMiddleware} */
     get beforeMiddleware() {
         return (to, from, next) => {
             const fromQuery = from.query.from;

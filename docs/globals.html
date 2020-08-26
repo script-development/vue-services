@@ -96,10 +96,13 @@
 						<section class="tsd-index-section ">
 							<h3>Type aliases</h3>
 							<ul class="tsd-index-list">
+								<li class="tsd-kind-type-alias"><a href="globals.html#aftermiddleware" class="tsd-kind-icon">After<wbr>Middleware</a></li>
+								<li class="tsd-kind-type-alias"><a href="globals.html#beforemiddleware" class="tsd-kind-icon">Before<wbr>Middleware</a></li>
 								<li class="tsd-kind-type-alias"><a href="globals.html#cache" class="tsd-kind-icon">Cache</a></li>
 								<li class="tsd-kind-type-alias"><a href="globals.html#credentials" class="tsd-kind-icon">Credentials</a></li>
 								<li class="tsd-kind-type-alias"><a href="globals.html#detaillistfield" class="tsd-kind-icon">Detail<wbr>List<wbr>Field</a></li>
 								<li class="tsd-kind-type-alias"><a href="globals.html#detaillistformatter" class="tsd-kind-icon">Detail<wbr>List<wbr>Formatter</a></li>
+								<li class="tsd-kind-type-alias"><a href="globals.html#errorbag" class="tsd-kind-icon">Error<wbr>Bag</a></li>
 								<li class="tsd-kind-type-alias"><a href="globals.html#formgroup" class="tsd-kind-icon">Form<wbr>Group</a></li>
 								<li class="tsd-kind-type-alias"><a href="globals.html#formgroupformatter" class="tsd-kind-icon">Form<wbr>Group<wbr>Formatter</a></li>
 								<li class="tsd-kind-type-alias"><a href="globals.html#forminputdata" class="tsd-kind-icon">Form<wbr>Input<wbr>Data</a></li>
@@ -115,6 +118,8 @@
 						<section class="tsd-index-section ">
 							<h3>Variables</h3>
 							<ul class="tsd-index-list">
+								<li class="tsd-kind-variable"><a href="globals.html#plural" class="tsd-kind-icon">PLURAL</a></li>
+								<li class="tsd-kind-variable"><a href="globals.html#singular" class="tsd-kind-icon">SINGULAR</a></li>
 								<li class="tsd-kind-variable"><a href="globals.html#appstarter" class="tsd-kind-icon">app<wbr>Starter</a></li>
 								<li class="tsd-kind-variable"><a href="globals.html#authservice" class="tsd-kind-icon">auth<wbr>Service</a></li>
 								<li class="tsd-kind-variable"><a href="globals.html#errorservice" class="tsd-kind-icon">error<wbr>Service</a></li>
@@ -133,12 +138,83 @@
 			<section class="tsd-panel-group tsd-member-group ">
 				<h2>Type aliases</h2>
 				<section class="tsd-panel tsd-member tsd-kind-type-alias">
+					<a name="aftermiddleware" class="tsd-anchor"></a>
+					<h3>After<wbr>Middleware</h3>
+					<div class="tsd-signature tsd-kind-icon">After<wbr>Middleware<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-symbol">(</span>to<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">Route</span>, from<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">Route</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol"> =&gt; </span><span class="tsd-signature-type">void</span></div>
+					<aside class="tsd-sources">
+						<ul>
+							<li>Defined in <a href="https://github.com/script-development/vue-services/blob/e4aa858/types/routerService.d.ts#L343">routerService.d.ts:343</a></li>
+						</ul>
+					</aside>
+					<div class="tsd-type-declaration">
+						<h4>Type declaration</h4>
+						<ul class="tsd-parameters">
+							<li class="tsd-parameter-signature">
+								<ul class="tsd-signatures tsd-kind-type-literal tsd-parent-kind-type-alias">
+									<li class="tsd-signature tsd-kind-icon"><span class="tsd-signature-symbol">(</span>to<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">Route</span>, from<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">Route</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">void</span></li>
+								</ul>
+								<ul class="tsd-descriptions">
+									<li class="tsd-description">
+										<h4 class="tsd-parameters-title">Parameters</h4>
+										<ul class="tsd-parameters">
+											<li>
+												<h5>to: <span class="tsd-signature-type">Route</span></h5>
+											</li>
+											<li>
+												<h5>from: <span class="tsd-signature-type">Route</span></h5>
+											</li>
+										</ul>
+										<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">void</span></h4>
+									</li>
+								</ul>
+							</li>
+						</ul>
+					</div>
+				</section>
+				<section class="tsd-panel tsd-member tsd-kind-type-alias">
+					<a name="beforemiddleware" class="tsd-anchor"></a>
+					<h3>Before<wbr>Middleware</h3>
+					<div class="tsd-signature tsd-kind-icon">Before<wbr>Middleware<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-symbol">(</span>to<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">Route</span>, from<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">Route</span>, next<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">NavigationGuardNext</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol"> =&gt; </span><span class="tsd-signature-type">Boolean</span></div>
+					<aside class="tsd-sources">
+						<ul>
+							<li>Defined in <a href="https://github.com/script-development/vue-services/blob/e4aa858/types/routerService.d.ts#L342">routerService.d.ts:342</a></li>
+						</ul>
+					</aside>
+					<div class="tsd-type-declaration">
+						<h4>Type declaration</h4>
+						<ul class="tsd-parameters">
+							<li class="tsd-parameter-signature">
+								<ul class="tsd-signatures tsd-kind-type-literal tsd-parent-kind-type-alias">
+									<li class="tsd-signature tsd-kind-icon"><span class="tsd-signature-symbol">(</span>to<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">Route</span>, from<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">Route</span>, next<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">NavigationGuardNext</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">Boolean</span></li>
+								</ul>
+								<ul class="tsd-descriptions">
+									<li class="tsd-description">
+										<h4 class="tsd-parameters-title">Parameters</h4>
+										<ul class="tsd-parameters">
+											<li>
+												<h5>to: <span class="tsd-signature-type">Route</span></h5>
+											</li>
+											<li>
+												<h5>from: <span class="tsd-signature-type">Route</span></h5>
+											</li>
+											<li>
+												<h5>next: <span class="tsd-signature-type">NavigationGuardNext</span></h5>
+											</li>
+										</ul>
+										<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">Boolean</span></h4>
+									</li>
+								</ul>
+							</li>
+						</ul>
+					</div>
+				</section>
+				<section class="tsd-panel tsd-member tsd-kind-type-alias">
 					<a name="cache" class="tsd-anchor"></a>
 					<h3>Cache</h3>
 					<div class="tsd-signature tsd-kind-icon">Cache<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-symbol">{}</span></div>
 					<aside class="tsd-sources">
 						<ul>
-							<li>Defined in <a href="https://github.com/script-development/vue-services/blob/d1f4abd/types/services.d.ts#L19">services.d.ts:19</a></li>
+							<li>Defined in <a href="https://github.com/script-development/vue-services/blob/e4aa858/types/services.d.ts#L19">services.d.ts:19</a></li>
 						</ul>
 					</aside>
 					<div class="tsd-type-declaration">
@@ -156,7 +232,7 @@
 					<div class="tsd-signature tsd-kind-icon">Credentials<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-symbol">{ </span>email<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">string</span><span class="tsd-signature-symbol">; </span>password<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">string</span><span class="tsd-signature-symbol">; </span>rememberMe<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">boolean</span><span class="tsd-signature-symbol"> }</span></div>
 					<aside class="tsd-sources">
 						<ul>
-							<li>Defined in <a href="https://github.com/script-development/vue-services/blob/d1f4abd/types/services.d.ts#L21">services.d.ts:21</a></li>
+							<li>Defined in <a href="https://github.com/script-development/vue-services/blob/e4aa858/types/services.d.ts#L21">services.d.ts:21</a></li>
 						</ul>
 					</aside>
 					<div class="tsd-type-declaration">
@@ -180,7 +256,7 @@
 					<div class="tsd-signature tsd-kind-icon">Detail<wbr>List<wbr>Field<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-symbol">{ </span>formatter<span class="tsd-signature-symbol">?: </span><a href="globals.html#detaillistformatter" class="tsd-signature-type">DetailListFormatter</a><span class="tsd-signature-symbol">; </span>key<span class="tsd-signature-symbol">?: </span><span class="tsd-signature-type">string</span><span class="tsd-signature-symbol">; </span>label<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">string</span><span class="tsd-signature-symbol">; </span>unorderedList<span class="tsd-signature-symbol">: </span><a href="globals.html#listelemententry" class="tsd-signature-type">ListElementEntry</a><span class="tsd-signature-symbol">[]</span><span class="tsd-signature-symbol"> }</span></div>
 					<aside class="tsd-sources">
 						<ul>
-							<li>Defined in <a href="https://github.com/script-development/vue-services/blob/d1f4abd/types/creators.d.ts#L238">creators.d.ts:238</a></li>
+							<li>Defined in <a href="https://github.com/script-development/vue-services/blob/e4aa858/types/creators.d.ts#L238">creators.d.ts:238</a></li>
 						</ul>
 					</aside>
 					<div class="tsd-type-declaration">
@@ -207,7 +283,7 @@
 					<div class="tsd-signature tsd-kind-icon">Detail<wbr>List<wbr>Formatter<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-symbol">(</span>key<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">any</span>, item<span class="tsd-signature-symbol">: </span><span class="tsd-signature-symbol">{}</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol"> =&gt; </span><span class="tsd-signature-type">string</span></div>
 					<aside class="tsd-sources">
 						<ul>
-							<li>Defined in <a href="https://github.com/script-development/vue-services/blob/d1f4abd/types/creators.d.ts#L234">creators.d.ts:234</a></li>
+							<li>Defined in <a href="https://github.com/script-development/vue-services/blob/e4aa858/types/creators.d.ts#L234">creators.d.ts:234</a></li>
 						</ul>
 					</aside>
 					<div class="tsd-type-declaration">
@@ -241,12 +317,30 @@
 					</div>
 				</section>
 				<section class="tsd-panel tsd-member tsd-kind-type-alias">
+					<a name="errorbag" class="tsd-anchor"></a>
+					<h3>Error<wbr>Bag</h3>
+					<div class="tsd-signature tsd-kind-icon">Error<wbr>Bag<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-symbol">{}</span></div>
+					<aside class="tsd-sources">
+						<ul>
+							<li>Defined in <a href="https://github.com/script-development/vue-services/blob/e4aa858/types/services.d.ts#L196">services.d.ts:196</a></li>
+						</ul>
+					</aside>
+					<div class="tsd-type-declaration">
+						<h4>Type declaration</h4>
+						<ul class="tsd-parameters">
+							<li class="tsd-parameter-index-signature">
+								<h5><span class="tsd-signature-symbol">[</span>property: <span class="tsd-signature-type">string</span><span class="tsd-signature-symbol">]: </span><span class="tsd-signature-type">string</span><span class="tsd-signature-symbol">[]</span></h5>
+							</li>
+						</ul>
+					</div>
+				</section>
+				<section class="tsd-panel tsd-member tsd-kind-type-alias">
 					<a name="formgroup" class="tsd-anchor"></a>
 					<h3>Form<wbr>Group</h3>
 					<div class="tsd-signature tsd-kind-icon">Form<wbr>Group<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-symbol">{ </span>component<span class="tsd-signature-symbol">?: </span><span class="tsd-signature-type">Component</span><span class="tsd-signature-symbol">; </span>description<span class="tsd-signature-symbol">?: </span><span class="tsd-signature-symbol">[</span><span class="tsd-signature-type">string</span><span class="tsd-signature-symbol">, </span><span class="tsd-signature-type">string</span><span class="tsd-signature-symbol">]</span><span class="tsd-signature-symbol">; </span>formatter<span class="tsd-signature-symbol">?: </span><a href="globals.html#formgroupformatter" class="tsd-signature-type">FormGroupFormatter</a><span class="tsd-signature-symbol">; </span>label<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">string</span><span class="tsd-signature-symbol">; </span>max<span class="tsd-signature-symbol">?: </span><span class="tsd-signature-type">number</span><span class="tsd-signature-symbol">; </span>min<span class="tsd-signature-symbol">?: </span><span class="tsd-signature-type">number</span><span class="tsd-signature-symbol">; </span>options<span class="tsd-signature-symbol">?: </span><span class="tsd-signature-type">string</span><span class="tsd-signature-symbol">; </span>property<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">string</span><span class="tsd-signature-symbol">; </span>step<span class="tsd-signature-symbol">?: </span><span class="tsd-signature-type">number</span><span class="tsd-signature-symbol">; </span>textField<span class="tsd-signature-symbol">?: </span><span class="tsd-signature-type">string</span><span class="tsd-signature-symbol">; </span>type<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">string</span><span class="tsd-signature-symbol">; </span>valueField<span class="tsd-signature-symbol">?: </span><span class="tsd-signature-type">string</span><span class="tsd-signature-symbol"> }</span></div>
 					<aside class="tsd-sources">
 						<ul>
-							<li>Defined in <a href="https://github.com/script-development/vue-services/blob/d1f4abd/types/creators.d.ts#L214">creators.d.ts:214</a></li>
+							<li>Defined in <a href="https://github.com/script-development/vue-services/blob/e4aa858/types/creators.d.ts#L214">creators.d.ts:214</a></li>
 						</ul>
 					</aside>
 					<div class="tsd-type-declaration">
@@ -297,7 +391,7 @@
 					<div class="tsd-signature tsd-kind-icon">Form<wbr>Group<wbr>Formatter<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-symbol">(</span>value<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">string</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol"> =&gt; </span><span class="tsd-signature-type">string</span></div>
 					<aside class="tsd-sources">
 						<ul>
-							<li>Defined in <a href="https://github.com/script-development/vue-services/blob/d1f4abd/types/creators.d.ts#L212">creators.d.ts:212</a></li>
+							<li>Defined in <a href="https://github.com/script-development/vue-services/blob/e4aa858/types/creators.d.ts#L212">creators.d.ts:212</a></li>
 						</ul>
 					</aside>
 					<div class="tsd-type-declaration">
@@ -328,7 +422,7 @@
 					<div class="tsd-signature tsd-kind-icon">Form<wbr>Input<wbr>Data<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-symbol">{ </span>cardHeader<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">string</span><span class="tsd-signature-symbol">; </span>formGroups<span class="tsd-signature-symbol">: </span><a href="globals.html#formgroup" class="tsd-signature-type">FormGroup</a><span class="tsd-signature-symbol">[]</span><span class="tsd-signature-symbol"> }</span></div>
 					<aside class="tsd-sources">
 						<ul>
-							<li>Defined in <a href="https://github.com/script-development/vue-services/blob/d1f4abd/types/creators.d.ts#L229">creators.d.ts:229</a></li>
+							<li>Defined in <a href="https://github.com/script-development/vue-services/blob/e4aa858/types/creators.d.ts#L229">creators.d.ts:229</a></li>
 						</ul>
 					</aside>
 					<div class="tsd-type-declaration">
@@ -349,7 +443,7 @@
 					<div class="tsd-signature tsd-kind-icon">Getter<wbr>Method<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-symbol">(</span>state<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">any</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol"> =&gt; </span><span class="tsd-signature-type">any</span></div>
 					<aside class="tsd-sources">
 						<ul>
-							<li>Defined in <a href="https://github.com/script-development/vue-services/blob/d1f4abd/types/controllers.d.ts#L8">controllers.d.ts:8</a></li>
+							<li>Defined in <a href="https://github.com/script-development/vue-services/blob/e4aa858/types/controllers.d.ts#L8">controllers.d.ts:8</a></li>
 						</ul>
 					</aside>
 					<div class="tsd-type-declaration">
@@ -380,7 +474,7 @@
 					<div class="tsd-signature tsd-kind-icon">Item<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-symbol">{}</span></div>
 					<aside class="tsd-sources">
 						<ul>
-							<li>Defined in <a href="https://github.com/script-development/vue-services/blob/d1f4abd/types/controllers.d.ts#L9">controllers.d.ts:9</a></li>
+							<li>Defined in <a href="https://github.com/script-development/vue-services/blob/e4aa858/types/controllers.d.ts#L9">controllers.d.ts:9</a></li>
 						</ul>
 					</aside>
 					<div class="tsd-type-declaration">
@@ -398,7 +492,7 @@
 					<div class="tsd-signature tsd-kind-icon">List<wbr>Element<wbr>Entry<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-symbol">{ </span>formatter<span class="tsd-signature-symbol">?: </span><a href="globals.html#detaillistformatter" class="tsd-signature-type">DetailListFormatter</a><span class="tsd-signature-symbol">; </span>key<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">string</span><span class="tsd-signature-symbol"> }</span></div>
 					<aside class="tsd-sources">
 						<ul>
-							<li>Defined in <a href="https://github.com/script-development/vue-services/blob/d1f4abd/types/creators.d.ts#L236">creators.d.ts:236</a></li>
+							<li>Defined in <a href="https://github.com/script-development/vue-services/blob/e4aa858/types/creators.d.ts#L236">creators.d.ts:236</a></li>
 						</ul>
 					</aside>
 					<div class="tsd-type-declaration">
@@ -419,7 +513,7 @@
 					<div class="tsd-signature tsd-kind-icon">Request<wbr>Middleware<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-symbol">(</span>request<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">AxiosRequestConfig</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol"> =&gt; </span><span class="tsd-signature-type">void</span></div>
 					<aside class="tsd-sources">
 						<ul>
-							<li>Defined in <a href="https://github.com/script-development/vue-services/blob/d1f4abd/types/services.d.ts#L23">services.d.ts:23</a></li>
+							<li>Defined in <a href="https://github.com/script-development/vue-services/blob/e4aa858/types/services.d.ts#L23">services.d.ts:23</a></li>
 						</ul>
 					</aside>
 					<div class="tsd-type-declaration">
@@ -450,7 +544,7 @@
 					<div class="tsd-signature tsd-kind-icon">Response<wbr>Error<wbr>Middleware<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-symbol">(</span>error<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">AxiosError</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol"> =&gt; </span><span class="tsd-signature-type">void</span></div>
 					<aside class="tsd-sources">
 						<ul>
-							<li>Defined in <a href="https://github.com/script-development/vue-services/blob/d1f4abd/types/services.d.ts#L25">services.d.ts:25</a></li>
+							<li>Defined in <a href="https://github.com/script-development/vue-services/blob/e4aa858/types/services.d.ts#L25">services.d.ts:25</a></li>
 						</ul>
 					</aside>
 					<div class="tsd-type-declaration">
@@ -481,7 +575,7 @@
 					<div class="tsd-signature tsd-kind-icon">Response<wbr>Middleware<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-symbol">(</span>response<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">AxiosResponse</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol"> =&gt; </span><span class="tsd-signature-type">void</span></div>
 					<aside class="tsd-sources">
 						<ul>
-							<li>Defined in <a href="https://github.com/script-development/vue-services/blob/d1f4abd/types/services.d.ts#L24">services.d.ts:24</a></li>
+							<li>Defined in <a href="https://github.com/script-development/vue-services/blob/e4aa858/types/services.d.ts#L24">services.d.ts:24</a></li>
 						</ul>
 					</aside>
 					<div class="tsd-type-declaration">
@@ -512,7 +606,7 @@
 					<div class="tsd-signature tsd-kind-icon">Translation<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-symbol">{ </span>plural<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">string</span><span class="tsd-signature-symbol">; </span>singular<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">string</span><span class="tsd-signature-symbol"> }</span></div>
 					<aside class="tsd-sources">
 						<ul>
-							<li>Defined in <a href="https://github.com/script-development/vue-services/blob/d1f4abd/types/services.d.ts#L8">services.d.ts:8</a></li>
+							<li>Defined in <a href="https://github.com/script-development/vue-services/blob/e4aa858/types/services.d.ts#L8">services.d.ts:8</a></li>
 						</ul>
 					</aside>
 					<div class="tsd-type-declaration">
@@ -541,12 +635,32 @@
 			<section class="tsd-panel-group tsd-member-group ">
 				<h2>Variables</h2>
 				<section class="tsd-panel tsd-member tsd-kind-variable">
+					<a name="plural" class="tsd-anchor"></a>
+					<h3><span class="tsd-flag ts-flagConst">Const</span> PLURAL</h3>
+					<div class="tsd-signature tsd-kind-icon">PLURAL<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">"plural"</span><span class="tsd-signature-symbol"> = &quot;plural&quot;</span></div>
+					<aside class="tsd-sources">
+						<ul>
+							<li>Defined in <a href="https://github.com/script-development/vue-services/blob/e4aa858/types/services.d.ts#L106">services.d.ts:106</a></li>
+						</ul>
+					</aside>
+				</section>
+				<section class="tsd-panel tsd-member tsd-kind-variable">
+					<a name="singular" class="tsd-anchor"></a>
+					<h3><span class="tsd-flag ts-flagConst">Const</span> SINGULAR</h3>
+					<div class="tsd-signature tsd-kind-icon">SINGULAR<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">"singular"</span><span class="tsd-signature-symbol"> = &quot;singular&quot;</span></div>
+					<aside class="tsd-sources">
+						<ul>
+							<li>Defined in <a href="https://github.com/script-development/vue-services/blob/e4aa858/types/services.d.ts#L107">services.d.ts:107</a></li>
+						</ul>
+					</aside>
+				</section>
+				<section class="tsd-panel tsd-member tsd-kind-variable">
 					<a name="appstarter" class="tsd-anchor"></a>
 					<h3><span class="tsd-flag ts-flagConst">Const</span> app<wbr>Starter</h3>
 					<div class="tsd-signature tsd-kind-icon">app<wbr>Starter<span class="tsd-signature-symbol">:</span> <a href="classes/appstarter.html" class="tsd-signature-type">AppStarter</a></div>
 					<aside class="tsd-sources">
 						<ul>
-							<li>Defined in <a href="https://github.com/script-development/vue-services/blob/d1f4abd/types/index.d.ts#L30">index.d.ts:30</a></li>
+							<li>Defined in <a href="https://github.com/script-development/vue-services/blob/e4aa858/types/index.d.ts#L30">index.d.ts:30</a></li>
 						</ul>
 					</aside>
 				</section>
@@ -556,7 +670,7 @@
 					<div class="tsd-signature tsd-kind-icon">auth<wbr>Service<span class="tsd-signature-symbol">:</span> <a href="classes/authservice.html" class="tsd-signature-type">AuthService</a></div>
 					<aside class="tsd-sources">
 						<ul>
-							<li>Defined in <a href="https://github.com/script-development/vue-services/blob/d1f4abd/types/index.d.ts#L32">index.d.ts:32</a></li>
+							<li>Defined in <a href="https://github.com/script-development/vue-services/blob/e4aa858/types/index.d.ts#L32">index.d.ts:32</a></li>
 						</ul>
 					</aside>
 				</section>
@@ -566,7 +680,7 @@
 					<div class="tsd-signature tsd-kind-icon">error<wbr>Service<span class="tsd-signature-symbol">:</span> <a href="classes/errorservice.html" class="tsd-signature-type">ErrorService</a></div>
 					<aside class="tsd-sources">
 						<ul>
-							<li>Defined in <a href="https://github.com/script-development/vue-services/blob/d1f4abd/types/index.d.ts#L35">index.d.ts:35</a></li>
+							<li>Defined in <a href="https://github.com/script-development/vue-services/blob/e4aa858/types/index.d.ts#L35">index.d.ts:35</a></li>
 						</ul>
 					</aside>
 				</section>
@@ -576,7 +690,7 @@
 					<div class="tsd-signature tsd-kind-icon">event<wbr>Service<span class="tsd-signature-symbol">:</span> <a href="classes/eventservice.html" class="tsd-signature-type">EventService</a></div>
 					<aside class="tsd-sources">
 						<ul>
-							<li>Defined in <a href="https://github.com/script-development/vue-services/blob/d1f4abd/types/index.d.ts#L38">index.d.ts:38</a></li>
+							<li>Defined in <a href="https://github.com/script-development/vue-services/blob/e4aa858/types/index.d.ts#L38">index.d.ts:38</a></li>
 						</ul>
 					</aside>
 				</section>
@@ -586,7 +700,7 @@
 					<div class="tsd-signature tsd-kind-icon">http<wbr>Service<span class="tsd-signature-symbol">:</span> <a href="classes/httpservice.html" class="tsd-signature-type">HTTPService</a></div>
 					<aside class="tsd-sources">
 						<ul>
-							<li>Defined in <a href="https://github.com/script-development/vue-services/blob/d1f4abd/types/index.d.ts#L37">index.d.ts:37</a></li>
+							<li>Defined in <a href="https://github.com/script-development/vue-services/blob/e4aa858/types/index.d.ts#L37">index.d.ts:37</a></li>
 						</ul>
 					</aside>
 				</section>
@@ -596,7 +710,7 @@
 					<div class="tsd-signature tsd-kind-icon">loading<wbr>Service<span class="tsd-signature-symbol">:</span> <a href="classes/loadingservice.html" class="tsd-signature-type">LoadingService</a></div>
 					<aside class="tsd-sources">
 						<ul>
-							<li>Defined in <a href="https://github.com/script-development/vue-services/blob/d1f4abd/types/index.d.ts#L36">index.d.ts:36</a></li>
+							<li>Defined in <a href="https://github.com/script-development/vue-services/blob/e4aa858/types/index.d.ts#L36">index.d.ts:36</a></li>
 						</ul>
 					</aside>
 				</section>
@@ -606,7 +720,7 @@
 					<div class="tsd-signature tsd-kind-icon">router<wbr>Service<span class="tsd-signature-symbol">:</span> <a href="classes/routerservice.html" class="tsd-signature-type">RouterService</a></div>
 					<aside class="tsd-sources">
 						<ul>
-							<li>Defined in <a href="https://github.com/script-development/vue-services/blob/d1f4abd/types/index.d.ts#L33">index.d.ts:33</a></li>
+							<li>Defined in <a href="https://github.com/script-development/vue-services/blob/e4aa858/types/index.d.ts#L33">index.d.ts:33</a></li>
 						</ul>
 					</aside>
 				</section>
@@ -616,7 +730,7 @@
 					<div class="tsd-signature tsd-kind-icon">static<wbr>Data<wbr>Service<span class="tsd-signature-symbol">:</span> <a href="classes/staticdataservice.html" class="tsd-signature-type">StaticDataService</a></div>
 					<aside class="tsd-sources">
 						<ul>
-							<li>Defined in <a href="https://github.com/script-development/vue-services/blob/d1f4abd/types/index.d.ts#L40">index.d.ts:40</a></li>
+							<li>Defined in <a href="https://github.com/script-development/vue-services/blob/e4aa858/types/index.d.ts#L40">index.d.ts:40</a></li>
 						</ul>
 					</aside>
 				</section>
@@ -626,7 +740,7 @@
 					<div class="tsd-signature tsd-kind-icon">store<wbr>Service<span class="tsd-signature-symbol">:</span> <a href="classes/storeservice.html" class="tsd-signature-type">StoreService</a></div>
 					<aside class="tsd-sources">
 						<ul>
-							<li>Defined in <a href="https://github.com/script-development/vue-services/blob/d1f4abd/types/index.d.ts#L34">index.d.ts:34</a></li>
+							<li>Defined in <a href="https://github.com/script-development/vue-services/blob/e4aa858/types/index.d.ts#L34">index.d.ts:34</a></li>
 						</ul>
 					</aside>
 				</section>
@@ -636,7 +750,7 @@
 					<div class="tsd-signature tsd-kind-icon">translator<wbr>Service<span class="tsd-signature-symbol">:</span> <a href="classes/translatorservice.html" class="tsd-signature-type">TranslatorService</a></div>
 					<aside class="tsd-sources">
 						<ul>
-							<li>Defined in <a href="https://github.com/script-development/vue-services/blob/d1f4abd/types/index.d.ts#L39">index.d.ts:39</a></li>
+							<li>Defined in <a href="https://github.com/script-development/vue-services/blob/e4aa858/types/index.d.ts#L39">index.d.ts:39</a></li>
 						</ul>
 					</aside>
 				</section>
@@ -722,6 +836,12 @@
 						<a href="classes/translatorservice.html" class="tsd-kind-icon">Translator<wbr>Service</a>
 					</li>
 					<li class=" tsd-kind-type-alias">
+						<a href="globals.html#aftermiddleware" class="tsd-kind-icon">After<wbr>Middleware</a>
+					</li>
+					<li class=" tsd-kind-type-alias">
+						<a href="globals.html#beforemiddleware" class="tsd-kind-icon">Before<wbr>Middleware</a>
+					</li>
+					<li class=" tsd-kind-type-alias">
 						<a href="globals.html#cache" class="tsd-kind-icon">Cache</a>
 					</li>
 					<li class=" tsd-kind-type-alias">
@@ -732,6 +852,9 @@
 					</li>
 					<li class=" tsd-kind-type-alias">
 						<a href="globals.html#detaillistformatter" class="tsd-kind-icon">Detail<wbr>List<wbr>Formatter</a>
+					</li>
+					<li class=" tsd-kind-type-alias">
+						<a href="globals.html#errorbag" class="tsd-kind-icon">Error<wbr>Bag</a>
 					</li>
 					<li class=" tsd-kind-type-alias">
 						<a href="globals.html#formgroup" class="tsd-kind-icon">Form<wbr>Group</a>
@@ -762,6 +885,12 @@
 					</li>
 					<li class=" tsd-kind-type-alias">
 						<a href="globals.html#translation" class="tsd-kind-icon">Translation</a>
+					</li>
+					<li class=" tsd-kind-variable">
+						<a href="globals.html#plural" class="tsd-kind-icon">PLURAL</a>
+					</li>
+					<li class=" tsd-kind-variable">
+						<a href="globals.html#singular" class="tsd-kind-icon">SINGULAR</a>
 					</li>
 					<li class=" tsd-kind-variable">
 						<a href="globals.html#appstarter" class="tsd-kind-icon">app<wbr>Starter</a>

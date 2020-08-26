@@ -1,6 +1,6 @@
 import {TranslatorService} from './services';
 import {ComponentOptions, DefaultData, DefaultMethods, DefaultComputed, PropsDefinition} from 'vue/types/options';
-import {RouteConfig, Route} from 'vue-router/types/index';
+import {RouteConfig, Route, NavigationGuardNext} from 'vue-router/types/index';
 
 import VueRouter from 'vue-router/types/index';
 
@@ -338,6 +338,10 @@ export class RouteFactory {
      */
     createEdit(settings: RouteSettings): RouteConfig;
 }
+
+export type BeforeMiddleware = (to: Route, from: Route, next: NavigationGuardNext) => Boolean;
+export type AfterMiddleware = (to: Route, from: Route) => void;
+
 export class RouterService {
     /**
      * @param {RouteFactory} factory the router factory
@@ -346,18 +350,18 @@ export class RouterService {
     constructor(factory: RouteFactory, settings: RouteSettings);
     _factory: RouteFactory;
     _settings: RouteSettings;
-    _routerBeforeMiddleware: ((to: Route, from: Route, next: any) => boolean)[];
-    _routerAfterMiddleware: any[];
+    _routerBeforeMiddleware: BeforeMiddleware[];
+    _routerAfterMiddleware: AfterMiddleware[];
     /**
      * register middleware for the router before entering the route
-     * @param {Function} middlewareFunc the middleware function
+     * @param {BeforeMiddleware} middlewareFunc the middleware function
      */
-    registerBeforeMiddleware(middlewareFunc: Function): void;
+    registerBeforeMiddleware(middlewareFunc: BeforeMiddleware): void;
     /**
      * register middleware for the router after entering a route
-     * @param {Function} middlewareFunc the middleware function
+     * @param {AfterMiddleware} middlewareFunc the middleware function
      */
-    registerAfterMiddleware(middlewareFunc: Function): void;
+    registerAfterMiddleware(middlewareFunc: AfterMiddleware): void;
     /**
      * Add routes to the router
      * @param {RouteConfig[]} routes

@@ -137,14 +137,17 @@ export class HTTPService {
         });
     }
 
+    /** @param {RequestMiddleware} middlewareFunc */
     registerRequestMiddleware(middlewareFunc) {
         this._requestMiddleware.push(middlewareFunc);
     }
 
+    /** @param {ResponseMiddleware} middlewareFunc */
     registerResponseMiddleware(middlewareFunc) {
         this._responseMiddleware.push(middlewareFunc);
     }
 
+    /** @param {ResponseErrorMiddleware} middlewareFunc */
     registerResponseErrorMiddleware(middlewareFunc) {
         this._responseErrorMiddleware.push(middlewareFunc);
     }

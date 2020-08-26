@@ -1,6 +1,6 @@
 import {AxiosResponse, AxiosRequestConfig, AxiosInstance, AxiosError} from 'axios';
 import {Vue} from 'vue/types/vue';
-import {RouterService} from './routerService';
+import {RouterService, AfterMiddleware} from './routerService';
 import {StoreService} from './storeService';
 
 import {Component} from 'vue/types/index';
@@ -103,17 +103,65 @@ export class EventService {
     modal(message: string, okAction: Function, cancelAction?: Function): void;
 }
 
+export const PLURAL = 'plural';
+export const SINGULAR = 'singular';
+
 export class TranslatorService {
     /** @type {Object.<string, Translation>}*/
     _translations: {
-        [x: string]: Translation;
+        [key: string]: Translation;
     };
-    getTranslation(value: any, pluralOrSingular: any): any;
-    getPlural(value: any): any;
-    getSingular(value: any): any;
-    getCapitalizedSingular(value: any): string;
-    getCapitalizedPlural(value: any): string;
-    maybePluralize(count: any, value: any): string;
+    /**
+     * Get plural or singular translation for given value
+     *
+     * @param {String} value
+     * @param {PLURAL | SINGULAR} pluralOrSingular
+     *
+     * @throws {MissingTranslationError}
+     */
+    getTranslation(value: string, pluralOrSingular: typeof PLURAL | typeof SINGULAR): string;
+    /**
+     * Get the plural translation for the given value
+     *
+     * @param {String} value
+     *
+     * @throws {MissingTranslationError}
+     */
+    getPlural(value: string): string;
+    /**
+     * Get the singular translation for the given value
+     *
+     * @param {String} value
+     *
+     * @throws {MissingTranslationError}
+     */
+    getSingular(value: string): string;
+    /**
+     * Get the singular translation for the given value and capitalize it
+     *
+     * @param {String} value
+     *
+     * @throws {MissingTranslationError}
+     */
+    getCapitalizedSingular(value: string): string;
+    /**
+     * Get the plural translation for the given value and capitalize it
+     *
+     * @param {String} value
+     *
+     * @throws {MissingTranslationError}
+     */
+    getCapitalizedPlural(value: string): string;
+    /**
+     * Get the either the singular or plural translation, based on the given count
+     * Return the string `${count} ${translation}`
+     *
+     * @param {Number} count
+     * @param {String} value
+     *
+     * @throws {MissingTranslationError}
+     */
+    maybePluralize(count: number, value: string): string;
     /**
      * @param {string} key
      * @param {Translation} translation
@@ -122,12 +170,33 @@ export class TranslatorService {
 }
 
 export class StorageService {
-    set keepALive(arg: any);
-    get keepALive(): any;
-    setItem(key: any, value: any): void;
-    getItem(key: any): string;
+    /** @param {Boolean} value */
+    set keepALive(value: Boolean);
+    get keepALive(): Boolean;
+    /**
+     * Set the given value in the storage under the given key
+     * If the value is not of type String, it will be converted to String
+     *
+     * @param {String} key
+     * @param {String | any} value
+     */
+    setItem(key: string, value: string | any): void;
+    /**
+     * Get the value from the storage under the given key
+     *
+     * @param {String} key
+     */
+    getItem(key: string): string;
+    /**
+     * Empty the storage
+     */
     clear(): void;
 }
+
+type ErrorBag = {
+    [property: string]: string[];
+};
+
 export class ErrorService {
     /**
      * @param {StoreService} storeService
@@ -135,15 +204,28 @@ export class ErrorService {
      * @param {HTTPService} httpService the http service for communication with the API
      */
     constructor(storeService: StoreService, routerService: RouterService, httpService: HTTPService);
-    _storeModuleName: string;
     _storeService: StoreService;
     _routerService: RouterService;
     _httpService: HTTPService;
-    getErrors(): any;
-    setErrors(errors: any): void;
+
+    /**
+     * Get all the known errors
+     * @returns {ErrorBag}
+     */
+    getErrors(): ErrorBag;
+    /**
+     * Store the given errors, overriding every known error
+     *
+     * @param {ErrorBag} errors
+     */
+    setErrors(errors: ErrorBag): void;
+    /** Clear every known error */
     destroyErrors(): void;
-    get responseErrorMiddleware(): ({response}: {response: any}) => void;
-    get routeMiddleware(): (to: any, from: any) => void;
+
+    /** @returns {ResponseErrorMiddleware} */
+    get responseErrorMiddleware(): ResponseErrorMiddleware;
+    /** @returns {AfterMiddleware} */
+    get routeMiddleware(): AfterMiddleware;
 }
 export class LoadingService {
     /**
