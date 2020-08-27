@@ -268,17 +268,17 @@ export class StoreService {
      * @param {Module} [extraFunctionality] extra functionality added to the store
      */
     generateAndSetDefaultStoreModule(moduleName, endpoint, extraFunctionality) {
-        const moduleName = this._factory.createDefaultStore(moduleName, endpoint);
+        const storeModule = this._factory.createDefaultStore(moduleName, endpoint);
 
         if (extraFunctionality) {
             for (const key in extraFunctionality) {
                 for (const name in extraFunctionality[key]) {
-                    moduleName[key][name] = extraFunctionality[key][name];
+                    storeModule[key][name] = extraFunctionality[key][name];
                 }
             }
         }
 
-        this.registerModule(moduleName, moduleName);
+        this.registerModule(moduleName, storeModule);
     }
 
     /**
@@ -321,7 +321,7 @@ export class StoreService {
      * @throws {StoreModuleNotFoundError}
      */
     checkIfRequestedModuleExists(moduleName) {
-        if (this._storeService._moduleNames.indexOf(moduleName) !== -1) return;
+        if (this._moduleNames.indexOf(moduleName) !== -1) return;
 
         throw new StoreModuleNotFoundError(
             `Could not find ${moduleName}, only these modules exists at the moment: ${this._storeService._moduleNames.toString()}`

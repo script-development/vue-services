@@ -1346,36 +1346,37 @@ class StoreService {
     /**
      * Get all from data from the given store module
      *
-     * @param {String} storeModule the module from which to get all
+     * @param {String} moduleName the module from which to get all
      *
      * @returns {Item[]}
      */
-    getAllFromStore(storeModule) {
+    getAllFromStore(moduleName) {
         this.checkIfRequestedModuleExists(moduleName);
-        return this._store.getters[storeModule + this.getReadAllGetter()];
+        return this._store.getters[moduleName + this.getReadAllGetter()];
     }
 
     /**
      * Get all data from the given store module by id
      *
-     * @param {String} storeModule the module from which to get all
+     * @param {String} moduleName the module from which to get all
      * @param {String} id the id of the data object to get
      *
      * @return {Item}
      */
-    getByIdFromStore(storeModule, id) {
-        return this._store.getters[storeModule + this.getReadByIdGetter()](id);
+    getByIdFromStore(moduleName, id) {
+        this.checkIfRequestedModuleExists(moduleName);
+        return this._store.getters[moduleName + this.getReadByIdGetter()](id);
     }
 
     /**
      * dispatch an action to the store, which deletes an item on the server
      *
-     * @param {String} storeModule the store module for which an item must be deleted
+     * @param {String} moduleName the store module for which an item must be deleted
      * @param {String} id the id of the item to be deleted
      */
-    destroy(storeModule, id) {
-        return this._store.dispatch(storeModule + this.getDeleteAction(), id).then(response => {
-            this._store.commit(storeModule + this.getDeleteMutation(), id);
+    destroy(moduleName, id) {
+        return this._store.dispatch(moduleName + this.getDeleteAction(), id).then(response => {
+            this._store.commit(moduleName + this.getDeleteMutation(), id);
             return response;
         });
     }
@@ -1383,50 +1384,50 @@ class StoreService {
     /**
      * dispatch an action to the store, which updates an item on the server
      *
-     * @param {String} storeModule the store module for which an item must be updated
+     * @param {String} moduleName the store module for which an item must be updated
      * @param {Item} item the item to be updated
      */
-    update(storeModule, item) {
-        return this._store.dispatch(storeModule + this.getUpdateAction(), item);
+    update(moduleName, item) {
+        return this._store.dispatch(moduleName + this.getUpdateAction(), item);
     }
 
     /**
      * dispatch an action to the store, which creates an item on the server
      *
-     * @param {String} storeModule the store module for which an item must be created
+     * @param {String} moduleName the store module for which an item must be created
      * @param {Item} item the item to be created
      */
-    create(storeModule, item) {
-        return this._store.dispatch(storeModule + this.getCreateAction(), item);
+    create(moduleName, item) {
+        return this._store.dispatch(moduleName + this.getCreateAction(), item);
     }
 
     /**
      * dispatch an action to the store, which reads all items on the server
      *
-     * @param {String} storeModule the store module for which all items must be read
+     * @param {String} moduleName the store module for which all items must be read
      */
-    read(storeModule) {
-        return this._store.dispatch(storeModule + this.getReadAction());
+    read(moduleName) {
+        return this._store.dispatch(moduleName + this.getReadAction());
     }
 
     /**
      * dispatch an action to the store, which reads an item on the server
      *
-     * @param {String} storeModule the store module for which the item must be read
+     * @param {String} moduleName the store module for which the item must be read
      * @param {Number} id the id to be read
      */
-    show(storeModule, id) {
-        return this._store.dispatch(storeModule + this.getReadAction(), id);
+    show(moduleName, id) {
+        return this._store.dispatch(moduleName + this.getReadAction(), id);
     }
 
     /**
      * Set all the data in the store module
      *
-     * @param {String} storeModule the module to fill the data with
+     * @param {String} moduleName the module to fill the data with
      * @param {Item | Item[]} data data to fill the store with
      */
-    setAllInStore(storeModule, data) {
-        return this._store.dispatch(storeModule + this.getSetAllInStoreAction(), data);
+    setAllInStore(moduleName, data) {
+        return this._store.dispatch(moduleName + this.getSetAllInStoreAction(), data);
     }
 
     /**
@@ -1596,7 +1597,7 @@ class StoreService {
      * @throws {StoreModuleNotFoundError}
      */
     checkIfRequestedModuleExists(moduleName) {
-        if (this._storeService._moduleNames.indexOf(moduleName) !== -1) return;
+        if (this._moduleNames.indexOf(moduleName) !== -1) return;
 
         throw new StoreModuleNotFoundError(
             `Could not find ${moduleName}, only these modules exists at the moment: ${this._storeService._moduleNames.toString()}`
