@@ -337,6 +337,10 @@ export class AuthService {
      * Sends a request to the server to get the logged in user
      */
     getLoggedInUser(): void;
+    goToForgotPasswordPage(): void;
+    goToResetPasswordPage(): void;
+    goToSetPasswordPage(): void;
+
     get responseErrorMiddleware(): ResponseErrorMiddleware;
     get routeMiddleware(): BeforeMiddleware;
     setRoutes(): void;

@@ -26,7 +26,11 @@ import {MissingDefaultLoggedinPageError} from '../../errors/MissingDefaultLogged
 
 const LOGIN_ACTION = 'login';
 const LOGOUT_ACTION = 'logout';
+
 const LOGIN_ROUTE_NAME = 'Login';
+const FORGOT_PASSWORD_ROUTE_NAME = 'ForgotPassword';
+const RESET_PASSWORD_ROUTE_NAME = 'ResetPassword';
+const SET_PASSWORD_ROUTE_NAME = 'SetPassword';
 
 const STORE_MODULE_NAME = 'auth';
 
@@ -192,13 +196,20 @@ export class AuthService {
         return this._storeService.dispatch(STORE_MODULE_NAME, 'resetPassword', data);
     }
 
-    goToStandardLoggedInPage() {
-        this._routerService.goToRoute(this.defaultLoggedInPageName);
-    }
+    // prettier-ignore
+    goToStandardLoggedInPage() { this._routerService.goToRoute(this.defaultLoggedInPageName); }
 
-    goToLoginPage() {
-        this._routerService.goToRoute(LOGIN_ROUTE_NAME);
-    }
+    // prettier-ignore
+    goToLoginPage() { this._routerService.goToRoute(LOGIN_ROUTE_NAME); }
+
+    // prettier-ignore
+    goToForgotPasswordPage() { this._routerService.goToRoute(FORGOT_PASSWORD_ROUTE_NAME); }
+
+    // prettier-ignore
+    goToResetPasswordPage() { this._routerService.goToRoute(RESET_PASSWORD_ROUTE_NAME); }
+
+    // prettier-ignore
+    goToSetPasswordPage() { this._routerService.goToRoute(SET_PASSWORD_ROUTE_NAME); }
 
     /**
      * Sends a request to the server to get the logged in user
@@ -258,7 +269,7 @@ export class AuthService {
             ),
             this._routerService._factory.createConfig(
                 '/wachtwoord-vergeten',
-                'ForgotPassword',
+                FORGOT_PASSWORD_ROUTE_NAME,
                 this.forgotPasswordPage,
                 false,
                 false,
@@ -267,7 +278,7 @@ export class AuthService {
             ),
             this._routerService._factory.createConfig(
                 '/wachtwoord-resetten',
-                'ResetPassword',
+                RESET_PASSWORD_ROUTE_NAME,
                 this.resetPasswordPage,
                 false,
                 false,
@@ -280,7 +291,7 @@ export class AuthService {
             routes.push(
                 this._routerService._factory.createConfig(
                     '/wachtwoord-setten',
-                    'SetPassword',
+                    SET_PASSWORD_ROUTE_NAME,
                     this.setPasswordPage,
                     false,
                     false,
