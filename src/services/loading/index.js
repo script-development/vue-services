@@ -1,6 +1,9 @@
 /**
  * @typedef {import('../store').StoreService} StoreService
  * @typedef {import('../http').HTTPService} HTTPService
+ * @typedef {import('../http').RequestMiddleware} RequestMiddleware
+ * @typedef {import('../http').ResponseMiddleware} ResponseMiddleware
+ * @typedef {import('../http').ResponseErrorMiddleware} ResponseErrorMiddleware
  */
 
 export class LoadingService {
@@ -67,10 +70,12 @@ export class LoadingService {
         );
     }
 
+    /** @returns {RequestMiddleware} */
     get requestMiddleware() {
         return () => (this.loading = true);
     }
 
+    /** @returns {ResponseMiddleware | ResponseErrorMiddleware} */
     get responseMiddleware() {
         return () => (this.loading = false);
     }

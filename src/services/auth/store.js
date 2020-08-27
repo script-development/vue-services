@@ -47,7 +47,7 @@ export default (storageService, httpService, authService) => {
             login: ({commit}, payload) => {
                 storageService.keepALive = payload.rememberMe;
                 commit('LOGIN');
-                return httpService.post('/login', payload).then(response => {
+                return httpService.post(authService.apiLoginRoute, payload).then(response => {
                     commit('LOGIN_SUCCES');
                     const user = response.data.user;
                     if (user) commit('SET_LOGGED_IN_USER', user);
@@ -58,7 +58,7 @@ export default (storageService, httpService, authService) => {
                 });
             },
             logout: ({commit}) => {
-                return httpService.post('logout').then(response => {
+                return httpService.post(authService.apiLogoutRoute).then(response => {
                     commit('LOGOUT');
                     return response;
                 });
@@ -67,17 +67,17 @@ export default (storageService, httpService, authService) => {
             logoutApp: ({commit}) => commit('LOGOUT'),
 
             sendEmailResetPassword: (_, email) => {
-                return httpService.post('/sendEmailResetPassword', email).then(response => {
+                return httpService.post(authService.apiSendEmailResetPasswordRoute, {email}).then(response => {
                     if (response.status == 200) authService.goToLoginPage();
                 });
             },
 
             resetPassword: (_, data) => {
-                return httpService.post('/resetpassword', data).then(authService.goToLoginPage());
+                return httpService.post(authService.apiResetpasswordRoute, data).then(authService.goToLoginPage());
             },
 
             me: ({commit}) => {
-                return httpService.get('me').then(response => {
+                return httpService.get(authService.apiLoggedInCheckRoute).then(response => {
                     const user = response.data.user;
                     if (user) commit('SET_LOGGED_IN_USER', user);
                     const isAdmin = response.data.isAdmin;

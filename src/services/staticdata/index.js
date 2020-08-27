@@ -17,6 +17,8 @@ try {
     msgpack = require('@msgpack/msgpack');
 } catch (error) {}
 
+const MSG_PACK_DATA_TYPE = 'msg-pack';
+
 export class StaticDataService {
     /**
      * @param {StoreService} storeService
@@ -30,6 +32,8 @@ export class StaticDataService {
             normal: [],
             msgpack: [],
         };
+
+        this._apiStaticDataEndpoint = 'staticdata';
     }
     /**
      * initiates the setup for the default store modules
@@ -40,7 +44,7 @@ export class StaticDataService {
         for (const moduleName of data) {
             if (typeof moduleName == 'string') {
                 this.createStoreModule(moduleName);
-            } else if (typeof moduleName == 'object' && Object.values(moduleName) == 'msg-pack') {
+            } else if (typeof moduleName == 'object' && Object.values(moduleName) == MSG_PACK_DATA_TYPE) {
                 this.createStoreModuleMsgPack(Object.keys(moduleName).toString());
             }
         }
@@ -82,7 +86,7 @@ export class StaticDataService {
      * Sends an action to the store which reads all the staticdata from the server defined in the 'constants/staticdata.js' file
      */
     getStaticData() {
-        this._httpService.get('staticdata');
+        this._httpService.get(this._apiStaticDataEndpoint);
 
         for (const staticDataName of this._data.msgpack) {
             this._storeService.read(staticDataName);

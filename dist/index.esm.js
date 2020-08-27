@@ -1651,6 +1651,9 @@ class ErrorService {
 /**
  * @typedef {import('../store').StoreService} StoreService
  * @typedef {import('../http').HTTPService} HTTPService
+ * @typedef {import('../http').RequestMiddleware} RequestMiddleware
+ * @typedef {import('../http').ResponseMiddleware} ResponseMiddleware
+ * @typedef {import('../http').ResponseErrorMiddleware} ResponseErrorMiddleware
  */
 
 class LoadingService {
@@ -1717,10 +1720,12 @@ class LoadingService {
         );
     }
 
+    /** @returns {RequestMiddleware} */
     get requestMiddleware() {
         return () => (this.loading = true);
     }
 
+    /** @returns {ResponseMiddleware | ResponseErrorMiddleware} */
     get responseMiddleware() {
         return () => (this.loading = false);
     }
@@ -1745,6 +1750,8 @@ try {
     msgpack = require('@msgpack/msgpack');
 } catch (error) {}
 
+const MSG_PACK_DATA_TYPE = 'msg-pack';
+
 class StaticDataService {
     /**
      * @param {StoreService} storeService
@@ -1758,6 +1765,8 @@ class StaticDataService {
             normal: [],
             msgpack: [],
         };
+
+        this._apiStaticDataEndpoint = 'staticdata';
     }
     /**
      * initiates the setup for the default store modules
@@ -1768,7 +1777,7 @@ class StaticDataService {
         for (const moduleName of data) {
             if (typeof moduleName == 'string') {
                 this.createStoreModule(moduleName);
-            } else if (typeof moduleName == 'object' && Object.values(moduleName) == 'msg-pack') {
+            } else if (typeof moduleName == 'object' && Object.values(moduleName) == MSG_PACK_DATA_TYPE) {
                 this.createStoreModuleMsgPack(Object.keys(moduleName).toString());
             }
         }
@@ -1810,7 +1819,7 @@ class StaticDataService {
      * Sends an action to the store which reads all the staticdata from the server defined in the 'constants/staticdata.js' file
      */
     getStaticData() {
-        this._httpService.get('staticdata');
+        this._httpService.get(this._apiStaticDataEndpoint);
 
         for (const staticDataName of this._data.msgpack) {
             this._storeService.read(staticDataName);
@@ -1886,7 +1895,7 @@ var storeModule = (storageService, httpService, authService) => {
             login: ({commit}, payload) => {
                 storageService.keepALive = payload.rememberMe;
                 commit('LOGIN');
-                return httpService.post('/login', payload).then(response => {
+                return httpService.post(authService.apiLoginRoute, payload).then(response => {
                     commit('LOGIN_SUCCES');
                     const user = response.data.user;
                     if (user) commit('SET_LOGGED_IN_USER', user);
@@ -1897,7 +1906,7 @@ var storeModule = (storageService, httpService, authService) => {
                 });
             },
             logout: ({commit}) => {
-                return httpService.post('logout').then(response => {
+                return httpService.post(authService.apiLogoutRoute).then(response => {
                     commit('LOGOUT');
                     return response;
                 });
@@ -1906,17 +1915,17 @@ var storeModule = (storageService, httpService, authService) => {
             logoutApp: ({commit}) => commit('LOGOUT'),
 
             sendEmailResetPassword: (_, email) => {
-                return httpService.post('/sendEmailResetPassword', email).then(response => {
+                return httpService.post(authService.apiSendEmailResetPasswordRoute, {email}).then(response => {
                     if (response.status == 200) authService.goToLoginPage();
                 });
             },
 
             resetPassword: (_, data) => {
-                return httpService.post('/resetpassword', data).then(authService.goToLoginPage());
+                return httpService.post(authService.apiResetpasswordRoute, data).then(authService.goToLoginPage());
             },
 
             me: ({commit}) => {
-                return httpService.get('me').then(response => {
+                return httpService.get(authService.apiLoggedInCheckRoute).then(response => {
                     const user = response.data.user;
                     if (user) commit('SET_LOGGED_IN_USER', user);
                     const isAdmin = response.data.isAdmin;
@@ -1963,16 +1972,29 @@ class MissingDefaultLoggedinPageError extends Error {
 
 /**
  * @typedef {import('../router').RouterService} RouterService
+ * @typedef {import('../router').BeforeMiddleware} BeforeMiddleware
  * @typedef {import('../store').StoreService} StoreService
  * @typedef {import('../storage').StorageService} StorageService
  * @typedef {import('../http').HTTPService} HTTPService
+ * @typedef {import('../http').ResponseErrorMiddleware} ResponseErrorMiddleware
+
  * @typedef {import('vue').Component} Component
- * @typedef {import('vue-router').NavigationGuard} NavigationGuard
+ *
+ * @typedef {Object} Credentials
+ * @property {String} email the email to login with
+ * @property {String} password the password to login with
+ * @property {Boolean} rememberMe if you want a consistent login
+ *
+ * @typedef {Object} ResetPasswordData
+ * @property {String} password
+ * @property {String} repeatPassword
  */
 
 const LOGIN_ACTION = 'login';
 const LOGOUT_ACTION = 'logout';
 const LOGIN_ROUTE_NAME = 'Login';
+
+const STORE_MODULE_NAME$1 = 'auth';
 
 class AuthService {
     /**
@@ -1987,7 +2009,13 @@ class AuthService {
         this._storageService = storageService;
         this._httpService = httpService;
 
-        this._storeService.registerModule(this.storeModuleName, storeModule(storageService, httpService, this));
+        this._storeService.registerModule(STORE_MODULE_NAME$1, storeModule(storageService, httpService, this));
+
+        this._apiLoginRoute = '/login';
+        this._apiLogoutRoute = '/logout';
+        this._apiLoggedInCheckRoute = '/me';
+        this._apiSendEmailResetPasswordRoute = '/send-email-reset-password';
+        this._apiResetpasswordRoute = '/resetpassword';
 
         this._defaultLoggedInPageName;
         this._loginPage = LoginPage;
@@ -1997,39 +2025,77 @@ class AuthService {
 
         this._httpService.registerResponseErrorMiddleware(this.responseErrorMiddleware);
         this._routerService.registerBeforeMiddleware(this.routeMiddleware);
-
-        // TODO :: this is standard behaviour for now, need to be able to adjust this
     }
 
-    // prettier-ignore
-    get storeModuleName() {return 'auth'}
+    get apiLoginRoute() {
+        return this._apiLoginRoute;
+    }
+
+    set apiLoginRoute(route) {
+        if (!route.startsWith('/')) route = '/' + route;
+        this._apiLoginRoute = route;
+    }
+
+    get apiLogoutRoute() {
+        return this._apiLogoutRoute;
+    }
+
+    set apiLogoutRoute(route) {
+        if (!route.startsWith('/')) route = '/' + route;
+        this._apiLogoutRoute = route;
+    }
+
+    get apiLoggedInCheckRoute() {
+        return this._apiLoggedInCheckRoute;
+    }
+
+    set apiLoggedInCheckRoute(route) {
+        if (!route.startsWith('/')) route = '/' + route;
+        this._apiLoggedInCheckRoute = route;
+    }
+
+    get apiSendEmailResetPasswordRoute() {
+        return this._apiSendEmailResetPasswordRoute;
+    }
+
+    set apiSendEmailResetPasswordRoute(route) {
+        if (!route.startsWith('/')) route = '/' + route;
+        this._apiSendEmailResetPasswordRoute = route;
+    }
+
+    get apiResetpasswordRoute() {
+        return this._apiResetpasswordRoute;
+    }
+
+    set apiResetpasswordRoute(route) {
+        if (!route.startsWith('/')) route = '/' + route;
+        this._apiResetpasswordRoute = route;
+    }
 
     get isLoggedin() {
         // TODO :: where to set isLoggedIn?
-        return this._storeService.get(this.storeModuleName, 'isLoggedIn');
+        return this._storeService.get(STORE_MODULE_NAME$1, 'isLoggedIn');
     }
 
     // TODO :: this is not basic usage, how to implement this?
     get isAdmin() {
         // TODO :: where to set isAdmin?
-        return this._storeService.get(this.storeModuleName, 'isAdmin');
+        return this._storeService.get(STORE_MODULE_NAME$1, 'isAdmin');
     }
 
     get loggedInUser() {
-        return this._storeService.get(this.storeModuleName, 'loggedInUser');
+        return this._storeService.get(STORE_MODULE_NAME$1, 'loggedInUser');
     }
 
     get defaultLoggedInPageName() {
         if (!this._defaultLoggedInPageName)
-            throw new MissingDefaultLoggedinPageError(
-                'Please set the default logged in page with authService.defaultLoggedInPageName = "page.name"'
-            );
+            throw new MissingDefaultLoggedinPageError('Please add the default login page to the appStarter');
         return this._defaultLoggedInPageName;
     }
 
     // prettier-ignore
-    /** @param {string} page */
-    set defaultLoggedInPageName(page){this._defaultLoggedInPageName = page;}
+    /** @param {string} pageName */
+    set defaultLoggedInPageName(pageName){this._defaultLoggedInPageName = pageName;}
 
     // prettier-ignore
     get loginPage() {return this._loginPage}
@@ -2061,14 +2127,11 @@ class AuthService {
 
     /**
      * Login to the app
-     * @param {Object} credentials the credentials to login with
-     * @param {String} credentials.email the email to login with
-     * @param {String} credentials.password the password to login with
-     * @param {Boolean} credentials.rememberMe if you want a consistent login
+     * @param {Credentials} credentials the credentials to login with
      */
     login(credentials) {
         // TODO :: isAdmin should be something like role
-        return this._storeService.dispatch(this.storeModuleName, LOGIN_ACTION, credentials).then(response => {
+        return this._storeService.dispatch(STORE_MODULE_NAME$1, LOGIN_ACTION, credentials).then(response => {
             // TODO :: check roles here somehow?
             // if (isAdmin) return this._routerService.goToRoute('courses.edit');
             this.goToStandardLoggedInPage();
@@ -2077,15 +2140,22 @@ class AuthService {
     }
 
     logout() {
-        return this._storeService.dispatch(this.storeModuleName, LOGOUT_ACTION);
+        return this._storeService.dispatch(STORE_MODULE_NAME$1, LOGOUT_ACTION);
     }
 
+    /**
+     * Send a reset password email to the given email
+     * @param {String} email
+     */
     sendEmailResetPassword(email) {
-        return this._storeService.dispatch(this.storeModuleName, 'sendEmailResetPassword', email);
+        return this._storeService.dispatch(STORE_MODULE_NAME$1, 'sendEmailResetPassword', email);
     }
 
+    /**
+     * @param {ResetPasswordData} data
+     */
     resetPassword(data) {
-        return this._storeService.dispatch(this.storeModuleName, 'resetPassword', data);
+        return this._storeService.dispatch(STORE_MODULE_NAME$1, 'resetPassword', data);
     }
 
     goToStandardLoggedInPage() {
@@ -2100,9 +2170,10 @@ class AuthService {
      * Sends a request to the server to get the logged in user
      */
     getLoggedInUser() {
-        this._storeService.dispatch(this.storeModuleName, 'me');
+        this._storeService.dispatch(STORE_MODULE_NAME$1, 'me');
     }
 
+    /** @returns {ResponseErrorMiddleware} */
     get responseErrorMiddleware() {
         return ({response}) => {
             if (!response) return;
@@ -2110,12 +2181,12 @@ class AuthService {
             if (status == 403) {
                 this.goToStandardLoggedInPage();
             } else if (status == 401) {
-                this._storeService.dispatch(this.storeModuleName, 'logoutApp');
+                this._storeService.dispatch(STORE_MODULE_NAME$1, 'logoutApp');
             }
         };
     }
 
-    /** @returns {NavigationGuard} */
+    /** @returns {BeforeMiddleware} */
     get routeMiddleware() {
         return (to, from, next) => {
             const isLoggedIn = this.isLoggedin;
