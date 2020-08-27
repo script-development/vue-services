@@ -1256,6 +1256,20 @@ class StoreModuleFactory {
     set setAllAction(value) { this._setAllAction = value; }
 }
 
+class StoreModuleNotFoundError extends Error {
+    constructor(...params) {
+        // Pass remaining arguments (including vendor specific ones) to parent constructor
+        super(...params);
+
+        // Maintains proper stack trace for where our error was thrown (only available on V8)
+        if (Error.captureStackTrace) {
+            Error.captureStackTrace(this, StoreModuleNotFoundError);
+        }
+
+        this.name = 'StoreModuleNotFoundError';
+    }
+}
+
 /**
  * @typedef {import('./factory').StoreModuleFactory} StoreModuleFactory
  * @typedef {import('../http').HTTPService} HTTPService
@@ -1263,6 +1277,7 @@ class StoreModuleFactory {
  * @typedef {import('vuex').Module} Module
  * @typedef {import('axios').AxiosRequestConfig} AxiosRequestConfig
  *
+ * @typedef {import('../../errors/StoreModuleNotFoundError').StoreModuleNotFoundError} StoreModuleNotFoundError
  * @typedef {import('../../controllers').Item} Item
  */
 
@@ -1307,6 +1322,7 @@ class StoreService {
      * @param {String} getter the name of the getter
      */
     get(moduleName, getter) {
+        this.checkIfRequestedModuleExists(moduleName);
         return this._store.getters[moduleName + this.storeSeperator + getter];
     }
 
@@ -1329,6 +1345,7 @@ class StoreService {
      * @returns {Item[]}
      */
     getAllFromStore(storeModule) {
+        this.checkIfRequestedModuleExists(moduleName);
         return this._store.getters[storeModule + this.getReadAllGetter()];
     }
 
@@ -1562,6 +1579,22 @@ class StoreService {
      */
     createExtraGetAction(endpoint, options) {
         return this._factory.createExtraGetAction(endpoint, options);
+    }
+
+    /**
+     * Checks if requested module exists in the store
+     * If not, throws a StoreModuleNotFoundError
+     *
+     * @param {String} moduleName
+     *
+     * @throws {StoreModuleNotFoundError}
+     */
+    checkIfRequestedModuleExists(moduleName) {
+        if (this._storeService._moduleNames.indexOf(moduleName) !== -1) return;
+
+        throw new StoreModuleNotFoundError(
+            `Could not find ${moduleName}, only these modules exists at the moment: ${this._storeService._moduleNames.toString()}`
+        );
     }
 }
 
@@ -3514,26 +3547,11 @@ var MinimalRouterView = {
     },
 };
 
-class StoreModuleNotFoundError extends Error {
-    constructor(...params) {
-        // Pass remaining arguments (including vendor specific ones) to parent constructor
-        super(...params);
-
-        // Maintains proper stack trace for where our error was thrown (only available on V8)
-        if (Error.captureStackTrace) {
-            Error.captureStackTrace(this, StoreModuleNotFoundError);
-        }
-
-        this.name = 'StoreModuleNotFoundError';
-    }
-}
-
 /**
  * @typedef {import('../services/translator').Translation} Translation
  * @typedef {import('vuex').Module} Module
  * @typedef {import('vuex').ActionMethod} ActionMethod
  * @typedef {import('vuex').Mutation} MutationMethod
- * @typedef {import('../errors/StoreModuleNotFoundError').StoreModuleNotFoundError} StoreModuleNotFoundError
  *
  * @typedef {(State) => any} GetterMethod
  *
@@ -3624,19 +3642,12 @@ class BaseController {
 
     /**
      * Get alle items from the given moduleName
-     * If moduleName is not found throws a StoreModuleNotFoundError
      *
      * @param {String} moduleName moduleName to get all items from
      *
      * @returns {Item[]}
-     * @throws {StoreModuleNotFoundError}
      */
     getAllFrom(moduleName) {
-        if (this._storeService._moduleNames.indexOf(moduleName) === -1) {
-            throw new StoreModuleNotFoundError(
-                `Could not find ${moduleName}, only these modules exists at the moment: ${this._storeService._moduleNames.toString()}`
-            );
-        }
         return this._storeService.getAllFromStore(moduleName);
     }
 

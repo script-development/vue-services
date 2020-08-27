@@ -3,7 +3,6 @@
  * @typedef {import('vuex').Module} Module
  * @typedef {import('vuex').ActionMethod} ActionMethod
  * @typedef {import('vuex').Mutation} MutationMethod
- * @typedef {import('../errors/StoreModuleNotFoundError').StoreModuleNotFoundError} StoreModuleNotFoundError
  *
  * @typedef {(State) => any} GetterMethod
  *
@@ -12,7 +11,6 @@
 
 import MinimalRouterView from '../components/MinimalRouterView';
 import {storeService, routerService, eventService, translatorService} from '../services';
-import {StoreModuleNotFoundError} from '../errors/StoreModuleNotFoundError';
 
 export class BaseController {
     /**
@@ -98,19 +96,12 @@ export class BaseController {
 
     /**
      * Get alle items from the given moduleName
-     * If moduleName is not found throws a StoreModuleNotFoundError
      *
      * @param {String} moduleName moduleName to get all items from
      *
      * @returns {Item[]}
-     * @throws {StoreModuleNotFoundError}
      */
     getAllFrom(moduleName) {
-        if (this._storeService._moduleNames.indexOf(moduleName) === -1) {
-            throw new StoreModuleNotFoundError(
-                `Could not find ${moduleName}, only these modules exists at the moment: ${this._storeService._moduleNames.toString()}`
-            );
-        }
         return this._storeService.getAllFromStore(moduleName);
     }
 

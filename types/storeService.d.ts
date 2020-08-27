@@ -167,57 +167,57 @@ export class StoreService {
     /**
      * Get all from data from the given store module
      *
-     * @param {String} storeModule the module from which to get all
+     * @param {String} moduleName the module from which to get all
      */
-    getAllFromStore(storeModule: string): Item[];
+    getAllFromStore(moduleName: string): Item[];
     /**
      * Get all data from the given store module by id
      *
-     * @param {String} storeModule the module from which to get all
+     * @param {String} moduleName the module from which to get all
      * @param {String} id the id of the data object to get
      */
-    getByIdFromStore(storeModule: string, id: string): Item;
+    getByIdFromStore(moduleName: string, id: string): Item;
     /**
      * dispatch an action to the store, which deletes an item on the server
      *
-     * @param {String} storeModule the store module for which an item must be deleted
+     * @param {String} moduleName the store module for which an item must be deleted
      * @param {String} id the id of the item to be deleted
      */
-    destroy(storeModule: string, id: string): Promise<any>;
+    destroy(moduleName: string, id: string): Promise<any>;
     /**
      * dispatch an action to the store, which updates an item on the server
      *
-     * @param {String} storeModule the store module for which an item must be updated
+     * @param {String} moduleName the store module for which an item must be updated
      * @param {Item} item the item to be updated
      */
-    update(storeModule: string, item: Item): Promise<any>;
+    update(moduleName: string, item: Item): Promise<any>;
     /**
      * dispatch an action to the store, which creates an item on the server
      *
-     * @param {String} storeModule the store module for which an item must be created
+     * @param {String} moduleName the store module for which an item must be created
      * @param {Item} item the item to be created
      */
-    create(storeModule: string, item: Item): Promise<any>;
+    create(moduleName: string, item: Item): Promise<any>;
     /**
      * dispatch an action to the store, which reads all items on the server
      *
-     * @param {String} storeModule the store module for which all items must be read
+     * @param {String} moduleName the store module for which all items must be read
      */
-    read(storeModule: string): Promise<any>;
+    read(moduleName: string): Promise<any>;
     /**
      * dispatch an action to the store, which reads an item on the server
      *
-     * @param {String} storeModule the store module for which the item must be read
+     * @param {String} moduleName the store module for which the item must be read
      * @param {Number} id the id to be read
      */
-    show(storeModule: string, id: number): Promise<any>;
+    show(moduleName: string, id: number): Promise<any>;
     /**
      * Set all the data in the store module
      *
-     * @param {String} storeModule the module to fill the data with
+     * @param {String} moduleName the module to fill the data with
      * @param {Item | Item[]} data data to fill the store with
      */
-    setAllInStore(storeModule: string, data: Item | Item[]): Promise<any>;
+    setAllInStore(moduleName: string, data: Item | Item[]): Promise<any>;
     /**
      *  get the read all from store getter with or without seperator
      * @param {Boolean} [seperator] with or without seperator, default true
@@ -315,4 +315,14 @@ export class StoreService {
     ): {
         [x: string]: (_: any, payload: any) => Promise<AxiosResponse<any>>;
     };
+
+    /**
+     * Checks if requested module exists in the store
+     * If not, throws a StoreModuleNotFoundError
+     *
+     * @param {String} moduleName
+     *
+     * @throws {StoreModuleNotFoundError}
+     */
+    checkIfRequestedModuleExists(moduleName: string): void;
 }
