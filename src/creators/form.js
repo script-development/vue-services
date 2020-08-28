@@ -118,9 +118,10 @@ export class FormCreator {
 
         switch (inputData.type) {
             case 'string':
-                let placeholder = `Vul hier uw ${inputData.label.toLowerCase()} in`;
-                if (inputData.placeholder) placeholder = inputData.placeholder;
-                return this._h(StringInput(placeholder, false), valueBinding);
+                return this._h(
+                    StringInput(inputData.placeholder || `Vul hier uw ${inputData.label.toLowerCase()} in`, false),
+                    valueBinding
+                );
             case 'select':
                 return this._h(SelectInput(inputData.options, inputData.valueField, inputData.textField), valueBinding);
             case 'number':
@@ -164,7 +165,7 @@ export class FormCreator {
             {
                 class: 'form-group',
                 on: {
-                    click: event => {
+                    click: _ => {
                         if (inputField[0].componentInstance && inputField[0].componentInstance.focus) {
                             inputField[0].componentInstance.focus();
                         } else if (inputField[0].elm) {

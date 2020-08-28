@@ -73,6 +73,6 @@ export class ErrorService {
 
     /** @returns {AfterMiddleware} */
     get routeMiddleware() {
-        return (to, from) => this.setErrors({});
+        return _ => this.setErrors({});
     }
 }

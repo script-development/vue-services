@@ -15,6 +15,7 @@ let msgpack;
  */
 try {
     msgpack = require('@msgpack/msgpack');
+    // eslint-disable-next-line
 } catch (error) {}
 
 const MSG_PACK_DATA_TYPE = 'msg-pack';

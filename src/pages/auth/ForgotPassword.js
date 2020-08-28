@@ -1,6 +1,5 @@
 export default {
     render(h) {
-      h("div", ["Implement your own forgot password page!"]);
+        h('div', ['Implement your own forgot password page!']);
     },
-  };
-  
+};

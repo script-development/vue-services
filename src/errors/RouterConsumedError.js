@@ -1,13 +1,13 @@
-export class MissingTranslationError extends Error {
+export class RouterConsumedError extends Error {
     constructor(...params) {
         // Pass remaining arguments (including vendor specific ones) to parent constructor
         super(...params);
 
         // Maintains proper stack trace for where our error was thrown (only available on V8)
         if (Error.captureStackTrace) {
-            Error.captureStackTrace(this, MissingTranslationError);
+            Error.captureStackTrace(this, RouterConsumedError);
         }
 
-        this.name = 'MissingTranslationError';
+        this.name = 'RouterConsumedError';
     }
 }

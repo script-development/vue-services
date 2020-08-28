@@ -142,7 +142,7 @@ export class EditPageCreator {
         if (!Object.keys(query).length) return;
 
         for (const key in query) {
-            if (editable.hasOwnProperty(key)) {
+            if (editable[key]) {
                 editable[key] = query[key];
             }
         }

@@ -11,18 +11,25 @@
         "src"
     ],
     "scripts": {
-        "test": "echo \"Error: no test specified\" && exit 1",
-        "build": "rollup src/index.js --file dist/index.js --format iife",
+        "test": "mocha --parallel --require @babel/register",
+        "build": "eslint ./src && rollup src/index.js --file dist/index.js --format iife",
         "dev": "rollup -c scripts/config.js",
         "watch": "rollup -c scripts/config.js --watch",
         "pub": "npm version patch && npm publish",
-        "docs": "typedoc"
+        "docs": "typedoc",
+        "lint": "eslint ./src"
     },
     "author": "Script",
     "license": "MIT",
     "devDependencies": {
+        "@babel/core": "^7.11.4",
+        "@babel/preset-env": "^7.11.0",
+        "@babel/register": "^7.10.5",
         "@rollup/plugin-node-resolve": "^9.0.0",
+        "eslint": "^7.7.0",
+        "eslint-plugin-standard": "^4.0.1",
         "husky": "^4.2.5",
+        "mocha": "^8.1.2",
         "prettier": "^2.1.1",
         "pretty-quick": "^3.0.0",
         "rollup": "^2.26.6",

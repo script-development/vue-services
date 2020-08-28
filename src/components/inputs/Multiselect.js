@@ -5,6 +5,7 @@ let Multiselect;
 
 try {
     Multiselect = require('vue-multiselect').default;
+    // eslint-disable-next-line
 } catch (error) {}
 
 /**

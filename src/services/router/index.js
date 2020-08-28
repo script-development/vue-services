@@ -9,6 +9,7 @@
  * @typedef {(to:Route, from:Route, next:NavigationGuardNext) => Boolean} BeforeMiddleware
  * @typedef {(to:Route, from:Route) => void} AfterMiddleware
  */
+import {RouterConsumedError} from '../../errors/RouterConsumedError';
 
 import Vue from 'vue';
 import VueRouter from 'vue-router';
@@ -57,8 +58,7 @@ export class RouterService {
     /** router can only be consumed once, which will happen at the appstarter */
     get router() {
         if (!this._router) {
-            console.error('You may not acces the router directly!');
-            return;
+            throw new RouterConsumedError('You may not acces the router directly!');
         }
         const onceRouter = this._router;
         this._router = undefined;
@@ -152,7 +152,7 @@ export class RouterService {
 
     /** @returns {BeforeMiddleware} */
     get beforeMiddleware() {
-        return (to, from, next) => {
+        return (to, from) => {
             const fromQuery = from.query.from;
             if (fromQuery) {
                 if (fromQuery == to.fullPath) return false;

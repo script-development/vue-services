@@ -1,5 +1,5 @@
 export default {
-  render(h) {
-    h("div", ["Implement your own login page!"]);
-  },
+    render(h) {
+        h('div', ['Implement your own login page!']);
+    },
 };

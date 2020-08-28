@@ -53,7 +53,7 @@ export class BaseController {
     }
 
     // prettier-ignore
-    get APIEndpoint() {return this._APIEndpoint}
+    get APIEndpoint() { return this._APIEndpoint; }
 
     /** go to the overview page from this controller */
     goToOverviewPage() {
@@ -216,18 +216,22 @@ export class BaseController {
 
     get overviewPage() {
         console.warn('overview page not implemented for', this._APIEndpoint);
+        return false;
     }
 
     get createPage() {
         console.warn('create page not implemented for', this._APIEndpoint);
+        return false;
     }
 
     get showPage() {
         console.warn('show page not implemented for', this._APIEndpoint);
+        return false;
     }
 
     get editPage() {
         console.warn('edit page not implemented for', this._APIEndpoint);
+        return false;
     }
 
     /**

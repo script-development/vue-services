@@ -133,35 +133,35 @@ export class AuthService {
 
     // prettier-ignore
     /** @param {string} pageName */
-    set defaultLoggedInPageName(pageName){this._defaultLoggedInPageName = pageName}
+    set defaultLoggedInPageName(pageName){this._defaultLoggedInPageName = pageName;}
 
     // prettier-ignore
-    get loginPage() {return this._loginPage}
-
-    // prettier-ignore
-    /** @param {Component} page*/
-    set loginPage(page) {this._loginPage = page}
-
-    // prettier-ignore
-    get forgotPasswordPage() {return this._forgotPasswordPage}
+    get loginPage() { return this._loginPage; }
 
     // prettier-ignore
     /** @param {Component} page*/
-    set forgotPasswordPage(page) {this._forgotPasswordPage = page}
+    set loginPage(page) { this._loginPage = page; }
 
     // prettier-ignore
-    get resetPasswordPage() {return this._resetPasswordPage}
-
-    // prettier-ignore
-    /** @param {Component} page*/
-    set resetPasswordPage(page) {this._resetPasswordPage = page}
-
-    // prettier-ignore
-    get setPasswordPage() {return this._setPasswordPage}
+    get forgotPasswordPage() { return this._forgotPasswordPage; }
 
     // prettier-ignore
     /** @param {Component} page*/
-    set setPasswordPage(page) {this._setPasswordPage = page}
+    set forgotPasswordPage(page) { this._forgotPasswordPage = page; }
+
+    // prettier-ignore
+    get resetPasswordPage() { return this._resetPasswordPage; }
+
+    // prettier-ignore
+    /** @param {Component} page*/
+    set resetPasswordPage(page) { this._resetPasswordPage = page; }
+
+    // prettier-ignore
+    get setPasswordPage() { return this._setPasswordPage; }
+
+    // prettier-ignore
+    /** @param {Component} page*/
+    set setPasswordPage(page) { this._setPasswordPage = page; }
 
     /**
      * Login to the app
@@ -233,7 +233,7 @@ export class AuthService {
 
     /** @returns {BeforeMiddleware} */
     get routeMiddleware() {
-        return (to, from, next) => {
+        return to => {
             const isLoggedIn = this.isLoggedin;
             const isAdmin = this.isAdmin;
 

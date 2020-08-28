@@ -1,13 +1,13 @@
 export class MissingDefaultLoggedinPageError extends Error {
     constructor(...params) {
         // Pass remaining arguments (including vendor specific ones) to parent constructor
-        super(...params)
+        super(...params);
 
         // Maintains proper stack trace for where our error was thrown (only available on V8)
         if (Error.captureStackTrace) {
-            Error.captureStackTrace(this, MissingDefaultLoggedinPageError)
+            Error.captureStackTrace(this, MissingDefaultLoggedinPageError);
         }
 
-        this.name = 'MissingDefaultLoggedinPageError'
+        this.name = 'MissingDefaultLoggedinPageError';
     }
 }
