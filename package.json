@@ -11,7 +11,7 @@
         "src"
     ],
     "scripts": {
-        "test": "mocha --parallel --require @babel/register",
+        "test": "nyc mocha --parallel --recursive --require @babel/register",
         "build": "eslint ./src && rollup src/index.js --file dist/index.js --format iife",
         "dev": "rollup -c scripts/config.js",
         "watch": "rollup -c scripts/config.js --watch",
@@ -30,6 +30,7 @@
         "eslint-plugin-standard": "^4.0.1",
         "husky": "^4.2.5",
         "mocha": "^8.1.2",
+        "nyc": "^15.1.0",
         "prettier": "^2.1.1",
         "pretty-quick": "^3.0.0",
         "rollup": "^2.26.6",
@@ -54,5 +55,11 @@
         "hooks": {
             "pre-commit": "pretty-quick --staged --pattern \"**/*.*(js|json)\""
         }
+    },
+    "nyc": {
+        "reporter": [
+            "lcov",
+            "text"
+        ]
     }
 }

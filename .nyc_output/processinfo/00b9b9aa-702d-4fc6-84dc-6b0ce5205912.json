@@ -1,0 +1,20 @@
+{
+    "parent": null,
+    "pid": 14152,
+    "argv": [
+        "C:\\Program Files\\nodejs\\node.exe",
+        "D:\\npm\\vue-services\\node_modules\\mocha\\bin\\mocha",
+        "--parallel",
+        "--recursive",
+        "--require",
+        "@babel/register"
+    ],
+    "execArgv": [],
+    "cwd": "D:\\npm\\vue-services",
+    "time": 1598621677722,
+    "ppid": 15656,
+    "coverageFilename": "D:\\npm\\vue-services\\.nyc_output\\00b9b9aa-702d-4fc6-84dc-6b0ce5205912.json",
+    "externalId": "",
+    "uuid": "00b9b9aa-702d-4fc6-84dc-6b0ce5205912",
+    "files": []
+}

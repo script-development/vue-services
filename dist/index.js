@@ -2,13 +2,18 @@
 
 Object.defineProperty(exports, '__esModule', { value: true });
 
-function _interopDefault (ex) { return (ex && (typeof ex === 'object') && 'default' in ex) ? ex['default'] : ex; }
-
-var Vue = _interopDefault(require('vue'));
-var Vuex = _interopDefault(require('vuex'));
-var axios = _interopDefault(require('axios'));
+var Vue = require('vue');
+var Vuex = require('vuex');
+var axios = require('axios');
 var bootstrapVue = require('bootstrap-vue');
-var VueRouter = _interopDefault(require('vue-router'));
+var VueRouter = require('vue-router');
+
+function _interopDefaultLegacy (e) { return e && typeof e === 'object' && 'default' in e ? e : { 'default': e }; }
+
+var Vue__default = /*#__PURE__*/_interopDefaultLegacy(Vue);
+var Vuex__default = /*#__PURE__*/_interopDefaultLegacy(Vuex);
+var axios__default = /*#__PURE__*/_interopDefaultLegacy(axios);
+var VueRouter__default = /*#__PURE__*/_interopDefaultLegacy(VueRouter);
 
 const keepALiveKey = 'keepALive';
 /** setting keepALive here so we don't have to Parse it each time we get it */
@@ -89,7 +94,7 @@ class HTTPService {
         this._cache = storedCache ? JSON.parse(storedCache) : {};
         this._cacheDuration = 10;
 
-        this._http = axios.create({
+        this._http = axios__default['default'].create({
             baseURL: API_URL,
             withCredentials: false,
             headers: {
@@ -236,11 +241,11 @@ class EventService {
 
     set app(app) {
         if (!app.$bvToast) {
-            Vue.use(bootstrapVue.ToastPlugin);
+            Vue__default['default'].use(bootstrapVue.ToastPlugin);
         }
 
         if (!app.$bvModal) {
-            Vue.user(bootstrapVue.ModalPlugin);
+            Vue__default['default'].user(bootstrapVue.ModalPlugin);
         }
         this._app = app;
     }
@@ -437,6 +442,20 @@ class TranslatorService {
     }
 }
 
+class RouterConsumedError extends Error {
+    constructor(...params) {
+        // Pass remaining arguments (including vendor specific ones) to parent constructor
+        super(...params);
+
+        // Maintains proper stack trace for where our error was thrown (only available on V8)
+        if (Error.captureStackTrace) {
+            Error.captureStackTrace(this, RouterConsumedError);
+        }
+
+        this.name = 'RouterConsumedError';
+    }
+}
+
 /**
  * @typedef {import("vue-router").RouteConfig} RouteConfig
  * @typedef {import("vue-router").Route} Route
@@ -448,9 +467,9 @@ class TranslatorService {
  * @typedef {(to:Route, from:Route, next:NavigationGuardNext) => Boolean} BeforeMiddleware
  * @typedef {(to:Route, from:Route) => void} AfterMiddleware
  */
-Vue.use(VueRouter);
+Vue__default['default'].use(VueRouter__default['default']);
 
-const router = new VueRouter({
+const router = new VueRouter__default['default']({
     mode: 'history',
     routes: [],
 });
@@ -493,8 +512,7 @@ class RouterService {
     /** router can only be consumed once, which will happen at the appstarter */
     get router() {
         if (!this._router) {
-            console.error('You may not acces the router directly!');
-            return;
+            throw new RouterConsumedError('You may not acces the router directly!');
         }
         const onceRouter = this._router;
         this._router = undefined;
@@ -588,7 +606,7 @@ class RouterService {
 
     /** @returns {BeforeMiddleware} */
     get beforeMiddleware() {
-        return (to, from, next) => {
+        return (to, from) => {
             const fromQuery = from.query.from;
             if (fromQuery) {
                 if (fromQuery == to.fullPath) return false;
@@ -1116,14 +1134,14 @@ class StoreModuleFactory {
                     // if allData is not an array but the state contains an array
                     // then allData probably has an id and then you can set it in the state
                     if (state[stateName].length && allData.id) {
-                        Vue.set(state[stateName], allData.id, allData);
+                        Vue__default['default'].set(state[stateName], allData.id, allData);
                     } else {
                         // else put allData as the state
                         state[stateName] = allData;
                     }
                 } else if (allData.length === 1) {
                     // if allData has an array with 1 entry, put it in the state
-                    Vue.set(state[stateName], allData[0].id, allData[0]);
+                    Vue__default['default'].set(state[stateName], allData[0].id, allData[0]);
                 } else {
                     // if allData has more entries, then that's the new baseline
                     for (const id in state[stateName]) {
@@ -1131,7 +1149,7 @@ class StoreModuleFactory {
                         const newDataIndex = allData.findIndex(entry => entry.id == id);
                         // if not found, then delete entry
                         if (newDataIndex === -1) {
-                            Vue.delete(state[stateName], id);
+                            Vue__default['default'].delete(state[stateName], id);
                             continue;
                         }
                         // remove new entry from allData, so further searches speed up
@@ -1140,12 +1158,12 @@ class StoreModuleFactory {
                         // if the entry for this id is larger then the current entry, do nothing
                         if (Object.values(state[stateName][id]).length > Object.values(newData).length) continue;
 
-                        Vue.set(state[stateName], newData.id, newData);
+                        Vue__default['default'].set(state[stateName], newData.id, newData);
                     }
 
                     // put all remaining new data in the state
                     for (const newData of allData) {
-                        Vue.set(state[stateName], newData.id, newData);
+                        Vue__default['default'].set(state[stateName], newData.id, newData);
                     }
                 }
 
@@ -1153,7 +1171,7 @@ class StoreModuleFactory {
             },
             [this.deleteMutation]: (state, id) => {
                 const stateName = this.allItemsStateName;
-                Vue.delete(state[stateName], id);
+                Vue__default['default'].delete(state[stateName], id);
                 this._storageService.setItem(moduleName + stateName, state[stateName]);
             },
         };
@@ -1606,9 +1624,9 @@ class StoreService {
 }
 
 var NotFoundPage = {
-  render(h) {
-    return h("div", ["ERROR 404"]);
-  },
+    render(h) {
+        return h('div', ['ERROR 404']);
+    },
 };
 
 /**
@@ -1684,7 +1702,7 @@ class ErrorService {
 
     /** @returns {AfterMiddleware} */
     get routeMiddleware() {
-        return (to, from) => this.setErrors({});
+        return _ => this.setErrors({});
     }
 }
 
@@ -1788,6 +1806,7 @@ let msgpack;
  */
 try {
     msgpack = require('@msgpack/msgpack');
+    // eslint-disable-next-line
 } catch (error) {}
 
 const MSG_PACK_DATA_TYPE = 'msg-pack';
@@ -1979,22 +1998,22 @@ var storeModule = (storageService, httpService, authService) => {
 };
 
 var LoginPage = {
-  render(h) {
-    h("div", ["Implement your own login page!"]);
-  },
+    render(h) {
+        h('div', ['Implement your own login page!']);
+    },
 };
 
 var ForgotPasswordPage = {
     render(h) {
-      h("div", ["Implement your own forgot password page!"]);
+        h('div', ['Implement your own forgot password page!']);
     },
-  };
+};
 
 var ResetPasswordPage = {
     render(h) {
-      h("div", ["Implement your own reset password page!"]);
+        h('div', ['Implement your own reset password page!']);
     },
-  };
+};
 
 class MissingDefaultLoggedinPageError extends Error {
     constructor(...params) {
@@ -2142,32 +2161,32 @@ class AuthService {
     set defaultLoggedInPageName(pageName){this._defaultLoggedInPageName = pageName;}
 
     // prettier-ignore
-    get loginPage() {return this._loginPage}
+    get loginPage() { return this._loginPage; }
 
     // prettier-ignore
     /** @param {Component} page*/
-    set loginPage(page) {this._loginPage = page;}
+    set loginPage(page) { this._loginPage = page; }
 
     // prettier-ignore
-    get forgotPasswordPage() {return this._forgotPasswordPage}
-
-    // prettier-ignore
-    /** @param {Component} page*/
-    set forgotPasswordPage(page) {this._forgotPasswordPage = page;}
-
-    // prettier-ignore
-    get resetPasswordPage() {return this._resetPasswordPage}
+    get forgotPasswordPage() { return this._forgotPasswordPage; }
 
     // prettier-ignore
     /** @param {Component} page*/
-    set resetPasswordPage(page) {this._resetPasswordPage = page;}
+    set forgotPasswordPage(page) { this._forgotPasswordPage = page; }
 
     // prettier-ignore
-    get setPasswordPage() {return this._setPasswordPage}
+    get resetPasswordPage() { return this._resetPasswordPage; }
 
     // prettier-ignore
     /** @param {Component} page*/
-    set setPasswordPage(page) {this._setPasswordPage = page;}
+    set resetPasswordPage(page) { this._resetPasswordPage = page; }
+
+    // prettier-ignore
+    get setPasswordPage() { return this._setPasswordPage; }
+
+    // prettier-ignore
+    /** @param {Component} page*/
+    set setPasswordPage(page) { this._setPasswordPage = page; }
 
     /**
      * Login to the app
@@ -2239,7 +2258,7 @@ class AuthService {
 
     /** @returns {BeforeMiddleware} */
     get routeMiddleware() {
-        return (to, from, next) => {
+        return to => {
             const isLoggedIn = this.isLoggedin;
             const isAdmin = this.isAdmin;
 
@@ -2313,8 +2332,8 @@ class AuthService {
 
 const storageService = new StorageService();
 // Bind the store to Vue and generate empty store
-Vue.use(Vuex);
-const store = new Vuex.Store();
+Vue__default['default'].use(Vuex__default['default']);
+const store = new Vuex__default['default'].Store();
 const httpService = new HTTPService(storageService);
 const eventService = new EventService(httpService);
 const translatorService = new TranslatorService();
@@ -2488,7 +2507,7 @@ class CreatePageCreator {
         if (!Object.keys(query).length) return;
 
         for (const key in query) {
-            if (editable.hasOwnProperty(key)) {
+            if (editable[key]) {
                 editable[key] = query[key];
             }
         }
@@ -2639,7 +2658,7 @@ class EditPageCreator {
         if (!Object.keys(query).length) return;
 
         for (const key in query) {
-            if (editable.hasOwnProperty(key)) {
+            if (editable[key]) {
                 editable[key] = query[key];
             }
         }
@@ -2968,6 +2987,7 @@ let Multiselect;
 
 try {
     Multiselect = require('vue-multiselect').default;
+    // eslint-disable-next-line
 } catch (error) {}
 
 /**
@@ -2980,7 +3000,7 @@ try {
  * @returns {VueComponent}
  */
 var MultiselectInput = (moduleName, valueField, textField) =>
-    Vue.component('multiselect-input', {
+    Vue__default['default'].component('multiselect-input', {
         props: {value: {required: true, type: Array}},
         computed: {
             options() {
@@ -3272,9 +3292,10 @@ class FormCreator {
 
         switch (inputData.type) {
             case 'string':
-                let placeholder = `Vul hier uw ${inputData.label.toLowerCase()} in`;
-                if (inputData.placeholder) placeholder = inputData.placeholder;
-                return this._h(StringInput(placeholder, false), valueBinding);
+                return this._h(
+                    StringInput(inputData.placeholder || `Vul hier uw ${inputData.label.toLowerCase()} in`, false),
+                    valueBinding
+                );
             case 'select':
                 return this._h(SelectInput(inputData.options, inputData.valueField, inputData.textField), valueBinding);
             case 'number':
@@ -3318,7 +3339,7 @@ class FormCreator {
             {
                 class: 'form-group',
                 on: {
-                    click: event => {
+                    click: _ => {
                         if (inputField[0].componentInstance && inputField[0].componentInstance.focus) {
                             inputField[0].componentInstance.focus();
                         } else if (inputField[0].elm) {
@@ -3468,7 +3489,7 @@ const detailListCreator = new DetailListCreator(baseCreator);
 
 // Very cheesy way to bind CreateElement to the creators
 
-new Vue({
+new Vue__default['default']({
     el: document.createElement('div'),
     render(h) {
         baseCreator.h = h;
@@ -3524,7 +3545,7 @@ class AppStarter {
 
         for (const controller in controllers) controllers[controller].init();
 
-        this._eventService.app = new Vue({
+        this._eventService.app = new Vue__default['default']({
             el: '#app',
             router: this._routerService.router,
             render: h => h(mainComponent),
@@ -3617,7 +3638,7 @@ class BaseController {
     }
 
     // prettier-ignore
-    get APIEndpoint() {return this._APIEndpoint}
+    get APIEndpoint() { return this._APIEndpoint; }
 
     /** go to the overview page from this controller */
     goToOverviewPage() {
@@ -3780,18 +3801,22 @@ class BaseController {
 
     get overviewPage() {
         console.warn('overview page not implemented for', this._APIEndpoint);
+        return false;
     }
 
     get createPage() {
         console.warn('create page not implemented for', this._APIEndpoint);
+        return false;
     }
 
     get showPage() {
         console.warn('show page not implemented for', this._APIEndpoint);
+        return false;
     }
 
     get editPage() {
         console.warn('edit page not implemented for', this._APIEndpoint);
+        return false;
     }
 
     /**

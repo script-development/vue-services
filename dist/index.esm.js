@@ -431,6 +431,20 @@ class TranslatorService {
     }
 }
 
+class RouterConsumedError extends Error {
+    constructor(...params) {
+        // Pass remaining arguments (including vendor specific ones) to parent constructor
+        super(...params);
+
+        // Maintains proper stack trace for where our error was thrown (only available on V8)
+        if (Error.captureStackTrace) {
+            Error.captureStackTrace(this, RouterConsumedError);
+        }
+
+        this.name = 'RouterConsumedError';
+    }
+}
+
 /**
  * @typedef {import("vue-router").RouteConfig} RouteConfig
  * @typedef {import("vue-router").Route} Route
@@ -487,8 +501,7 @@ class RouterService {
     /** router can only be consumed once, which will happen at the appstarter */
     get router() {
         if (!this._router) {
-            console.error('You may not acces the router directly!');
-            return;
+            throw new RouterConsumedError('You may not acces the router directly!');
         }
         const onceRouter = this._router;
         this._router = undefined;
@@ -582,7 +595,7 @@ class RouterService {
 
     /** @returns {BeforeMiddleware} */
     get beforeMiddleware() {
-        return (to, from, next) => {
+        return (to, from) => {
             const fromQuery = from.query.from;
             if (fromQuery) {
                 if (fromQuery == to.fullPath) return false;
@@ -1600,9 +1613,9 @@ class StoreService {
 }
 
 var NotFoundPage = {
-  render(h) {
-    return h("div", ["ERROR 404"]);
-  },
+    render(h) {
+        return h('div', ['ERROR 404']);
+    },
 };
 
 /**
@@ -1678,7 +1691,7 @@ class ErrorService {
 
     /** @returns {AfterMiddleware} */
     get routeMiddleware() {
-        return (to, from) => this.setErrors({});
+        return _ => this.setErrors({});
     }
 }
 
@@ -1782,6 +1795,7 @@ let msgpack;
  */
 try {
     msgpack = require('@msgpack/msgpack');
+    // eslint-disable-next-line
 } catch (error) {}
 
 const MSG_PACK_DATA_TYPE = 'msg-pack';
@@ -1973,22 +1987,22 @@ var storeModule = (storageService, httpService, authService) => {
 };
 
 var LoginPage = {
-  render(h) {
-    h("div", ["Implement your own login page!"]);
-  },
+    render(h) {
+        h('div', ['Implement your own login page!']);
+    },
 };
 
 var ForgotPasswordPage = {
     render(h) {
-      h("div", ["Implement your own forgot password page!"]);
+        h('div', ['Implement your own forgot password page!']);
     },
-  };
+};
 
 var ResetPasswordPage = {
     render(h) {
-      h("div", ["Implement your own reset password page!"]);
+        h('div', ['Implement your own reset password page!']);
     },
-  };
+};
 
 class MissingDefaultLoggedinPageError extends Error {
     constructor(...params) {
@@ -2136,32 +2150,32 @@ class AuthService {
     set defaultLoggedInPageName(pageName){this._defaultLoggedInPageName = pageName;}
 
     // prettier-ignore
-    get loginPage() {return this._loginPage}
+    get loginPage() { return this._loginPage; }
 
     // prettier-ignore
     /** @param {Component} page*/
-    set loginPage(page) {this._loginPage = page;}
+    set loginPage(page) { this._loginPage = page; }
 
     // prettier-ignore
-    get forgotPasswordPage() {return this._forgotPasswordPage}
-
-    // prettier-ignore
-    /** @param {Component} page*/
-    set forgotPasswordPage(page) {this._forgotPasswordPage = page;}
-
-    // prettier-ignore
-    get resetPasswordPage() {return this._resetPasswordPage}
+    get forgotPasswordPage() { return this._forgotPasswordPage; }
 
     // prettier-ignore
     /** @param {Component} page*/
-    set resetPasswordPage(page) {this._resetPasswordPage = page;}
+    set forgotPasswordPage(page) { this._forgotPasswordPage = page; }
 
     // prettier-ignore
-    get setPasswordPage() {return this._setPasswordPage}
+    get resetPasswordPage() { return this._resetPasswordPage; }
 
     // prettier-ignore
     /** @param {Component} page*/
-    set setPasswordPage(page) {this._setPasswordPage = page;}
+    set resetPasswordPage(page) { this._resetPasswordPage = page; }
+
+    // prettier-ignore
+    get setPasswordPage() { return this._setPasswordPage; }
+
+    // prettier-ignore
+    /** @param {Component} page*/
+    set setPasswordPage(page) { this._setPasswordPage = page; }
 
     /**
      * Login to the app
@@ -2233,7 +2247,7 @@ class AuthService {
 
     /** @returns {BeforeMiddleware} */
     get routeMiddleware() {
-        return (to, from, next) => {
+        return to => {
             const isLoggedIn = this.isLoggedin;
             const isAdmin = this.isAdmin;
 
@@ -2482,7 +2496,7 @@ class CreatePageCreator {
         if (!Object.keys(query).length) return;
 
         for (const key in query) {
-            if (editable.hasOwnProperty(key)) {
+            if (editable[key]) {
                 editable[key] = query[key];
             }
         }
@@ -2633,7 +2647,7 @@ class EditPageCreator {
         if (!Object.keys(query).length) return;
 
         for (const key in query) {
-            if (editable.hasOwnProperty(key)) {
+            if (editable[key]) {
                 editable[key] = query[key];
             }
         }
@@ -2962,6 +2976,7 @@ let Multiselect;
 
 try {
     Multiselect = require('vue-multiselect').default;
+    // eslint-disable-next-line
 } catch (error) {}
 
 /**
@@ -3266,9 +3281,10 @@ class FormCreator {
 
         switch (inputData.type) {
             case 'string':
-                let placeholder = `Vul hier uw ${inputData.label.toLowerCase()} in`;
-                if (inputData.placeholder) placeholder = inputData.placeholder;
-                return this._h(StringInput(placeholder, false), valueBinding);
+                return this._h(
+                    StringInput(inputData.placeholder || `Vul hier uw ${inputData.label.toLowerCase()} in`, false),
+                    valueBinding
+                );
             case 'select':
                 return this._h(SelectInput(inputData.options, inputData.valueField, inputData.textField), valueBinding);
             case 'number':
@@ -3312,7 +3328,7 @@ class FormCreator {
             {
                 class: 'form-group',
                 on: {
-                    click: event => {
+                    click: _ => {
                         if (inputField[0].componentInstance && inputField[0].componentInstance.focus) {
                             inputField[0].componentInstance.focus();
                         } else if (inputField[0].elm) {
@@ -3611,7 +3627,7 @@ class BaseController {
     }
 
     // prettier-ignore
-    get APIEndpoint() {return this._APIEndpoint}
+    get APIEndpoint() { return this._APIEndpoint; }
 
     /** go to the overview page from this controller */
     goToOverviewPage() {
@@ -3774,18 +3790,22 @@ class BaseController {
 
     get overviewPage() {
         console.warn('overview page not implemented for', this._APIEndpoint);
+        return false;
     }
 
     get createPage() {
         console.warn('create page not implemented for', this._APIEndpoint);
+        return false;
     }
 
     get showPage() {
         console.warn('show page not implemented for', this._APIEndpoint);
+        return false;
     }
 
     get editPage() {
         console.warn('edit page not implemented for', this._APIEndpoint);
+        return false;
     }
 
     /**
