@@ -23,7 +23,7 @@
     "license": "MIT",
     "devDependencies": {
         "@babel/core": "^7.11.4",
-        "@babel/preset-env": "^7.11.0",
+        "@babel/preset-env": "^7.11.5",
         "@babel/register": "^7.10.5",
         "@rollup/plugin-node-resolve": "^9.0.0",
         "eslint": "^7.7.0",
