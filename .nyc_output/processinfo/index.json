@@ -1,5 +1,8 @@
 {
-    "processes": {"fbbed19e-5246-487c-9d5b-3495cf33ea7d": {"parent": null, "children": []}},
-    "files": {},
+    "processes": {"61c68ec3-1e89-4e69-81e7-817baf7902b0": {"parent": null, "children": []}},
+    "files": {
+        "D:\\npm\\vue-services\\src\\services\\translator\\index.js": ["61c68ec3-1e89-4e69-81e7-817baf7902b0"],
+        "D:\\npm\\vue-services\\src\\errors\\MissingTranslationError.js": ["61c68ec3-1e89-4e69-81e7-817baf7902b0"]
+    },
     "externalIds": {}
 }

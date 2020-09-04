@@ -7,12 +7,20 @@
     "settings": {
         // JavaScript settings
         "eslint.enable": true,
+        // Coverage settings
+        "coverage-gutters.coverageBaseDir": "coverage",
+        "coverage-gutters.showGutterCoverage": true,
+        "coverage-gutters.showLineCoverage": true,
         // Basic editor settings
         "editor.formatOnSave": true,
         "editor.tabSize": 4,
         "githubIssues.issueCompletionFormatScm": "${issueTitle} ${issueNumberLabel}"
     },
     "extensions": {
-        "recommendations": ["GitHub.vscode-pull-request-github", "esbenp.prettier-vscode"]
+        "recommendations": [
+            "GitHub.vscode-pull-request-github",
+            "esbenp.prettier-vscode",
+            "ryanluker.vscode-coverage-gutters"
+        ]
     }
 }

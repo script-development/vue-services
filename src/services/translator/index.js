@@ -35,8 +35,9 @@ export class TranslatorService {
         const translation = this._translations[value];
 
         if (!translation) throw new MissingTranslationError(`Missing translation for ${value}`);
-        if (!translation[pluralOrSingular])
+        if (!translation[pluralOrSingular]) {
             throw new MissingTranslationError(`Missing ${pluralOrSingular} translation for ${value}`);
+        }
 
         return translation[pluralOrSingular];
     }

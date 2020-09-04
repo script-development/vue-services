@@ -53,4 +53,18 @@ describe('Translator Service', () => {
             assert.throws(() => translatorService.getSingular('does not exist'), MissingTranslationError);
         });
     });
+
+    describe('Test missing plural translation', () => {
+        translatorService.setTranslation('noPlural', {singular: 'noPlural'});
+        it('translatorService should throw a MissingTranslationError when getting a missing plural translation', () => {
+            assert.throws(() => translatorService.getPlural('noPlural'), MissingTranslationError);
+        });
+    });
+
+    describe('Test missing singular translation', () => {
+        translatorService.setTranslation('noSingular', {plural: 'noSingular'});
+        it('translatorService should throw a MissingTranslationError when getting a missing singular translation', () => {
+            assert.throws(() => translatorService.getSingular('noSingular'), MissingTranslationError);
+        });
+    });
 });

@@ -11,7 +11,7 @@
         "src"
     ],
     "scripts": {
-        "test": "nyc mocha --parallel --recursive --require @babel/register",
+        "test": "nyc mocha --recursive --require @babel/register",
         "build": "eslint ./src && rollup src/index.js --file dist/index.js --format iife",
         "dev": "rollup -c scripts/config.js",
         "watch": "rollup -c scripts/config.js --watch",

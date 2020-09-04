@@ -1,0 +1,22 @@
+{
+    "parent": null,
+    "pid": 23020,
+    "argv": [
+        "C:\\Program Files\\nodejs\\node.exe",
+        "D:\\npm\\vue-services\\node_modules\\mocha\\bin\\mocha",
+        "--recursive",
+        "--require",
+        "@babel/register"
+    ],
+    "execArgv": [],
+    "cwd": "D:\\npm\\vue-services",
+    "time": 1599221082995,
+    "ppid": 23472,
+    "coverageFilename": "D:\\npm\\vue-services\\.nyc_output\\61c68ec3-1e89-4e69-81e7-817baf7902b0.json",
+    "externalId": "",
+    "uuid": "61c68ec3-1e89-4e69-81e7-817baf7902b0",
+    "files": [
+        "D:\\npm\\vue-services\\src\\services\\translator\\index.js",
+        "D:\\npm\\vue-services\\src\\errors\\MissingTranslationError.js"
+    ]
+}
