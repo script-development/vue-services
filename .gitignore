@@ -1,3 +1,11 @@
 node_modules
+
+# nyc results
 coverage
 .nyc_output
+
+# stryker results
+reports
+
+# stryker temp files
+.stryker-tmp

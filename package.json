@@ -17,7 +17,8 @@
         "watch": "rollup -c scripts/config.js --watch",
         "pub": "npm version patch && npm publish",
         "docs": "typedoc",
-        "lint": "eslint ./src"
+        "lint": "eslint ./src",
+        "mutate": "stryker run"
     },
     "author": "Script",
     "license": "MIT",
@@ -26,6 +27,9 @@
         "@babel/preset-env": "^7.11.0",
         "@babel/register": "^7.10.5",
         "@rollup/plugin-node-resolve": "^9.0.0",
+        "@stryker-mutator/core": "^3.3.1",
+        "@stryker-mutator/javascript-mutator": "^3.3.1",
+        "@stryker-mutator/mocha-runner": "^3.3.1",
         "eslint": "^7.7.0",
         "eslint-plugin-mocha": "^8.0.0",
         "eslint-plugin-standard": "^4.0.1",
