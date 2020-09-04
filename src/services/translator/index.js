@@ -19,7 +19,10 @@ const capitalize = value => `${value[0].toUpperCase()}${value.substr(1)}`;
 
 export class TranslatorService {
     constructor() {
-        /** @type {Object.<string, Translation>}*/
+        /**
+         * @type {Object.<string, Translation>}
+         * @private
+         */
         this._translations = {};
     }
 
@@ -30,8 +33,9 @@ export class TranslatorService {
      * @param {PLURAL | SINGULAR} pluralOrSingular
      *
      * @throws {MissingTranslationError}
+     * @private
      */
-    getTranslation(value, pluralOrSingular) {
+    _getTranslation(value, pluralOrSingular) {
         const translation = this._translations[value];
 
         if (!translation) throw new MissingTranslationError(`Missing translation for ${value}`);
@@ -50,7 +54,7 @@ export class TranslatorService {
      * @throws {MissingTranslationError}
      */
     getPlural(value) {
-        return this.getTranslation(value, PLURAL);
+        return this._getTranslation(value, PLURAL);
     }
 
     /**
@@ -61,7 +65,7 @@ export class TranslatorService {
      * @throws {MissingTranslationError}
      */
     getSingular(value) {
-        return this.getTranslation(value, SINGULAR);
+        return this._getTranslation(value, SINGULAR);
     }
 
     /**

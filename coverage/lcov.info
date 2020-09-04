@@ -19,7 +19,7 @@ TN:
 SF:src\services\translator\index.js
 FN:18,capitalize
 FN:21,TranslatorService
-FN:34,getTranslation
+FN:34,_getTranslation
 FN:52,getPlural
 FN:63,getSingular
 FN:74,getCapitalizedSingular
@@ -30,7 +30,7 @@ FNF:9
 FNH:9
 FNDA:2,capitalize
 FNDA:1,TranslatorService
-FNDA:10,getTranslation
+FNDA:10,_getTranslation
 FNDA:5,getPlural
 FNDA:5,getSingular
 FNDA:1,getCapitalizedSingular

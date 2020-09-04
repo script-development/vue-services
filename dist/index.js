@@ -324,7 +324,9 @@ class MissingTranslationError extends Error {
         // Pass remaining arguments (including vendor specific ones) to parent constructor
         super(...params);
 
+        /* istanbul ignore else */
         // Maintains proper stack trace for where our error was thrown (only available on V8)
+        // Not available on FireFox, that's why we set `istanbul ignore else`
         if (Error.captureStackTrace) {
             Error.captureStackTrace(this, MissingTranslationError);
         }
@@ -364,12 +366,13 @@ class TranslatorService {
      *
      * @throws {MissingTranslationError}
      */
-    getTranslation(value, pluralOrSingular) {
+    _getTranslation(value, pluralOrSingular) {
         const translation = this._translations[value];
 
         if (!translation) throw new MissingTranslationError(`Missing translation for ${value}`);
-        if (!translation[pluralOrSingular])
+        if (!translation[pluralOrSingular]) {
             throw new MissingTranslationError(`Missing ${pluralOrSingular} translation for ${value}`);
+        }
 
         return translation[pluralOrSingular];
     }
@@ -382,7 +385,7 @@ class TranslatorService {
      * @throws {MissingTranslationError}
      */
     getPlural(value) {
-        return this.getTranslation(value, PLURAL);
+        return this._getTranslation(value, PLURAL);
     }
 
     /**
@@ -393,7 +396,7 @@ class TranslatorService {
      * @throws {MissingTranslationError}
      */
     getSingular(value) {
-        return this.getTranslation(value, SINGULAR);
+        return this._getTranslation(value, SINGULAR);
     }
 
     /**
