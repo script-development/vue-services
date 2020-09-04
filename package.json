@@ -54,5 +54,8 @@
         "hooks": {
             "pre-commit": "pretty-quick --staged --pattern \"**/*.*(js|json)\""
         }
+    },
+    "bin": {
+        "servvue": "./cli/index.js"
     }
 }
