@@ -110,7 +110,7 @@ export const SINGULAR = 'singular';
 
 export class TranslatorService {
     /** @type {Object.<string, Translation>}*/
-    _translations: {
+    private _translations: {
         [key: string]: Translation;
     };
     /**
