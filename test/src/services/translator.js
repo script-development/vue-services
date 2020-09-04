@@ -46,21 +46,47 @@ describe('Translator Service', () => {
 
     describe('Test none existing translation', () => {
         it('translatorService should throw a MissingTranslationError when getting a none existing translation', () => {
-            assert.throws(() => translatorService.getSingular('does not exist'), MissingTranslationError);
+            const translationKey = 'does not exist';
+            assert.throws(
+                () => translatorService.getSingular(translationKey),
+                error => {
+                    assert(error instanceof MissingTranslationError);
+                    assert.equal(error.message, `Missing translation for ${translationKey}`);
+                    return true;
+                }
+            );
         });
     });
 
     describe('Test missing plural translation', () => {
-        translatorService.setTranslation('noPlural', {singular: 'noPlural'});
+        const translationKey = 'noPlural';
+        translatorService.setTranslation(translationKey, {singular: translationKey});
+
         it('translatorService should throw a MissingTranslationError when getting a missing plural translation', () => {
-            assert.throws(() => translatorService.getPlural('noPlural'), MissingTranslationError);
+            assert.throws(
+                () => translatorService.getPlural(translationKey),
+                error => {
+                    assert(error instanceof MissingTranslationError);
+                    assert.equal(error.message, `Missing plural translation for ${translationKey}`);
+                    return true;
+                }
+            );
         });
     });
 
     describe('Test missing singular translation', () => {
-        translatorService.setTranslation('noSingular', {plural: 'noSingular'});
+        const translationKey = 'noSingular';
+        translatorService.setTranslation(translationKey, {plural: translationKey});
+        // TODO :: should test the error message as well
         it('translatorService should throw a MissingTranslationError when getting a missing singular translation', () => {
-            assert.throws(() => translatorService.getSingular('noSingular'), MissingTranslationError);
+            assert.throws(
+                () => translatorService.getSingular(translationKey),
+                error => {
+                    assert(error instanceof MissingTranslationError);
+                    assert.equal(error.message, `Missing singular translation for ${translationKey}`);
+                    return true;
+                }
+            );
         });
     });
 });
