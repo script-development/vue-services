@@ -1,6 +1,6 @@
 {
     "parent": null,
-    "pid": 14152,
+    "pid": 21448,
     "argv": [
         "C:\\Program Files\\nodejs\\node.exe",
         "D:\\npm\\vue-services\\node_modules\\mocha\\bin\\mocha",
@@ -11,10 +11,10 @@
     ],
     "execArgv": [],
     "cwd": "D:\\npm\\vue-services",
-    "time": 1598621677722,
-    "ppid": 15656,
-    "coverageFilename": "D:\\npm\\vue-services\\.nyc_output\\00b9b9aa-702d-4fc6-84dc-6b0ce5205912.json",
+    "time": 1599211371772,
+    "ppid": 21868,
+    "coverageFilename": "D:\\npm\\vue-services\\.nyc_output\\fbbed19e-5246-487c-9d5b-3495cf33ea7d.json",
     "externalId": "",
-    "uuid": "00b9b9aa-702d-4fc6-84dc-6b0ce5205912",
+    "uuid": "fbbed19e-5246-487c-9d5b-3495cf33ea7d",
     "files": []
 }
