@@ -1,4 +1,6 @@
 const fs = require('fs');
+// TODO :: documentation
+
 module.exports = {
     readDirectory(directory, env) {
         if (env === 'local') return fs.readdirSync(process.cwd() + directory, 'utf8');

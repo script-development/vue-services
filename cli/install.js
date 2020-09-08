@@ -1,4 +1,9 @@
 const helpers = require('./helpers');
+// TODO :: make paths absolute, are they relative to this or to project folder?
+// TODO :: documentation
+
+const mainDirectory = './resources/js/';
+
 module.exports = {
     createControllerIndexFile() {
         const controllerDirectory = './resources/js/controllers/';
@@ -12,14 +17,12 @@ module.exports = {
     },
 
     createMainFile() {
-        const mainDirectory = './resources/js/';
         const mainFile = 'main.js';
         helpers.createDirectory(mainDirectory);
         helpers.createFile(mainDirectory, mainFile, helpers.readFile('\\files\\main.js'));
     },
 
     createAppFile() {
-        const mainDirectory = './resources/js/';
         const appFile = 'App.vue';
         helpers.createFile(mainDirectory, appFile, helpers.readFile('\\files\\App.vue'));
     },

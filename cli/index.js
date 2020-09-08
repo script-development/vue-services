@@ -53,6 +53,8 @@ switch (command) {
         break;
 }
 
+// TODO :: move to other file
+// TODO :: documentation
 function updateApiFile(routeName) {
     const apiFile = fs.openSync('./routes/api.php', 'a');
 
