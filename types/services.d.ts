@@ -110,7 +110,7 @@ export const SINGULAR = 'singular';
 
 export class TranslatorService {
     /** @type {Object.<string, Translation>}*/
-    _translations: {
+    private _translations: {
         [key: string]: Translation;
     };
     /**
@@ -120,8 +120,10 @@ export class TranslatorService {
      * @param {PLURAL | SINGULAR} pluralOrSingular
      *
      * @throws {MissingTranslationError}
+     *
+     * @private
      */
-    getTranslation(value: string, pluralOrSingular: typeof PLURAL | typeof SINGULAR): string;
+    private _getTranslation(value: string, pluralOrSingular: typeof PLURAL | typeof SINGULAR): string;
     /**
      * Get the plural translation for the given value
      *
