@@ -134,11 +134,10 @@ export class StoreModuleFactory {
 }
 export class StoreService {
     /**
-     * @param {Store} store the store being used
      * @param {StoreModuleFactory} factory the factory being used to create store modules
      * @param {HTTPService} httpService the http service for communication with the API
      */
-    constructor(store: Store<any>, factory: StoreModuleFactory, httpService: HTTPService);
+    constructor(factory: StoreModuleFactory, httpService: HTTPService);
     _store: Store<any>;
     _factory: StoreModuleFactory;
     _httpService: HTTPService;

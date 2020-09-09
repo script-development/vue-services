@@ -10,15 +10,18 @@
  */
 
 import {StoreModuleNotFoundError} from '../../errors/StoreModuleNotFoundError';
+import Vue from 'vue';
+import Vuex from 'vuex';
+// Bind the store to Vue and generate empty store
+Vue.use(Vuex);
 
 export class StoreService {
     /**
-     * @param {Store} store the store being used
      * @param {StoreModuleFactory} factory the factory being used to create store modules
      * @param {HTTPService} httpService the http service for communication with the API
      */
-    constructor(store, factory, httpService) {
-        this._store = store;
+    constructor(factory, httpService) {
+        this._store = new Vuex.Store();
         this._factory = factory;
         this._httpService = httpService;
 

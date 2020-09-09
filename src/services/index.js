@@ -1,12 +1,6 @@
 import {StorageService} from './storage';
 const storageService = new StorageService();
 
-import Vue from 'vue';
-import Vuex from 'vuex';
-// Bind the store to Vue and generate empty store
-Vue.use(Vuex);
-const store = new Vuex.Store();
-
 import {HTTPService} from './http';
 export const httpService = new HTTPService(storageService);
 
@@ -28,7 +22,7 @@ import {StoreModuleFactory} from './store/factory';
 import {StoreService} from './store';
 
 const storeFactory = new StoreModuleFactory(httpService, storageService);
-export const storeService = new StoreService(store, storeFactory, httpService);
+export const storeService = new StoreService(storeFactory, httpService);
 
 import {ErrorService} from './error';
 export const errorService = new ErrorService(storeService, routerService, httpService);
