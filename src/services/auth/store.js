@@ -5,14 +5,13 @@ const IS_ADMIN = APP_NAME + ' is supreme';
 const LOGGED_IN_USER = APP_NAME + ' is Harry';
 
 export default (storageService, httpService, authService) => {
-    const storedUser = storageService.getItem(LOGGED_IN_USER);
     return {
         namespaced: true,
         state: {
             isLoggedIn: !!storageService.getItem(IS_LOGGED_IN),
             isAdmin: !!storageService.getItem(IS_ADMIN),
             pending: false,
-            loggedInUser: storedUser ? JSON.parse(storedUser) : {},
+            loggedInUser: storageService.getItem(LOGGED_IN_USER, true) || {},
             // userToRegister: {}, // move to register service
         },
         getters: {

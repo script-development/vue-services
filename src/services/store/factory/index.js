@@ -52,8 +52,9 @@ export class StoreModuleFactory {
 
     /** create default state for the store */
     createDefaultState(moduleName) {
-        const stored = this._storageService.getItem(moduleName + this.allItemsStateName);
-        return {[this.allItemsStateName]: stored ? JSON.parse(stored) : {}};
+        return {
+            [this.allItemsStateName]: this._storageService.getItem(moduleName + this.allItemsStateName, true) || {},
+        };
     }
 
     /** create default getters for the store */

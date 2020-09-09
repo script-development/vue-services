@@ -189,8 +189,9 @@ export class StorageService {
      * Get the value from the storage under the given key
      *
      * @param {String} key
+     * @param {Boolean} [parse] if parse is given, then JSON.parse will be used to return a parsed value
      */
-    getItem(key: string): string;
+    getItem(key: string, parse: boolean): any;
     /**
      * Empty the storage
      */

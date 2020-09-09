@@ -27,9 +27,8 @@ export class HTTPService {
      */
     constructor(storageService) {
         this._storageService = storageService;
-        const storedCache = this._storageService.getItem(CACHE_KEY);
         /** @type {Cache} */
-        this._cache = storedCache ? JSON.parse(storedCache) : {};
+        this._cache = this._storageService.getItem(CACHE_KEY, true) || {};
         this._cacheDuration = 10;
 
         this._http = axios.create({
