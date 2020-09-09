@@ -52,6 +52,7 @@ describe('Translator Service', () => {
                 error => {
                     assert(error instanceof MissingTranslationError);
                     assert.equal(error.message, `Missing translation for ${translationKey}`);
+                    assert.equal(error.name, 'MissingTranslationError');
                     return true;
                 }
             );
@@ -68,6 +69,7 @@ describe('Translator Service', () => {
                 error => {
                     assert(error instanceof MissingTranslationError);
                     assert.equal(error.message, `Missing plural translation for ${translationKey}`);
+                    assert.equal(error.name, 'MissingTranslationError');
                     return true;
                 }
             );

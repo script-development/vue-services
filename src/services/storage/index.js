@@ -22,7 +22,7 @@ export class StorageService {
      * @param {String | any} value
      */
     setItem(key, value) {
-        // TODO :: Stryker ConditionalExpression survived
+        // TODO :: Stryker ConditionalExpression survived, when mutated to false
         if (!this.keepALive) return;
         if (typeof value !== 'string') value = JSON.stringify(value);
         localStorage.setItem(key, value);
@@ -35,11 +35,11 @@ export class StorageService {
      * @param {Boolean} [parse] if parse is given, then JSON.parse will be used to return a parsed value
      */
     getItem(key, parse) {
-        // TODO :: Stryker ConditionalExpression survived
+        // TODO :: Stryker ConditionalExpression survived, when mutated to false
         if (!this.keepALive) return null;
 
         const value = localStorage.getItem(key);
-        // TODO :: Stryker ConditionalExpression survived
+        // TODO :: Stryker ConditionalExpression survived, when mutated to false
         if (!value) return null;
         if (!parse) return value;
 
@@ -57,7 +57,7 @@ export class StorageService {
      * Empty the storage
      */
     clear() {
-        // TODO :: Stryker ConditionalExpression survived
+        // TODO :: Stryker ConditionalExpression survived, when mutated to false
         if (!this.keepALive) return;
         localStorage.clear();
     }
