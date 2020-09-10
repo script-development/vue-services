@@ -168,13 +168,7 @@ export class AuthService {
      * @param {Credentials} credentials the credentials to login with
      */
     login(credentials) {
-        // TODO :: isAdmin should be something like role
-        return this._storeService.dispatch(STORE_MODULE_NAME, LOGIN_ACTION, credentials).then(response => {
-            // TODO :: check roles here somehow?
-            // if (isAdmin) return this._routerService.goToRoute('courses.edit');
-            this.goToStandardLoggedInPage();
-            return response;
-        });
+        return this._storeService.dispatch(STORE_MODULE_NAME, LOGIN_ACTION, credentials);
     }
 
     logout() {
