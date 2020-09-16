@@ -11,7 +11,7 @@ let msgpack;
  * {externals: {'@msgpack/msgpack': true}}
  *
  * or when using 'laravel-mix', the following to webpack.mix.js:
- * mix.webpackConfig({externals: {'@msgpack/msgpack': true}});
+ * mix.webpackConfig({externals: {'@msgpack/msgpack': 'msgpack'}});
  */
 try {
     msgpack = require('@msgpack/msgpack');

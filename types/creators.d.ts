@@ -4,10 +4,21 @@ import {CreateElement, Component, VNode, VNodeChildren} from 'vue';
 import {BvTableField} from 'bootstrap-vue';
 
 export class BaseCreator {
-    _h: CreateElement;
+    private _h: CreateElement;
+    private _containerClassList: string[];
 
-    /** @param {VNode[]} children */
-    container(children: VNode[]): VNode;
+    /**
+     * Add classes to the basic container
+     * Every container created through this class will have these classes as well
+     *
+     * @param {String[]} classNames
+     */
+    addContainerClass(...classNames: string[]): void;
+    /**
+     * @param {VNode[]} children
+     * @param {String[]} [extraClasses]
+     */
+    container(children: VNode[], extraClasses: string[]): VNode;
     /** @param {VNode[]} children */
     row(children: VNode[]): VNode;
     /** @param {VNode[]} children */

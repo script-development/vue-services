@@ -7,17 +7,33 @@
 
 export class BaseCreator {
     constructor() {
-        /** @type {CreateElement} */
-        this._h;
+        /** @private */ this._h;
+
+        /** @private */ this._containerClassList = ['container'];
     }
 
     // prettier-ignore
     /** @param {CreateElement} h */
     set h(h) { this._h = h; }
 
-    /** @param {VNode[]} children */
-    container(children) {
-        return this._h('div', {class: 'ml-0 container'}, children);
+    /**
+     * Add classes to the basic container
+     * Every container created through this class will have these classes as well
+     *
+     * @param {String[]} classNames
+     */
+    addContainerClass(...classNames) {
+        this._containerClassList.push(...classNames);
+    }
+
+    /**
+     * @param {VNode[]} children
+     * @param {String[]} [extraClasses]
+     */
+    container(children, extraClasses) {
+        const classes = [...this._containerClassList];
+        if (extraClasses) classes.push(...extraClasses);
+        return this._h('div', {class: classes.join(' ')}, children);
     }
 
     /** @param {VNode[]} children */

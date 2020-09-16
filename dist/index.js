@@ -2,22 +2,23 @@
 
 Object.defineProperty(exports, '__esModule', { value: true });
 
-var Vue = require('vue');
-var Vuex = require('vuex');
 var axios = require('axios');
 var bootstrapVue = require('bootstrap-vue');
+var Vue = require('vue');
 var VueRouter = require('vue-router');
+var Vuex = require('vuex');
 
 function _interopDefaultLegacy (e) { return e && typeof e === 'object' && 'default' in e ? e : { 'default': e }; }
 
-var Vue__default = /*#__PURE__*/_interopDefaultLegacy(Vue);
-var Vuex__default = /*#__PURE__*/_interopDefaultLegacy(Vuex);
 var axios__default = /*#__PURE__*/_interopDefaultLegacy(axios);
+var Vue__default = /*#__PURE__*/_interopDefaultLegacy(Vue);
 var VueRouter__default = /*#__PURE__*/_interopDefaultLegacy(VueRouter);
+var Vuex__default = /*#__PURE__*/_interopDefaultLegacy(Vuex);
 
 const keepALiveKey = 'keepALive';
 /** setting keepALive here so we don't have to Parse it each time we get it */
-let keepALive = JSON.parse(localStorage.getItem(keepALiveKey));
+const storedKeepALive = localStorage.getItem(keepALiveKey);
+let keepALive = storedKeepALive ? JSON.parse(storedKeepALive) : false;
 
 class StorageService {
     /** @param {Boolean} value */
@@ -38,6 +39,7 @@ class StorageService {
      * @param {String | any} value
      */
     setItem(key, value) {
+        // TODO :: Stryker ConditionalExpression survived, when mutated to false
         if (!this.keepALive) return;
         if (typeof value !== 'string') value = JSON.stringify(value);
         localStorage.setItem(key, value);
@@ -47,16 +49,32 @@ class StorageService {
      * Get the value from the storage under the given key
      *
      * @param {String} key
+     * @param {Boolean} [parse] if parse is given, then JSON.parse will be used to return a parsed value
      */
-    getItem(key) {
+    getItem(key, parse) {
+        // TODO :: Stryker ConditionalExpression survived, when mutated to false
         if (!this.keepALive) return null;
-        return localStorage.getItem(key);
+
+        const value = localStorage.getItem(key);
+        // TODO :: Stryker ConditionalExpression survived, when mutated to false
+        if (!value) return null;
+        if (!parse) return value;
+
+        try {
+            return JSON.parse(value);
+        } catch (_) {
+            // Can it throw something else then a SyntaxError?
+            // if (error instanceof SyntaxError) {
+            return value;
+            // }
+        }
     }
 
     /**
      * Empty the storage
      */
     clear() {
+        // TODO :: Stryker ConditionalExpression survived, when mutated to false
         if (!this.keepALive) return;
         localStorage.clear();
     }
@@ -89,9 +107,8 @@ class HTTPService {
      */
     constructor(storageService) {
         this._storageService = storageService;
-        const storedCache = this._storageService.getItem(CACHE_KEY);
         /** @type {Cache} */
-        this._cache = storedCache ? JSON.parse(storedCache) : {};
+        this._cache = this._storageService.getItem(CACHE_KEY, true) || {};
         this._cacheDuration = 10;
 
         this._http = axios__default['default'].create({
@@ -324,13 +341,6 @@ class MissingTranslationError extends Error {
         // Pass remaining arguments (including vendor specific ones) to parent constructor
         super(...params);
 
-        /* istanbul ignore else */
-        // Maintains proper stack trace for where our error was thrown (only available on V8)
-        // Not available on FireFox, that's why we set `istanbul ignore else`
-        if (Error.captureStackTrace) {
-            Error.captureStackTrace(this, MissingTranslationError);
-        }
-
         this.name = 'MissingTranslationError';
     }
 }
@@ -354,7 +364,10 @@ const capitalize = value => `${value[0].toUpperCase()}${value.substr(1)}`;
 
 class TranslatorService {
     constructor() {
-        /** @type {Object.<string, Translation>}*/
+        /**
+         * @type {Object.<string, Translation>}
+         * @private
+         */
         this._translations = {};
     }
 
@@ -365,6 +378,7 @@ class TranslatorService {
      * @param {PLURAL | SINGULAR} pluralOrSingular
      *
      * @throws {MissingTranslationError}
+     * @private
      */
     _getTranslation(value, pluralOrSingular) {
         const translation = this._translations[value];
@@ -449,11 +463,6 @@ class RouterConsumedError extends Error {
     constructor(...params) {
         // Pass remaining arguments (including vendor specific ones) to parent constructor
         super(...params);
-
-        // Maintains proper stack trace for where our error was thrown (only available on V8)
-        if (Error.captureStackTrace) {
-            Error.captureStackTrace(this, RouterConsumedError);
-        }
 
         this.name = 'RouterConsumedError';
     }
@@ -1111,8 +1120,9 @@ class StoreModuleFactory {
 
     /** create default state for the store */
     createDefaultState(moduleName) {
-        const stored = this._storageService.getItem(moduleName + this.allItemsStateName);
-        return {[this.allItemsStateName]: stored ? JSON.parse(stored) : {}};
+        return {
+            [this.allItemsStateName]: this._storageService.getItem(moduleName + this.allItemsStateName, true) || {},
+        };
     }
 
     /** create default getters for the store */
@@ -1288,11 +1298,6 @@ class StoreModuleNotFoundError extends Error {
         // Pass remaining arguments (including vendor specific ones) to parent constructor
         super(...params);
 
-        // Maintains proper stack trace for where our error was thrown (only available on V8)
-        if (Error.captureStackTrace) {
-            Error.captureStackTrace(this, StoreModuleNotFoundError);
-        }
-
         this.name = 'StoreModuleNotFoundError';
     }
 }
@@ -1307,15 +1312,16 @@ class StoreModuleNotFoundError extends Error {
  * @typedef {import('../../errors/StoreModuleNotFoundError').StoreModuleNotFoundError} StoreModuleNotFoundError
  * @typedef {import('../../controllers').Item} Item
  */
+// Bind the store to Vue and generate empty store
+Vue__default['default'].use(Vuex__default['default']);
 
 class StoreService {
     /**
-     * @param {Store} store the store being used
      * @param {StoreModuleFactory} factory the factory being used to create store modules
      * @param {HTTPService} httpService the http service for communication with the API
      */
-    constructor(store, factory, httpService) {
-        this._store = store;
+    constructor(factory, httpService) {
+        this._store = new Vuex__default['default'].Store();
         this._factory = factory;
         this._httpService = httpService;
 
@@ -1805,7 +1811,7 @@ let msgpack;
  * {externals: {'@msgpack/msgpack': true}}
  *
  * or when using 'laravel-mix', the following to webpack.mix.js:
- * mix.webpackConfig({externals: {'@msgpack/msgpack': true}});
+ * mix.webpackConfig({externals: {'@msgpack/msgpack': 'msgpack'}});
  */
 try {
     msgpack = require('@msgpack/msgpack');
@@ -1915,14 +1921,13 @@ const IS_ADMIN = APP_NAME + ' is supreme';
 const LOGGED_IN_USER = APP_NAME + ' is Harry';
 
 var storeModule = (storageService, httpService, authService) => {
-    const storedUser = storageService.getItem(LOGGED_IN_USER);
     return {
         namespaced: true,
         state: {
             isLoggedIn: !!storageService.getItem(IS_LOGGED_IN),
             isAdmin: !!storageService.getItem(IS_ADMIN),
             pending: false,
-            loggedInUser: storedUser ? JSON.parse(storedUser) : {},
+            loggedInUser: storageService.getItem(LOGGED_IN_USER, true) || {},
             // userToRegister: {}, // move to register service
         },
         getters: {
@@ -2022,11 +2027,6 @@ class MissingDefaultLoggedinPageError extends Error {
     constructor(...params) {
         // Pass remaining arguments (including vendor specific ones) to parent constructor
         super(...params);
-
-        // Maintains proper stack trace for where our error was thrown (only available on V8)
-        if (Error.captureStackTrace) {
-            Error.captureStackTrace(this, MissingDefaultLoggedinPageError);
-        }
 
         this.name = 'MissingDefaultLoggedinPageError';
     }
@@ -2196,13 +2196,7 @@ class AuthService {
      * @param {Credentials} credentials the credentials to login with
      */
     login(credentials) {
-        // TODO :: isAdmin should be something like role
-        return this._storeService.dispatch(STORE_MODULE_NAME$1, LOGIN_ACTION, credentials).then(response => {
-            // TODO :: check roles here somehow?
-            // if (isAdmin) return this._routerService.goToRoute('courses.edit');
-            this.goToStandardLoggedInPage();
-            return response;
-        });
+        return this._storeService.dispatch(STORE_MODULE_NAME$1, LOGIN_ACTION, credentials);
     }
 
     logout() {
@@ -2334,9 +2328,6 @@ class AuthService {
 }
 
 const storageService = new StorageService();
-// Bind the store to Vue and generate empty store
-Vue__default['default'].use(Vuex__default['default']);
-const store = new Vuex__default['default'].Store();
 const httpService = new HTTPService(storageService);
 const eventService = new EventService(httpService);
 const translatorService = new TranslatorService();
@@ -2346,7 +2337,7 @@ const routeSettings = new RouteSettings(translatorService);
 const routerService = new RouterService(routeFactory, routeSettings);
 
 const storeFactory = new StoreModuleFactory(httpService, storageService);
-const storeService = new StoreService(store, storeFactory, httpService);
+const storeService = new StoreService(storeFactory, httpService);
 const errorService = new ErrorService(storeService, routerService, httpService);
 const loadingService = new LoadingService(storeService, httpService);
 const staticDataService = new StaticDataService(storeService, httpService);
@@ -2362,17 +2353,33 @@ const authService = new AuthService(routerService, storeService, storageService,
 
 class BaseCreator {
     constructor() {
-        /** @type {CreateElement} */
-        this._h;
+        /** @private */ this._h;
+
+        /** @private */ this._containerClassList = ['container'];
     }
 
     // prettier-ignore
     /** @param {CreateElement} h */
     set h(h) { this._h = h; }
 
-    /** @param {VNode[]} children */
-    container(children) {
-        return this._h('div', {class: 'ml-0 container'}, children);
+    /**
+     * Add classes to the basic container
+     * Every container created through this class will have these classes as well
+     *
+     * @param {String[]} classNames
+     */
+    addContainerClass(...classNames) {
+        this._containerClassList.push(...classNames);
+    }
+
+    /**
+     * @param {VNode[]} children
+     * @param {String[]} [extraClasses]
+     */
+    container(children, extraClasses) {
+        const classes = [...this._containerClassList];
+        if (extraClasses) classes.push(...extraClasses);
+        return this._h('div', {class: classes.join(' ')}, children);
     }
 
     /** @param {VNode[]} children */
@@ -3175,11 +3182,6 @@ class InvalidFormTypeGivenError extends Error {
         // Pass remaining arguments (including vendor specific ones) to parent constructor
         super(...params);
 
-        // Maintains proper stack trace for where our error was thrown (only available on V8)
-        if (Error.captureStackTrace) {
-            Error.captureStackTrace(this, InvalidFormTypeGivenError);
-        }
-
         this.name = 'InvalidFormTypeGivenError';
     }
 }
@@ -3957,6 +3959,7 @@ const appStarter = new AppStarter(routerService, eventService, authService, stat
 exports.BaseController = BaseController;
 exports.appStarter = appStarter;
 exports.authService = authService;
+exports.baseCreator = baseCreator;
 exports.createPageCreator = createPageCreator;
 exports.detailListCreator = detailListCreator;
 exports.editPageCreator = editPageCreator;

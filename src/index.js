@@ -11,6 +11,7 @@ import {
 } from './services';
 
 export {
+    baseCreator,
     formCreator,
     tableCreator,
     detailListCreator,
