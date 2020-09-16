@@ -16,7 +16,7 @@ import {StoreService} from './storeService';
 export {BaseController} from './controllers';
 export {Translation} from './services';
 
-export {
+import {
     BaseCreator,
     TableCreator,
     CreatePageCreator,
@@ -26,6 +26,15 @@ export {
     ShowPageCreator,
     EditPageCreator,
 } from './creators';
+
+export const baseCreator: BaseCreator;
+export const tableCreator: TableCreator;
+export const createPageCreator: CreatePageCreator;
+export const detailListCreator: DetailListCreator;
+export const formCreator: FormCreator;
+export const overviewPageCreator: OverviewPageCreator;
+export const showPageCreator: ShowPageCreator;
+export const editPageCreator: EditPageCreator;
 
 export const appStarter: AppStarter;
 

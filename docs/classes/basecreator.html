@@ -3,8 +3,8 @@
 <head>
 	<meta charset="utf-8">
 	<meta http-equiv="X-UA-Compatible" content="IE=edge">
-	<title>BaseCreator | ServVue - v0.2.0</title>
-	<meta name="description" content="Documentation for ServVue - v0.2.0">
+	<title>BaseCreator | ServVue - v0.2.2</title>
+	<meta name="description" content="Documentation for ServVue - v0.2.2">
 	<meta name="viewport" content="width=device-width, initial-scale=1">
 	<link rel="stylesheet" href="../assets/css/main.css">
 </head>
@@ -22,7 +22,7 @@
 						<li class="state loading">Preparing search index...</li>
 						<li class="state failure">The search index is not available</li>
 					</ul>
-					<a href="../index.html" class="title">ServVue - v0.2.0</a>
+					<a href="../index.html" class="title">ServVue - v0.2.2</a>
 				</div>
 				<div class="table-cell" id="tsd-widgets">
 					<div id="tsd-filter">
@@ -76,15 +76,17 @@
 				<h2>Index</h2>
 				<section class="tsd-panel tsd-index-panel">
 					<div class="tsd-index-content">
-						<section class="tsd-index-section ">
+						<section class="tsd-index-section tsd-is-private tsd-is-private-protected">
 							<h3>Properties</h3>
 							<ul class="tsd-index-list">
-								<li class="tsd-kind-property tsd-parent-kind-class"><a href="basecreator.html#_h" class="tsd-kind-icon">_h</a></li>
+								<li class="tsd-kind-property tsd-parent-kind-class tsd-is-private"><a href="basecreator.html#_containerclasslist" class="tsd-kind-icon">_container<wbr>Class<wbr>List</a></li>
+								<li class="tsd-kind-property tsd-parent-kind-class tsd-is-private"><a href="basecreator.html#_h" class="tsd-kind-icon">_h</a></li>
 							</ul>
 						</section>
 						<section class="tsd-index-section ">
 							<h3>Methods</h3>
 							<ul class="tsd-index-list">
+								<li class="tsd-kind-method tsd-parent-kind-class"><a href="basecreator.html#addcontainerclass" class="tsd-kind-icon">add<wbr>Container<wbr>Class</a></li>
 								<li class="tsd-kind-method tsd-parent-kind-class"><a href="basecreator.html#card" class="tsd-kind-icon">card</a></li>
 								<li class="tsd-kind-method tsd-parent-kind-class"><a href="basecreator.html#col" class="tsd-kind-icon">col</a></li>
 								<li class="tsd-kind-method tsd-parent-kind-class"><a href="basecreator.html#container" class="tsd-kind-icon">container</a></li>
@@ -97,21 +99,62 @@
 					</div>
 				</section>
 			</section>
-			<section class="tsd-panel-group tsd-member-group ">
+			<section class="tsd-panel-group tsd-member-group tsd-is-private tsd-is-private-protected">
 				<h2>Properties</h2>
-				<section class="tsd-panel tsd-member tsd-kind-property tsd-parent-kind-class">
+				<section class="tsd-panel tsd-member tsd-kind-property tsd-parent-kind-class tsd-is-private">
+					<a name="_containerclasslist" class="tsd-anchor"></a>
+					<h3><span class="tsd-flag ts-flagPrivate">Private</span> _container<wbr>Class<wbr>List</h3>
+					<div class="tsd-signature tsd-kind-icon">_container<wbr>Class<wbr>List<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">string</span><span class="tsd-signature-symbol">[]</span></div>
+					<aside class="tsd-sources">
+						<ul>
+							<li>Defined in <a href="https://github.com/script-development/vue-services/blob/9514023/types/creators.d.ts#L8">creators.d.ts:8</a></li>
+						</ul>
+					</aside>
+				</section>
+				<section class="tsd-panel tsd-member tsd-kind-property tsd-parent-kind-class tsd-is-private">
 					<a name="_h" class="tsd-anchor"></a>
-					<h3>_h</h3>
+					<h3><span class="tsd-flag ts-flagPrivate">Private</span> _h</h3>
 					<div class="tsd-signature tsd-kind-icon">_h<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">CreateElement</span></div>
 					<aside class="tsd-sources">
 						<ul>
-							<li>Defined in <a href="https://github.com/script-development/vue-services/blob/0b457d2/types/creators.d.ts#L7">creators.d.ts:7</a></li>
+							<li>Defined in <a href="https://github.com/script-development/vue-services/blob/9514023/types/creators.d.ts#L7">creators.d.ts:7</a></li>
 						</ul>
 					</aside>
 				</section>
 			</section>
 			<section class="tsd-panel-group tsd-member-group ">
 				<h2>Methods</h2>
+				<section class="tsd-panel tsd-member tsd-kind-method tsd-parent-kind-class">
+					<a name="addcontainerclass" class="tsd-anchor"></a>
+					<h3>add<wbr>Container<wbr>Class</h3>
+					<ul class="tsd-signatures tsd-kind-method tsd-parent-kind-class">
+						<li class="tsd-signature tsd-kind-icon">add<wbr>Container<wbr>Class<span class="tsd-signature-symbol">(</span><span class="tsd-signature-symbol">...</span>classNames<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">string</span><span class="tsd-signature-symbol">[]</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">void</span></li>
+					</ul>
+					<ul class="tsd-descriptions">
+						<li class="tsd-description">
+							<aside class="tsd-sources">
+								<ul>
+									<li>Defined in <a href="https://github.com/script-development/vue-services/blob/9514023/types/creators.d.ts#L16">creators.d.ts:16</a></li>
+								</ul>
+							</aside>
+							<div class="tsd-comment tsd-typography">
+								<div class="lead">
+									<p>Add classes to the basic container
+									Every container created through this class will have these classes as well</p>
+								</div>
+							</div>
+							<h4 class="tsd-parameters-title">Parameters</h4>
+							<ul class="tsd-parameters">
+								<li>
+									<h5><span class="tsd-flag ts-flagRest">Rest</span> <span class="tsd-signature-symbol">...</span>classNames: <span class="tsd-signature-type">string</span><span class="tsd-signature-symbol">[]</span></h5>
+									<div class="tsd-comment tsd-typography">
+									</div>
+								</li>
+							</ul>
+							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">void</span></h4>
+						</li>
+					</ul>
+				</section>
 				<section class="tsd-panel tsd-member tsd-kind-method tsd-parent-kind-class">
 					<a name="card" class="tsd-anchor"></a>
 					<h3>card</h3>
@@ -122,7 +165,7 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/script-development/vue-services/blob/0b457d2/types/creators.d.ts#L21">creators.d.ts:21</a></li>
+									<li>Defined in <a href="https://github.com/script-development/vue-services/blob/9514023/types/creators.d.ts#L32">creators.d.ts:32</a></li>
 								</ul>
 							</aside>
 							<div class="tsd-comment tsd-typography">
@@ -147,7 +190,7 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/script-development/vue-services/blob/0b457d2/types/creators.d.ts#L14">creators.d.ts:14</a></li>
+									<li>Defined in <a href="https://github.com/script-development/vue-services/blob/9514023/types/creators.d.ts#L25">creators.d.ts:25</a></li>
 								</ul>
 							</aside>
 							<div class="tsd-comment tsd-typography">
@@ -166,13 +209,13 @@
 					<a name="container" class="tsd-anchor"></a>
 					<h3>container</h3>
 					<ul class="tsd-signatures tsd-kind-method tsd-parent-kind-class">
-						<li class="tsd-signature tsd-kind-icon">container<span class="tsd-signature-symbol">(</span>children<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">VNode</span><span class="tsd-signature-symbol">[]</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">VNode</span></li>
+						<li class="tsd-signature tsd-kind-icon">container<span class="tsd-signature-symbol">(</span>children<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">VNode</span><span class="tsd-signature-symbol">[]</span>, overrideClasses<span class="tsd-signature-symbol">?: </span><span class="tsd-signature-type">string</span><span class="tsd-signature-symbol">[]</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">VNode</span></li>
 					</ul>
 					<ul class="tsd-descriptions">
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/script-development/vue-services/blob/0b457d2/types/creators.d.ts#L10">creators.d.ts:10</a></li>
+									<li>Defined in <a href="https://github.com/script-development/vue-services/blob/9514023/types/creators.d.ts#L21">creators.d.ts:21</a></li>
 								</ul>
 							</aside>
 							<div class="tsd-comment tsd-typography">
@@ -181,6 +224,9 @@
 							<ul class="tsd-parameters">
 								<li>
 									<h5>children: <span class="tsd-signature-type">VNode</span><span class="tsd-signature-symbol">[]</span></h5>
+								</li>
+								<li>
+									<h5><span class="tsd-flag ts-flagOptional">Optional</span> overrideClasses: <span class="tsd-signature-type">string</span><span class="tsd-signature-symbol">[]</span></h5>
 								</li>
 							</ul>
 							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">VNode</span></h4>
@@ -197,7 +243,7 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/script-development/vue-services/blob/0b457d2/types/creators.d.ts#L12">creators.d.ts:12</a></li>
+									<li>Defined in <a href="https://github.com/script-development/vue-services/blob/9514023/types/creators.d.ts#L23">creators.d.ts:23</a></li>
 								</ul>
 							</aside>
 							<div class="tsd-comment tsd-typography">
@@ -222,7 +268,7 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/script-development/vue-services/blob/0b457d2/types/creators.d.ts#L16">creators.d.ts:16</a></li>
+									<li>Defined in <a href="https://github.com/script-development/vue-services/blob/9514023/types/creators.d.ts#L27">creators.d.ts:27</a></li>
 								</ul>
 							</aside>
 							<div class="tsd-comment tsd-typography">
@@ -247,7 +293,7 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/script-development/vue-services/blob/0b457d2/types/creators.d.ts#L26">creators.d.ts:26</a></li>
+									<li>Defined in <a href="https://github.com/script-development/vue-services/blob/9514023/types/creators.d.ts#L37">creators.d.ts:37</a></li>
 								</ul>
 							</aside>
 							<div class="tsd-comment tsd-typography">
@@ -277,7 +323,7 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/script-development/vue-services/blob/0b457d2/types/creators.d.ts#L18">creators.d.ts:18</a></li>
+									<li>Defined in <a href="https://github.com/script-development/vue-services/blob/9514023/types/creators.d.ts#L29">creators.d.ts:29</a></li>
 								</ul>
 							</aside>
 							<div class="tsd-comment tsd-typography">
@@ -309,8 +355,14 @@
 					<li class="current tsd-kind-class">
 						<a href="basecreator.html" class="tsd-kind-icon">Base<wbr>Creator</a>
 						<ul>
-							<li class=" tsd-kind-property tsd-parent-kind-class">
+							<li class=" tsd-kind-property tsd-parent-kind-class tsd-is-private">
+								<a href="basecreator.html#_containerclasslist" class="tsd-kind-icon">_container<wbr>Class<wbr>List</a>
+							</li>
+							<li class=" tsd-kind-property tsd-parent-kind-class tsd-is-private">
 								<a href="basecreator.html#_h" class="tsd-kind-icon">_h</a>
+							</li>
+							<li class=" tsd-kind-method tsd-parent-kind-class">
+								<a href="basecreator.html#addcontainerclass" class="tsd-kind-icon">add<wbr>Container<wbr>Class</a>
 							</li>
 							<li class=" tsd-kind-method tsd-parent-kind-class">
 								<a href="basecreator.html#card" class="tsd-kind-icon">card</a>
@@ -351,6 +403,10 @@
 				<li class="tsd-kind-property tsd-parent-kind-class"><span class="tsd-kind-icon">Property</span></li>
 				<li class="tsd-kind-method tsd-parent-kind-class"><span class="tsd-kind-icon">Method</span></li>
 				<li class="tsd-kind-accessor tsd-parent-kind-class"><span class="tsd-kind-icon">Accessor</span></li>
+			</ul>
+			<ul class="tsd-legend">
+				<li class="tsd-kind-property tsd-parent-kind-class tsd-is-private"><span class="tsd-kind-icon">Private property</span></li>
+				<li class="tsd-kind-method tsd-parent-kind-class tsd-is-private"><span class="tsd-kind-icon">Private method</span></li>
 			</ul>
 		</div>
 	</div>

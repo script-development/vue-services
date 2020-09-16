@@ -6,6 +6,9 @@
  * @typedef {import('vue').CreateElement} CreateElement
  * @typedef {import('vue').VNode} VNode
  * @typedef {import('vue').Component} Component
+ *
+ * @typedef {Object} CreatePageCSSClasses
+ * @property {String[]} container
  */
 
 export class CreatePageCreator {
@@ -35,8 +38,9 @@ export class CreatePageCreator {
      * @param {String} subject the subject for which to create something for
      * @param {Function} createAction the action to send the newly created model to the backend
      * @param {String} [title] the optional title, will generate default one if nothing is given
+     * @param {CreatePageCSSClasses} [cssClasses] the optional css classes to override the basic classes
      */
-    create(form, modelFactory, subject, createAction, title) {
+    create(form, modelFactory, subject, createAction, title, cssClasses) {
         // define pageCreator here, cause this context get's lost in the return object
         const pageCreator = this;
 
@@ -48,10 +52,10 @@ export class CreatePageCreator {
                     ? pageCreator._baseCreator.title(title)
                     : pageCreator.createCreatePageTitle(subject);
 
-                return pageCreator._baseCreator.container([
-                    titleElement,
-                    pageCreator.createForm(form, this.editable, createAction),
-                ]);
+                return pageCreator._baseCreator.container(
+                    [titleElement, pageCreator.createForm(form, this.editable, createAction)],
+                    cssClasses ? cssClasses.container : undefined
+                );
             },
             mounted() {
                 pageCreator.checkQuery(this.editable);

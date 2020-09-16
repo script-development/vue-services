@@ -28,11 +28,10 @@ export class BaseCreator {
 
     /**
      * @param {VNode[]} children
-     * @param {String[]} [extraClasses]
+     * @param {String[]} [overrideClasses]
      */
-    container(children, extraClasses) {
-        const classes = [...this._containerClassList];
-        if (extraClasses) classes.push(...extraClasses);
+    container(children, overrideClasses) {
+        const classes = overrideClasses || this._containerClassList;
         return this._h('div', {class: classes.join(' ')}, children);
     }
 

@@ -16,9 +16,9 @@ export class BaseCreator {
     addContainerClass(...classNames: string[]): void;
     /**
      * @param {VNode[]} children
-     * @param {String[]} [extraClasses]
+     * @param {String[]} [overrideClasses]
      */
-    container(children: VNode[], extraClasses: string[]): VNode;
+    container(children: VNode[], overrideClasses?: string[]): VNode;
     /** @param {VNode[]} children */
     row(children: VNode[]): VNode;
     /** @param {VNode[]} children */
@@ -96,6 +96,8 @@ export class ShowPageCreator {
      */
 }
 
+type CreatePageCSSClasses = {container: string[]};
+
 export class CreatePageCreator {
     _h: CreateElement;
     _baseCreator: BaseCreator;
@@ -110,6 +112,7 @@ export class CreatePageCreator {
      * @param {String} subject the subject for which to create something for
      * @param {Function} createAction the action to send the newly created model to the backend
      * @param {String} [title] the optional title, will generate default one if nothing is given
+     * @param {CreatePageCSSClasses} [cssClasses] the optional css classes to override the basic classes
      */
     create(
         form: Component,
@@ -117,7 +120,8 @@ export class CreatePageCreator {
         modelFactory: Function,
         subject: string,
         createAction: Function,
-        title: string
+        title: string,
+        cssClasses: CreatePageCSSClasses
     ): Component;
 
     /** @param {String} subject */
@@ -141,6 +145,8 @@ export class CreatePageCreator {
     checkQuery(editable: {[x: string]: any}): void;
 }
 
+type EditPageCSSClasses = {container: string[]};
+
 export class EditPageCreator {
     _h: CreateElement;
     _baseCreator: BaseCreator;
@@ -156,6 +162,7 @@ export class EditPageCreator {
      * @param {Function} [destroyAction] the optional destroyAction, will attach a destroy button with this action
      * @param {Function} [showAction] the optional showAction, will get data from the server if given
      * @param {String|String[]} [titleItemProperty] the optional titleItemProperty, will show title based on the given property. If nothing is given then the creator will try to resolve a title
+     * @param {EditPageCSSClasses} [cssClasses] the optional css classes to override the basic classes
      */
     create(
         form: Component,
@@ -164,7 +171,8 @@ export class EditPageCreator {
         subject: string,
         updateAction?: Function,
         destroyAction?: Function,
-        titleItemProperty?: string | string[]
+        titleItemProperty?: string | string[],
+        cssClasses?: EditPageCSSClasses
     ): Component;
     /**
      * @param {Object<string,any>} item the item for which to show the title

@@ -6,6 +6,9 @@
  * @typedef {import('vue').CreateElement} CreateElement
  * @typedef {import('vue').VNode} VNode
  * @typedef {import('vue').Component} Component
+ *
+ * @typedef {Object} EditPageCSSClasses
+ * @property {String[]} container
  */
 
 export class EditPageCreator {
@@ -36,8 +39,9 @@ export class EditPageCreator {
      * @param {Function} [destroyAction] the optional destroyAction, will attach a destroy button with this action
      * @param {Function} [showAction] the optional showAction, will get data from the server if given
      * @param {String|String[]} [titleItemProperty] the optional titleItemProperty, will show title based on the given property. If nothing is given then the creator will try to resolve a title
+     * @param {EditPageCSSClasses} [cssClasses] the optional css classes to override the basic classes
      */
-    create(form, getter, subject, updateAction, destroyAction, showAction, titleItemProperty) {
+    create(form, getter, subject, updateAction, destroyAction, showAction, titleItemProperty, cssClasses) {
         // define pageCreator here, cause this context get's lost in the return object
         const pageCreator = this;
 
@@ -77,7 +81,10 @@ export class EditPageCreator {
                     );
                 }
 
-                return pageCreator._baseCreator.container(containerChildren);
+                return pageCreator._baseCreator.container(
+                    containerChildren,
+                    cssClasses ? cssClasses.container : undefined
+                );
             },
             mounted() {
                 pageCreator.checkQuery(this.editable);

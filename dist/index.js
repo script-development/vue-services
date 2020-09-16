@@ -2374,11 +2374,10 @@ class BaseCreator {
 
     /**
      * @param {VNode[]} children
-     * @param {String[]} [extraClasses]
+     * @param {String[]} [overrideClasses]
      */
-    container(children, extraClasses) {
-        const classes = [...this._containerClassList];
-        if (extraClasses) classes.push(...extraClasses);
+    container(children, overrideClasses) {
+        const classes = overrideClasses || this._containerClassList;
         return this._h('div', {class: classes.join(' ')}, children);
     }
 
@@ -2434,6 +2433,9 @@ class BaseCreator {
  * @typedef {import('vue').CreateElement} CreateElement
  * @typedef {import('vue').VNode} VNode
  * @typedef {import('vue').Component} Component
+ *
+ * @typedef {Object} CreatePageCSSClasses
+ * @property {String[]} container
  */
 
 class CreatePageCreator {
@@ -2463,8 +2465,9 @@ class CreatePageCreator {
      * @param {String} subject the subject for which to create something for
      * @param {Function} createAction the action to send the newly created model to the backend
      * @param {String} [title] the optional title, will generate default one if nothing is given
+     * @param {CreatePageCSSClasses} [cssClasses] the optional css classes to override the basic classes
      */
-    create(form, modelFactory, subject, createAction, title) {
+    create(form, modelFactory, subject, createAction, title, cssClasses) {
         // define pageCreator here, cause this context get's lost in the return object
         const pageCreator = this;
 
@@ -2476,10 +2479,10 @@ class CreatePageCreator {
                     ? pageCreator._baseCreator.title(title)
                     : pageCreator.createCreatePageTitle(subject);
 
-                return pageCreator._baseCreator.container([
-                    titleElement,
-                    pageCreator.createForm(form, this.editable, createAction),
-                ]);
+                return pageCreator._baseCreator.container(
+                    [titleElement, pageCreator.createForm(form, this.editable, createAction)],
+                    cssClasses ? cssClasses.container : undefined
+                );
             },
             mounted() {
                 pageCreator.checkQuery(this.editable);
@@ -2532,6 +2535,9 @@ class CreatePageCreator {
  * @typedef {import('vue').CreateElement} CreateElement
  * @typedef {import('vue').VNode} VNode
  * @typedef {import('vue').Component} Component
+ *
+ * @typedef {Object} EditPageCSSClasses
+ * @property {String[]} container
  */
 
 class EditPageCreator {
@@ -2562,8 +2568,9 @@ class EditPageCreator {
      * @param {Function} [destroyAction] the optional destroyAction, will attach a destroy button with this action
      * @param {Function} [showAction] the optional showAction, will get data from the server if given
      * @param {String|String[]} [titleItemProperty] the optional titleItemProperty, will show title based on the given property. If nothing is given then the creator will try to resolve a title
+     * @param {EditPageCSSClasses} [cssClasses] the optional css classes to override the basic classes
      */
-    create(form, getter, subject, updateAction, destroyAction, showAction, titleItemProperty) {
+    create(form, getter, subject, updateAction, destroyAction, showAction, titleItemProperty, cssClasses) {
         // define pageCreator here, cause this context get's lost in the return object
         const pageCreator = this;
 
@@ -2603,7 +2610,10 @@ class EditPageCreator {
                     );
                 }
 
-                return pageCreator._baseCreator.container(containerChildren);
+                return pageCreator._baseCreator.container(
+                    containerChildren,
+                    cssClasses ? cssClasses.container : undefined
+                );
             },
             mounted() {
                 pageCreator.checkQuery(this.editable);
