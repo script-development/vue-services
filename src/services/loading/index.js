@@ -18,7 +18,6 @@ export class LoadingService {
         this._storeService = storeService;
 
         this._storeService.generateAndSetDefaultStoreModule(this._storeModuleName);
-        this.loading = false;
 
         // time after which the spinner should show
         this.spinnerTimeout = 500;

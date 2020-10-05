@@ -1119,8 +1119,12 @@ class StoreModuleFactory {
         return {
             [this.readAllGetter]: state => {
                 const data = state[this.allItemsStateName];
+                // if data is not of type object, return as is
+                if (typeof data !== 'object') return data;
+
                 // if not all keys are a number, then return as is
                 if (Object.keys(data).some(key => isNaN(key))) return data;
+
                 return Object.values(data);
             },
             [this.readByIdGetter]: state => id => state[this.allItemsStateName][id],
@@ -1724,7 +1728,6 @@ class LoadingService {
         this._storeService = storeService;
 
         this._storeService.generateAndSetDefaultStoreModule(this._storeModuleName);
-        this.loading = false;
 
         // time after which the spinner should show
         this.spinnerTimeout = 500;
