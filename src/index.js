@@ -39,3 +39,6 @@ export {
 };
 
 export {BaseController} from './controllers';
+
+import MinimalRouterView from './components/MinimalRouterView';
+export {MinimalRouterView};

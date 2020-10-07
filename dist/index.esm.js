@@ -636,6 +636,10 @@ class RouterService {
     // prettier-ignore
     /** Get the id from the params from the current route */
     get id() { return router.currentRoute.params.id; }
+
+    // prettier-ignore
+    /** Get the name from the current route */
+    get currentRouteName() { return router.currentRoute.name; }
 }
 
 /**
@@ -653,11 +657,7 @@ class RouteFactory {
      * @returns {RouteConfig}
      */
     createBase(settings, children) {
-        return {
-            path: settings.basePath,
-            component: settings.baseComponent,
-            children,
-        };
+        return this.createConfigWithChildren(settings.basePath, settings.baseComponent, children);
     }
 
     /**
@@ -680,6 +680,19 @@ class RouteFactory {
             component,
             meta: {auth, admin, title, cantSeeWhenLoggedIn},
         };
+    }
+
+    /**
+     * Create a standard route config with child routes
+     *
+     * @param {String} path the name of the path for the route config
+     * @param {*} component the component to render for this route
+     * @param {RouteConfig[]} children the child routes
+     *
+     * @returns {RouteConfig}
+     */
+    createConfigWithChildren(path, component, children) {
+        return {path, component, children};
     }
 
     /**
@@ -726,6 +739,10 @@ class RouteFactory {
      * @returns {RouteConfig}
      */
     createShow(settings) {
+        if (settings.showChildren) {
+            return this.createConfigWithChildren(settings.showPath, settings.showComponent, settings.showChildren);
+        }
+
         return this.createConfig(
             settings.showPath,
             settings.showName,
@@ -758,6 +775,7 @@ class RouteFactory {
 /**
  * @typedef {import('../../translator').TranslatorService} TranslatorService
  * @typedef {import('vue').ComponentOptions} ComponentOptions
+ * @typedef {import('vue-router').RouteConfig} RouteConfig
  */
 
 class RouteSettings {
@@ -794,6 +812,12 @@ class RouteSettings {
         this._showTitle;
         this._overviewTitle;
         this._createTitle;
+
+        /** route children */
+        this._editChildren;
+        this._showChildren;
+        this._overviewChildren;
+        this._createChildren;
 
         // TODO :: need to add cantSeeWhenLoggedIn setting to the pages
         /** show page settings */
@@ -1041,6 +1065,34 @@ class RouteSettings {
     // prettier-ignore
     /** @param {String} value title of the route */
     set overviewTitle(value) { this._overviewTitle = value; }
+
+    // prettier-ignore
+    /** @returns {RouteConfig[]} */
+    get createChildren() { return this._createChildren; }
+    // prettier-ignore
+    /** @param {RouteConfig[]} value child routes */
+    set createChildren(value) { this._createChildren = value; }
+
+    // prettier-ignore
+    /** @returns {RouteConfig[]} */
+    get editChildren() { return this._editChildren; }
+    // prettier-ignore
+    /** @param {RouteConfig[]} value child routes */
+    set editChildren(value) { this._editChildren = value; }
+
+    // prettier-ignore
+    /** @returns {RouteConfig[]} */
+    get showChildren() { return this._showChildren; }
+    // prettier-ignore
+    /** @param {RouteConfig[]} value child routes */
+    set showChildren(value) { this._showChildren = value; }
+
+    // prettier-ignore
+    /** @returns {RouteConfig[]} */
+    get overviewChildren() { return this._overviewChildren; }
+    // prettier-ignore
+    /** @param {RouteConfig[]} value child routes */
+    set overviewChildren(value) { this._overviewChildren = value; }
 
     /**
      * create new instance of router settings with the base route name set
@@ -3806,6 +3858,7 @@ class BaseController {
         return {
             name: `${this.APIEndpoint}-base`,
             render: h => h(MinimalRouterView, {props: {depth: 1}}),
+            // render: h => h(MinimalRouterView, {props: {depth: 1}}),
             // TODO #9 @Goosterhof
             mounted: () => this.read(),
         };
@@ -3963,4 +4016,4 @@ class BaseController {
 
 const appStarter = new AppStarter(routerService, eventService, authService, staticDataService);
 
-export { BaseController, appStarter, authService, baseCreator, createPageCreator, detailListCreator, editPageCreator, errorService, eventService, formCreator, httpService, loadingService, overviewPageCreator, routerService, showPageCreator, staticDataService, storeService, tableCreator, translatorService };
+export { BaseController, MinimalRouterView, appStarter, authService, baseCreator, createPageCreator, detailListCreator, editPageCreator, errorService, eventService, formCreator, httpService, loadingService, overviewPageCreator, routerService, showPageCreator, staticDataService, storeService, tableCreator, translatorService };

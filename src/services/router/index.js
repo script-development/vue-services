@@ -181,4 +181,8 @@ export class RouterService {
     // prettier-ignore
     /** Get the id from the params from the current route */
     get id() { return router.currentRoute.params.id; }
+
+    // prettier-ignore
+    /** Get the name from the current route */
+    get currentRouteName() { return router.currentRoute.name; }
 }

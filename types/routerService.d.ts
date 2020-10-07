@@ -264,6 +264,22 @@ export class RouteSettings {
     /** @returns {String} */
     get overviewTitle(): string;
     _overviewTitle: string;
+    /** @returns {RouteConfig[]} */
+    get createChildren(): RouteConfig[];
+    /** @param {RouteConfig[]} value child routes */
+    set createChildren(value: RouteConfig[]);
+    /** @returns {RouteConfig[]} */
+    get editChildren(): RouteConfig[];
+    /** @param {RouteConfig[]} value child routes */
+    set editChildren(value: RouteConfig[]);
+    /** @returns {RouteConfig[]} */
+    get showChildren(): RouteConfig[];
+    /** @param {RouteConfig[]} value child routes */
+    set showChildren(value: RouteConfig[]);
+    /** @returns {RouteConfig[]} */
+    get overviewChildren(): RouteConfig[];
+    /** @param {RouteConfig[]} value child routes */
+    set overviewChildren(value: RouteConfig[]);
     /**
      * create new instance of router settings with the base route name set
      *
@@ -305,6 +321,16 @@ export class RouteFactory {
         title: string,
         cantSeeWhenLoggedIn?: boolean
     ): RouteConfig;
+    /**
+     * Create a standard route config with child routes
+     *
+     * @param {String} path the name of the path for the route config
+     * @param {*} component the component to render for this route
+     * @param {RouteConfig[]} children the child routes
+     *
+     * @returns {RouteConfig}
+     */
+    createConfigWithChildren(path: string, component: any, children: RouteConfig[]): RouteConfig;
     /**
      * Create an overview route for the given settings
      *
@@ -412,4 +438,6 @@ export class RouterService {
     get query(): {[key: string]: string};
     /** Get the id from the params from the current route */
     get id(): string;
+    /** Get the name from the current route */
+    get currentRouteName(): string;
 }

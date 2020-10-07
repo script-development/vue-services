@@ -209,6 +209,7 @@ export class BaseController {
         return {
             name: `${this.APIEndpoint}-base`,
             render: h => h(MinimalRouterView, {props: {depth: 1}}),
+            // render: h => h(MinimalRouterView, {props: {depth: 1}}),
             // TODO #9 @Goosterhof
             mounted: () => this.read(),
         };

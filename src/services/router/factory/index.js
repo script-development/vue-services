@@ -13,11 +13,7 @@ export class RouteFactory {
      * @returns {RouteConfig}
      */
     createBase(settings, children) {
-        return {
-            path: settings.basePath,
-            component: settings.baseComponent,
-            children,
-        };
+        return this.createConfigWithChildren(settings.basePath, settings.baseComponent, children);
     }
 
     /**
@@ -40,6 +36,19 @@ export class RouteFactory {
             component,
             meta: {auth, admin, title, cantSeeWhenLoggedIn},
         };
+    }
+
+    /**
+     * Create a standard route config with child routes
+     *
+     * @param {String} path the name of the path for the route config
+     * @param {*} component the component to render for this route
+     * @param {RouteConfig[]} children the child routes
+     *
+     * @returns {RouteConfig}
+     */
+    createConfigWithChildren(path, component, children) {
+        return {path, component, children};
     }
 
     /**
@@ -86,6 +95,10 @@ export class RouteFactory {
      * @returns {RouteConfig}
      */
     createShow(settings) {
+        if (settings.showChildren) {
+            return this.createConfigWithChildren(settings.showPath, settings.showComponent, settings.showChildren);
+        }
+
         return this.createConfig(
             settings.showPath,
             settings.showName,

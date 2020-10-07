@@ -1,6 +1,7 @@
 /**
  * @typedef {import('../../translator').TranslatorService} TranslatorService
  * @typedef {import('vue').ComponentOptions} ComponentOptions
+ * @typedef {import('vue-router').RouteConfig} RouteConfig
  */
 
 export class RouteSettings {
@@ -37,6 +38,12 @@ export class RouteSettings {
         this._showTitle;
         this._overviewTitle;
         this._createTitle;
+
+        /** route children */
+        this._editChildren;
+        this._showChildren;
+        this._overviewChildren;
+        this._createChildren;
 
         // TODO :: need to add cantSeeWhenLoggedIn setting to the pages
         /** show page settings */
@@ -284,6 +291,34 @@ export class RouteSettings {
     // prettier-ignore
     /** @param {String} value title of the route */
     set overviewTitle(value) { this._overviewTitle = value; }
+
+    // prettier-ignore
+    /** @returns {RouteConfig[]} */
+    get createChildren() { return this._createChildren; }
+    // prettier-ignore
+    /** @param {RouteConfig[]} value child routes */
+    set createChildren(value) { this._createChildren = value; }
+
+    // prettier-ignore
+    /** @returns {RouteConfig[]} */
+    get editChildren() { return this._editChildren; }
+    // prettier-ignore
+    /** @param {RouteConfig[]} value child routes */
+    set editChildren(value) { this._editChildren = value; }
+
+    // prettier-ignore
+    /** @returns {RouteConfig[]} */
+    get showChildren() { return this._showChildren; }
+    // prettier-ignore
+    /** @param {RouteConfig[]} value child routes */
+    set showChildren(value) { this._showChildren = value; }
+
+    // prettier-ignore
+    /** @returns {RouteConfig[]} */
+    get overviewChildren() { return this._overviewChildren; }
+    // prettier-ignore
+    /** @param {RouteConfig[]} value child routes */
+    set overviewChildren(value) { this._overviewChildren = value; }
 
     /**
      * create new instance of router settings with the base route name set
