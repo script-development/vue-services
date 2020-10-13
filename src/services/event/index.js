@@ -1,12 +1,9 @@
 /**
- * @typedef {import("vue/types/vue").Vue} VueInstance
+ * @typedef {import("vue").App} App
  * @typedef {import('../http').HTTPService} HTTPService
  * @typedef {import('../http').ResponseMiddleware} ResponseMiddleware
  * @typedef {import('../http').ResponseErrorMiddleware} ResponseErrorMiddleware
  */
-
-import {ToastPlugin, ModalPlugin} from 'bootstrap-vue';
-import Vue from 'vue';
 
 export class EventService {
     /**
@@ -22,17 +19,17 @@ export class EventService {
     }
 
     // prettier-ignore
-    /** @returns {VueInstance} */
+    /** @returns {App} */
     get app() { return this._app; }
 
     set app(app) {
-        if (!app.$bvToast) {
-            Vue.use(ToastPlugin);
-        }
+        // if (!app.$bvToast) {
+        //     Vue.use(ToastPlugin);
+        // }
 
-        if (!app.$bvModal) {
-            Vue.user(ModalPlugin);
-        }
+        // if (!app.$bvModal) {
+        //     Vue.user(ModalPlugin);
+        // }
         this._app = app;
     }
 
@@ -56,11 +53,13 @@ export class EventService {
      * @param {String} variant the toast variant
      */
     toast(message, variant) {
-        this._app.$bvToast.toast(`${message}`, {
-            variant,
-            solid: true,
-            toaster: 'b-toaster-bottom-left',
-        });
+        // TODO :: vue-3 :: make toast great again
+        console.log('TOAST', message, variant);
+        // this._app.$bvToast.toast(`${message}`, {
+        //     variant,
+        //     solid: true,
+        //     toaster: 'b-toaster-bottom-left',
+        // });
     }
 
     /**
@@ -86,21 +85,23 @@ export class EventService {
      * @param {Function} [cancelAction] the being used when click on cancel
      */
     modal(message, okAction, cancelAction) {
-        this._app.$bvModal
-            .msgBoxConfirm(message, {
-                size: 'm',
-                buttonSize: 'm',
-                okVariant: 'primary',
-                okTitle: 'Ja',
-                cancelTitle: 'Nee',
-                headerClass: 'p-2',
-                footerClass: 'p-2 confirm',
-                hideHeaderClose: true,
-                centered: true,
-            })
-            .then(value => {
-                if (value && okAction) okAction();
-                else if (cancelAction) cancelAction();
-            });
+        // TODO :: vue-3 :: make modal great again
+        console.log('MODAL', message, okAction, cancelAction);
+        // this._app.$bvModal
+        //     .msgBoxConfirm(message, {
+        //         size: 'm',
+        //         buttonSize: 'm',
+        //         okVariant: 'primary',
+        //         okTitle: 'Ja',
+        //         cancelTitle: 'Nee',
+        //         headerClass: 'p-2',
+        //         footerClass: 'p-2 confirm',
+        //         hideHeaderClose: true,
+        //         centered: true,
+        //     })
+        //     .then(value => {
+        //         if (value && okAction) okAction();
+        //         else if (cancelAction) cancelAction();
+        //     });
     }
 }
