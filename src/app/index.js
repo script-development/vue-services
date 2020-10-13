@@ -7,7 +7,7 @@
  * @typedef {import('vue').Component} Component
  */
 
-import Vue from 'vue';
+import {createApp} from 'vue';
 
 export class AppStarter {
     /**
@@ -41,10 +41,7 @@ export class AppStarter {
 
         for (const controller in controllers) controllers[controller].init();
 
-        this._eventService.app = new Vue({
-            el: '#app',
-            render: h => h(mainComponent),
-        });
+        this._eventService.app = createApp(mainComponent).mount('#app');
 
         this._eventService.app.use(this._routerService.router);
 
