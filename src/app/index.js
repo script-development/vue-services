@@ -43,9 +43,10 @@ export class AppStarter {
 
         this._eventService.app = new Vue({
             el: '#app',
-            router: this._routerService.router,
             render: h => h(mainComponent),
         });
+
+        this._eventService.app.use(this._routerService.router);
 
         // TODO :: could even do this first and .then(()=>this._authService.getLoggedInUser())
         // or make it a setting

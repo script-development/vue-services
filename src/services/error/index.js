@@ -28,7 +28,8 @@ export class ErrorService {
         this._routerService = routerService;
         this._routerService.addRoutes([
             {
-                path: '*',
+                path: '/:pathMatch(.*)*',
+                name: 'not-found',
                 component: NotFoundPage,
                 meta: {
                     title: 'Pagina niet gevonden',

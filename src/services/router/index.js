@@ -1,22 +1,19 @@
 /**
- * @typedef {import("vue-router").RouteConfig} RouteConfig
- * @typedef {import("vue-router").Route} Route
- * @typedef {import("vue-router").NavigationGuardNext} NavigationGuardNext
- * @typedef {import("vue-router").default} VueRouter
+ * @typedef {import("vue-router").RouteRecord} RouteRecord
+ * @typedef {import("vue-router").NavigationGuard} NavigationGuard
+ * @typedef {import("vue-router").NavigationHookAfter} NavigationHookAfter
+ * @typedef {import('vue-router').RouteLocation} RouteLocation
+ * @typedef {import('vue-router').LocationQuery} LocationQuery
+ *
  * @typedef {import("./factory").RouteFactory} RouteFactory
  * @typedef {import("./settings").RouteSettings} RouteSettings
- *
- * @typedef {(to:Route, from:Route, next:NavigationGuardNext) => Boolean} BeforeMiddleware
- * @typedef {(to:Route, from:Route) => void} AfterMiddleware
  */
 import {RouterConsumedError} from '../../errors/RouterConsumedError';
 
-import Vue from 'vue';
-import VueRouter from 'vue-router';
-Vue.use(VueRouter);
+import {createRouter, createWebHistory} from 'vue-router';
 
-const router = new VueRouter({
-    mode: 'history',
+const router = createRouter({
+    history: createWebHistory(),
     routes: [],
 });
 
@@ -24,7 +21,7 @@ const router = new VueRouter({
  * checks if the given string is in the current routes name
  * @param {string} pageName the name of the page to check
  */
-const onPage = pageName => router.currentRoute.name.includes(pageName);
+const onPage = pageName => router.currentRoute.value.name.includes(pageName);
 
 export class RouterService {
     /**
@@ -36,7 +33,7 @@ export class RouterService {
         this._factory = factory;
         this._settings = settings;
 
-        /** @type {BeforeMiddleware[]} */
+        /** @type {NavigationGuard[]} */
         this._routerBeforeMiddleware = [this.beforeMiddleware];
         router.beforeEach((to, from, next) => {
             for (const middlewareFunc of this._routerBeforeMiddleware) {
@@ -46,7 +43,7 @@ export class RouterService {
             return next();
         });
 
-        /** @type {AfterMiddleware[]} */
+        /** @type {NavigationHookAfter[]} */
         this._routerAfterMiddleware = [];
         router.afterEach((to, from) => {
             for (const middlewareFunc of this._routerAfterMiddleware) {
@@ -84,9 +81,9 @@ export class RouterService {
     // prettier-ignore
     /**
      * Add routes to the router
-     * @param {RouteConfig[]} routes
+     * @param {RouteRecord[]} routes
      */
-    addRoutes(routes) {router.addRoutes(routes);}
+    addRoutes(routes) {router.options.routes.push(routes);}
 
     /**
      * Go to the give route by name, optional id and query
@@ -94,16 +91,18 @@ export class RouterService {
      *
      * @param {String} name the name of the new route
      * @param {String} [id] the optional id for the params of the new route
-     * @param {Object.<string, string>} [query] the optional query for the new route
+     * @param {LocationQuery} [query] the optional query for the new route
      */
     goToRoute(name, id, query) {
-        if (router.currentRoute.name === name && !query && !id) return;
+        if (onPage(name) && !query && !id) return;
 
+        /** @type {RouteLocation} */
         const route = {name};
         if (id) route.params = {id};
         if (query) route.query = query;
 
         router.push(route).catch(err => {
+            // TODO :: vue-3 :: check if NavigationDuplicated error is still the same name
             // Ignore the vue-router err regarding navigating to the page they are already on.
             if (err && err.name != 'NavigationDuplicated') {
                 // But print any other errors to the console
@@ -150,7 +149,7 @@ export class RouterService {
         return this._settings.createNew(baseRouteName);
     }
 
-    /** @returns {BeforeMiddleware} */
+    /** @returns {NavigationGuard} */
     get beforeMiddleware() {
         return (to, from) => {
             const fromQuery = from.query.from;
