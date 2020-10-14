@@ -1,19 +1,16 @@
 /**
  * @typedef {import('./factory').StoreModuleFactory} StoreModuleFactory
  * @typedef {import('../http').HTTPService} HTTPService
- * @typedef {import('vuex').Store} Store
- * @typedef {import('vuex').Module} Module
  * @typedef {import('axios').AxiosRequestConfig} AxiosRequestConfig
  *
  * @typedef {import('../../errors/StoreModuleNotFoundError').StoreModuleNotFoundError} StoreModuleNotFoundError
  * @typedef {import('../../controllers').Item} Item
+ * @typedef {import('./factory/module').BaseStoreModule} BaseStoreModule
+ *
+ * @typedef {Object<string,BaseStoreModule>} Store
  */
 
 import {StoreModuleNotFoundError} from '../../errors/StoreModuleNotFoundError';
-import Vue from 'vue';
-import Vuex from 'vuex';
-// Bind the store to Vue and generate empty store
-Vue.use(Vuex);
 
 export class StoreService {
     /**
@@ -21,14 +18,13 @@ export class StoreService {
      * @param {HTTPService} httpService the http service for communication with the API
      */
     constructor(factory, httpService) {
-        this._store = new Vuex.Store();
+        /** @type {Store} */
+        this._store = {};
         this._factory = factory;
         this._httpService = httpService;
 
         /** @type {String[]} */
         this._moduleNames = [];
-
-        this.setFactorySettings();
 
         this._httpService.registerResponseMiddleware(this.responseMiddleware);
     }
@@ -56,7 +52,8 @@ export class StoreService {
      */
     get(moduleName, getter) {
         this.checkIfRequestedModuleExists(moduleName);
-        return this._store.getters[moduleName + this.storeSeperator + getter];
+        // TODO :: check if this works
+        return this._store[moduleName][getter];
     }
 
     /**
@@ -67,7 +64,7 @@ export class StoreService {
      * @param {*} payload the payload to sent to the action
      */
     dispatch(moduleName, action, payload) {
-        return this._store.dispatch(moduleName + this.storeSeperator + action, payload);
+        return this._store[moduleName][action](payload);
     }
 
     /**
@@ -79,7 +76,7 @@ export class StoreService {
      */
     getAllFromStore(moduleName) {
         this.checkIfRequestedModuleExists(moduleName);
-        return this._store.getters[moduleName + this.getReadAllGetter()];
+        return this._store[moduleName].all;
     }
 
     /**
@@ -92,7 +89,7 @@ export class StoreService {
      */
     getByIdFromStore(moduleName, id) {
         this.checkIfRequestedModuleExists(moduleName);
-        return this._store.getters[moduleName + this.getReadByIdGetter()](id);
+        return this._store[moduleName].byId(id);
     }
 
     /**
@@ -102,8 +99,8 @@ export class StoreService {
      * @param {String} id the id of the item to be deleted
      */
     destroy(moduleName, id) {
-        return this._store.dispatch(moduleName + this.getDeleteAction(), id).then(response => {
-            this._store.commit(moduleName + this.getDeleteMutation(), id);
+        return this._store[moduleName].delete(id).then(response => {
+            this._store[moduleName].deleteEntryById(id);
             return response;
         });
     }
@@ -115,7 +112,7 @@ export class StoreService {
      * @param {Item} item the item to be updated
      */
     update(moduleName, item) {
-        return this._store.dispatch(moduleName + this.getUpdateAction(), item);
+        return this._store[moduleName].post(item);
     }
 
     /**
@@ -125,7 +122,7 @@ export class StoreService {
      * @param {Item} item the item to be created
      */
     create(moduleName, item) {
-        return this._store.dispatch(moduleName + this.getCreateAction(), item);
+        return this._store[moduleName].post(item);
     }
 
     /**
@@ -134,7 +131,7 @@ export class StoreService {
      * @param {String} moduleName the store module for which all items must be read
      */
     read(moduleName) {
-        return this._store.dispatch(moduleName + this.getReadAction());
+        return this._store[moduleName].get();
     }
 
     /**
@@ -144,7 +141,7 @@ export class StoreService {
      * @param {Number} id the id to be read
      */
     show(moduleName, id) {
-        return this._store.dispatch(moduleName + this.getReadAction(), id);
+        return this._store[moduleName].get(id);
     }
 
     /**
@@ -154,113 +151,7 @@ export class StoreService {
      * @param {Item | Item[]} data data to fill the store with
      */
     setAllInStore(moduleName, data) {
-        return this._store.dispatch(moduleName + this.getSetAllInStoreAction(), data);
-    }
-
-    /**
-     *  get the read all from store getter with or without seperator
-     * @param {Boolean} [seperator] with or without seperator, default true
-     */
-    getReadAllGetter(seperator = true) {
-        return (seperator ? this.storeSeperator : '') + 'all';
-    }
-
-    /**
-     *  get the read by id from store getter with or without seperator
-     * @param {Boolean} [seperator] with or without seperator, default true
-     */
-    getReadByIdGetter(seperator = true) {
-        return (seperator ? this.storeSeperator : '') + 'byId';
-    }
-
-    /**
-     *  get the read store action with or without seperator
-     * @param {Boolean} [seperator] with or without seperator, default true
-     */
-    getReadAction(seperator = true) {
-        return (seperator ? this.storeSeperator : '') + 'read';
-    }
-
-    /**
-     *  get the delete store action with or without seperator
-     * @param {Boolean} [seperator] with or without seperator, default true
-     */
-    getDeleteAction(seperator = true) {
-        return (seperator ? this.storeSeperator : '') + 'destroy';
-    }
-
-    /**
-     *  get the update store action with or without seperator
-     * @param {Boolean} [seperator] with or without seperator, default true
-     */
-    getUpdateAction(seperator = true) {
-        return (seperator ? this.storeSeperator : '') + 'update';
-    }
-
-    /**
-     *  get the update store action with or without seperator
-     * @param {Boolean} [seperator] with or without seperator, default true
-     */
-    getCreateAction(seperator = true) {
-        return (seperator ? this.storeSeperator : '') + 'create';
-    }
-
-    /**
-     *  get the set all in store action with or without seperator
-     * @param {Boolean} [seperator] with or without seperator, default true
-     */
-    getSetAllInStoreAction(seperator = true) {
-        return (seperator ? this.storeSeperator : '') + 'setAll';
-    }
-
-    /**
-     *  get the all data in store state name with or without seperator
-     * @param {Boolean} [seperator] with or without seperator, default true
-     */
-    getAllItemsStateName(seperator = true) {
-        return (seperator ? this.storeSeperator : '') + 'data';
-    }
-
-    /**
-     *  get the set all mutation name with or without seperator
-     * @param {Boolean} [seperator] with or without seperator, default true
-     */
-    getSetAllMutation(seperator = true) {
-        return (seperator ? this.storeSeperator : '') + 'SET_ALL';
-    }
-
-    /**
-     *  get the delete mutation name with or without seperator
-     * @param {Boolean} [seperator] with or without seperator, default true
-     */
-    getDeleteMutation(seperator = true) {
-        return (seperator ? this.storeSeperator : '') + 'DELETE';
-    }
-
-    /** get the store seperator */
-    get storeSeperator() {
-        return '/';
-    }
-
-    /** Set the factory name */
-    setFactorySettings() {
-        // set the factory action names
-        this._factory.readAction = this.getReadAction(false);
-        this._factory.createAction = this.getCreateAction(false);
-        this._factory.updateAction = this.getUpdateAction(false);
-        this._factory.deleteAction = this.getDeleteAction(false);
-        this._factory.setAllAction = this.getSetAllInStoreAction(false);
-
-        // set the factory getter names
-        this._factory.readAllGetter = this.getReadAllGetter(false);
-        this._factory.readByIdGetter = this.getReadByIdGetter(false);
-
-        // set the factory state names
-        this._factory.allItemsStateName = this.getAllItemsStateName(false);
-
-        // set the factory mutation names
-        this._factory.setAllMutation = this.getSetAllMutation(false);
-        this._factory.deleteMutation = this.getDeleteMutation(false);
+        return this._store[moduleName].setAll(data);
     }
 
     /**
@@ -268,16 +159,15 @@ export class StoreService {
      *
      * @param {String} moduleName the name of the module
      * @param {String} [endpoint] the endpoint for the API
-     * @param {Module} [extraFunctionality] extra functionality added to the store
+     * @param {Object<string,Function>} [extraFunctionality] extra functionality added to the store
      */
     generateAndSetDefaultStoreModule(moduleName, endpoint, extraFunctionality) {
-        const storeModule = this._factory.createDefaultStore(moduleName, endpoint);
+        // TODO :: mixin for etraFunctionality?
+        const storeModule = this._factory.createDefaultStore(endpoint);
 
         if (extraFunctionality) {
-            for (const key in extraFunctionality) {
-                for (const name in extraFunctionality[key]) {
-                    storeModule[key][name] = extraFunctionality[key][name];
-                }
+            for (const name in extraFunctionality) {
+                storeModule[name] = extraFunctionality[name];
             }
         }
 
@@ -292,27 +182,7 @@ export class StoreService {
      */
     registerModule(moduleName, storeModule) {
         this._moduleNames.push(moduleName);
-        this._store.registerModule(moduleName, storeModule);
-    }
-
-    /**
-     * create a new action to add to the store which sends a post request
-     *
-     * @param {String} endpoint api endpoint
-     * @param {String} actionName the last part of the url
-     */
-    createExtraPostAction(endpoint, actionName) {
-        return this._factory.createExtraPostAction(endpoint, actionName);
-    }
-
-    /**
-     * create a new action to add to the store which sends a get request
-     *
-     * @param {String} endpoint api endpoint
-     * @param {AxiosRequestConfig} [options] the optional request options
-     */
-    createExtraGetAction(endpoint, options) {
-        return this._factory.createExtraGetAction(endpoint, options);
+        this._store[moduleName] = storeModule;
     }
 
     /**
