@@ -1,8 +1,6 @@
 import axios from 'axios';
-import { ToastPlugin, ModalPlugin, BTable } from 'bootstrap-vue';
-import Vue from 'vue';
-import VueRouter from 'vue-router';
-import Vuex from 'vuex';
+import { createRouter, createWebHistory } from 'vue-router';
+import { ref, computed, createApp } from 'vue';
 
 const keepALiveKey = 'keepALive';
 /** setting keepALive here so we don't have to Parse it each time we get it */
@@ -222,7 +220,7 @@ class HTTPService {
 }
 
 /**
- * @typedef {import("vue/types/vue").Vue} VueInstance
+ * @typedef {import("vue").App} App
  * @typedef {import('../http').HTTPService} HTTPService
  * @typedef {import('../http').ResponseMiddleware} ResponseMiddleware
  * @typedef {import('../http').ResponseErrorMiddleware} ResponseErrorMiddleware
@@ -242,17 +240,17 @@ class EventService {
     }
 
     // prettier-ignore
-    /** @returns {VueInstance} */
+    /** @returns {App} */
     get app() { return this._app; }
 
     set app(app) {
-        if (!app.$bvToast) {
-            Vue.use(ToastPlugin);
-        }
+        // if (!app.$bvToast) {
+        //     Vue.use(ToastPlugin);
+        // }
 
-        if (!app.$bvModal) {
-            Vue.user(ModalPlugin);
-        }
+        // if (!app.$bvModal) {
+        //     Vue.user(ModalPlugin);
+        // }
         this._app = app;
     }
 
@@ -276,11 +274,13 @@ class EventService {
      * @param {String} variant the toast variant
      */
     toast(message, variant) {
-        this._app.$bvToast.toast(`${message}`, {
-            variant,
-            solid: true,
-            toaster: 'b-toaster-bottom-left',
-        });
+        // TODO :: vue-3 :: make toast great again
+        console.log('TOAST', message, variant);
+        // this._app.$bvToast.toast(`${message}`, {
+        //     variant,
+        //     solid: true,
+        //     toaster: 'b-toaster-bottom-left',
+        // });
     }
 
     /**
@@ -306,22 +306,24 @@ class EventService {
      * @param {Function} [cancelAction] the being used when click on cancel
      */
     modal(message, okAction, cancelAction) {
-        this._app.$bvModal
-            .msgBoxConfirm(message, {
-                size: 'm',
-                buttonSize: 'm',
-                okVariant: 'primary',
-                okTitle: 'Ja',
-                cancelTitle: 'Nee',
-                headerClass: 'p-2',
-                footerClass: 'p-2 confirm',
-                hideHeaderClose: true,
-                centered: true,
-            })
-            .then(value => {
-                if (value && okAction) okAction();
-                else if (cancelAction) cancelAction();
-            });
+        // TODO :: vue-3 :: make modal great again
+        console.log('MODAL', message, okAction, cancelAction);
+        // this._app.$bvModal
+        //     .msgBoxConfirm(message, {
+        //         size: 'm',
+        //         buttonSize: 'm',
+        //         okVariant: 'primary',
+        //         okTitle: 'Ja',
+        //         cancelTitle: 'Nee',
+        //         headerClass: 'p-2',
+        //         footerClass: 'p-2 confirm',
+        //         hideHeaderClose: true,
+        //         centered: true,
+        //     })
+        //     .then(value => {
+        //         if (value && okAction) okAction();
+        //         else if (cancelAction) cancelAction();
+        //     });
     }
 }
 
@@ -458,20 +460,18 @@ class RouterConsumedError extends Error {
 }
 
 /**
- * @typedef {import("vue-router").RouteConfig} RouteConfig
- * @typedef {import("vue-router").Route} Route
- * @typedef {import("vue-router").NavigationGuardNext} NavigationGuardNext
- * @typedef {import("vue-router").default} VueRouter
+ * @typedef {import("vue-router").RouteRecord} RouteRecord
+ * @typedef {import("vue-router").NavigationGuard} NavigationGuard
+ * @typedef {import("vue-router").NavigationHookAfter} NavigationHookAfter
+ * @typedef {import('vue-router').RouteLocation} RouteLocation
+ * @typedef {import('vue-router').LocationQuery} LocationQuery
+ *
  * @typedef {import("./factory").RouteFactory} RouteFactory
  * @typedef {import("./settings").RouteSettings} RouteSettings
- *
- * @typedef {(to:Route, from:Route, next:NavigationGuardNext) => Boolean} BeforeMiddleware
- * @typedef {(to:Route, from:Route) => void} AfterMiddleware
  */
-Vue.use(VueRouter);
 
-const router = new VueRouter({
-    mode: 'history',
+const router = createRouter({
+    history: createWebHistory(),
     routes: [],
 });
 
@@ -479,7 +479,7 @@ const router = new VueRouter({
  * checks if the given string is in the current routes name
  * @param {string} pageName the name of the page to check
  */
-const onPage = pageName => router.currentRoute.name.includes(pageName);
+const onPage = pageName => router.currentRoute.value.name.includes(pageName);
 
 class RouterService {
     /**
@@ -491,7 +491,7 @@ class RouterService {
         this._factory = factory;
         this._settings = settings;
 
-        /** @type {BeforeMiddleware[]} */
+        /** @type {NavigationGuard[]} */
         this._routerBeforeMiddleware = [this.beforeMiddleware];
         router.beforeEach((to, from, next) => {
             for (const middlewareFunc of this._routerBeforeMiddleware) {
@@ -501,7 +501,7 @@ class RouterService {
             return next();
         });
 
-        /** @type {AfterMiddleware[]} */
+        /** @type {NavigationHookAfter[]} */
         this._routerAfterMiddleware = [];
         router.afterEach((to, from) => {
             for (const middlewareFunc of this._routerAfterMiddleware) {
@@ -539,9 +539,9 @@ class RouterService {
     // prettier-ignore
     /**
      * Add routes to the router
-     * @param {RouteConfig[]} routes
+     * @param {RouteRecord[]} routes
      */
-    addRoutes(routes) {router.addRoutes(routes);}
+    addRoutes(routes) {router.options.routes.push(routes);}
 
     /**
      * Go to the give route by name, optional id and query
@@ -549,16 +549,18 @@ class RouterService {
      *
      * @param {String} name the name of the new route
      * @param {String} [id] the optional id for the params of the new route
-     * @param {Object.<string, string>} [query] the optional query for the new route
+     * @param {LocationQuery} [query] the optional query for the new route
      */
     goToRoute(name, id, query) {
-        if (router.currentRoute.name === name && !query && !id) return;
+        if (onPage(name) && !query && !id) return;
 
+        /** @type {RouteLocation} */
         const route = {name};
         if (id) route.params = {id};
         if (query) route.query = query;
 
         router.push(route).catch(err => {
+            // TODO :: vue-3 :: check if NavigationDuplicated error is still the same name
             // Ignore the vue-router err regarding navigating to the page they are already on.
             if (err && err.name != 'NavigationDuplicated') {
                 // But print any other errors to the console
@@ -605,7 +607,7 @@ class RouterService {
         return this._settings.createNew(baseRouteName);
     }
 
-    /** @returns {BeforeMiddleware} */
+    /** @returns {NavigationGuard} */
     get beforeMiddleware() {
         return (to, from) => {
             const fromQuery = from.query.from;
@@ -1111,6 +1113,110 @@ class RouteSettings {
 /**
  * @typedef {import('../../http').HTTPService} HTTPService
  * @typedef {import('../../storage').StorageService} StorageService
+ */
+
+// TODO :: documentation
+
+class BaseStoreModule {
+    /**
+     * @param {String} endpoint the endpoint
+     * @param {StorageService} storageService the storage service for storing stuff in the browser
+     * @param {HTTPService} httpService the service that makes the requests
+     */
+    constructor(endpoint, httpService, storageService) {
+        this._endpoint = endpoint;
+        this._httpService = httpService;
+        this._storageService = storageService;
+
+        // Check if data is stored, if so load that, else empy
+        const stored = this._storageService.getItem(endpoint);
+        this._state = ref(stored ? JSON.parse(stored) : {});
+    }
+
+    // getters
+    get all() {
+        return computed(() => {
+            const data = this._state.value;
+            // if data is not of type object, return as is
+            if (typeof data !== 'object') return data;
+
+            // if not all keys are a number, then return as is
+            if (Object.keys(data).some(key => isNaN(key))) return data;
+
+            return Object.values(data);
+        });
+    }
+
+    byId(id) {
+        return this.all[id];
+    }
+
+    // mutations
+    setAll(data) {
+        if (!data.length) {
+            // if data is not an array but the state contains an array
+            // then data probably has an id and then you can set it in the state
+            if (this._state.value.length && data.id) {
+                // TODO :: vue-3 :: check if vue-3 is reactive this way
+                this._state.value[data.id] = data;
+            } else {
+                // else put data as the state
+                this._state.value = data;
+            }
+        } else if (data.length === 1) {
+            // if data has an array with 1 entry, put it in the state
+            this._state.value[data[0].id] = data[0];
+        } else {
+            // if data has more entries, then that's the new baseline
+            for (const id in this._state.value) {
+                // search for new data entry
+                const newDataIndex = data.findIndex(entry => entry.id == id);
+                // if not found, then delete entry
+                if (newDataIndex === -1) {
+                    // TODO :: vue-3 :: check if vue-3 is reactive this way
+                    delete this._state.value[id];
+                    continue;
+                }
+                // remove new entry from data, so further searches speed up
+                const newData = data.splice(newDataIndex, 1)[0];
+
+                // if the entry for this id is larger then the current entry, do nothing
+                if (Object.values(this._state.value[id]).length > Object.values(newData).length) continue;
+
+                this._state.value[newData.id] = newData;
+            }
+
+            // put all remaining new data in the state
+            for (const newData of data) {
+                this._state.value[newData.id] = newData;
+            }
+        }
+
+        this._storageService.setItem(this._endpoint, JSON.stringify(this._state.value));
+    }
+
+    deleteEntryById(id) {
+        delete this._state.value[id];
+        this._storageService.setItem(this._endpoint, JSON.stringify(this._state.value));
+    }
+
+    // actions
+    get(id) {
+        return this._httpService.get(this._endpoint + (id ? `/${id}` : ''));
+    }
+
+    post(item) {
+        return this._httpService.post(this._endpoint + (item.id ? `/${item.id}` : ''), item);
+    }
+
+    delete(id) {
+        return this._httpService.delete(`${this._endpoint}/${id}`);
+    }
+}
+
+/**
+ * @typedef {import('../../http').HTTPService} HTTPService
+ * @typedef {import('../../storage').StorageService} StorageService
  * @typedef {import('axios').AxiosRequestConfig} AxiosRequestConfig
  */
 
@@ -1118,224 +1224,21 @@ class StoreModuleFactory {
     /**
      * @param {HTTPService} httpService the http service for communication with the API
      * @param {StorageService} storageService the storage service for storing stuff in the browser
-     * @param {Boolean} [namespaced]
      */
-    constructor(httpService, storageService, namespaced = true) {
+    constructor(httpService, storageService) {
         this._httpService = httpService;
         this._storageService = storageService;
-        this._namespaced = namespaced;
-
-        // getter naming
-        /** @type {String} */ this._readAllGetter;
-        /** @type {String} */ this._readByIdGetter;
-
-        // state naming
-        /** @type {String} */ this._allItemsStateName;
-
-        // mutation naming
-        /** @type {String} */ this._setAllMutation;
-        /** @type {String} */ this._deleteMutation;
-
-        // action naming
-        /** @type {String} */ this._readAction;
-        /** @type {String} */ this._updateAction;
-        /** @type {String} */ this._createAction;
-        /** @type {String} */ this._deleteAction;
-        /** @type {String} */ this._setAllAction;
     }
 
     /**
      * Generate a default store module
-     * @param {String} moduleName the name of the module
      * @param {String} [endpoint] the optional endpoint for the API
      */
-    createDefaultStore(moduleName, endpoint) {
-        return {
-            namespaced: this._namespaced,
-            state: this.createDefaultState(moduleName),
-            getters: this.createDefaultGetters(),
-            mutations: this.createDefaultMutations(moduleName),
-            actions: this.createDefaultActions(endpoint),
-        };
+    createDefaultStore(endpoint) {
+        // TODO :: make a base store module, which has only a state
+        // and make a EndpointStoreModule, which extends the base and adds httpService actions
+        return new BaseStoreModule(endpoint, this._httpService, this._storageService);
     }
-
-    /** create default state for the store */
-    createDefaultState(moduleName) {
-        return {
-            [this.allItemsStateName]: this._storageService.getItem(moduleName + this.allItemsStateName, true) || {},
-        };
-    }
-
-    /** create default getters for the store */
-    createDefaultGetters() {
-        return {
-            [this.readAllGetter]: state => {
-                const data = state[this.allItemsStateName];
-                // if data is not of type object, return as is
-                if (typeof data !== 'object') return data;
-
-                // if not all keys are a number, then return as is
-                if (Object.keys(data).some(key => isNaN(key))) return data;
-
-                return Object.values(data);
-            },
-            [this.readByIdGetter]: state => id => state[this.allItemsStateName][id],
-        };
-    }
-
-    /** create default mutations for the store */
-    createDefaultMutations(moduleName) {
-        return {
-            [this.setAllMutation]: (state, allData) => {
-                const stateName = this.allItemsStateName;
-                if (!allData.length) {
-                    // if allData is not an array but the state contains an array
-                    // then allData probably has an id and then you can set it in the state
-                    if (state[stateName].length && allData.id) {
-                        Vue.set(state[stateName], allData.id, allData);
-                    } else {
-                        // else put allData as the state
-                        state[stateName] = allData;
-                    }
-                } else if (allData.length === 1) {
-                    // if allData has an array with 1 entry, put it in the state
-                    Vue.set(state[stateName], allData[0].id, allData[0]);
-                } else {
-                    // if allData has more entries, then that's the new baseline
-                    for (const id in state[stateName]) {
-                        // search for new data entry
-                        const newDataIndex = allData.findIndex(entry => entry.id == id);
-                        // if not found, then delete entry
-                        if (newDataIndex === -1) {
-                            Vue.delete(state[stateName], id);
-                            continue;
-                        }
-                        // remove new entry from allData, so further searches speed up
-                        const newData = allData.splice(newDataIndex, 1)[0];
-
-                        // if the entry for this id is larger then the current entry, do nothing
-                        if (Object.values(state[stateName][id]).length > Object.values(newData).length) continue;
-
-                        Vue.set(state[stateName], newData.id, newData);
-                    }
-
-                    // put all remaining new data in the state
-                    for (const newData of allData) {
-                        Vue.set(state[stateName], newData.id, newData);
-                    }
-                }
-
-                this._storageService.setItem(moduleName + stateName, state[stateName]);
-            },
-            [this.deleteMutation]: (state, id) => {
-                const stateName = this.allItemsStateName;
-                Vue.delete(state[stateName], id);
-                this._storageService.setItem(moduleName + stateName, state[stateName]);
-            },
-        };
-    }
-
-    /**
-     * create default actions for the store
-     * if the endpoint is given it also generates actions for the endpoint
-     *
-     * @param {String} [endpoint] optional endpoint for the API
-     * */
-    createDefaultActions(endpoint) {
-        const actions = {
-            [this.setAllAction]: ({commit}, allData) => commit(this.setAllMutation, allData),
-        };
-
-        if (!endpoint) return actions;
-
-        actions[this.readAction] = (_, id) => this._httpService.get(endpoint + (id ? `/${id}` : ''));
-        // TODO :: create and update could become one
-        actions[this.createAction] = (_, item) => this._httpService.post(endpoint, item);
-        actions[this.updateAction] = (_, item) => this._httpService.post(`${endpoint}/${item.id}`, item);
-        actions[this.deleteAction] = (_, id) => this._httpService.delete(`${endpoint}/${id}`);
-
-        return actions;
-    }
-
-    /**
-     * create a new action to add to the store which sends a post request
-     *
-     * @param {String} endpoint api endpoint
-     * @param {String} actionName the last part of the url
-     */
-    createExtraPostAction(endpoint, actionName) {
-        return (_, payload) => this._httpService.post(`${endpoint}/${payload.id}/${actionName}`, payload);
-    }
-
-    /**
-     * create a new action to add to the store which sends a get request
-     *
-     * @param {String} endpoint api endpoint
-     * @param {AxiosRequestConfig} [options] the optional request options
-     */
-    createExtraGetAction(endpoint, options) {
-        return (_, payload) => this._httpService.get(endpoint + (payload ? `/${payload}` : ''), options);
-    }
-
-    // prettier-ignore
-    get readAllGetter() { return this._readAllGetter; }
-
-    // prettier-ignore
-    set readAllGetter(value) { this._readAllGetter = value; }
-
-    // prettier-ignore
-    get readByIdGetter() { return this._readByIdGetter; }
-
-    // prettier-ignore
-    set readByIdGetter(value) { this._readByIdGetter = value; }
-
-    // prettier-ignore
-    get allItemsStateName() { return this._allItemsStateName; }
-
-    // prettier-ignore
-    set allItemsStateName(value) { this._allItemsStateName = value; }
-
-    // prettier-ignore
-    get setAllMutation() { return this._setAllMutation; }
-
-    // prettier-ignore
-    set setAllMutation(value) { this._setAllMutation = value; }
-
-    // prettier-ignore
-    get deleteMutation() { return this._deleteMutation; }
-
-    // prettier-ignore
-    set deleteMutation(value) { this._deleteMutation = value; }
-
-    // prettier-ignore
-    get readAction() { return this._readAction; }
-
-    // prettier-ignore
-    set readAction(value) { this._readAction = value; }
-
-    // prettier-ignore
-    get updateAction() { return this._updateAction; }
-
-    // prettier-ignore
-    set updateAction(value) { this._updateAction = value; }
-
-    // prettier-ignore
-    get createAction() { return this._createAction; }
-
-    // prettier-ignore
-    set createAction(value) { this._createAction = value; }
-
-    // prettier-ignore
-    get deleteAction() { return this._deleteAction; }
-
-    // prettier-ignore
-    set deleteAction(value) { this._deleteAction = value; }
-
-    // prettier-ignore
-    get setAllAction() { return this._setAllAction; }
-
-    // prettier-ignore
-    set setAllAction(value) { this._setAllAction = value; }
 }
 
 class StoreModuleNotFoundError extends Error {
@@ -1350,15 +1253,14 @@ class StoreModuleNotFoundError extends Error {
 /**
  * @typedef {import('./factory').StoreModuleFactory} StoreModuleFactory
  * @typedef {import('../http').HTTPService} HTTPService
- * @typedef {import('vuex').Store} Store
- * @typedef {import('vuex').Module} Module
  * @typedef {import('axios').AxiosRequestConfig} AxiosRequestConfig
  *
  * @typedef {import('../../errors/StoreModuleNotFoundError').StoreModuleNotFoundError} StoreModuleNotFoundError
  * @typedef {import('../../controllers').Item} Item
+ * @typedef {import('./factory/module').BaseStoreModule} BaseStoreModule
+ *
+ * @typedef {Object<string,BaseStoreModule>} Store
  */
-// Bind the store to Vue and generate empty store
-Vue.use(Vuex);
 
 class StoreService {
     /**
@@ -1366,14 +1268,13 @@ class StoreService {
      * @param {HTTPService} httpService the http service for communication with the API
      */
     constructor(factory, httpService) {
-        this._store = new Vuex.Store();
+        /** @type {Store} */
+        this._store = {};
         this._factory = factory;
         this._httpService = httpService;
 
         /** @type {String[]} */
         this._moduleNames = [];
-
-        this.setFactorySettings();
 
         this._httpService.registerResponseMiddleware(this.responseMiddleware);
     }
@@ -1401,7 +1302,8 @@ class StoreService {
      */
     get(moduleName, getter) {
         this.checkIfRequestedModuleExists(moduleName);
-        return this._store.getters[moduleName + this.storeSeperator + getter];
+        // TODO :: check if this works
+        return this._store[moduleName][getter];
     }
 
     /**
@@ -1412,7 +1314,7 @@ class StoreService {
      * @param {*} payload the payload to sent to the action
      */
     dispatch(moduleName, action, payload) {
-        return this._store.dispatch(moduleName + this.storeSeperator + action, payload);
+        return this._store[moduleName][action](payload);
     }
 
     /**
@@ -1424,7 +1326,7 @@ class StoreService {
      */
     getAllFromStore(moduleName) {
         this.checkIfRequestedModuleExists(moduleName);
-        return this._store.getters[moduleName + this.getReadAllGetter()];
+        return this._store[moduleName].all;
     }
 
     /**
@@ -1437,7 +1339,7 @@ class StoreService {
      */
     getByIdFromStore(moduleName, id) {
         this.checkIfRequestedModuleExists(moduleName);
-        return this._store.getters[moduleName + this.getReadByIdGetter()](id);
+        return this._store[moduleName].byId(id);
     }
 
     /**
@@ -1447,8 +1349,8 @@ class StoreService {
      * @param {String} id the id of the item to be deleted
      */
     destroy(moduleName, id) {
-        return this._store.dispatch(moduleName + this.getDeleteAction(), id).then(response => {
-            this._store.commit(moduleName + this.getDeleteMutation(), id);
+        return this._store[moduleName].delete(id).then(response => {
+            this._store[moduleName].deleteEntryById(id);
             return response;
         });
     }
@@ -1460,7 +1362,7 @@ class StoreService {
      * @param {Item} item the item to be updated
      */
     update(moduleName, item) {
-        return this._store.dispatch(moduleName + this.getUpdateAction(), item);
+        return this._store[moduleName].post(item);
     }
 
     /**
@@ -1470,7 +1372,7 @@ class StoreService {
      * @param {Item} item the item to be created
      */
     create(moduleName, item) {
-        return this._store.dispatch(moduleName + this.getCreateAction(), item);
+        return this._store[moduleName].post(item);
     }
 
     /**
@@ -1479,7 +1381,7 @@ class StoreService {
      * @param {String} moduleName the store module for which all items must be read
      */
     read(moduleName) {
-        return this._store.dispatch(moduleName + this.getReadAction());
+        return this._store[moduleName].get();
     }
 
     /**
@@ -1489,7 +1391,7 @@ class StoreService {
      * @param {Number} id the id to be read
      */
     show(moduleName, id) {
-        return this._store.dispatch(moduleName + this.getReadAction(), id);
+        return this._store[moduleName].get(id);
     }
 
     /**
@@ -1499,113 +1401,7 @@ class StoreService {
      * @param {Item | Item[]} data data to fill the store with
      */
     setAllInStore(moduleName, data) {
-        return this._store.dispatch(moduleName + this.getSetAllInStoreAction(), data);
-    }
-
-    /**
-     *  get the read all from store getter with or without seperator
-     * @param {Boolean} [seperator] with or without seperator, default true
-     */
-    getReadAllGetter(seperator = true) {
-        return (seperator ? this.storeSeperator : '') + 'all';
-    }
-
-    /**
-     *  get the read by id from store getter with or without seperator
-     * @param {Boolean} [seperator] with or without seperator, default true
-     */
-    getReadByIdGetter(seperator = true) {
-        return (seperator ? this.storeSeperator : '') + 'byId';
-    }
-
-    /**
-     *  get the read store action with or without seperator
-     * @param {Boolean} [seperator] with or without seperator, default true
-     */
-    getReadAction(seperator = true) {
-        return (seperator ? this.storeSeperator : '') + 'read';
-    }
-
-    /**
-     *  get the delete store action with or without seperator
-     * @param {Boolean} [seperator] with or without seperator, default true
-     */
-    getDeleteAction(seperator = true) {
-        return (seperator ? this.storeSeperator : '') + 'destroy';
-    }
-
-    /**
-     *  get the update store action with or without seperator
-     * @param {Boolean} [seperator] with or without seperator, default true
-     */
-    getUpdateAction(seperator = true) {
-        return (seperator ? this.storeSeperator : '') + 'update';
-    }
-
-    /**
-     *  get the update store action with or without seperator
-     * @param {Boolean} [seperator] with or without seperator, default true
-     */
-    getCreateAction(seperator = true) {
-        return (seperator ? this.storeSeperator : '') + 'create';
-    }
-
-    /**
-     *  get the set all in store action with or without seperator
-     * @param {Boolean} [seperator] with or without seperator, default true
-     */
-    getSetAllInStoreAction(seperator = true) {
-        return (seperator ? this.storeSeperator : '') + 'setAll';
-    }
-
-    /**
-     *  get the all data in store state name with or without seperator
-     * @param {Boolean} [seperator] with or without seperator, default true
-     */
-    getAllItemsStateName(seperator = true) {
-        return (seperator ? this.storeSeperator : '') + 'data';
-    }
-
-    /**
-     *  get the set all mutation name with or without seperator
-     * @param {Boolean} [seperator] with or without seperator, default true
-     */
-    getSetAllMutation(seperator = true) {
-        return (seperator ? this.storeSeperator : '') + 'SET_ALL';
-    }
-
-    /**
-     *  get the delete mutation name with or without seperator
-     * @param {Boolean} [seperator] with or without seperator, default true
-     */
-    getDeleteMutation(seperator = true) {
-        return (seperator ? this.storeSeperator : '') + 'DELETE';
-    }
-
-    /** get the store seperator */
-    get storeSeperator() {
-        return '/';
-    }
-
-    /** Set the factory name */
-    setFactorySettings() {
-        // set the factory action names
-        this._factory.readAction = this.getReadAction(false);
-        this._factory.createAction = this.getCreateAction(false);
-        this._factory.updateAction = this.getUpdateAction(false);
-        this._factory.deleteAction = this.getDeleteAction(false);
-        this._factory.setAllAction = this.getSetAllInStoreAction(false);
-
-        // set the factory getter names
-        this._factory.readAllGetter = this.getReadAllGetter(false);
-        this._factory.readByIdGetter = this.getReadByIdGetter(false);
-
-        // set the factory state names
-        this._factory.allItemsStateName = this.getAllItemsStateName(false);
-
-        // set the factory mutation names
-        this._factory.setAllMutation = this.getSetAllMutation(false);
-        this._factory.deleteMutation = this.getDeleteMutation(false);
+        return this._store[moduleName].setAll(data);
     }
 
     /**
@@ -1613,16 +1409,15 @@ class StoreService {
      *
      * @param {String} moduleName the name of the module
      * @param {String} [endpoint] the endpoint for the API
-     * @param {Module} [extraFunctionality] extra functionality added to the store
+     * @param {Object<string,Function>} [extraFunctionality] extra functionality added to the store
      */
     generateAndSetDefaultStoreModule(moduleName, endpoint, extraFunctionality) {
-        const storeModule = this._factory.createDefaultStore(moduleName, endpoint);
+        // TODO :: mixin for etraFunctionality?
+        const storeModule = this._factory.createDefaultStore(endpoint);
 
         if (extraFunctionality) {
-            for (const key in extraFunctionality) {
-                for (const name in extraFunctionality[key]) {
-                    storeModule[key][name] = extraFunctionality[key][name];
-                }
+            for (const name in extraFunctionality) {
+                storeModule[name] = extraFunctionality[name];
             }
         }
 
@@ -1637,27 +1432,7 @@ class StoreService {
      */
     registerModule(moduleName, storeModule) {
         this._moduleNames.push(moduleName);
-        this._store.registerModule(moduleName, storeModule);
-    }
-
-    /**
-     * create a new action to add to the store which sends a post request
-     *
-     * @param {String} endpoint api endpoint
-     * @param {String} actionName the last part of the url
-     */
-    createExtraPostAction(endpoint, actionName) {
-        return this._factory.createExtraPostAction(endpoint, actionName);
-    }
-
-    /**
-     * create a new action to add to the store which sends a get request
-     *
-     * @param {String} endpoint api endpoint
-     * @param {AxiosRequestConfig} [options] the optional request options
-     */
-    createExtraGetAction(endpoint, options) {
-        return this._factory.createExtraGetAction(endpoint, options);
+        this._store[moduleName] = storeModule;
     }
 
     /**
@@ -1674,171 +1449,6 @@ class StoreService {
         throw new StoreModuleNotFoundError(
             `Could not find ${moduleName}, only these modules exists at the moment: ${this._storeService._moduleNames.toString()}`
         );
-    }
-}
-
-var NotFoundPage = {
-    render(h) {
-        return h('div', ['ERROR 404']);
-    },
-};
-
-/**
- * @typedef {import('../store').StoreService} StoreService
- * @typedef {import('../router').RouterService} RouterService
- * @typedef {import('../router').AfterMiddleware} AfterMiddleware
- * @typedef {import('../http').HTTPService} HTTPService
- * @typedef {import('../http').ResponseErrorMiddleware} ResponseErrorMiddleware
- *
- * @typedef {Object.<string, string[]} ErrorBag
- */
-
-const STORE_MODULE_NAME = 'errors';
-
-class ErrorService {
-    /**
-     * @param {StoreService} storeService
-     * @param {RouterService} routerService
-     * @param {HTTPService} httpService the http service for communication with the API
-     */
-    constructor(storeService, routerService, httpService) {
-        this._storeService = storeService;
-
-        this._storeService.generateAndSetDefaultStoreModule(STORE_MODULE_NAME, '', {
-            getters: {[STORE_MODULE_NAME]: state => state[this._storeService.getAllItemsStateName(false)]},
-        });
-
-        this._routerService = routerService;
-        this._routerService.addRoutes([
-            {
-                path: '*',
-                component: NotFoundPage,
-                meta: {
-                    title: 'Pagina niet gevonden',
-                    auth: true,
-                },
-            },
-        ]);
-
-        this._routerService.registerAfterMiddleware(this.routeMiddleware);
-
-        this._httpService = httpService;
-        this._httpService.registerResponseErrorMiddleware(this.responseErrorMiddleware);
-    }
-
-    /**
-     * Get all the known errors
-     * @returns {ErrorBag}
-     */
-    getErrors() {
-        return this._storeService.get(STORE_MODULE_NAME, STORE_MODULE_NAME);
-    }
-
-    /**
-     * Store the given errors, overriding every known error
-     *
-     * @param {ErrorBag} errors
-     */
-    setErrors(errors) {
-        this._storeService.setAllInStore(STORE_MODULE_NAME, errors);
-    }
-
-    // prettier-ignore
-    /** Clear every known error */
-    destroyErrors() { this.setErrors({}); }
-
-    /** @returns {ResponseErrorMiddleware} */
-    get responseErrorMiddleware() {
-        return ({response}) => {
-            if (response && response.data.errors) this.setErrors(response.data.errors);
-        };
-    }
-
-    /** @returns {AfterMiddleware} */
-    get routeMiddleware() {
-        return _ => this.setErrors({});
-    }
-}
-
-/**
- * @typedef {import('../store').StoreService} StoreService
- * @typedef {import('../http').HTTPService} HTTPService
- * @typedef {import('../http').RequestMiddleware} RequestMiddleware
- * @typedef {import('../http').ResponseMiddleware} ResponseMiddleware
- * @typedef {import('../http').ResponseErrorMiddleware} ResponseErrorMiddleware
- */
-
-class LoadingService {
-    /**
-     *
-     * @param {StoreService} storeService
-     * @param {HTTPService} httpService
-     */
-    constructor(storeService, httpService) {
-        // TODO :: do i even need a store? yes i do! cause of computed, can change with vue3
-        this._storeModuleName = 'loading';
-        this._storeService = storeService;
-
-        this._storeService.generateAndSetDefaultStoreModule(this._storeModuleName);
-
-        // time after which the spinner should show
-        this.spinnerTimeout = 500;
-        // time the spinner is minimal active
-        this.minTimeSpinner = 1000;
-
-        this.loadingTimeoutId;
-        this.loadingTimeStart;
-
-        httpService.registerRequestMiddleware(this.requestMiddleware);
-        httpService.registerResponseMiddleware(this.responseMiddleware);
-        httpService.registerResponseErrorMiddleware(this.responseMiddleware);
-    }
-
-    /**
-     * get the loading state
-     *
-     * @returns {Boolean}
-     */
-    get loading() {
-        // TODO :: loading somehow still an array at start, first this fix
-        return !!this._storeService.getAllFromStore(this._storeModuleName);
-    }
-
-    /**
-     * Set the loading state
-     *
-     * @param {Boolean} loading the loading state
-     */
-    set loading(loading) {
-        if (this.loadingTimeoutId) clearTimeout(this.loadingTimeoutId);
-
-        let timeout = this.spinnerTimeout;
-
-        if (loading) {
-            // set the time the loading started
-            this.loadingTimeStart = Date.now();
-        } else if (this.loadingTimeStart) {
-            // get the response time from the request
-            const responseTime = Date.now() - this.loadingTimeStart;
-            // check the time the spinner is already active and how many ms it should stay active to get to the min time of the spinner
-            timeout = this.minTimeSpinner - responseTime + this.spinnerTimeout;
-            if (timeout < 0) timeout = 0;
-        }
-
-        this.loadingTimeoutId = setTimeout(
-            () => this._storeService.setAllInStore(this._storeModuleName, loading),
-            timeout
-        );
-    }
-
-    /** @returns {RequestMiddleware} */
-    get requestMiddleware() {
-        return () => (this.loading = true);
-    }
-
-    /** @returns {ResponseMiddleware | ResponseErrorMiddleware} */
-    get responseMiddleware() {
-        return () => (this.loading = false);
     }
 }
 
@@ -2104,7 +1714,7 @@ const FORGOT_PASSWORD_ROUTE_NAME = 'ForgotPassword';
 const RESET_PASSWORD_ROUTE_NAME = 'ResetPassword';
 const SET_PASSWORD_ROUTE_NAME = 'SetPassword';
 
-const STORE_MODULE_NAME$1 = 'auth';
+const STORE_MODULE_NAME = 'auth';
 
 class AuthService {
     /**
@@ -2119,7 +1729,7 @@ class AuthService {
         this._storageService = storageService;
         this._httpService = httpService;
 
-        this._storeService.registerModule(STORE_MODULE_NAME$1, storeModule(storageService, httpService, this));
+        this._storeService.registerModule(STORE_MODULE_NAME, storeModule(storageService, httpService, this));
 
         this._apiLoginRoute = '/login';
         this._apiLogoutRoute = '/logout';
@@ -2184,17 +1794,17 @@ class AuthService {
 
     get isLoggedin() {
         // TODO :: where to set isLoggedIn?
-        return this._storeService.get(STORE_MODULE_NAME$1, 'isLoggedIn');
+        return this._storeService.get(STORE_MODULE_NAME, 'isLoggedIn');
     }
 
     // TODO :: this is not basic usage, how to implement this?
     get isAdmin() {
         // TODO :: where to set isAdmin?
-        return this._storeService.get(STORE_MODULE_NAME$1, 'isAdmin');
+        return this._storeService.get(STORE_MODULE_NAME, 'isAdmin');
     }
 
     get loggedInUser() {
-        return this._storeService.get(STORE_MODULE_NAME$1, 'loggedInUser');
+        return this._storeService.get(STORE_MODULE_NAME, 'loggedInUser');
     }
 
     get defaultLoggedInPageName() {
@@ -2240,11 +1850,11 @@ class AuthService {
      * @param {Credentials} credentials the credentials to login with
      */
     login(credentials) {
-        return this._storeService.dispatch(STORE_MODULE_NAME$1, LOGIN_ACTION, credentials);
+        return this._storeService.dispatch(STORE_MODULE_NAME, LOGIN_ACTION, credentials);
     }
 
     logout() {
-        return this._storeService.dispatch(STORE_MODULE_NAME$1, LOGOUT_ACTION);
+        return this._storeService.dispatch(STORE_MODULE_NAME, LOGOUT_ACTION);
     }
 
     /**
@@ -2252,14 +1862,14 @@ class AuthService {
      * @param {String} email
      */
     sendEmailResetPassword(email) {
-        return this._storeService.dispatch(STORE_MODULE_NAME$1, 'sendEmailResetPassword', email);
+        return this._storeService.dispatch(STORE_MODULE_NAME, 'sendEmailResetPassword', email);
     }
 
     /**
      * @param {ResetPasswordData} data
      */
     resetPassword(data) {
-        return this._storeService.dispatch(STORE_MODULE_NAME$1, 'resetPassword', data);
+        return this._storeService.dispatch(STORE_MODULE_NAME, 'resetPassword', data);
     }
 
     // prettier-ignore
@@ -2281,7 +1891,7 @@ class AuthService {
      * Sends a request to the server to get the logged in user
      */
     getLoggedInUser() {
-        this._storeService.dispatch(STORE_MODULE_NAME$1, 'me');
+        this._storeService.dispatch(STORE_MODULE_NAME, 'me');
     }
 
     /** @returns {ResponseErrorMiddleware} */
@@ -2292,7 +1902,7 @@ class AuthService {
             if (status == 403) {
                 this.goToStandardLoggedInPage();
             } else if (status == 401) {
-                this._storeService.dispatch(STORE_MODULE_NAME$1, 'logoutApp');
+                this._storeService.dispatch(STORE_MODULE_NAME, 'logoutApp');
             }
         };
     }
@@ -2382,1191 +1992,9 @@ const routerService = new RouterService(routeFactory, routeSettings);
 
 const storeFactory = new StoreModuleFactory(httpService, storageService);
 const storeService = new StoreService(storeFactory, httpService);
-const errorService = new ErrorService(storeService, routerService, httpService);
-const loadingService = new LoadingService(storeService, httpService);
 const staticDataService = new StaticDataService(storeService, httpService);
 
 const authService = new AuthService(routerService, storeService, storageService, httpService);
-
-/**
- * @typedef {import('vue').CreateElement} CreateElement
- * @typedef {import('vue').VNode} VNode
- * @typedef {import('vue').Component} Component
- * @typedef {import('../services/translator').TranslatorService} TranslatorService
- */
-
-class BaseCreator {
-    constructor() {
-        /** @private */ this._h;
-
-        /** @private */ this._containerClassList = ['container'];
-    }
-
-    // prettier-ignore
-    /** @param {CreateElement} h */
-    set h(h) { this._h = h; }
-
-    /**
-     * Add classes to the basic container
-     * Every container created through this class will have these classes as well
-     *
-     * @param {String[]} classNames
-     */
-    addContainerClass(...classNames) {
-        this._containerClassList.push(...classNames);
-    }
-
-    /**
-     * @param {VNode[]} children
-     * @param {String[]} [overrideClasses]
-     */
-    container(children, overrideClasses) {
-        const classes = overrideClasses || this._containerClassList;
-        return this._h('div', {class: classes.join(' ')}, children);
-    }
-
-    /** @param {VNode[]} children */
-    card(children) {
-        return this._h('div', {class: 'card mb-2'}, [this._h('div', {class: 'card-body'}, children)]);
-    }
-
-    /** @param {String} title */
-    title(title, header = 'h1') {
-        return this._h(header, [title]);
-    }
-
-    /**
-     * @param {VNode[]} children
-     * @param {number} [mt]
-     */
-    row(children, mt) {
-        let classes = 'row';
-        if (mt) classes += ` mt-${mt}`;
-        return this._h('div', {class: classes}, children);
-    }
-    /**
-     * @param {VNode[]} children
-     * @param {number} [md]
-     */
-    col(children, md) {
-        const className = md ? `col-md-${md}` : 'col';
-        return this._h('div', {class: className}, children);
-    }
-
-    /** @param {String} title */
-    titleRow(title) {
-        return this.row([this.col([this.title(title)])]);
-    }
-
-    /**
-     * @param {String} text
-     * @param {Function} clickFunction
-     */
-    titleButton(text, clickFunction) {
-        return this._h('div', {class: 'd-flex justify-content-md-end align-items-center col'}, [
-            this._h('button', {class: 'btn overview-add-btn py-2 btn-primary', on: {click: clickFunction}}, [text]),
-        ]);
-    }
-}
-
-/**
- * @typedef {import('./basecreator').BaseCreator} BaseCreator
- * @typedef {import('../services/error').ErrorService} ErrorService
- * @typedef {import('../services/translator').TranslatorService} TranslatorService
- * @typedef {import('../services/router').RouterService} RouterService
- * @typedef {import('vue').CreateElement} CreateElement
- * @typedef {import('vue').VNode} VNode
- * @typedef {import('vue').Component} Component
- *
- * @typedef {Object} CreatePageCSSClasses
- * @property {String[]} container
- */
-
-class CreatePageCreator {
-    /**
-     * @param {BaseCreator} baseCreator
-     * @param {ErrorService} errorService
-     * @param {RouterService} routerService
-     * @param {TranslatorService} translatorService
-     */
-    constructor(baseCreator, errorService, translatorService, routerService) {
-        /** @type {CreateElement} */
-        this._h;
-        this._errorService = errorService;
-        this._routerService = routerService;
-        this._translatorService = translatorService;
-        this._baseCreator = baseCreator;
-    }
-
-    // prettier-ignore
-    /** @param {CreateElement} h */
-    set h(h) { this._h = h; }
-
-    /**
-     * Generate a create page
-     * @param {Component} form the form to create stuff with
-     * @param {()=>Object<string,any} modelFactory the factory to create a new instance of a model
-     * @param {String} subject the subject for which to create something for
-     * @param {Function} createAction the action to send the newly created model to the backend
-     * @param {String} [title] the optional title, will generate default one if nothing is given
-     * @param {CreatePageCSSClasses} [cssClasses] the optional css classes to override the basic classes
-     */
-    create(form, modelFactory, subject, createAction, title, cssClasses) {
-        // define pageCreator here, cause this context get's lost in the return object
-        const pageCreator = this;
-
-        return {
-            name: `create-${subject}`,
-            data: () => ({editable: modelFactory()}),
-            render() {
-                const titleElement = title
-                    ? pageCreator._baseCreator.title(title)
-                    : pageCreator.createCreatePageTitle(subject);
-
-                return pageCreator._baseCreator.container(
-                    [titleElement, pageCreator.createForm(form, this.editable, createAction)],
-                    cssClasses ? cssClasses.container : undefined
-                );
-            },
-            mounted() {
-                pageCreator.checkQuery(this.editable);
-            },
-        };
-    }
-
-    /** @param {String} subject */
-    createCreatePageTitle(subject) {
-        return this._baseCreator.titleRow(this._translatorService.getCapitalizedSingular(subject) + ` toevoegen`);
-    }
-    /**
-     * @param {Component} form
-     * @param {Object<string,any>} editable
-     * @param {(item:Object<string,any) => void} action
-     */
-    createForm(form, editable, action) {
-        return this._h('div', {class: 'row mt-3'}, [
-            this._baseCreator.col([
-                this._h(form, {
-                    props: {
-                        editable,
-                        errors: this._errorService.getErrors(),
-                    },
-                    on: {submit: () => action(editable)},
-                }),
-            ]),
-        ]);
-    }
-
-    /** @param {Object<string,any>} editable */
-    checkQuery(editable) {
-        const query = this._routerService.query;
-
-        if (!Object.keys(query).length) return;
-
-        for (const key in query) {
-            if (editable[key]) {
-                editable[key] = query[key];
-            }
-        }
-    }
-}
-
-/**
- * @typedef {import('./basecreator').BaseCreator} BaseCreator
- * @typedef {import('../services/error').ErrorService} ErrorService
- * @typedef {import('../services/translator').TranslatorService} TranslatorService
- * @typedef {import('../services/router').RouterService} RouterService
- * @typedef {import('vue').CreateElement} CreateElement
- * @typedef {import('vue').VNode} VNode
- * @typedef {import('vue').Component} Component
- *
- * @typedef {Object} EditPageCSSClasses
- * @property {String[]} container
- */
-
-class EditPageCreator {
-    /**
-     * @param {BaseCreator} baseCreator
-     * @param {ErrorService} errorService
-     * @param {TranslatorService} translatorService
-     */
-    constructor(baseCreator, errorService, translatorService, routerService) {
-        /** @type {CreateElement} */
-        this._h;
-        this._errorService = errorService;
-        this._translatorService = translatorService;
-        this._baseCreator = baseCreator;
-        this._routerService = routerService;
-    }
-
-    // prettier-ignore
-    /** @param {CreateElement} h */
-    set h(h) { this._h = h; }
-
-    /**
-     * Generate an edit page
-     * @param {Component} form the form to create stuff with
-     * @param {()=>Object<string,any} getter the getter to get the instance from the store
-     * @param {String} subject the subject for which to create something for
-     * @param {Function} updateAction the action to send the updated model to the backend
-     * @param {Function} [destroyAction] the optional destroyAction, will attach a destroy button with this action
-     * @param {Function} [showAction] the optional showAction, will get data from the server if given
-     * @param {String|String[]} [titleItemProperty] the optional titleItemProperty, will show title based on the given property. If nothing is given then the creator will try to resolve a title
-     * @param {EditPageCSSClasses} [cssClasses] the optional css classes to override the basic classes
-     */
-    create(form, getter, subject, updateAction, destroyAction, showAction, titleItemProperty, cssClasses) {
-        // define pageCreator here, cause this context get's lost in the return object
-        const pageCreator = this;
-
-        return {
-            name: `edit-${subject}`,
-            computed: {
-                item() {
-                    const item = getter();
-                    if (item) this.editable = JSON.parse(JSON.stringify(item));
-                    return item;
-                },
-            },
-            data() {
-                return {editable: {}};
-            },
-            render(h) {
-                // TODO :: notFoundMessage should be clear
-                if (!this.item) return h('div', ['Dit is nog niet gevonden']);
-
-                const containerChildren = [
-                    pageCreator.createEditPageTitle(this.item, titleItemProperty),
-                    pageCreator.createForm(form, this.editable, updateAction),
-                ];
-
-                if (destroyAction) {
-                    // TODO :: move to method, when there are more b-links
-                    // TODO :: uses Bootstrap-Vue element
-                    containerChildren.push(
-                        h(
-                            'b-link',
-                            {
-                                class: 'text-danger',
-                                on: {click: destroyAction},
-                            },
-                            [`${pageCreator._translatorService.getCapitalizedSingular(subject)} verwijderen`]
-                        )
-                    );
-                }
-
-                return pageCreator._baseCreator.container(
-                    containerChildren,
-                    cssClasses ? cssClasses.container : undefined
-                );
-            },
-            mounted() {
-                pageCreator.checkQuery(this.editable);
-                if (showAction) showAction();
-            },
-        };
-    }
-
-    /**
-     * @param {Object<string,any>} item the item for which to show the title
-     * @param {String|String[]} [titleItemProperty] the optional titleItemProperty, will show title based on the given property. If nothing is given then the creator will try to resolve a title
-     */
-    createEditPageTitle(item, titleItemProperty) {
-        const title = this.createTitleFromItemProperties(item, titleItemProperty);
-
-        if (!title) return this._baseCreator.titleRow('Aanpassen');
-
-        return this._baseCreator.titleRow(title + ' aanpassen');
-    }
-
-    /**
-     * @param {Object<string,any>} item the item for which to show the title
-     * @param {String|String[]} [titleItemProperty] the optional titleItemProperty, will show title based on the given property. If nothing is given then the creator will try to resolve a title
-     */
-    createTitleFromItemProperties(item, titleItemProperty) {
-        // if titleItemProperty is given, create title based on that
-        if (titleItemProperty) {
-            if (Array.isArray(titleItemProperty)) {
-                return titleItemProperty.map(prop => item[prop]).join(' ');
-            }
-            return item[titleItemProperty];
-        }
-
-        // if titleItemProperty is not given, try to resolve it with the most common properties
-        if (item.firstname) return `${item.firstname} ${item.lastname}`;
-
-        return item.name || item.title;
-    }
-    /**
-     * @param {Component} form
-     * @param {Object<string,any>} editable
-     * @param {(item:Object<string,any) => void} action
-     */
-    createForm(form, editable, action) {
-        return this._h('div', {class: 'row mt-3'}, [
-            this._baseCreator.col([
-                this._h(form, {
-                    props: {
-                        editable,
-                        errors: this._errorService.getErrors(),
-                    },
-                    on: {submit: () => action(editable)},
-                }),
-            ]),
-        ]);
-    }
-
-    /** @param {Object<string,any>} editable */
-    checkQuery(editable) {
-        const query = this._routerService.query;
-
-        if (!Object.keys(query).length) return;
-
-        for (const key in query) {
-            if (editable[key]) {
-                editable[key] = query[key];
-            }
-        }
-    }
-}
-
-/**
- * @typedef {import('./basecreator').BaseCreator} BaseCreator
- * @typedef {import('../services/translator').TranslatorService} TranslatorService
- * @typedef {import('vue').CreateElement} CreateElement
- * @typedef {import('vue').VNode} VNode
- * @typedef {import('vue').Component} Component
- */
-
-class OverviewPageCreator {
-    /**
-     * @param {BaseCreator} baseCreator
-     * @param {TranslatorService} translatorService
-     */
-    constructor(baseCreator, translatorService) {
-        /** @type {CreateElement} */
-        this._h;
-        this._translatorService = translatorService;
-        this._baseCreator = baseCreator;
-    }
-
-    // prettier-ignore
-    /** @param {CreateElement} h */
-    set h(h) { this._h = h; }
-
-    /**
-     * @param {String} subject the subject for which to create the overview page
-     * @param {Function} getter the table to show items in
-     * @param {Component} table the table to show items in
-     * @param {Component} [filter] the filter to filter the items
-     * @param {Function} [toCreatePage] the function to go to the create page
-     */
-    create(subject, getter, table, filter, toCreatePage) {
-        // define pageCreator here, cause this context get's lost in the return object
-        const pageCreator = this;
-
-        return {
-            name: `overview-${subject}`,
-            computed: {
-                items() {
-                    return getter();
-                },
-            },
-            data() {
-                return {
-                    filteredItems: [],
-                };
-            },
-            render(h) {
-                const titleElement = pageCreator.createOverviewPageTitle(subject, toCreatePage);
-
-                const containerChildren = [titleElement];
-
-                if (filter)
-                    containerChildren.push(
-                        h(filter, {
-                            props: {items: this.items},
-                            on: {filter: items => (this.filteredItems = items)},
-                        })
-                    );
-
-                const items = filter ? this.filteredItems : this.items;
-
-                containerChildren.push(h(table, {props: {items}}));
-
-                return pageCreator._baseCreator.container(containerChildren);
-            },
-        };
-    }
-    /**
-     * @param {String} subject
-     * @param {Function} [toCreatePage]
-     */
-    createOverviewPageTitle(subject, toCreatePage) {
-        const title = this._translatorService.getCapitalizedPlural(subject);
-        if (!toCreatePage) return this._baseCreator.titleRow(title);
-
-        const titleCol = this._baseCreator.col([this._baseCreator.title(title)], 8);
-        const buttonCol = this._baseCreator.titleButton(
-            this._translatorService.getCapitalizedSingular(subject) + ` toevoegen`,
-            toCreatePage
-        );
-
-        return this._baseCreator.row([titleCol, buttonCol]);
-    }
-}
-
-/**
- * @typedef {import('./basecreator').BaseCreator} BaseCreator
- * @typedef {import('../services/translator').TranslatorService} TranslatorService
- * @typedef {import('vue').CreateElement} CreateElement
- * @typedef {import('vue').VNode} VNode
- * @typedef {import('vue').Component} Component
- */
-
-class ShowPageCreator {
-    /**
-     * @param {BaseCreator} baseCreator
-     * @param {TranslatorService} translatorService
-     */
-    constructor(baseCreator, translatorService) {
-        /** @type {CreateElement} */
-        this._h;
-        this._translatorService = translatorService;
-        this._baseCreator = baseCreator;
-    }
-
-    // prettier-ignore
-    /** @param {CreateElement} h */
-    set h(h) { this._h = h; }
-
-    /**
-     * @param {String} subject the subject for which to create the show page
-     * @param {Function} getter the getter to get the show item to show
-     * @param {Component} detailList the detail list that displays the actual data
-     * @param {String|String[]} [titleItemProperty] the optional titleItemProperty, will show title based on the given property. If nothing is given then the creator will try to resolve a title
-     * @param {Function} [toEditPage] the function to go to the edit page
-     */
-    create(subject, getter, detailList, titleItemProperty, toEditPage) {
-        // define pageCreator here, cause this context get's lost in the return object
-        const pageCreator = this;
-
-        return {
-            name: `show-${subject}`,
-            computed: {
-                item() {
-                    return getter();
-                },
-            },
-            render(h) {
-                // TODO :: notFoundMessage should be clear
-                if (!this.item) return h('div', ['Dit is nog niet gevonden']);
-
-                const row = pageCreator._baseCreator.row(
-                    [
-                        pageCreator._baseCreator.col([
-                            pageCreator._baseCreator.card([
-                                pageCreator._baseCreator.title(
-                                    pageCreator._translatorService.getCapitalizedSingular(subject) + ' gegevens',
-                                    'h4'
-                                ),
-                                h(detailList, {props: {item: this.item}}),
-                            ]),
-                        ]),
-                    ],
-                    3
-                );
-
-                return pageCreator._baseCreator.container([
-                    pageCreator.createShowPageTitle(this.item, titleItemProperty, toEditPage),
-                    row,
-                ]);
-            },
-        };
-    }
-
-    /**
-     * @param {Object<string,any>} item the item for which to show the title
-     * @param {String|String[]} [titleItemProperty] the optional titleItemProperty, will show title based on the given property. If nothing is given then the creator will try to resolve a title
-     * @param {Function} [toEditPage] the optional to edit page function
-     */
-    createShowPageTitle(item, titleItemProperty, toEditPage) {
-        const title = this.createTitleFromItemProperties(item, titleItemProperty);
-        if (!toEditPage) return this._baseCreator.titleRow(title);
-
-        const titleCol = this._baseCreator.col([this._baseCreator.title(title)], 8);
-        const buttonCol = this._baseCreator.titleButton(`${title} aanpassen`, toEditPage);
-        return this._baseCreator.row([titleCol, buttonCol]);
-    }
-    /**
-     * @param {Object<string,any>} item the item for which to show the title
-     * @param {String|String[]} [titleItemProperty] the optional titleItemProperty, will show title based on the given property. If nothing is given then the creator will try to resolve a title
-     */
-    createTitleFromItemProperties(item, titleItemProperty) {
-        // if titleItemProperty is given, create title based on that
-        if (titleItemProperty) {
-            if (Array.isArray(titleItemProperty)) {
-                return titleItemProperty.map(prop => item[prop]).join(' ');
-            }
-            return item[titleItemProperty];
-        }
-
-        // if titleItemProperty is not given, try to resolve it with the most common properties
-        if (item.firstname) return `${item.firstname} ${item.lastname}`;
-
-        return item.name || item.title;
-    }
-}
-
-/**
- * @typedef {import('../services/translator').TranslatorService} TranslatorService
- * @typedef {import('./basecreator').BaseCreator} BaseCreator
- * @typedef {import('vue').CreateElement} CreateElement
- * @typedef {import('vue').VNode} VNode
- * @typedef {import('bootstrap-vue').BvTableField} BvTableField
- */
-
-class TableCreator {
-    /**
-     * @param {TranslatorService} translatorService
-     * @param {BaseCreator} baseCreator
-     */
-    constructor(baseCreator, translatorService) {
-        /** @type {CreateElement} */
-        this._h;
-        this._translatorService = translatorService;
-        this._baseCreator = baseCreator;
-    }
-
-    // prettier-ignore
-    /** @param {CreateElement} h */
-    set h(h) { this._h = h; }
-
-    /**
-     * @param {String} subject the subject for which to create the table for
-     * @param {BvTableField[]} fields the subject for which to create the table for
-     * @param {Function} [rowClicked] the subject for which to create the table for
-     */
-    table(subject, fields, rowClicked) {
-        // define tableCreator here, cause this context get's lost in the return object
-        const creator = this;
-        const title = creator._baseCreator.title(
-            creator._translatorService.getCapitalizedPlural(subject) + ' overzicht',
-            'h4'
-        );
-
-        return {
-            props: {items: {type: Array, required: true}},
-            data: () => ({perPage: 20}),
-            methods: {
-                infiniteScroll() {
-                    const docElement = document.documentElement;
-                    // check if bottom, then add 20 rows to the table
-                    if (docElement.scrollTop + window.innerHeight === docElement.offsetHeight) {
-                        if (this.perPage > this.items.length) return;
-                        this.perPage += 20;
-                    }
-                },
-            },
-            mounted() {
-                window.onscroll = () => this.infiniteScroll();
-                this.infiniteScroll();
-            },
-            render() {
-                return creator._baseCreator.card([title, creator.bTable(this.items, this.perPage, fields, rowClicked)]);
-            },
-        };
-    }
-
-    bTable(items, perPage, fields, rowClicked) {
-        const options = {
-            props: {items, perPage, fields, borderless: true, hover: true, responsive: true},
-        };
-
-        if (rowClicked) {
-            options.on = {'row-clicked': rowClicked};
-        }
-
-        return this._h(BTable, options);
-    }
-}
-
-let updateTimeout;
-
-const update = (emitter, url, value) => {
-    if (updateTimeout) clearTimeout(updateTimeout);
-    if (url && !value.indexOf('http://') == 0 && !value.indexOf('https://') == 0) {
-        value = `http://${value}`;
-    }
-    updateTimeout = setTimeout(() => emitter(value), 200);
-};
-
-/**
- * Creates a text input for a create and edit form
- *
- * @param {String}  placeholder The placeholder being shown when there is no input
- * @param {Boolean} url         If the input needs to be a url or not
- *
- * @returns {VueComponent}
- */
-var StringInput = (placeholder, url) => ({
-    name: 'string-input',
-    functional: true,
-    props: {value: {required: true, type: String}},
-    render(h, {props, listeners}) {
-        return h('input', {
-            class: 'form-control',
-            attrs: {value: props.value, placeholder},
-            on: {input: e => update(listeners.update, url, e.target.value)},
-        });
-    },
-});
-
-/**
- * Creates a select input for a create and edit form
- *
- * @param {String}          storeGetter     The getter for the options for the multiselect
- * @param {String}          valueField      The property of an option object that's used as the value for the option
- * @param {String}          textField       The property of an option object that will be shown to the user
- *
- * @returns {VueComponent}
- */
-var SelectInput = (moduleName, valueField, textField) => ({
-    name: 'select-input',
-    computed: {
-        options() {
-            return storeService.getAllFromStore(moduleName);
-        },
-    },
-    props: {value: {required: true, type: Number}},
-    render(h) {
-        const options = this.options.map(option =>
-            h('option', {attrs: {value: option[valueField], selected: option[valueField] == this.value}}, [
-                option[textField],
-            ])
-        );
-        return h(
-            'select',
-            {class: 'custom-select', on: {input: e => this.$emit('update', parseInt(e.target.value))}},
-            options
-        );
-    },
-});
-
-let Multiselect;
-
-try {
-    Multiselect = require('vue-multiselect').default;
-    // eslint-disable-next-line
-} catch (error) {}
-
-/**
- * Creates a multiselect for a create and edit form
- *
- * @param {String}    storeGetter     The getter for the options for the multiselect
- * @param {string}    valueField      The property of an option object that's used as the value for the option
- * @param {string}    textField       The property of an option object that will be shown to the user
- *
- * @returns {VueComponent}
- */
-var MultiselectInput = (moduleName, valueField, textField) =>
-    Vue.component('multiselect-input', {
-        props: {value: {required: true, type: Array}},
-        computed: {
-            options() {
-                return storeService.getAllFromStore(moduleName);
-            },
-        },
-        render(h) {
-            if (!Multiselect) {
-                console.error('VUE-MULTISELECT IS NOT INSTALLED');
-                console.warn('run the following command to install vue-multiselect: npm --save vue-multiselect');
-                return h('p', 'VUE-MULTISELECT IS NOT INSTALLED');
-            }
-            return h(Multiselect, {
-                props: {
-                    trackBy: valueField,
-                    label: textField,
-                    options: this.options,
-                    value: this.options.filter(item => this.value.includes(item[valueField])),
-                    placeholder: 'zoeken',
-                    multiple: true,
-                    clearOnSelect: false,
-                    preserveSearch: true,
-                    showLabels: false,
-                    showPointer: false,
-                    closeOnSelect: false,
-                },
-                on: {
-                    input: e =>
-                        this.$emit(
-                            'update',
-                            e.map(item => item[valueField])
-                        ),
-                },
-            });
-        },
-    });
-
-/**
- * @typedef {import("vue").Component} Component
- *
- * @typedef {(value:string) => string} FormGroupFormatter
- */
-
-let updateTimeout$1;
-
-const update$1 = (emitter, value) => {
-    if (updateTimeout$1) clearTimeout(updateTimeout$1);
-    updateTimeout$1 = setTimeout(() => {
-        // Check if it's a float or an int
-        if (value.indexOf('.') !== -1) emitter(parseFloat(value));
-        else emitter(parseInt(value));
-    }, 200);
-};
-
-/**
- * Creates a number input for a create and edit form
- *
- * @param {Number}                  [min]         The minimum amount
- * @param {Number}                  [max]         The maximum amount
- * @param {Number}                  [steps]       The steps amount
- * @param {FormGroupFormatter}      [formatter]   Optional formatter
- *
- * @returns {Component}
- */
-var NumberInput = (min, max, step, formatter) => {
-    const functional = !formatter;
-    return {
-        name: 'number-input',
-        // can be functional when it's just a number without a formatter
-        // maybe not the most practical/readable solution, but it's a proof of concept that it can work
-        functional,
-        props: {value: {required: true, type: Number}},
-        data() {
-            return {
-                isInputActive: false,
-            };
-        },
-        render(h, context) {
-            // TODO Vue3 :: make this pretty again, put it in setup
-            // could also still be just a functional component then, requires testing
-            let value, updater;
-            // render get's context when it's a functional component
-            if (functional) {
-                value = context.props.value;
-                updater = context.listeners.update;
-            } else {
-                value = this.value;
-                updater = this.$listeners.update;
-            }
-
-            if (functional || this.isInputActive) {
-                return h('input', {
-                    class: 'form-control',
-                    attrs: {
-                        value,
-                        type: 'number',
-                        min,
-                        max,
-                        step,
-                    },
-                    on: {
-                        input: e => {
-                            if (!e.target.value) e.target.value = '0';
-
-                            update$1(updater, e.target.value);
-                        },
-                        blur: () => {
-                            if (!functional) this.isInputActive = false;
-                        },
-                    },
-                });
-            }
-
-            return h('input', {
-                class: 'form-control',
-                attrs: {value: formatter(value), type: 'text'},
-                on: {focus: () => (this.isInputActive = true)},
-            });
-        },
-    };
-};
-
-/**
- * Creates a checkbox for a create and edit form
- *
- * @param {String[]} description The description being show when checkbox is checked and not checked, first value in array is checked, second is not checked
- *
- * @returns {VueComponent}
- */
-var CheckboxInput = description => ({
-    name: 'checkbox-input',
-    functional: true,
-    props: {value: {required: true, type: Boolean}},
-    render(h, {props, listeners}) {
-        // TODO :: create normal element instead of Bootstrap Vue element
-        return h(
-            'b-checkbox',
-            {props: {checked: props.value, required: true, switch: true}, on: {input: e => listeners.update(e)}},
-            [description[props.value ? 1 : 0]]
-        );
-    },
-});
-
-var BaseFormError = {
-    name: 'form-error',
-    functional: true,
-    props: {
-        error: {
-            type: String,
-            required: true,
-        },
-    },
-    render(h, {props}) {
-        if (!props.error) return;
-        return h(
-            'b-form-invalid-feedback',
-            {
-                props: {
-                    state: false,
-                },
-            },
-            [props.error]
-        );
-    },
-};
-
-class InvalidFormTypeGivenError extends Error {
-    constructor(...params) {
-        // Pass remaining arguments (including vendor specific ones) to parent constructor
-        super(...params);
-
-        this.name = 'InvalidFormTypeGivenError';
-    }
-}
-
-/**
- * @typedef {import('vue').CreateElement} CreateElement
- * @typedef {import('vue').VNode} VNode
- * @typedef {import('vue').VNodeChildren} VNodeChildren
- *
- * @typedef {import('vue').Component} Component
- * @typedef {import('../services/translator').TranslatorService} TranslatorService
- * @typedef {import('./basecreator').BaseCreator} BaseCreator
- *
- * @typedef {(value:string) => string} FormGroupFormatter
- *
- * @typedef {Object} FormInputData
- * @property {string} cardHeader the header of the card
- * @property {FormGroup[]} formGroups the formgroups the form consits of
- *
- * @typedef {Object} FormGroup the formgroups the form consits of
- * @property {string} property the property of the formgroup
- * @property {string} label the label of the formgroup
- * @property {string} type the type of the formgroup
- * @property {FormGroupFormatter} [formatter] the formatter for the value in the formgroup input
- * @property {string} [options] the options in the 'select' or 'multiselect' type formgroup has
- * @property {string} [valueField] the valueField in the 'select' or 'multiselect' type formgroup has
- * @property {string} [textField] the textField in the 'select' or 'multiselect' type formgroup has
- * @property {number} [min] the minimal value a number in the 'number' type formgroup has
- * @property {number} [max] the maximal value a number in the 'number' type formgroup has
- * @property {number} [step] the step value a number in the 'number' type formgroup has
- * @property {[string,string]} [description] the descriptions(options) a checkbox should have
- * @property {Component} [component] the component the formgroup should use
- */
-
-class FormCreator {
-    /**
-     * @param {TranslatorService} translatorService
-     * @param {BaseCreator} baseCreator
-     */
-    constructor(baseCreator, translatorService) {
-        /** @type {CreateElement} */
-        this._h;
-        this._translatorService = translatorService;
-        this._baseCreator = baseCreator;
-    }
-
-    // prettier-ignore
-    /** @param {CreateElement} h */
-    set h(h) { this._h = h; }
-
-    /**
-     * Generate a form
-     * @param {String} subject the subject for which to create something for
-     * @param {FormInputData[]} formData the data the form consists of
-     */
-    create(subject, formData) {
-        // define formCreator here, cause this context get's lost in the return object
-        const formCreator = this;
-
-        return {
-            name: `${subject}-form`,
-
-            functional: true,
-
-            props: {
-                editable: {
-                    type: Object,
-                    required: true,
-                },
-                errors: {
-                    type: Object,
-                    required: true,
-                },
-            },
-
-            render(_, {props, listeners}) {
-                const cards = formData.map(data => {
-                    const cardData = [];
-
-                    if (data.cardHeader) cardData.push(formCreator._baseCreator.title(data.cardHeader, 'h3'));
-
-                    const formGroups = data.formGroups.map(formGroup => {
-                        const input = [formCreator.typeConverter(formGroup, props.editable)];
-
-                        if (props.errors[formGroup.property]) {
-                            input.push(formCreator.createError(props.errors[formGroup.property][0]));
-                        }
-
-                        return formCreator.createFormGroup(formGroup.label, input);
-                    });
-
-                    cardData.push(formGroups);
-
-                    return formCreator._baseCreator.card(cardData);
-                });
-
-                cards.push(formCreator.submitButton(subject));
-                return formCreator.createForm(cards, () => listeners.submit());
-            },
-        };
-    }
-
-    /**
-     * Generate an input
-     * @param {FormGroup} inputData the data used to generate an input field
-     * @param {Object<string, any>} editable the editable property of the form
-     */
-    typeConverter(inputData, editable) {
-        const valueBinding = {
-            props: {value: editable[inputData.property]},
-            on: {update: e => (editable[inputData.property] = e)},
-        };
-
-        switch (inputData.type) {
-            case 'string':
-                return this._h(
-                    StringInput(inputData.placeholder || `Vul hier uw ${inputData.label.toLowerCase()} in`, false),
-                    valueBinding
-                );
-            case 'select':
-                return this._h(SelectInput(inputData.options, inputData.valueField, inputData.textField), valueBinding);
-            case 'number':
-                return this._h(
-                    NumberInput(inputData.min, inputData.max, inputData.step, inputData.formatter),
-                    valueBinding
-                );
-            case 'checkbox':
-                return this._h(CheckboxInput(inputData.description), valueBinding);
-            case 'multiselect':
-                return this._h(
-                    MultiselectInput(inputData.options, inputData.valueField, inputData.textField),
-                    valueBinding
-                );
-            case 'custom':
-                return this._h(inputData.component, valueBinding);
-        }
-
-        throw new InvalidFormTypeGivenError(
-            `Invalid type for ${inputData.property}, type can be 'string', 'select', 'number', 'checkbox', 'multiselect', 'custom'`
-        );
-    }
-
-    /** @param {String} property */
-    createError(property) {
-        return this._h(BaseFormError, {props: {error: property}});
-    }
-
-    /**
-     * @param {String} label
-     * @param {VNodeChildren} inputField
-     */
-    createFormGroup(label, inputField) {
-        const labelAndInput = [
-            this._h('legend', {class: 'col-sm-3 bv-no-focus-ring col-form-label'}, [label]),
-            this._h('div', {class: 'bv-no-focus-ring col'}, inputField),
-        ];
-
-        return this._h(
-            'fieldset',
-            {
-                class: 'form-group',
-                on: {
-                    click: _ => {
-                        if (inputField[0].componentInstance && inputField[0].componentInstance.focus) {
-                            inputField[0].componentInstance.focus();
-                        } else if (inputField[0].elm) {
-                            inputField[0].elm.focus();
-                        } else {
-                            // TODO :: check how everything is focusable
-                            console.log(inputField[0]);
-                        }
-                    },
-                },
-            },
-            [this._h('div', {class: 'form-row'}, labelAndInput)]
-        );
-    }
-
-    /** @param {String} subject */
-    submitButton(subject) {
-        return this._h(
-            'button',
-            {type: 'submit', class: 'btn btn-primary'},
-            this._translatorService.getCapitalizedSingular(subject) + ' opslaan'
-        );
-    }
-
-    /** @param {VNode[]} cards */
-    createForm(cards, emitter) {
-        return this._h(
-            'form',
-            {
-                on: {
-                    submit: e => {
-                        e.preventDefault();
-                        emitter();
-                    },
-                },
-            },
-            cards
-        );
-    }
-}
-
-/**
- * @typedef {import('vue').CreateElement} CreateElement
- * @typedef {import('vue').VNodeChildren} VNodeChildren
- * @typedef {import('./basecreator').BaseCreator} BaseCreator
- *
- * @typedef {(key:any, item:Object<string,any>) => string} DetailListFormatter
- *
- * @typedef {Object} ListElementEntry
- * @property {string} key The property to show for the list item
- * @property {DetailListFormatter} [formatter] The optional formatter for how to show the list item
- *
- * @typedef {Object} DetailListField
- * @property {string} label The label for the detail list entry
- * @property {string} [key] The property to show for the detail list entry
- * @property {DetailListFormatter} [formatter] The optional formatter for how to show the detail list entry
- * @property {ListElementEntry[]} [unorderedList] Creates an unordered list based on the given entries and shows it as the detail data (dd)
- */
-
-class DetailListCreator {
-    /**
-     * @param {BaseCreator} baseCreator
-     */
-    constructor(baseCreator) {
-        /** @type {CreateElement} */
-        this._h;
-        this._baseCreator = baseCreator;
-    }
-
-    // prettier-ignore
-    /** @param {CreateElement} h */
-    set h(h) { this._h = h; }
-
-    /**
-     * Create a detail list component based on the given fields
-     * @param {DetailListField[]} fields The fields for the detail list component
-     */
-    detailList(fields) {
-        const creator = this;
-        return {
-            functional: true,
-            inheritAttrs: false,
-            props: {
-                item: {
-                    type: Object,
-                    required: true,
-                },
-            },
-            render(h, {props}) {
-                const details = fields.reduce((children, field) => {
-                    if (field.unorderedList) {
-                        const ulChildren = field.unorderedList.map(listItem => {
-                            let keyValue = props.item[listItem.key];
-                            if (listItem.formatter) {
-                                keyValue = listItem.formatter(props.item[listItem.key], props.item);
-                            }
-                            return h('li', [keyValue]);
-                        });
-                        children.push(creator.dt(field.label), creator.dd([h('ul', ulChildren)]));
-                        return children;
-                    }
-
-                    let keyValue = props.item[field.key];
-                    if (field.formatter) {
-                        keyValue = field.formatter(props.item[field.key], props.item);
-                    }
-
-                    children.push(creator.dt(field.label), creator.dd(keyValue));
-                    return children;
-                }, []);
-
-                return creator.dl(details);
-            },
-        };
-    }
-
-    /** @param {String} label */
-    dt(label) {
-        return this._h('dt', {class: 'col-sm-3'}, label);
-    }
-
-    /** @param {VNodeChildren} children */
-    dd(children) {
-        return this._h('dd', {class: 'col-sm-9'}, children);
-    }
-
-    /** @param {VNodeChildren} children */
-    dl(children) {
-        return this._h('dl', {class: 'row'}, children);
-    }
-}
-
-/**
- * @typedef {import('vue').CreateElement} CreateElement
- */
-
-const baseCreator = new BaseCreator(translatorService);
-
-const createPageCreator = new CreatePageCreator(baseCreator, errorService, translatorService, routerService);
-const editPageCreator = new EditPageCreator(baseCreator, errorService, translatorService, routerService);
-const overviewPageCreator = new OverviewPageCreator(baseCreator, translatorService);
-const showPageCreator = new ShowPageCreator(baseCreator, translatorService);
-
-const tableCreator = new TableCreator(baseCreator, translatorService);
-const formCreator = new FormCreator(baseCreator, translatorService);
-const detailListCreator = new DetailListCreator(baseCreator);
-
-// Very cheesy way to bind CreateElement to the creators
-
-new Vue({
-    el: document.createElement('div'),
-    render(h) {
-        baseCreator.h = h;
-        createPageCreator.h = h;
-        editPageCreator.h = h;
-        overviewPageCreator.h = h;
-        showPageCreator.h = h;
-        tableCreator.h = h;
-        formCreator.h = h;
-        detailListCreator.h = h;
-        return h('div');
-    },
-});
 
 /**
  * @typedef {import('../services/router').RouterService} RouterService
@@ -3609,11 +2037,9 @@ class AppStarter {
 
         for (const controller in controllers) controllers[controller].init();
 
-        this._eventService.app = new Vue({
-            el: '#app',
-            router: this._routerService.router,
-            render: h => h(mainComponent),
-        });
+        this._eventService.app = createApp(mainComponent);
+        this._eventService.app.use(this._routerService.router);
+        this._eventService.app.mount('#app');
 
         // TODO :: could even do this first and .then(()=>this._authService.getLoggedInUser())
         // or make it a setting
@@ -3621,399 +2047,11 @@ class AppStarter {
     }
 }
 
-const name = 'default';
-
-var MinimalRouterView = {
-    name: 'MinimalRouterView',
-    functional: true,
-    props: {
-        depth: {
-            type: Number,
-            default: 0,
-        },
-    },
-    render(h, {
-        props,
-        children,
-        parent,
-        data
-    }) {
-        const route = parent.$route;
-        const matched = route.matched[props.depth];
-        const component = matched && matched.components[name];
-
-        // render empty node if no matched route or no config component
-        if (!matched || !component) {
-            return h();
-        }
-        return h(component, data, children);
-    },
-};
-
-/**
- * @typedef {import('../services/translator').Translation} Translation
- * @typedef {import('vuex').Module} Module
- * @typedef {import('vuex').ActionMethod} ActionMethod
- * @typedef {import('vuex').Mutation} MutationMethod
- *
- * @typedef {(State) => any} GetterMethod
- *
- * @typedef {Object<string,any>} Item
- */
-
-class BaseController {
-    /**
-     * @param {String} APIEndpoint
-     * @param {Translation} [translation]
-     */
-    constructor(APIEndpoint, translation) {
-        this._storeService = storeService;
-        this._routerService = routerService;
-        this._eventService = eventService;
-        this._translatorService = translatorService;
-
-        if (!translation) {
-            translation = {singular: APIEndpoint, plural: APIEndpoint};
-        }
-
-        this._translatorService.setTranslation(APIEndpoint, translation);
-
-        this._APIEndpoint = APIEndpoint;
-
-        /**
-         * Set the routes to go to after a certain action has been done by the store
-         * Can be edited/overwritten in controller
-         */
-        this._goToPageAfterEditAction = this.goToShowPage;
-        this._goToPageAfterCreateAction = this.goToOverviewPage;
-        this._goToPageAfterDeleteAction = this.goToOverviewPage;
-
-        /**
-         * @type {Module}
-         * Extra store functionality can added through the store service
-         */
-        this._extraStoreFunctionality = {};
-
-        /**
-         * Initiate basic route settings
-         * Settings can be changed in controller
-         */
-        this._routeSettings = this._routerService.newSettings(APIEndpoint);
-    }
-
-    // prettier-ignore
-    get APIEndpoint() { return this._APIEndpoint; }
-
-    /** go to the overview page from this controller */
-    goToOverviewPage() {
-        this._routerService.goToRoute(this.routeSettings.overviewName);
-    }
-
-    /**
-     * go the the show page for the given item of the given id
-     *
-     * @param {String|Number} id id of item to go to the show page
-     */
-    goToShowPage(id) {
-        this._routerService.goToRoute(this.routeSettings.showName, id);
-    }
-
-    /**
-     * Go to the edit page for this controller
-     * @param {String} id
-     * @param {Object.<string, string>} [query] the optional query for the new route
-     */
-    goToEditPage(id, query) {
-        this._routerService.goToRoute(this.routeSettings.editName, id, query);
-    }
-
-    /**
-     * Go to the create page for this controller
-     *
-     * @param {Object.<string, string>} [query] the optional query for the new route
-     */
-    goToCreatePage(query) {
-        this._routerService.goToRoute(this.routeSettings.createName, undefined, query);
-    }
-
-    /**
-     * get all items from the store from this controller
-     */
-    get getAll() {
-        return () => this._storeService.getAllFromStore(this._APIEndpoint);
-    }
-
-    /**
-     * Get alle items from the given moduleName
-     *
-     * @param {String} moduleName moduleName to get all items from
-     *
-     * @returns {Item[]}
-     */
-    getAllFrom(moduleName) {
-        return this._storeService.getAllFromStore(moduleName);
-    }
-
-    /**
-     * Get an item from the store based on the given id
-     * @param {String|Number} id get the item from the store base don id
-     */
-    getById(id) {
-        return this._storeService.getByIdFromStore(this._APIEndpoint, id);
-    }
-
-    /**
-     * Get an item based on the current route id
-     */
-    get getByCurrentRouteId() {
-        return () => this.getById(this._routerService.id);
-    }
-
-    /**
-     * Send an update to the api
-     * @param {Item} item The item with the information to be updated
-     * @param {String} [goToRouteName] the optional route to go to after the item has been succesfully updated
-     */
-    get update() {
-        return (item, goToRouteName) =>
-            this._storeService.update(this._APIEndpoint, item).then(() => {
-                if (!goToRouteName) return this._goToPageAfterEditAction(item.id);
-                this._routerService.goToRoute(goToRouteName);
-            });
-    }
-
-    /**
-     * Send a create to the api
-     * @param {Item} item The item with the information to be created
-     * @param {String} [goToRouteName] the optional route to go to after the item has been succesfully created
-     */
-    get create() {
-        return (item, goToRouteName) =>
-            this._storeService.create(this._APIEndpoint, item).then(() => {
-                if (!goToRouteName) return this._goToPageAfterCreateAction(item.id);
-                this._routerService.goToRoute(goToRouteName);
-            });
-    }
-
-    /**
-     * Send a delete to the api
-     * @param {String|Number} id The id of the item to be deleted
-     * @param {String} [goToRouteName] the optional route to go to after the item has been succesfully deleted
-     */
-    get destroy() {
-        return (id, goToRouteName) =>
-            this._storeService.destroy(this._APIEndpoint, id).then(() => {
-                if (!goToRouteName) return this._goToPageAfterDeleteAction(id);
-                this._routerService.goToRoute(goToRouteName);
-            });
-    }
-
-    /**
-     * Send a delete to the api without changing route afterwards
-     *
-     * @param {String|Number} id The id of the item to be deleted
-     */
-    get destroyByIdWithoutRouteChange() {
-        return id => this._storeService.destroy(this._APIEndpoint, id);
-    }
-
-    /**
-     * Send a delete with current route id to the api
-     */
-    get destroyByCurrentRouteId() {
-        return () => this.destroy(this._routerService.id);
-    }
-
-    /**
-     * Send a read request for the current controller
-     * StoreService will catch the data and put it in store
-     */
-    get read() {
-        return () => this._storeService.read(this._APIEndpoint);
-    }
-
-    /**
-     * Send a read request for an item with id of the current route
-     * StoreService will catch the data and put it in store
-     */
-    get showByCurrentRouteId() {
-        return () => this.show(this._routerService.id);
-    }
-
-    /**
-     * Send a read request for an item with the given id
-     * StoreService will catch the data and put it in store
-     *
-     * @param {String|Number} id the id of the item to read from the server
-     */
-    get show() {
-        return id => this._storeService.show(this._APIEndpoint, id);
-    }
-
-    /**
-     * The base page for the current controller
-     * Sned a read request to the server on mount
-     */
-    get basePage() {
-        return {
-            name: `${this.APIEndpoint}-base`,
-            render: h => h(MinimalRouterView, {props: {depth: 1}}),
-            // render: h => h(MinimalRouterView, {props: {depth: 1}}),
-            // TODO #9 @Goosterhof
-            mounted: () => this.read(),
-        };
-    }
-
-    get overviewPage() {
-        console.warn('overview page not implemented for', this._APIEndpoint);
-        return false;
-    }
-
-    get createPage() {
-        console.warn('create page not implemented for', this._APIEndpoint);
-        return false;
-    }
-
-    get showPage() {
-        console.warn('show page not implemented for', this._APIEndpoint);
-        return false;
-    }
-
-    get editPage() {
-        console.warn('edit page not implemented for', this._APIEndpoint);
-        return false;
-    }
-
-    /**
-     * init the controller
-     * this will add a module to the store and register routes
-     */
-    init() {
-        this._storeService.generateAndSetDefaultStoreModule(
-            this.APIEndpoint,
-            this.APIEndpoint,
-            this._extraStoreFunctionality
-        );
-
-        /**
-         * Set basic pages, so there will be custom errors in the console when something is not implemented
-         * Can be edited/overwritten in controller
-         */
-        this.routeSettings.baseComponent = this.basePage;
-        this.routeSettings.editComponent = this.editPage;
-        this.routeSettings.showComponent = this.showPage;
-        this.routeSettings.overviewComponent = this.overviewPage;
-        this.routeSettings.createComponent = this.createPage;
-
-        /**
-         * Create basic routes and add them to the global routes
-         * Routes can only be: show, overview, edit and create
-         */
-        const routes = this._routerService.createRoutes(this.routeSettings);
-        this._routerService.addRoutes(routes);
-    }
-
-    // prettier-ignore
-    get routeSettings() { return this._routeSettings; }
-
-    /** The standard message to show in the destroy modal */
-    get destroyModalMessage() {
-        return `Weet je zeker dat je deze ${this._translatorService.getSingular(this.APIEndpoint)} wil verwijderen?`;
-    }
-
-    /** Shows a modal with the standard destroy modal message. On OK will send a destroy request based on the current route id */
-    get destroyByCurrentRouteIdModal() {
-        return () => this._eventService.modal(this.destroyModalMessage, this.destroyByCurrentRouteId);
-    }
-
-    /**
-     * Shows a modal with the standard destroy modal message. On OK will send a destroy request based on the given id
-     * @param {String|Number} id
-     */
-    get destroyByIdModal() {
-        return id => this._eventService.modal(this.destroyModalMessage, () => this.destroyByIdWithoutRouteChange(id));
-    }
-
-    /**
-     * Add an extra action to this store module
-     *
-     * @param {String} name name of the new action
-     * @param {ActionMethod} action
-     */
-    setExtraStoreAction(name, action) {
-        if (!this._extraStoreFunctionality.actions) {
-            this._extraStoreFunctionality.actions = {};
-        }
-        this._extraStoreFunctionality.actions[name] = action;
-    }
-
-    /**
-     * Add an extra mutation to this store module
-     *
-     * @param {String} name name of the new action
-     * @param {MutationMethod} mutation
-     */
-    setExtraStoreMutation(name, mutation) {
-        if (!this._extraStoreFunctionality.mutations) {
-            this._extraStoreFunctionality.mutations = {};
-        }
-        this._extraStoreFunctionality.mutations[name] = mutation;
-    }
-
-    /**
-     * Add an extra getter to this store module
-     *
-     * @param {String} name name of the new getter
-     * @param {GetterMethod} getter
-     */
-    setExtraStoreGetter(name, getter) {
-        if (!this._extraStoreFunctionality.getters) {
-            this._extraStoreFunctionality.getters = {};
-        }
-        this._extraStoreFunctionality.getters[name] = getter;
-    }
-
-    /**
-     * create a new action to add to the store which sends a get request
-     * url for the new request will be: this.APIEndpoint + payload ? `/${payload}` : ''
-     *
-     * @param {String} name name of the new action
-     * @param {AxiosRequestConfig} [options] the optional request options
-     */
-    createAndSetExtraGetAction(name, options) {
-        this.setExtraStoreAction(name, this._storeService.createExtraGetAction(this.APIEndpoint, options));
-    }
-
-    /**
-     * create a new action to add to the store which sends a post request
-     * url for the post request will be: `${this.APIEndpoint}/${payload.id}/${name}
-     *
-     * @param {String} name name of the new action and the last part of the url
-     */
-    createAndSetExtraPostAction(name) {
-        this.setExtraStoreAction(name, this._storeService.createExtraPostAction(this.APIEndpoint, name));
-    }
-
-    /**
-     * dispatch an action to the store
-     * @param {String} action the name of the action being dispatched
-     * @param {*} payload the payload being used by the action
-     */
-    dispatchToStore(action, payload) {
-        this._storeService.dispatch(this.APIEndpoint, action, payload);
-    }
-
-    /**
-     * pops up a modal with the given message
-     * @param {String} message the message being shown by the modal
-     * @param {Function} okAction the function being used when click on ok
-     * @param {Function} [cancelAction] the being used when click on cancel
-     */
-    popModal(message, okAction, cancelAction) {
-        this._eventService.modal(message, okAction, cancelAction);
-    }
-}
-
 const appStarter = new AppStarter(routerService, eventService, authService, staticDataService);
 
-export { BaseController, MinimalRouterView, appStarter, authService, baseCreator, createPageCreator, detailListCreator, editPageCreator, errorService, eventService, formCreator, httpService, loadingService, overviewPageCreator, routerService, showPageCreator, staticDataService, storeService, tableCreator, translatorService };
+// export {BaseController} from './controllers';
+
+// import MinimalRouterView from './components/MinimalRouterView';
+// export {MinimalRouterView};
+
+export { appStarter, authService, eventService, routerService, staticDataService };

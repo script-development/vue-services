@@ -24,11 +24,11 @@ import {StoreService} from './store';
 const storeFactory = new StoreModuleFactory(httpService, storageService);
 export const storeService = new StoreService(storeFactory, httpService);
 
-import {ErrorService} from './error';
-export const errorService = new ErrorService(storeService, routerService, httpService);
+// import {ErrorService} from './error';
+// export const errorService = new ErrorService(storeService, routerService, httpService);
 
-import {LoadingService} from './loading';
-export const loadingService = new LoadingService(storeService, httpService);
+// import {LoadingService} from './loading';
+// export const loadingService = new LoadingService(storeService, httpService);
 
 import {StaticDataService} from './staticdata';
 export const staticDataService = new StaticDataService(storeService, httpService);

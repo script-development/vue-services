@@ -41,9 +41,9 @@ export class AppStarter {
 
         for (const controller in controllers) controllers[controller].init();
 
-        this._eventService.app = createApp(mainComponent).mount('#app');
-
+        this._eventService.app = createApp(mainComponent);
         this._eventService.app.use(this._routerService.router);
+        this._eventService.app.mount('#app');
 
         // TODO :: could even do this first and .then(()=>this._authService.getLoggedInUser())
         // or make it a setting
