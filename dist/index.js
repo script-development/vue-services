@@ -2,18 +2,13 @@
 
 Object.defineProperty(exports, '__esModule', { value: true });
 
-var axios = require('axios');
+function _interopDefault (ex) { return (ex && (typeof ex === 'object') && 'default' in ex) ? ex['default'] : ex; }
+
+var axios = _interopDefault(require('axios'));
 var bootstrapVue = require('bootstrap-vue');
-var Vue = require('vue');
-var VueRouter = require('vue-router');
-var Vuex = require('vuex');
-
-function _interopDefaultLegacy (e) { return e && typeof e === 'object' && 'default' in e ? e : { 'default': e }; }
-
-var axios__default = /*#__PURE__*/_interopDefaultLegacy(axios);
-var Vue__default = /*#__PURE__*/_interopDefaultLegacy(Vue);
-var VueRouter__default = /*#__PURE__*/_interopDefaultLegacy(VueRouter);
-var Vuex__default = /*#__PURE__*/_interopDefaultLegacy(Vuex);
+var Vue = _interopDefault(require('vue'));
+var VueRouter = _interopDefault(require('vue-router'));
+var Vuex = _interopDefault(require('vuex'));
 
 const keepALiveKey = 'keepALive';
 /** setting keepALive here so we don't have to Parse it each time we get it */
@@ -111,7 +106,7 @@ class HTTPService {
         this._cache = this._storageService.getItem(CACHE_KEY, true) || {};
         this._cacheDuration = 10;
 
-        this._http = axios__default['default'].create({
+        this._http = axios.create({
             baseURL: API_URL,
             withCredentials: false,
             headers: {
@@ -258,11 +253,11 @@ class EventService {
 
     set app(app) {
         if (!app.$bvToast) {
-            Vue__default['default'].use(bootstrapVue.ToastPlugin);
+            Vue.use(bootstrapVue.ToastPlugin);
         }
 
         if (!app.$bvModal) {
-            Vue__default['default'].user(bootstrapVue.ModalPlugin);
+            Vue.user(bootstrapVue.ModalPlugin);
         }
         this._app = app;
     }
@@ -479,9 +474,9 @@ class RouterConsumedError extends Error {
  * @typedef {(to:Route, from:Route, next:NavigationGuardNext) => Boolean} BeforeMiddleware
  * @typedef {(to:Route, from:Route) => void} AfterMiddleware
  */
-Vue__default['default'].use(VueRouter__default['default']);
+Vue.use(VueRouter);
 
-const router = new VueRouter__default['default']({
+const router = new VueRouter({
     mode: 'history',
     routes: [],
 });
@@ -1203,14 +1198,14 @@ class StoreModuleFactory {
                     // if allData is not an array but the state contains an array
                     // then allData probably has an id and then you can set it in the state
                     if (state[stateName].length && allData.id) {
-                        Vue__default['default'].set(state[stateName], allData.id, allData);
+                        Vue.set(state[stateName], allData.id, allData);
                     } else {
                         // else put allData as the state
                         state[stateName] = allData;
                     }
                 } else if (allData.length === 1) {
                     // if allData has an array with 1 entry, put it in the state
-                    Vue__default['default'].set(state[stateName], allData[0].id, allData[0]);
+                    Vue.set(state[stateName], allData[0].id, allData[0]);
                 } else {
                     // if allData has more entries, then that's the new baseline
                     for (const id in state[stateName]) {
@@ -1218,7 +1213,7 @@ class StoreModuleFactory {
                         const newDataIndex = allData.findIndex(entry => entry.id == id);
                         // if not found, then delete entry
                         if (newDataIndex === -1) {
-                            Vue__default['default'].delete(state[stateName], id);
+                            Vue.delete(state[stateName], id);
                             continue;
                         }
                         // remove new entry from allData, so further searches speed up
@@ -1227,12 +1222,12 @@ class StoreModuleFactory {
                         // if the entry for this id is larger then the current entry, do nothing
                         if (Object.values(state[stateName][id]).length > Object.values(newData).length) continue;
 
-                        Vue__default['default'].set(state[stateName], newData.id, newData);
+                        Vue.set(state[stateName], newData.id, newData);
                     }
 
                     // put all remaining new data in the state
                     for (const newData of allData) {
-                        Vue__default['default'].set(state[stateName], newData.id, newData);
+                        Vue.set(state[stateName], newData.id, newData);
                     }
                 }
 
@@ -1240,7 +1235,7 @@ class StoreModuleFactory {
             },
             [this.deleteMutation]: (state, id) => {
                 const stateName = this.allItemsStateName;
-                Vue__default['default'].delete(state[stateName], id);
+                Vue.delete(state[stateName], id);
                 this._storageService.setItem(moduleName + stateName, state[stateName]);
             },
         };
@@ -1369,7 +1364,7 @@ class StoreModuleNotFoundError extends Error {
  * @typedef {import('../../controllers').Item} Item
  */
 // Bind the store to Vue and generate empty store
-Vue__default['default'].use(Vuex__default['default']);
+Vue.use(Vuex);
 
 class StoreService {
     /**
@@ -1377,7 +1372,7 @@ class StoreService {
      * @param {HTTPService} httpService the http service for communication with the API
      */
     constructor(factory, httpService) {
-        this._store = new Vuex__default['default'].Store();
+        this._store = new Vuex.Store();
         this._factory = factory;
         this._httpService = httpService;
 
@@ -3080,7 +3075,7 @@ try {
  * @returns {VueComponent}
  */
 var MultiselectInput = (moduleName, valueField, textField) =>
-    Vue__default['default'].component('multiselect-input', {
+    Vue.component('multiselect-input', {
         props: {value: {required: true, type: Array}},
         computed: {
             options() {
@@ -3564,7 +3559,7 @@ const detailListCreator = new DetailListCreator(baseCreator);
 
 // Very cheesy way to bind CreateElement to the creators
 
-new Vue__default['default']({
+new Vue({
     el: document.createElement('div'),
     render(h) {
         baseCreator.h = h;
@@ -3620,7 +3615,7 @@ class AppStarter {
 
         for (const controller in controllers) controllers[controller].init();
 
-        this._eventService.app = new Vue__default['default']({
+        this._eventService.app = new Vue({
             el: '#app',
             router: this._routerService.router,
             render: h => h(mainComponent),
