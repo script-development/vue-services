@@ -10,6 +10,7 @@
         "types",
         "src"
     ],
+    "repository": "github:script-development/vue-services",
     "scripts": {
         "test": "nyc mocha --recursive --require @babel/register",
         "build": "eslint ./src && rollup src/index.js --file dist/index.js --format iife",
@@ -53,9 +54,6 @@
     "peerDependencies": {
         "@msgpack/msgpack": "^1.12.2",
         "vue-multiselect": "^2.1.6"
-    },
-    "publishConfig": {
-        "registry": "https://npm.pkg.github.com/"
     },
     "husky": {
         "hooks": {
