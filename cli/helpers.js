@@ -22,4 +22,33 @@ module.exports = {
         fs.writeFileSync(path.join(dir, filename), content);
         console.log('Created: ' + path.join(dir, filename));
     },
+
+    checkForFileOrDirectory(fileOrDirectoryName, message) {
+        if (!message) message = '';
+        if (!fs.existsSync(fileOrDirectoryName)) {
+            console.log('ERROR: Could not find ' + fileOrDirectoryName + '. ' + message);
+            return false;
+        }
+        return true;
+    },
+
+    run_shell_command(commmand) {
+        exec(commmand, (error, stdout, stderr) => {
+            if (error) {
+                console.error(`exec error: ${error}`);
+                return;
+            }
+            console.log(stdout);
+            console.log(stderr);
+        });
+    },
+    checkIfLaravelExists() {
+        if (this.checkForFileOrDirectory(path.join('composer.json')))
+            composerContent = this.readFile(path.join('composer.json'), 'local');
+        if (!JSON.parse(composerContent).require['laravel/framework']) {
+            console.log('Could not find Laravel installation.');
+            return false;
+        }
+        return true;
+    },
 };

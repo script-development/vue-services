@@ -18,14 +18,14 @@ module.exports = {
 
         const capitalizedArgument = argument.charAt(0).toUpperCase() + argument.slice(1);
 
-        if (parameter === '--laravel')
-            this.run_shell_command(
+        if (parameter === '--laravel') {
+            helpers.run_shell_command(
                 'php artisan make:model ' + capitalizedArgument + ' --migration --controller --resource'
             );
-
+            this.updateApiFile(capitalizedArgument);
+        }
         console.log('Created ' + argument + ' controller succesfully');
         this.updateControllerIndex();
-        this.updateApiFile(capitalizedArgument);
     },
 
     updateControllerIndex() {
@@ -77,6 +77,12 @@ module.exports = {
 
     updateApiFile(routeName) {
         console.log('Updating API route file...');
+
+        if (!fs.existsSync(path.join('routes'))) {
+            console.log('ERROR: Could not update API file, routes directory not found...');
+            return;
+        }
+
         const apiFile = fs.openSync(path.join('routes', 'api.php'), 'a');
 
         const routeInfo = `
@@ -93,17 +99,6 @@ module.exports = {
         fs.closeSync(apiFile);
 
         console.log('Updated API routes succesfully');
-    },
-
-    run_shell_command(commmand) {
-        exec(commmand, (error, stdout, stderr) => {
-            if (error) {
-                console.error(`exec error: ${error}`);
-                return;
-            }
-            console.log(stdout);
-            console.log(stderr);
-        });
     },
 
     readDefaultControllerFile(argument) {

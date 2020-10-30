@@ -2,6 +2,7 @@
 
 const install = require('./install');
 const make = require('./controller');
+const helpers = require('./helpers');
 
 const path = require('path');
 const fs = require('fs');
@@ -12,6 +13,7 @@ const parameter = process.argv[4];
 
 switch (command) {
     case 'install':
+        if (!helpers.checkIfLaravelExists()) break;
         install.createControllerIndexFile();
         install.createMainFile();
         install.createAppFile();
@@ -20,6 +22,7 @@ switch (command) {
         console.log('Installed succesfully');
         break;
     case 'make:controller':
+        if (parameter == '--laravel' && !helpers.checkIfLaravelExists()) break;
         make.controller(argument, parameter);
         break;
     case 'update:controllerindex':

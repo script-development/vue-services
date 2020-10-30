@@ -1,7 +1,6 @@
 const helpers = require('./helpers');
 const path = require('path');
 
-// TODO :: make paths absolute, are they relative to this or to project folder?
 // TODO :: documentation
 
 const mainDirectory = path.join('resources', 'js');
