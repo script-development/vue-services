@@ -1,6 +1,6 @@
 {
     "name": "@script-development/vue-services",
-    "version": "0.2.5",
+    "version": "0.2.8",
     "description": "Services for Vue SPA App",
     "main": "dist/index.js",
     "module": "dist/index.esm.js",
@@ -8,8 +8,10 @@
     "files": [
         "dist",
         "types",
-        "src"
+        "src",
+        "cli"
     ],
+    "repository": "github:script-development/vue-services",
     "scripts": {
         "test": "nyc mocha --recursive --require @babel/register",
         "build": "eslint ./src && rollup src/index.js --file dist/index.js --format iife",
@@ -23,7 +25,7 @@
     "author": "Script",
     "license": "MIT",
     "devDependencies": {
-        "@babel/core": "^7.11.4",
+        "@babel/core": "^7.12.3",
         "@babel/preset-env": "^7.11.5",
         "@babel/register": "^7.11.5",
         "@rollup/plugin-node-resolve": "^9.0.0",
@@ -31,14 +33,14 @@
         "@stryker-mutator/javascript-mutator": "^3.3.1",
         "@stryker-mutator/mocha-runner": "^3.3.1",
         "axios-mock-adapter": "^1.18.2",
-        "eslint": "^7.7.0",
+        "eslint": "^7.12.1",
         "eslint-plugin-mocha": "^8.0.0",
         "eslint-plugin-standard": "^4.0.1",
         "husky": "^4.2.5",
         "mocha": "^8.1.3",
         "nyc": "^15.1.0",
         "prettier": "^2.1.1",
-        "pretty-quick": "^3.0.0",
+        "pretty-quick": "^3.1.0",
         "rollup": "^2.26.11",
         "typedoc": "^0.19.1",
         "typescript": "^4.0.2"
@@ -51,9 +53,6 @@
     "peerDependencies": {
         "@msgpack/msgpack": "^1.12.2",
         "vue-multiselect": "^2.1.6"
-    },
-    "publishConfig": {
-        "registry": "https://npm.pkg.github.com/"
     },
     "husky": {
         "hooks": {
