@@ -1,6 +1,4 @@
 /**
- * @typedef {import('axios').AxiosRequestConfig} AxiosRequestConfig
- * @typedef {import('../storage').StorageService} StorageService
  * @typedef {import('axios').AxiosResponse} AxiosResponse
  * @typedef {import('axios').AxiosRequestConfig} AxiosRequestConfig
  * @typedef {import('axios').AxiosError} AxiosError
@@ -12,6 +10,7 @@
  * @typedef {(response: AxiosError) => void} ResponseErrorMiddleware
  */
 
+import {getItemFromStorage, setItemInStorage} from '../storage';
 import axios from 'axios';
 // TODO :: heavilly dependant on webpack and laravel mix
 const API_URL = process.env.MIX_APP_URL ? `${process.env.MIX_APP_URL}/api` : '/api';
@@ -21,101 +20,88 @@ const HEADERS_TO_TYPE = {
 
 const CACHE_KEY = 'HTTP_CACHE';
 
-export class HTTPService {
-    /**
-     * @param {StorageService} storageService
-     */
-    constructor(storageService) {
-        this._storageService = storageService;
-        /** @type {Cache} */
-        this._cache = this._storageService.getItem(CACHE_KEY, true) || {};
-        this._cacheDuration = 10;
+/** @type {number} */
+let cacheDuration = 10;
 
-        this._http = axios.create({
-            baseURL: API_URL,
-            withCredentials: false,
-            headers: {
-                Accept: 'application/json',
-                'Content-Type': 'application/json',
-            },
-        });
+const cache = getItemFromStorage(CACHE_KEY, true) || {};
 
-        /** @type {RequestMiddleware[]} */
-        this._requestMiddleware = [];
+const http = axios.create({
+    baseURL: API_URL,
+    withCredentials: false,
+    headers: {
+        Accept: 'application/json',
+        'Content-Type': 'application/json',
+    },
+});
 
-        /** @type {ResponseMiddleware[]} */
-        this._responseMiddleware = [];
+/** @type {RequestMiddleware[]} */
+const requestMiddleware = [];
+/** @type {ResponseMiddleware[]} */
+const responseMiddleware = [];
+/** @type {ResponseErrorMiddleware[]} */
+const responseErrorMiddleware = [];
 
-        /** @type {ResponseErrorMiddleware[]} */
-        this._responseErrorMiddleware = [];
+http.interceptors.request.use(request => {
+    for (const middleware of requestMiddleware) middleware(request);
+    return request;
+});
 
-        this._http.interceptors.request.use(request => {
-            for (const middleware of this._requestMiddleware) {
-                middleware(request);
-            }
-            return request;
-        });
+http.interceptors.response.use(
+    response => {
+        for (const middleware of responseMiddleware) middleware(response);
+        return response;
+    },
+    error => {
+        if (!error.response) return Promise.reject(error);
+        for (const middleware of responseErrorMiddleware) middleware(error);
+        return Promise.reject(error);
+    }
+);
 
-        this._http.interceptors.response.use(
-            response => {
-                for (const middleware of this._responseMiddleware) {
-                    middleware(response);
-                }
-                return response;
-            },
-            error => {
-                if (!error.response) return Promise.reject(error);
-
-                for (const middleware of this._responseErrorMiddleware) {
-                    middleware(error);
-                }
-                return Promise.reject(error);
-            }
-        );
+/**
+ * send a get request to the given endpoint
+ * @param {String} endpoint the endpoint for the get
+ * @param {AxiosRequestConfig} [options] the optional request options
+ */
+export const getRequest = (endpoint, options) => {
+    // get currentTimeStamp in seconds
+    const currentTimeStamp = Math.floor(Date.now() / 1000);
+    if (cache[endpoint] && !options) {
+        // if it has been less then the cache duration since last requested this get request, do nothing
+        if (currentTimeStamp - cache[endpoint] < cacheDuration) return;
     }
 
+    return http.get(endpoint, options).then(response => {
+        cache[endpoint] = currentTimeStamp;
+        setItemInStorage(CACHE_KEY, cache);
+        return response;
+    });
+};
+
+export default {
     // prettier-ignore
-    get cacheDuration() {return this._cacheDuration;}
+    get cacheDuration() {return cacheDuration;},
 
     // prettier-ignore
-    set cacheDuration(value) {this._cacheDuration = value;}
+    /** @param {number} value  */
+    set cacheDuration(value) {cacheDuration = value;},
 
-    /**
-     * send a get request to the given endpoint
-     * @param {String} endpoint the endpoint for the get
-     * @param {AxiosRequestConfig} [options] the optional request options
-     */
-    get(endpoint, options) {
-        // get currentTimeStamp in seconds
-        const currentTimeStamp = Math.floor(Date.now() / 1000);
-        if (this._cache[endpoint] && !options) {
-            // if it has been less then the cache duration since last requested this get request, do nothing
-            if (currentTimeStamp - this._cache[endpoint] < this.cacheDuration) return;
-        }
+    get: getRequest,
 
-        return this._http.get(endpoint, options).then(response => {
-            this._cache[endpoint] = currentTimeStamp;
-            this._storageService.setItem(CACHE_KEY, this._cache);
-            return response;
-        });
-    }
-
+    // prettier-ignore
     /**
      * send a post request to the given endpoint with the given data
      * @param {String} endpoint the endpoint for the post
      * @param {any} data the data to be send to the server
      */
-    post(endpoint, data) {
-        return this._http.post(endpoint, data);
-    }
+    post(endpoint, data) { return http.post(endpoint, data); },
 
+    // prettier-ignore
     /**
      * send a delete request to the given endpoint
      * @param {String} endpoint the endpoint for the get
      */
-    delete(endpoint) {
-        return this._http.delete(endpoint);
-    }
+    delete(endpoint) { return http.delete(endpoint); },
 
     /**
      * download a file from the backend
@@ -125,7 +111,7 @@ export class HTTPService {
      * @param {String} [type] the downloaded document type
      */
     download(endpoint, documentName, type) {
-        return this._http.get(endpoint, {responseType: 'blob'}).then(response => {
+        return http.get(endpoint, {responseType: 'blob'}).then(response => {
             if (!type) type = HEADERS_TO_TYPE[response.headers['content-type']];
             const blob = new Blob([response.data], {type});
             const link = document.createElement('a');
@@ -134,20 +120,20 @@ export class HTTPService {
             link.click();
             return response;
         });
-    }
+    },
 
     /** @param {RequestMiddleware} middlewareFunc */
     registerRequestMiddleware(middlewareFunc) {
-        this._requestMiddleware.push(middlewareFunc);
-    }
+        requestMiddleware.push(middlewareFunc);
+    },
 
     /** @param {ResponseMiddleware} middlewareFunc */
     registerResponseMiddleware(middlewareFunc) {
-        this._responseMiddleware.push(middlewareFunc);
-    }
+        responseMiddleware.push(middlewareFunc);
+    },
 
     /** @param {ResponseErrorMiddleware} middlewareFunc */
     registerResponseErrorMiddleware(middlewareFunc) {
-        this._responseErrorMiddleware.push(middlewareFunc);
-    }
-}
+        responseErrorMiddleware.push(middlewareFunc);
+    },
+};

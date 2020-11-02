@@ -1,8 +1,5 @@
-import {StorageService} from './storage';
-const storageService = new StorageService();
-
-import {HTTPService} from './http';
-export const httpService = new HTTPService(storageService);
+// import {HTTPService} from './http';
+// export const httpService = new HTTPService();
 
 import {EventService} from './event';
 export const eventService = new EventService(httpService);

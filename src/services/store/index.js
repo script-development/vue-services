@@ -9,8 +9,11 @@
  *
  * @typedef {Object<string,BaseStoreModule>} Store
  */
-
 import {StoreModuleNotFoundError} from '../../errors/StoreModuleNotFoundError';
+
+// const store = {}
+
+// export default {}
 
 export class StoreService {
     /**
