@@ -14,6 +14,7 @@
     "repository": "github:script-development/vue-services",
     "scripts": {
         "test": "nyc mocha --recursive --require @babel/register",
+        "test:watch": "mocha --watch --recursive --require @babel/register",
         "build": "eslint ./src && rollup src/index.js --file dist/index.js --format iife",
         "dev": "rollup -c scripts/config.js",
         "watch": "rollup -c scripts/config.js --watch",

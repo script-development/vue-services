@@ -1,6 +1,7 @@
-const keepALiveKey = 'keepALive';
+const KEEP_A_LIVE_KEY = 'keepALive';
 /** setting keepALive here so we don't have to Parse it each time we get it */
-const storedKeepALive = localStorage.getItem(keepALiveKey);
+const storedKeepALive = localStorage.getItem(KEEP_A_LIVE_KEY);
+/** @type {Boolean} */
 let keepALive = storedKeepALive ? JSON.parse(storedKeepALive) : false;
 
 /**
@@ -49,19 +50,10 @@ export const clearStorage = () => {
     localStorage.clear();
 };
 
-export default {
-    /** @param {Boolean} value */
-    set keepALive(value) {
-        localStorage.setItem(keepALiveKey, JSON.stringify(value));
-        keepALive = value;
-    },
+export const getKeepALive = () => keepALive;
 
-    get keepALive() {
-        return keepALive;
-    },
-
-    // TODO :: like this, or is the naming a bit overdone this way
-    setItem: setItemInStorage,
-    getItem: getItemFromStorage,
-    clear: clearStorage,
+/** @param {Boolean} value */
+export const setKeepALive = value => {
+    localStorage.setItem(KEEP_A_LIVE_KEY, JSON.stringify(value));
+    keepALive = value;
 };

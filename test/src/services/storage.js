@@ -23,88 +23,87 @@ global.localStorage = localStorageMock;
 const newStorageService = () => {
     // deleting the storage service from cache, so it can load again in another test, with a base new localStorageMock
     delete require.cache[require.resolve('../../../src/services/storage')];
-    const {StorageService} = require('../../../src/services/storage');
-    return new StorageService();
+    return require('../../../src/services/storage');
 };
 
 describe('Storage Service', () => {
     describe('test stored keepALive values', () => {
         it('value of keepALive should be false', () => {
-            const storageService = newStorageService();
-            assert.strictEqual(storageService.keepALive, false);
+            const {getKeepALive} = newStorageService();
+            assert.strictEqual(getKeepALive(), false);
             // deleting the storage service from cache, so it can load again in another test
         });
 
-        it('value of keepALive should be true', () => {
+        it('value of keepALive should be true when stored value is true', () => {
             localStorageMock.data.keepALive = 'true';
-            const storageService = newStorageService();
-            assert.strictEqual(storageService.keepALive, true);
+            const {getKeepALive} = newStorageService();
+            assert.strictEqual(getKeepALive(), true);
         });
     });
 
     describe('setting and getting items with keepALive as false', () => {
         it('getting a set item should return null', () => {
-            const storageService = newStorageService();
-            storageService.keepALive = false;
+            const {setKeepALive, setItemInStorage, getItemFromStorage} = newStorageService();
+            setKeepALive(false);
 
-            storageService.setItem('customers', [{name: 'Macro'}]);
-            assert.strictEqual(storageService.getItem('customers'), null);
+            setItemInStorage('customers', [{name: 'Macro'}]);
+            assert.strictEqual(getItemFromStorage('customers'), null);
         });
 
         it('clearing the storage, items should still be returned as null', () => {
-            const storageService = newStorageService();
-            storageService.keepALive = false;
+            const {setKeepALive, setItemInStorage, getItemFromStorage, clearStorage} = newStorageService();
+            setKeepALive(false);
 
-            storageService.setItem('invoices', [{id: 5}]);
-            assert.strictEqual(storageService.getItem('invoices'), null);
+            setItemInStorage('invoices', [{id: 5}]);
+            assert.strictEqual(getItemFromStorage('invoices'), null);
 
-            storageService.clear();
+            clearStorage();
 
-            assert.strictEqual(storageService.getItem('invoices'), null);
+            assert.strictEqual(getItemFromStorage('invoices'), null);
         });
     });
 
     describe('setting and getting items with keepALive as true', () => {
-        const storageService = newStorageService();
+        const {setKeepALive, setItemInStorage, getItemFromStorage, clearStorage} = newStorageService();
 
         it('setting a string item should return the item as a string with getItem and without parse', () => {
             // TODO :: setting keepALive here as true, so it won't effect other tests
             // find out a better way to set these tests
-            storageService.keepALive = true;
-            storageService.setItem('username', 'Harry');
-            assert.strictEqual(storageService.getItem('username'), 'Harry');
+            setKeepALive(true);
+            setItemInStorage('username', 'Harry');
+            assert.strictEqual(getItemFromStorage('username'), 'Harry');
         });
 
         it('setting a string item should return the item as a string with getItem and with parse set to true', () => {
-            storageService.setItem('username', 'Harry');
-            assert.strictEqual(storageService.getItem('username', true), 'Harry');
+            setItemInStorage('username', 'Harry');
+            assert.strictEqual(getItemFromStorage('username', true), 'Harry');
         });
 
         it('setting a string item should return the item as a string with getItem and with parse set to false', () => {
-            storageService.setItem('username', 'Harry');
-            assert.strictEqual(storageService.getItem('username', false), 'Harry');
+            setItemInStorage('username', 'Harry');
+            assert.strictEqual(getItemFromStorage('username', false), 'Harry');
         });
 
         it("getting an item that's not stored should return null", () => {
-            assert.strictEqual(storageService.getItem('roles'), null);
+            assert.strictEqual(getItemFromStorage('roles'), null);
         });
 
         it('setting an Object should be returned as a string with getItem and with parse set to false', () => {
-            storageService.setItem('customers', [{name: 'Macro'}]);
-            assert.strictEqual(storageService.getItem('customers', false), '[{"name":"Macro"}]');
+            setItemInStorage('customers', [{name: 'Macro'}]);
+            assert.strictEqual(getItemFromStorage('customers', false), '[{"name":"Macro"}]');
         });
 
         it('setting an Object should be returned as an Object with getItem and with parse set to true', () => {
-            storageService.setItem('customers', [{name: 'Macro'}]);
+            setItemInStorage('customers', [{name: 'Macro'}]);
             // using not strict equal here, cause it returns it in a different format
-            assert.notStrictEqual(storageService.getItem('customers', true), [{name: 'Macro'}]);
+            assert.notStrictEqual(getItemFromStorage('customers', true), [{name: 'Macro'}]);
         });
 
         it('clear should cleanout the storage', () => {
-            storageService.setItem('isAdmin', true);
-            assert.strictEqual(storageService.getItem('isAdmin', true), true);
-            storageService.clear();
-            assert.strictEqual(storageService.getItem('isAdmin', true), null);
+            setItemInStorage('isAdmin', true);
+            assert.strictEqual(getItemFromStorage('isAdmin', true), true);
+            clearStorage();
+            assert.strictEqual(getItemFromStorage('isAdmin', true), null);
         });
     });
 });
