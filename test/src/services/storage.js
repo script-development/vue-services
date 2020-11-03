@@ -1,25 +1,5 @@
 import assert from 'assert';
 
-// since the test is running in node, localStorage is not defined, so we mock it
-const localStorageMock = {
-    data: {},
-
-    getItem(key) {
-        if (key in this.data) return this.data[key];
-        return null;
-    },
-
-    setItem(key, value) {
-        this.data[key] = value;
-    },
-
-    clear() {
-        this.data = {};
-    },
-};
-
-global.localStorage = localStorageMock;
-
 const newStorageService = () => {
     // deleting the storage service from cache, so it can load again in another test, with a base new localStorageMock
     delete require.cache[require.resolve('../../../src/services/storage')];
@@ -35,7 +15,7 @@ describe('Storage Service', () => {
         });
 
         it('value of keepALive should be true when stored value is true', () => {
-            localStorageMock.data.keepALive = 'true';
+            global.localStorage.data.keepALive = 'true';
             const {getKeepALive} = newStorageService();
             assert.strictEqual(getKeepALive(), true);
         });
