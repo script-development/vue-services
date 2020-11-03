@@ -1,13 +1,10 @@
 /**
- * @typedef {import('axios').AxiosResponse} AxiosResponse
  * @typedef {import('axios').AxiosRequestConfig} AxiosRequestConfig
- * @typedef {import('axios').AxiosError} AxiosError
  *
- * @typedef {Object<string,number>} Cache
- *
- * @typedef {(response: AxiosRequestConfig) => void} RequestMiddleware
- * @typedef {(response: AxiosResponse) => void} ResponseMiddleware
- * @typedef {(response: AxiosError) => void} ResponseErrorMiddleware
+ * @typedef {import('../../../types/types').Cache} Cache
+ * @typedef {import('../../../types/types').RequestMiddleware} RequestMiddleware
+ * @typedef {import('../../../types/types').ResponseMiddleware} ResponseMiddleware
+ * @typedef {import('../../../types/types').ResponseErrorMiddleware} ResponseErrorMiddleware
  */
 
 import {getItemFromStorage, setItemInStorage} from '../storage';
@@ -23,6 +20,7 @@ const CACHE_KEY = 'HTTP_CACHE';
 /** @type {number} */
 let cacheDuration = 10;
 
+/** @type {Cache} */
 const cache = getItemFromStorage(CACHE_KEY, true) || {};
 
 const http = axios.create({
@@ -63,7 +61,7 @@ http.interceptors.response.use(
  * @param {String} endpoint the endpoint for the get
  * @param {AxiosRequestConfig} [options] the optional request options
  */
-export const getRequest = (endpoint, options) => {
+export const getRequest = async (endpoint, options) => {
     // get currentTimeStamp in seconds
     const currentTimeStamp = Math.floor(Date.now() / 1000);
     if (cache[endpoint] && !options) {
@@ -78,62 +76,46 @@ export const getRequest = (endpoint, options) => {
     });
 };
 
-export default {
-    // prettier-ignore
-    get cacheDuration() {return cacheDuration;},
+/** @param {number} value */
+export const setCacheDuration = value => (cacheDuration = value);
+export const getCacheDuration = () => cacheDuration;
 
-    // prettier-ignore
-    /** @param {number} value  */
-    set cacheDuration(value) {cacheDuration = value;},
+/**
+ * send a post request to the given endpoint with the given data
+ * @param {String} endpoint the endpoint for the post
+ * @param {any} data the data to be send to the server
+ */
+export const postRequest = (endpoint, data) => http.post(endpoint, data);
 
-    get: getRequest,
+/**
+ * send a delete request to the given endpoint
+ * @param {String} endpoint the endpoint for the get
+ */
+export const deleteRequest = endpoint => http.delete(endpoint);
 
-    // prettier-ignore
-    /**
-     * send a post request to the given endpoint with the given data
-     * @param {String} endpoint the endpoint for the post
-     * @param {any} data the data to be send to the server
-     */
-    post(endpoint, data) { return http.post(endpoint, data); },
+/**
+ * download a file from the backend
+ * type should be resolved automagically, if not, then you can pass the type
+ * @param {String} endpoint the endpoint for the download
+ * @param {String} documentName the name of the document to be downloaded
+ * @param {String} [type] the downloaded document type
+ */
+export const download = async (endpoint, documentName, type) =>
+    http.get(endpoint, {responseType: 'blob'}).then(response => {
+        if (!type) type = HEADERS_TO_TYPE[response.headers['content-type']];
+        const blob = new Blob([response.data], {type});
+        const link = document.createElement('a');
+        link.href = window.URL.createObjectURL(blob);
+        link.download = documentName;
+        link.click();
+        return response;
+    });
 
-    // prettier-ignore
-    /**
-     * send a delete request to the given endpoint
-     * @param {String} endpoint the endpoint for the get
-     */
-    delete(endpoint) { return http.delete(endpoint); },
+/** @param {RequestMiddleware} middlewareFunc */
+export const registerRequestMiddleware = middlewareFunc => requestMiddleware.push(middlewareFunc);
 
-    /**
-     * download a file from the backend
-     * type should be resolved automagically, if not, then you can pass the type
-     * @param {String} endpoint the endpoint for the download
-     * @param {String} documentName the name of the document to be downloaded
-     * @param {String} [type] the downloaded document type
-     */
-    download(endpoint, documentName, type) {
-        return http.get(endpoint, {responseType: 'blob'}).then(response => {
-            if (!type) type = HEADERS_TO_TYPE[response.headers['content-type']];
-            const blob = new Blob([response.data], {type});
-            const link = document.createElement('a');
-            link.href = window.URL.createObjectURL(blob);
-            link.download = documentName;
-            link.click();
-            return response;
-        });
-    },
+/** @param {ResponseMiddleware} middlewareFunc */
+export const registerResponseMiddleware = middlewareFunc => responseMiddleware.push(middlewareFunc);
 
-    /** @param {RequestMiddleware} middlewareFunc */
-    registerRequestMiddleware(middlewareFunc) {
-        requestMiddleware.push(middlewareFunc);
-    },
-
-    /** @param {ResponseMiddleware} middlewareFunc */
-    registerResponseMiddleware(middlewareFunc) {
-        responseMiddleware.push(middlewareFunc);
-    },
-
-    /** @param {ResponseErrorMiddleware} middlewareFunc */
-    registerResponseErrorMiddleware(middlewareFunc) {
-        responseErrorMiddleware.push(middlewareFunc);
-    },
-};
+/** @param {ResponseErrorMiddleware} middlewareFunc */
+export const registerResponseErrorMiddleware = middlewareFunc => responseErrorMiddleware.push(middlewareFunc);
