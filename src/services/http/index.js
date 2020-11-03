@@ -6,10 +6,9 @@
  * @typedef {import('../../../types/types').ResponseMiddleware} ResponseMiddleware
  * @typedef {import('../../../types/types').ResponseErrorMiddleware} ResponseErrorMiddleware
  */
-
-import {getItemFromStorage, setItemInStorage} from '../storage';
 import axios from 'axios';
 // TODO :: heavilly dependant on webpack and laravel mix
+// TODO :: how to test these branches?
 const API_URL = process.env.MIX_APP_URL ? `${process.env.MIX_APP_URL}/api` : '/api';
 const HEADERS_TO_TYPE = {
     'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet': 'application/xlsx',
@@ -20,8 +19,11 @@ const CACHE_KEY = 'HTTP_CACHE';
 /** @type {number} */
 let cacheDuration = 10;
 
+// Not using storageService here, cause it always needs to be stored in the localStorage
+const preCache = localStorage.getItem(CACHE_KEY);
+// TODO :: how to test these branches?
 /** @type {Cache} */
-const cache = getItemFromStorage(CACHE_KEY, true) || {};
+const cache = preCache ? JSON.parse(preCache) : {};
 
 const http = axios.create({
     baseURL: API_URL,
@@ -56,6 +58,10 @@ http.interceptors.response.use(
     }
 );
 
+/** @param {number} value */
+export const setCacheDuration = value => (cacheDuration = value);
+export const getCacheDuration = () => cacheDuration;
+
 /**
  * send a get request to the given endpoint
  * @param {String} endpoint the endpoint for the get
@@ -71,27 +77,23 @@ export const getRequest = async (endpoint, options) => {
 
     return http.get(endpoint, options).then(response => {
         cache[endpoint] = currentTimeStamp;
-        setItemInStorage(CACHE_KEY, cache);
+        localStorage.setItem(CACHE_KEY, JSON.stringify(cache));
         return response;
     });
 };
-
-/** @param {number} value */
-export const setCacheDuration = value => (cacheDuration = value);
-export const getCacheDuration = () => cacheDuration;
 
 /**
  * send a post request to the given endpoint with the given data
  * @param {String} endpoint the endpoint for the post
  * @param {any} data the data to be send to the server
  */
-export const postRequest = (endpoint, data) => http.post(endpoint, data);
+export const postRequest = async (endpoint, data) => http.post(endpoint, data);
 
 /**
  * send a delete request to the given endpoint
  * @param {String} endpoint the endpoint for the get
  */
-export const deleteRequest = endpoint => http.delete(endpoint);
+export const deleteRequest = async endpoint => http.delete(endpoint);
 
 /**
  * download a file from the backend
