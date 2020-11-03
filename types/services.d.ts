@@ -173,31 +173,6 @@ export class TranslatorService {
     setTranslation(key: string, translation: Translation): void;
 }
 
-export class StorageService {
-    /** @param {Boolean} value */
-    set keepALive(value: Boolean);
-    get keepALive(): Boolean;
-    /**
-     * Set the given value in the storage under the given key
-     * If the value is not of type String, it will be converted to String
-     *
-     * @param {String} key
-     * @param {String | any} value
-     */
-    setItem(key: string, value: string | any): void;
-    /**
-     * Get the value from the storage under the given key
-     *
-     * @param {String} key
-     * @param {Boolean} [parse] if parse is given, then JSON.parse will be used to return a parsed value
-     */
-    getItem(key: string, parse: boolean): any;
-    /**
-     * Empty the storage
-     */
-    clear(): void;
-}
-
 type ErrorBag = {
     [property: string]: string[];
 };
