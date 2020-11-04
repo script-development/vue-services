@@ -2043,7 +2043,9 @@ var storeModule = (storageService, httpService, authService) => {
             },
 
             resetPassword: (_, data) => {
-                return httpService.post(authService.apiResetpasswordRoute, data).then(authService.goToLoginPage());
+                return httpService
+                    .post(authService.apiResetpasswordRoute, data)
+                    .then(() => authService.goToLoginPage());
             },
 
             me: ({commit}) => {
