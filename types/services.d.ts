@@ -17,55 +17,8 @@ export type Translation = {
     plural: string;
 };
 
-type Cache = {[key: string]: number};
-
 type Credentials = {email: string; password: string; rememberMe: boolean};
 type RepeatPasswordData = {password: string; repeatPassword: string; [key: string]: string};
-
-export type RequestMiddleware = (request: AxiosRequestConfig) => void;
-export type ResponseMiddleware = (response: AxiosResponse) => void;
-export type ResponseErrorMiddleware = (error: AxiosError) => void;
-
-export class HTTPService {
-    _storageService: StorageService;
-    _cache: Cache;
-    _cahceDuration: number;
-    _http: AxiosInstance;
-    _requestMiddleware: RequestMiddleware[];
-    _responseMiddleware: ResponseMiddleware[];
-    _responseErrorMiddleware: ResponseErrorMiddleware[];
-
-    get cacheDuration(): number;
-    set cacheDuration(value: number);
-    /**
-     * send a get request to the given endpoint
-     * @param {String} endpoint the endpoint for the get
-     * @param {AxiosRequestConfig} [options] the optional request options
-     */
-    get(endpoint: string, options?: AxiosRequestConfig): Promise<AxiosResponse>;
-    /**
-     * send a post request to the given endpoint with the given data
-     * @param {String} endpoint the endpoint for the post
-     * @param {any} data the data to be send to the server
-     */
-    post(endpoint: string, data: any): Promise<AxiosResponse>;
-    /**
-     * send a delete request to the given endpoint
-     * @param {String} endpoint the endpoint for the get
-     */
-    delete(endpoint: string): Promise<AxiosResponse>;
-    /**
-     * download a file from the backend
-     * type should be resolved automagically, if not, then you can pass the type
-     * @param {String} endpoint the endpoint for the download
-     * @param {String} documentName the name of the document to be downloaded
-     * @param {String} [type] the downloaded document type
-     */
-    download(endpoint: string, documentName: string, type?: string): Promise<AxiosResponse>;
-    registerRequestMiddleware(middlewareFunc: any): void;
-    registerResponseMiddleware(middlewareFunc: any): void;
-    registerResponseErrorMiddleware(middlewareFunc: any): void;
-}
 
 export class EventService {
     /**
