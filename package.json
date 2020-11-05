@@ -13,8 +13,8 @@
     ],
     "repository": "github:script-development/vue-services",
     "scripts": {
-        "test": "nyc mocha --require @babel/register --require scripts/fixtures.mjs --recursive",
-        "test:watch": "mocha --require @babel/register --require scripts/fixtures.mjs --watch --recursive",
+        "test": "nyc mocha --require @babel/register --recursive",
+        "test:watch": "mocha --require @babel/register --watch --recursive",
         "build": "eslint ./src && rollup src/index.js --file dist/index.js --format iife",
         "dev": "rollup -c scripts/config.js",
         "watch": "rollup -c scripts/config.js --watch",
@@ -44,6 +44,7 @@
         "prettier": "^2.1.1",
         "pretty-quick": "^3.1.0",
         "rollup": "^2.26.11",
+        "sinon": "^9.2.1",
         "typedoc": "^0.19.1",
         "typescript": "^4.0.2"
     },

@@ -1,5 +1,5 @@
 // since the test is running in node, localStorage is not defined, so we mock it
-const localStorageMock = {
+global.localStorage = {
     data: {},
 
     getItem(key) {
@@ -15,8 +15,6 @@ const localStorageMock = {
         this.data = {};
     },
 };
-
-global.localStorage = localStorageMock;
 
 // TODO :: should be a better option then this
 // http service instantiates an axios instance and it's unaccessable from outside
