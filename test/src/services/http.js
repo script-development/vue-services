@@ -1,25 +1,37 @@
 /**
  * @typedef {import('axios-mock-adapter').default} AxiosMock
  */
-
-import assert from 'assert';
+import {deepStrictEqual, strictEqual} from 'assert';
 import {
     getCacheDuration,
     setCacheDuration,
     postRequest,
     deleteRequest,
     getRequest,
-    // download,
+    download,
     registerRequestMiddleware,
     registerResponseErrorMiddleware,
     registerResponseMiddleware,
 } from '../../../src/services/http';
 
-const {strictEqual} = assert;
+// Some global simple mockups
+global.Blob = () => {};
+global.document = {
+    createElement: () => ({
+        link: undefined,
+        download: undefined,
+        click: () => {},
+    }),
+};
+global.window = {URL: {createObjectURL: () => {}}};
+
 /** @type {AxiosMock} */
 const axiosMock = global.axiosMock;
 
+const xlsxContentType = {'content-type': 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'};
+
 describe('HTTP Service', () => {
+    // jsdom();
     describe('cache duration setting', () => {
         it('should be 10 in the beginning', () => {
             strictEqual(getCacheDuration(), 10);
@@ -103,29 +115,52 @@ describe('HTTP Service', () => {
                 .catch(() => assert(false));
         });
 
-        it('download should do a lot of stuff, how to test?', async () => {
-            // axiosMock.onGet('/do-little').replyOnce(200);
-            // await download('/do-little', 'test.csv')
-            //     .then(response => strictEqual(response.status, 200))
-            //     // it needs a catch
-            //     .catch(() => assert(false));
+        it('download should send a request and get a 200 response', async () => {
+            axiosMock.onGet('/do-little').replyOnce(config => {
+                return [200, {}, xlsxContentType];
+            });
+            await download('/do-little', 'test.csv')
+                .then(response => strictEqual(response.status, 200))
+                // it needs a catch
+                .catch(() => assert(false));
         });
 
         it('download should send a get request with responseType blob', async () => {
-            // axiosMock.onGet('/get-this').replyOnce(config => {
-            //     strictEqual(config.responseType, 'blob');
-            //     return [200, {}, {'content-type': 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'}];
-            // });
-            // await download('/get-this', 'test.csv')
-            //     .then(response => strictEqual(response.status, 200))
-            //     // it needs a catch
-            //     .catch(() => assert(false));
+            let recievedResponseType;
+            axiosMock.onGet('/get-this').replyOnce(config => {
+                recievedResponseType = config.responseType;
+                return [200, {}, xlsxContentType];
+            });
+
+            await download('/get-this', 'test.csv')
+                .then(response => strictEqual(response.status, 200))
+                // it needs a catch
+                .catch(() => assert(false));
+
+            strictEqual(recievedResponseType, 'blob');
+        });
+
+        it('download should use the type when given one', async () => {
+            axiosMock.onGet('/get-html').replyOnce(config => {
+                return [200, 'data'];
+            });
+
+            // kind of a hacky way to test this, TODO :: find a better way
+            let passedOptions;
+            global.Blob = (parts, options) => (passedOptions = options);
+
+            await download('/get-html', 'test.csv', 'html')
+                .then(response => strictEqual(response.status, 200))
+                // it needs a catch
+                .catch(() => assert(false));
+
+            deepStrictEqual(passedOptions, {type: 'html'});
         });
     });
 
     describe('middleware-interceptors', () => {
         it('should not run registered response error middleware when there is no response in the error', async () => {
-            // there is no response when it never reaches the server, but how to test?
+            // TODO :: there is no response when it never reaches the server, but how to test?
         });
 
         it('should run registered response error middleware', async () => {
