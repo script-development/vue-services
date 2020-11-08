@@ -127,9 +127,10 @@ export class BaseController {
      */
     get update() {
         return (item, goToRouteName) =>
-            this._storeService.update(this._APIEndpoint, item).then(() => {
+            this._storeService.update(this._APIEndpoint, item).then(response => {
                 if (!goToRouteName) return this._goToPageAfterEditAction(item.id);
                 this._routerService.goToRoute(goToRouteName);
+                return response;
             });
     }
 
@@ -140,9 +141,10 @@ export class BaseController {
      */
     get create() {
         return (item, goToRouteName) =>
-            this._storeService.create(this._APIEndpoint, item).then(() => {
+            this._storeService.create(this._APIEndpoint, item).then(response => {
                 if (!goToRouteName) return this._goToPageAfterCreateAction(item.id);
                 this._routerService.goToRoute(goToRouteName);
+                return response;
             });
     }
 
