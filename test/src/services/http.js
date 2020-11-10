@@ -38,6 +38,7 @@ describe('HTTP Service', () => {
         // since that transpiles it to runtimeGenerator or something
         // and it should not be a problem to not use it, since Node V8
         it('postRequest should send a post request with data', async () => {
+            // TODO :: Werkt niet - Gerard
             axiosMock.onPost('/users').replyOnce(config => {
                 strictEqual(config.data, '{"name":"Harry"}');
                 return [200];

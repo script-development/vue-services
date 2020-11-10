@@ -1,81 +1,56 @@
 /**
- * @typedef {import('../store').StoreService} StoreService
- * @typedef {import('../http').HTTPService} HTTPService
  * @typedef {import('../http').RequestMiddleware} RequestMiddleware
  * @typedef {import('../http').ResponseMiddleware} ResponseMiddleware
  * @typedef {import('../http').ResponseErrorMiddleware} ResponseErrorMiddleware
  */
 
-export class LoadingService {
-    /**
-     *
-     * @param {StoreService} storeService
-     * @param {HTTPService} httpService
-     */
-    constructor(storeService, httpService) {
-        // TODO :: do i even need a store? yes i do! cause of computed, can change with vue3
-        this._storeModuleName = 'loading';
-        this._storeService = storeService;
+import {ref} from 'vue';
+// import {registerRequestMiddleware, registerResponseMiddleware, registerResponseErrorMiddleware} from '../http';
 
-        this._storeService.generateAndSetDefaultStoreModule(this._storeModuleName);
+let spinnerTimeout = 500;
+let minTimeSpinner = 1000;
 
-        // time after which the spinner should show
-        this.spinnerTimeout = 500;
-        // time the spinner is minimal active
-        this.minTimeSpinner = 1000;
+let loadingTimeoutId;
+let loadingTimeStart;
 
-        this.loadingTimeoutId;
-        this.loadingTimeStart;
+// registerRequestMiddleware(requestMiddleware);
+// registerResponseMiddleware(responseMiddleware);
+// registerResponseErrorMiddleware(responseMiddleware);
 
-        httpService.registerRequestMiddleware(this.requestMiddleware);
-        httpService.registerResponseMiddleware(this.responseMiddleware);
-        httpService.registerResponseErrorMiddleware(this.responseMiddleware);
+/**
+ * get the loading state
+ *
+ * @returns {Boolean}
+ */
+export const loading = ref(false);
+
+/**
+ * Set the loading state
+ *
+ * @param {Boolean} loading the loading state
+ */
+export const setLoading = newLoading => {
+    if (loadingTimeoutId) clearTimeout(loadingTimeoutId);
+
+    let timeout = spinnerTimeout;
+
+    if (newLoading) {
+        // set the time the loading started
+        loadingTimeStart = Date.now();
+    } else if (loadingTimeStart) {
+        // get the response time from the request
+        const responseTime = Date.now() - loadingTimeStart;
+        // check the time the spinner is already active and how many ms it should stay active to get to the min time of the spinner
+        timeout = minTimeSpinner - responseTime + spinnerTimeout;
+        if (timeout < 0) timeout = 0;
+        loadingTimeStart = undefined;
     }
 
-    /**
-     * get the loading state
-     *
-     * @returns {Boolean}
-     */
-    get loading() {
-        // TODO :: loading somehow still an array at start, first this fix
-        return !!this._storeService.getAllFromStore(this._storeModuleName);
-    }
+    loadingTimeoutId = setTimeout(() => (loading.value = newLoading), timeout);
+};
 
-    /**
-     * Set the loading state
-     *
-     * @param {Boolean} loading the loading state
-     */
-    set loading(loading) {
-        if (this.loadingTimeoutId) clearTimeout(this.loadingTimeoutId);
+// /** @returns {RequestMiddleware} */
+// const requestMiddleware = () => setLoading(true);
 
-        let timeout = this.spinnerTimeout;
-
-        if (loading) {
-            // set the time the loading started
-            this.loadingTimeStart = Date.now();
-        } else if (this.loadingTimeStart) {
-            // get the response time from the request
-            const responseTime = Date.now() - this.loadingTimeStart;
-            // check the time the spinner is already active and how many ms it should stay active to get to the min time of the spinner
-            timeout = this.minTimeSpinner - responseTime + this.spinnerTimeout;
-            if (timeout < 0) timeout = 0;
-        }
-
-        this.loadingTimeoutId = setTimeout(
-            () => this._storeService.setAllInStore(this._storeModuleName, loading),
-            timeout
-        );
-    }
-
-    /** @returns {RequestMiddleware} */
-    get requestMiddleware() {
-        return () => (this.loading = true);
-    }
-
-    /** @returns {ResponseMiddleware | ResponseErrorMiddleware} */
-    get responseMiddleware() {
-        return () => (this.loading = false);
-    }
-}
+// /** @returns {ResponseMiddleware | ResponseErrorMiddleware} */
+// const responseMiddleware = () => setLoading(false);
