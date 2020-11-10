@@ -50,9 +50,9 @@ describe('HTTP Service', () => {
         // since that transpiles it to runtimeGenerator or something
         // and it should not be a problem to not use it, since Node V8
         it('postRequest should send a post request with data', async () => {
-            // TODO :: Werkt niet - Gerard
+            let responseData;
             axiosMock.onPost('/users').replyOnce(config => {
-                strictEqual(config.data, '{"name":"Harry"}');
+                responseData = config.data;
                 return [200];
             });
 
@@ -60,6 +60,8 @@ describe('HTTP Service', () => {
                 .then(response => strictEqual(response.status, 200))
                 // it needs a catch
                 .catch(() => assert(false));
+
+            strictEqual(responseData, '{"name":"Harry"}');
         });
 
         it('deleteRequest should send a delete request', async () => {
@@ -105,8 +107,9 @@ describe('HTTP Service', () => {
         });
 
         it('getRequest with data should send a get request with data as params', async () => {
+            let recievedParam;
             axiosMock.onGet('/reports').replyOnce(config => {
-                strictEqual(config.params.name, 'Sjaak');
+                recievedParam = config.params.name;
                 return [200];
             });
 
@@ -114,6 +117,7 @@ describe('HTTP Service', () => {
                 .then(response => strictEqual(response.status, 200))
                 // it needs a catch
                 .catch(() => assert(false));
+            strictEqual(recievedParam, 'Sjaak');
         });
 
         it('download should send a request and get a 200 response', async () => {

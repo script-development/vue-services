@@ -910,7 +910,7 @@ class BaseStoreModule {
         this._httpService = httpService;
         this._storageService = storageService;
 
-        // Check if data is stored, if so load that, else empy
+        // Check if data is stored, if so load that, else empty
         const stored = this._storageService.getItem(endpoint);
         this._state = ref(stored ? JSON.parse(stored) : {});
     }

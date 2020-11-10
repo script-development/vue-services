@@ -4,13 +4,13 @@ const {strictEqual} = assert;
 
 import {loading, setLoading} from '../../../src/services/loading';
 
-function sleep(time) {
+const sleep = time => {
     return new Promise(resolve => {
         setTimeout(() => {
             resolve();
         }, time);
     });
-}
+};
 
 describe('Loading Service', () => {
     describe('test stored loading value', () => {

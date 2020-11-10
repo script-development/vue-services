@@ -1,11 +1,5 @@
-/**
- * @typedef {import('../http').RequestMiddleware} RequestMiddleware
- * @typedef {import('../http').ResponseMiddleware} ResponseMiddleware
- * @typedef {import('../http').ResponseErrorMiddleware} ResponseErrorMiddleware
- */
-
 import {ref} from 'vue';
-// import {registerRequestMiddleware, registerResponseMiddleware, registerResponseErrorMiddleware} from '../http';
+import {registerRequestMiddleware, registerResponseMiddleware, registerResponseErrorMiddleware} from '../http';
 
 let spinnerTimeout = 500;
 let minTimeSpinner = 1000;
@@ -13,9 +7,9 @@ let minTimeSpinner = 1000;
 let loadingTimeoutId;
 let loadingTimeStart;
 
-// registerRequestMiddleware(requestMiddleware);
-// registerResponseMiddleware(responseMiddleware);
-// registerResponseErrorMiddleware(responseMiddleware);
+registerRequestMiddleware(() => setLoading(true));
+registerResponseMiddleware(() => setLoading(false));
+registerResponseErrorMiddleware(() => setLoading(false));
 
 /**
  * get the loading state
@@ -23,7 +17,6 @@ let loadingTimeStart;
  * @returns {Boolean}
  */
 export const loading = ref(false);
-
 /**
  * Set the loading state
  *
@@ -48,9 +41,3 @@ export const setLoading = newLoading => {
 
     loadingTimeoutId = setTimeout(() => (loading.value = newLoading), timeout);
 };
-
-// /** @returns {RequestMiddleware} */
-// const requestMiddleware = () => setLoading(true);
-
-// /** @returns {ResponseMiddleware | ResponseErrorMiddleware} */
-// const responseMiddleware = () => setLoading(false);
