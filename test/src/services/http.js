@@ -14,23 +14,25 @@ import {
     registerResponseMiddleware,
 } from '../../../src/services/http';
 
-// Some global simple mockups
-global.Blob = () => {};
-global.document = {
-    createElement: () => ({
-        link: undefined,
-        download: undefined,
-        click: () => {},
-    }),
-};
-global.window = {URL: {createObjectURL: () => {}}};
-
 /** @type {AxiosMock} */
 const axiosMock = global.axiosMock;
 
 const xlsxContentType = {'content-type': 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'};
 
 describe('HTTP Service', () => {
+    before(() => {
+        // Some global simple mockups
+        global.Blob = () => {};
+        global.document = {
+            createElement: () => ({
+                link: undefined,
+                download: undefined,
+                click: () => {},
+            }),
+        };
+        global.window = {URL: {createObjectURL: () => {}}};
+    });
+
     // jsdom();
     describe('cache duration setting', () => {
         it('should be 10 in the beginning', () => {
