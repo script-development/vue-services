@@ -2,11 +2,11 @@
  * @typedef {import('../../../types/types').Item} Item
  * @typedef {import('../../../types/types').ExtraStoreFunctionality} ExtraStoreFunctionality
  * @typedef {import('../../../types/types').ResponseMiddleware} ResponseMiddleware
- *
- * @typedef {Object<string,BaseStoreModule>} Store
+ * @typedef {import('../../../types/services/store').StoreModule} StoreModule
+ * @typedef {import('../../../types/services/store').Store} Store
  */
 import {StoreModuleNotFoundError} from '../../errors/StoreModuleNotFoundError';
-import {registerResponseMiddleware} from '../http';
+import {deleteRequest, getRequest, postRequest, registerResponseMiddleware} from '../http';
 import StoreModuleFactory from './factory';
 
 /** @type {Store} */
@@ -55,7 +55,7 @@ registerResponseMiddleware(responseMiddleware);
  * @param {String} functionName the name of the function
  * @param {*} [payload] the payload to sent to the action
  */
-const doStoreStuff = (moduleName, functionName, payload) => {
+export const performStoreAction = (moduleName, functionName, payload) => {
     checkIfRequestedModuleExists(moduleName);
     return store[moduleName][functionName](payload);
 };
@@ -78,7 +78,7 @@ export const getFromStore = (moduleName, getter) => {
  * @param {String} action the name of the action
  * @param {*} [payload] the payload to sent to the action
  */
-export const dispatchActionToStore = (moduleName, action, payload) => doStoreStuff(moduleName, action, payload);
+export const dispatchActionToStore = (moduleName, action, payload) => performStoreAction(moduleName, action, payload);
 
 /**
  * Get all from data from the given store module
@@ -97,60 +97,52 @@ export const getAllFromStore = moduleName => getFromStore(moduleName, 'all');
  *
  * @return {Item}
  */
-export const getByIdFromStore = (moduleName, id) => doStoreStuff(moduleName, 'byId', id);
+export const getByIdFromStore = (moduleName, id) => performStoreAction(moduleName, 'byId', id);
 
 /**
- * dispatch an action to the store, which deletes an item on the server
+ * Sends a delete request to the server.
+ * Delete's the given id from the server
  *
- * @param {String} moduleName the store module for which an item must be deleted
- * @param {String} id the id of the item to be deleted
+ * @param {String} moduleName the store module for which an item must be updated
+ * @param {number} id the id to delete from the server
  */
-export const destroyFromStore = (moduleName, id) => {
-    // TODO :: the following bellow should be enough
-    // dispatchActionToStore(moduleName, 'delete', id)
-    checkIfRequestedModuleExists(moduleName);
-    return store[moduleName].delete(id).then(response => {
-        // TODO :: check if this is really needed
-        store[moduleName].deleteEntryById(id);
-        return response;
-    });
-};
+export const destroyStoreAction = (moduleName, id) => deleteRequest(`${moduleName}/${id}`);
 
 /**
- * dispatch an action to the store, which updates an item on the server
+ * Sends a post request to the server, which updates the given item on the server
  *
  * @param {String} moduleName the store module for which an item must be updated
  * @param {Item} item the item to be updated
  */
-export const updateStoreAction = (moduleName, item) => dispatchActionToStore(moduleName, 'post', item);
+export const updateStoreAction = (moduleName, item) => postRequest(`${moduleName}/${item.id}`, item);
 
 /**
- * dispatch an action to the store, which creates an item on the server
+ * Sends a post request to the server, which creates the item on the server
  *
  * @param {String} moduleName the store module for which an item must be created
  * @param {Item} item the item to be created
  */
-export const createStoreAction = (moduleName, item) => dispatchActionToStore(moduleName, 'post', item);
+export const createStoreAction = (moduleName, item) => postRequest(moduleName, item);
 /**
- * dispatch an action to the store, which reads all items on the server
+ * Sends a get request to the server, which returns all items on the server from that endpoint
  *
  * @param {String} moduleName the store module for which all items must be read
  */
-export const readStoreAction = moduleName => dispatchActionToStore(moduleName, 'get');
+export const readStoreAction = moduleName => getRequest(moduleName);
 
 /**
- * dispatch an action to the store, which reads an item on the server
+ * Sends a get request to the server, which returns a single item on the server based on the given id
  *
  * @param {String} moduleName the store module for which the item must be read
  * @param {Number} id the id to be read
  */
-export const showStoreAction = (moduleName, id) => dispatchActionToStore(moduleName, 'get', id);
+export const showStoreAction = (moduleName, id) => getRequest(`${moduleName}/${id}`);
 
 /**
  * set the store module in the store
  *
  * @param {String} moduleName the name of the module
- * @param {BaseStoreModule} storeModule the module to add to the store
+ * @param {StoreModule} storeModule the module to add to the store
  */
 export const registerModule = (moduleName, storeModule) => {
     moduleNames.push(moduleName);

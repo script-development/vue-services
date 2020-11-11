@@ -2,9 +2,9 @@
  * @typedef {import('../../../../types/types').State} State
  * @typedef {import('../../../../types/types').Item} Item
  * @typedef {import('../../../../types/types').ExtraStoreFunctionality} ExtraStoreFunctionality
+ * @typedef {import('../../../../types/services/store').StoreModule} StoreModule
  */
 import {computed, ref} from 'vue';
-import {deleteRequest, getRequest, postRequest} from '../../http';
 import {getItemFromStorage, setItemInStorage} from '../../storage';
 
 /**
@@ -13,15 +13,15 @@ import {getItemFromStorage, setItemInStorage} from '../../storage';
  *
  * @param {string} moduleName the name of the module, also the endpoint for the module
  * @param {ExtraStoreFunctionality} [extraFunctionality] the optional extra functionality to add to the store
+ *
+ * @returns {StoreModule}
  */
 export default (moduleName, extraFunctionality) => {
     /** @type {State} */
     const state = ref(getItemFromStorage(moduleName, true) ?? {});
 
     const storeModule = {
-        /**
-         * Get all items from the store
-         */
+        /** Get all items from the store */
         all: computed(() => Object.values(state.value)),
         /**
          * Get an item from the state by id
@@ -29,7 +29,7 @@ export default (moduleName, extraFunctionality) => {
          * @param {string} id
          * @returns {Item}
          */
-        byId: id => storeModule.all.value[id],
+        byId: id => state.value[id],
         /**
          * Set data in the state.
          * Data can be of any kind.
@@ -78,29 +78,6 @@ export default (moduleName, extraFunctionality) => {
 
             setItemInStorage(moduleName, state.value);
         },
-
-        /**
-         * Sends a get request to the server.
-         * When an id is given it will request one item from the server
-         *
-         * @param {number} [id] the optional id to read from the server
-         */
-        get: id => getRequest(moduleName + (id ? `/${id}` : '')),
-        /**
-         * Sends a post request to the server.
-         * When the item has an id it will update the item on the server.
-         * When there is no id, it will store the item on the server
-         *
-         * @param {Item} item the item to send to the server
-         */
-        post: item => postRequest(moduleName + (item.id ? `/${item.id}` : ''), item),
-        /**
-         * Sends a delete request to the server.
-         * Delete's the given id from the server
-         *
-         * @param {number} id the id to delete from the server
-         */
-        delete: id => deleteRequest(`${moduleName}/${id}`),
     };
 
     if (extraFunctionality) return {...storeModule, ...extraFunctionality};
