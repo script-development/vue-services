@@ -9,6 +9,9 @@ import {StoreModuleNotFoundError} from '../../errors/StoreModuleNotFoundError';
 import {deleteRequest, getRequest, postRequest, registerResponseMiddleware} from '../http';
 import StoreModuleFactory from './factory';
 
+// TODO :: can only get functions from the store module at this moment
+// could add properties
+
 /** @type {Store} */
 const store = {};
 
@@ -61,17 +64,6 @@ export const performStoreAction = (moduleName, functionName, payload) => {
 };
 
 /**
- * get something from the store
- *
- * @param {String} moduleName the name of the module to get something from
- * @param {String} getter the name of the getter
- */
-export const getFromStore = (moduleName, getter) => {
-    checkIfRequestedModuleExists(moduleName);
-    return store[moduleName][getter];
-};
-
-/**
  * dispatch an action to the store
  *
  * @param {String} moduleName the name of the module to dispatch the action to
@@ -85,9 +77,9 @@ export const dispatchActionToStore = (moduleName, action, payload) => performSto
  *
  * @param {String} moduleName the module from which to get all
  *
- * @returns {Item[]}
+ * @returns {import('vue').ComputedRef<Item[]>}
  */
-export const getAllFromStore = moduleName => getFromStore(moduleName, 'all');
+export const getAllFromStore = moduleName => store[moduleName].all;
 
 /**
  * Get all data from the given store module by id
@@ -144,7 +136,7 @@ export const showStoreAction = (moduleName, id) => getRequest(`${moduleName}/${i
  * @param {String} moduleName the name of the module
  * @param {StoreModule} storeModule the module to add to the store
  */
-export const registerModule = (moduleName, storeModule) => {
+export const registerStoreModule = (moduleName, storeModule) => {
     moduleNames.push(moduleName);
     store[moduleName] = storeModule;
 };
@@ -156,4 +148,4 @@ export const registerModule = (moduleName, storeModule) => {
  * @param {ExtraStoreFunctionality} [extraFunctionality] extra functionality added to the store
  */
 export const generateAndRegisterDefaultStoreModule = (moduleName, extraFunctionality) =>
-    registerModule(moduleName, StoreModuleFactory(moduleName, extraFunctionality));
+    registerStoreModule(moduleName, StoreModuleFactory(moduleName, extraFunctionality));

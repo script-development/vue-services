@@ -2,10 +2,24 @@
  * @typedef {import('axios-mock-adapter').default} AxiosMock
  */
 import assert from 'assert';
-import {} from '../../../src/services/store';
+import Sinon from 'sinon';
+import {getRequest} from '../../../src/services/http';
+import {
+    destroyStoreAction,
+    getAllFromStore,
+    readStoreAction,
+    registerStoreModule,
+    showStoreAction,
+    createStoreAction,
+    updateStoreAction,
+} from '../../../src/services/store';
 import storeModuleFactory from '../../../src/services/store/factory';
 
 const {deepStrictEqual, strictEqual} = assert;
+
+// TODO ::it's not pretty with axiosmock here, can i stub or mock the functions?
+/** @type {AxiosMock} */
+const axiosMock = global.axiosMock;
 
 describe('Store Service', () => {
     describe('Store module factory', () => {
@@ -135,6 +149,60 @@ describe('Store Service', () => {
                 {id: 2, type: 'axe'},
                 {id: 4, type: 'sword'},
             ]);
+        });
+    });
+
+    describe('registering store modules', () => {
+        it('should add the module to the store', () => {
+            registerStoreModule('clients', storeModuleFactory('clients'));
+            strictEqual(getAllFromStore('clients').value.length, 0);
+        });
+    });
+
+    describe('actions', () => {
+        it('showStoreAction should send a get request to the moduleName with the id', () => {
+            axiosMock.onGet('warriors/2').replyOnce(200);
+
+            showStoreAction('warriors', 2)
+                .then(response => strictEqual(response.status, 200))
+                // it needs a catch
+                .catch(() => assert(false));
+        });
+
+        it('readStoreAction should send a get request to the moduleName', () => {
+            axiosMock.onGet('warriors').replyOnce(200);
+
+            readStoreAction('warriors')
+                .then(response => strictEqual(response.status, 200))
+                // it needs a catch
+                .catch(() => assert(false));
+        });
+
+        // it('createStoreAction should send a get request to the moduleName', () => {
+        //     axiosMock.onGet('warriors').replyOnce(200);
+
+        //     createStoreAction('warriors')
+        //         .then(response => strictEqual(response.status, 200))
+        //         // it needs a catch
+        //         .catch(() => assert(false));
+        // });
+
+        // it('updateStoreAction should send a get request to the moduleName', () => {
+        //     axiosMock.onGet('warriors').replyOnce(200);
+
+        //     updateStoreAction('warriors')
+        //         .then(response => strictEqual(response.status, 200))
+        //         // it needs a catch
+        //         .catch(() => assert(false));
+        // });
+
+        it('destroyStoreAction should send a get request to the moduleName', () => {
+            axiosMock.onDelete('warriors/1').replyOnce(200);
+
+            destroyStoreAction('warriors', 1)
+                .then(response => strictEqual(response.status, 200))
+                // it needs a catch
+                .catch(() => assert(false));
         });
     });
 });

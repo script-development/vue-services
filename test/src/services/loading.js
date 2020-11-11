@@ -20,6 +20,7 @@ describe('Loading Service', () => {
     });
 
     describe('setLoading function', () => {
+        // TODO :: maybe use sinon.useFakeTimers? check https://sinonjs.org/releases/v1.17.6/fake-timers/
         // setting spinner timeout and mintime spinner to lower value, so the tests speed up
         setSpinnerTimeout(20);
         setMinTimeSpinner(20);

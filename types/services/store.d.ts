@@ -34,14 +34,6 @@ export function StoreModuleFactory(moduleName: string, extraFunctionality?: Extr
 export function performStoreAction(moduleName: string, functionName: string, payload?: any): any;
 
 /**
- * get something from the store
- *
- * @param {String} moduleName the name of the module to get something from
- * @param {String} getter the name of the getter
- */
-export function getFromStore(moduleName: string, getter: string): any;
-
-/**
  * dispatch an action to the store
  *
  * @param {String} moduleName the name of the module to dispatch the action to
@@ -54,10 +46,8 @@ export function dispatchActionToStore(moduleName: string, action: string, payloa
  * Get all from data from the given store module
  *
  * @param {String} moduleName the module from which to get all
- *
- * @returns {Item[]}
  */
-export function getAllFromStoremoduleName(moduleName: string): Item[];
+export function getAllFromStore(moduleName: string): ComputedRef<Item[]>;
 
 /**
  * Get all data from the given store module by id
@@ -114,7 +104,7 @@ export function showStoreAction(moduleName: string, id: number): Promise<AxiosRe
  * @param {String} moduleName the name of the module
  * @param {StoreModule} storeModule the module to add to the store
  */
-export function registerModule(moduleName: string, storeModule: StoreModule): void;
+export function registerStoreModule(moduleName: string, storeModule: StoreModule): void;
 
 /**
  * generate and set the default store module in the store

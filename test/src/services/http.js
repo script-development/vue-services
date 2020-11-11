@@ -194,7 +194,7 @@ describe('HTTP Service', () => {
 
         it('should run registered request middleware', async () => {
             let sendingParamDay;
-            registerRequestMiddleware(request => (sendingParamDay = request.params.day));
+            registerRequestMiddleware(request => (sendingParamDay = request.params?.day));
             axiosMock.onGet('/status-correct').replyOnce(200);
 
             await getRequest('/status-correct', {params: {day: 12}})
