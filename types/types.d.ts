@@ -7,7 +7,7 @@ export type ResponseErrorMiddleware = (error: AxiosError) => void;
 
 export type Cache = {[key: string]: number};
 
-export type Item = {[property: string]: any};
+export type Item = {id: string | undefined; [property: string]: any};
 
 export type State = Ref<{[id: string]: Item}>;
 
