@@ -16,15 +16,14 @@ import {getItemFromStorage, setItemInStorage} from '../../storage';
  * When extra store functionality is given, it will extend the base module with the extra functionality.
  *
  * @param {string} moduleName the name of the module, also the endpoint for the module
- * @param {ExtraStoreFunctionality} [extraFunctionality] the optional extra functionality to add to the store
  *
  * @returns {StoreModule}
  */
-export default (moduleName, extraFunctionality) => {
+export default moduleName => {
     /** @type {State} */
     const state = ref(getItemFromStorage(moduleName, true) ?? {});
 
-    const storeModule = {
+    return {
         /** Get all items from the store */
         all: computed(() => Object.values(state.value)),
         // TODO :: byId computed? Will it be reactive this way?
@@ -81,8 +80,4 @@ export default (moduleName, extraFunctionality) => {
             setItemInStorage(moduleName, state.value);
         },
     };
-
-    if (extraFunctionality) return {...storeModule, ...extraFunctionality};
-
-    return storeModule;
 };

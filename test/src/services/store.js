@@ -2,45 +2,26 @@
  * @typedef {import('axios-mock-adapter').default} AxiosMock
  */
 import assert from 'assert';
-import Sinon from 'sinon';
-import {getRequest} from '../../../src/services/http';
-import {
-    destroyStoreAction,
-    getAllFromStore,
-    readStoreAction,
-    registerStoreModule,
-    showStoreAction,
-    createStoreAction,
-    updateStoreAction,
-} from '../../../src/services/store';
+import {getAllFromStore, registerStoreModule} from '../../../src/services/store';
 import storeModuleFactory from '../../../src/services/store/factory';
 
 const {deepStrictEqual, strictEqual} = assert;
-
-// TODO ::it's not pretty with axiosmock here, can i stub or mock the functions?
-/** @type {AxiosMock} */
-const axiosMock = global.axiosMock;
 
 describe('Store Service', () => {
     describe('Store module factory', () => {
         it('should return store module with the all property', () => {
             const storeModule = storeModuleFactory('users');
-            assert(storeModule.hasOwnProperty('all'));
+            assert('all' in storeModule);
         });
 
         it('should return store module with the byId property', () => {
             const storeModule = storeModuleFactory('posts');
-            assert(storeModule.hasOwnProperty('byId'));
+            assert('byId' in storeModule);
         });
 
         it('should return store module with the setAll property', () => {
             const storeModule = storeModuleFactory('comments');
-            assert(storeModule.hasOwnProperty('setAll'));
-        });
-
-        it('should return store module with the extra functionality as a property', () => {
-            const storeModule = storeModuleFactory('magicians', {magic: 'MUAHAHA'});
-            assert(storeModule.hasOwnProperty('magic'));
+            assert('setAll' in storeModule);
         });
     });
 
@@ -156,53 +137,6 @@ describe('Store Service', () => {
         it('should add the module to the store', () => {
             registerStoreModule('clients', storeModuleFactory('clients'));
             strictEqual(getAllFromStore('clients').value.length, 0);
-        });
-    });
-
-    describe('actions', () => {
-        it('showStoreAction should send a get request to the moduleName with the id', () => {
-            axiosMock.onGet('warriors/2').replyOnce(200);
-
-            showStoreAction('warriors', 2)
-                .then(response => strictEqual(response.status, 200))
-                // it needs a catch
-                .catch(() => assert(false));
-        });
-
-        it('readStoreAction should send a get request to the moduleName', () => {
-            axiosMock.onGet('warriors').replyOnce(200);
-
-            readStoreAction('warriors')
-                .then(response => strictEqual(response.status, 200))
-                // it needs a catch
-                .catch(() => assert(false));
-        });
-
-        // it('createStoreAction should send a get request to the moduleName', () => {
-        //     axiosMock.onGet('warriors').replyOnce(200);
-
-        //     createStoreAction('warriors')
-        //         .then(response => strictEqual(response.status, 200))
-        //         // it needs a catch
-        //         .catch(() => assert(false));
-        // });
-
-        // it('updateStoreAction should send a get request to the moduleName', () => {
-        //     axiosMock.onGet('warriors').replyOnce(200);
-
-        //     updateStoreAction('warriors')
-        //         .then(response => strictEqual(response.status, 200))
-        //         // it needs a catch
-        //         .catch(() => assert(false));
-        // });
-
-        it('destroyStoreAction should send a get request to the moduleName', () => {
-            axiosMock.onDelete('warriors/1').replyOnce(200);
-
-            destroyStoreAction('warriors', 1)
-                .then(response => strictEqual(response.status, 200))
-                // it needs a catch
-                .catch(() => assert(false));
         });
     });
 });

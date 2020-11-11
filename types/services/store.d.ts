@@ -1,6 +1,6 @@
 import {AxiosResponse} from 'axios';
 import {ComputedRef} from 'vue';
-import {ExtraStoreFunctionality, Item} from '../types';
+import {Item} from '../types';
 
 export type StoreModule = {
     /** Get all items from the store */
@@ -20,18 +20,8 @@ export type Store = {[moduleName: string]: StoreModule};
  * When extra store functionality is given, it will extend the base module with the extra functionality.
  *
  * @param {string} moduleName the name of the module, also the endpoint for the module
- * @param {ExtraStoreFunctionality} [extraFunctionality] the optional extra functionality to add to the store
  */
-export function StoreModuleFactory(moduleName: string, extraFunctionality?: ExtraStoreFunctionality): StoreModule;
-
-/**
- * generic function to call functions inside the store
- *
- * @param {String} moduleName the name of the module to dispatch the action to
- * @param {String} functionName the name of the function
- * @param {*} [payload] the payload to sent to the action
- */
-export function performStoreAction(moduleName: string, functionName: string, payload?: any): any;
+export function StoreModuleFactory(moduleName: string): StoreModule;
 
 /**
  * dispatch an action to the store
@@ -110,9 +100,5 @@ export function registerStoreModule(moduleName: string, storeModule: StoreModule
  * generate and set the default store module in the store
  *
  * @param {String} moduleName the name of the module
- * @param {ExtraStoreFunctionality} [extraFunctionality] extra functionality added to the store
  */
-export function generateAndRegisterDefaultStoreModule(
-    moduleName: string,
-    extraFunctionality: ExtraStoreFunctionality
-): void;
+export function generateAndRegisterDefaultStoreModule(moduleName: string): void;
