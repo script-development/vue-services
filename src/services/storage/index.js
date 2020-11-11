@@ -19,7 +19,8 @@ export const setItemInStorage = (key, value) => {
 };
 
 /**
- * Get the value from the storage under the given key
+ * Get the value from the storage under the given key.
+ * Returns null if value is not found or if keepALive is false
  *
  * @param {String} key
  * @param {Boolean} [parse] if parse is given, then JSON.parse will be used to return a parsed value

@@ -1,15 +1,13 @@
 /**
- * @typedef {import('./factory').StoreModuleFactory} StoreModuleFactory
- *
- * @typedef {import('./factory/module').BaseStoreModule} BaseStoreModule
- *
  * @typedef {import('../../../types/types').Item} Item
+ * @typedef {import('../../../types/types').ExtraStoreFunctionality} ExtraStoreFunctionality
  * @typedef {import('../../../types/types').ResponseMiddleware} ResponseMiddleware
  *
  * @typedef {Object<string,BaseStoreModule>} Store
  */
 import {StoreModuleNotFoundError} from '../../errors/StoreModuleNotFoundError';
 import {registerResponseMiddleware} from '../http';
+import StoreModuleFactory from './factory';
 
 /** @type {Store} */
 const store = {};
@@ -42,9 +40,9 @@ const checkIfRequestedModuleExists = moduleName => {
 const responseMiddleware = ({data}) => {
     if (!data) return;
     for (const storeModuleName of moduleNames) {
-        if (data[storeModuleName]) {
-            // this.setAllInStore(storeModuleName, data[storeModuleName]);
-        }
+        if (!data[storeModuleName]) continue;
+
+        store[storeModuleName].setAll(data[storeModuleName]);
     }
 };
 
@@ -163,16 +161,7 @@ export const registerModule = (moduleName, storeModule) => {
  * generate and set the default store module in the store
  *
  * @param {String} moduleName the name of the module
- * @param {String} [endpoint] the endpoint for the API
- * @param {Object<string,Function>} [extraFunctionality] extra functionality added to the store
+ * @param {ExtraStoreFunctionality} [extraFunctionality] extra functionality added to the store
  */
-export const generateAndRegisterDefaultStoreModule = (moduleName, endpoint, extraFunctionality) => {
-    // TODO :: make this work
-    // const storeModule = factory.createDefaultStore(endpoint);
-    // if (extraFunctionality) {
-    //     for (const name in extraFunctionality) {
-    //         storeModule[name] = extraFunctionality[name];
-    //     }
-    // }
-    // this.registerModule(moduleName, storeModule);
-};
+export const generateAndRegisterDefaultStoreModule = (moduleName, extraFunctionality) =>
+    registerModule(moduleName, StoreModuleFactory(moduleName, extraFunctionality));
