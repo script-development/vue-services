@@ -1,3 +1,7 @@
+/**
+ * @typedef {import('vue').Ref} Ref
+ */
+
 import {ref} from 'vue';
 import {registerRequestMiddleware, registerResponseMiddleware, registerResponseErrorMiddleware} from '../http';
 
@@ -28,13 +32,15 @@ export const setMinTimeSpinner = ms => (minTimeSpinner = ms);
 /**
  * get the loading state
  *
- * @returns {Boolean}
+ * @returns {Ref<boolean>}
  */
 export const loading = ref(false);
 /**
- * Set the loading state
+ * Set the loading state.
+ * Does not set the state immediatly after recieving false.
+ * It only sets it before 500ms or after 1500ms.
  *
- * @param {Boolean} loading the loading state
+ * @param {Boolean} newLoading the loading state
  */
 export const setLoading = newLoading => {
     if (loadingTimeoutId) clearTimeout(loadingTimeoutId);

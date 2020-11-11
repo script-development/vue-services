@@ -160,36 +160,7 @@ export class ErrorService {
     /** @returns {AfterMiddleware} */
     get routeMiddleware(): AfterMiddleware;
 }
-export class LoadingService {
-    /**
-     * @param {StoreService} storeService
-     * @param {HTTPService} httpService
-     */
-    constructor(storeService: StoreService, httpService: HTTPService);
-    _storeModuleName: string;
-    _storeService: StoreService;
 
-    spinnerTimeout: number;
-    minTimeSpinner: number;
-    loadingTimeStart: number;
-    loadingTimeoutId: NodeJS.Timeout;
-    /**
-     * Set the loading state
-     *
-     * @param {Boolean} loading the loading state
-     */
-    set loading(loading: boolean);
-    /**
-     * get the loading state
-     *
-     * @returns {Boolean}
-     */
-    get loading(): boolean;
-    /** @returns {RequestMiddleware} */
-    get requestMiddleware(): RequestMiddleware;
-    /** @returns {ResponseMiddleware | ResponseErrorMiddleware} */
-    get responseMiddleware(): ResponseMiddleware | ResponseErrorMiddleware;
-}
 export class AuthService {
     /**
      * @param {RouterService} routerService
