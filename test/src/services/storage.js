@@ -1,29 +1,26 @@
 import assert from 'assert';
-
-const newStorageService = () => {
-    // deleting the storage service from cache, so it can load again in another test, with a base new localStorageMock
-    delete require.cache[require.resolve('../../../src/services/storage')];
-    return require('../../../src/services/storage');
-};
+import {deleteServiceFromCache, newService} from '../../helpers';
 
 describe('Storage Service', () => {
+    after(() => deleteServiceFromCache('storage'));
+
     describe('test stored keepALive values', () => {
         it('value of keepALive should be false', () => {
-            const {getKeepALive} = newStorageService();
+            const {getKeepALive} = newService('storage');
             assert.strictEqual(getKeepALive(), false);
             // deleting the storage service from cache, so it can load again in another test
         });
 
         it('value of keepALive should be true when stored value is true', () => {
             global.localStorage.data.keepALive = 'true';
-            const {getKeepALive} = newStorageService();
+            const {getKeepALive} = newService('storage');
             assert.strictEqual(getKeepALive(), true);
         });
     });
 
     describe('setting and getting items with keepALive as false', () => {
         it('getting a set item should return null', () => {
-            const {setKeepALive, setItemInStorage, getItemFromStorage} = newStorageService();
+            const {setKeepALive, setItemInStorage, getItemFromStorage} = newService('storage');
             setKeepALive(false);
 
             setItemInStorage('customers', [{name: 'Macro'}]);
@@ -31,7 +28,7 @@ describe('Storage Service', () => {
         });
 
         it('clearing the storage, items should still be returned as null', () => {
-            const {setKeepALive, setItemInStorage, getItemFromStorage, clearStorage} = newStorageService();
+            const {setKeepALive, setItemInStorage, getItemFromStorage, clearStorage} = newService('storage');
             setKeepALive(false);
 
             setItemInStorage('invoices', [{id: 5}]);
@@ -44,7 +41,7 @@ describe('Storage Service', () => {
     });
 
     describe('setting and getting items with keepALive as true', () => {
-        const {setKeepALive, setItemInStorage, getItemFromStorage, clearStorage} = newStorageService();
+        const {setKeepALive, setItemInStorage, getItemFromStorage, clearStorage} = newService('storage');
 
         it('setting a string item should return the item as a string with getItem and without parse', () => {
             // TODO :: setting keepALive here as true, so it won't effect other tests

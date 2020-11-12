@@ -1,7 +1,6 @@
 /**
  * @typedef {import('../../../../types/types').State} State
  * @typedef {import('../../../../types/types').Item} Item
- * @typedef {import('../../../../types/types').ExtraStoreFunctionality} ExtraStoreFunctionality
  * @typedef {import('../../../../types/services/store').StoreModule} StoreModule
  */
 import {computed, ref} from 'vue';
