@@ -16,20 +16,6 @@ registerResponseMiddleware(() => setLoading(false));
 registerResponseErrorMiddleware(() => setLoading(false));
 
 /**
- * Set the timeout before the spinner time starts.
- * This is exposed so tests can change these values
- * @param {number} ms
- */
-export const setSpinnerTimeout = ms => (spinnerTimeout = ms);
-
-/**
- * Set the minimum time the spinner is active
- * This is exposed so tests can change these values
- * @param {number} ms
- */
-export const setMinTimeSpinner = ms => (minTimeSpinner = ms);
-
-/**
  * get the loading state
  *
  * @returns {Ref<boolean>}
