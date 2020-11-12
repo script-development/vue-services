@@ -2,8 +2,15 @@
  * @typedef {import('axios-mock-adapter').default} AxiosMock
  */
 import assert from 'assert';
-import {getAllFromStore, registerStoreModule} from '../../../src/services/store';
+import {StoreModuleNotFoundError} from '../../../src/errors/StoreModuleNotFoundError';
 import storeModuleFactory from '../../../src/services/store/factory';
+import {
+    getAllFromStore,
+    registerStoreModule,
+    generateAndRegisterDefaultStoreModule,
+    getByIdFromStore,
+    responseMiddleware,
+} from '../../../src/services/store';
 
 const {deepStrictEqual, strictEqual} = assert;
 
@@ -137,6 +144,77 @@ describe('Store Service', () => {
         it('should add the module to the store', () => {
             registerStoreModule('clients', storeModuleFactory('clients'));
             strictEqual(getAllFromStore('clients').value.length, 0);
+        });
+    });
+
+    describe('generating and registering store modules', () => {
+        it('should add the generated module to the store', () => {
+            generateAndRegisterDefaultStoreModule('fields');
+            strictEqual(getAllFromStore('fields').value.length, 0);
+        });
+    });
+
+    describe('getting items from store', () => {
+        it('should throw an error when trying to get all from an unknown module', () => {
+            assert.throws(
+                () => deepStrictEqual(getAllFromStore('does-not-exist')),
+                error => {
+                    assert(error instanceof StoreModuleNotFoundError);
+                    strictEqual(error.name, 'StoreModuleNotFoundError');
+                    // TODO :: make this one work
+                    // strictEqual(error.message, `Could not find does-not-exist, only these modules exists at the moment: ${moduleNames.toString()}`)
+                    return true;
+                }
+            );
+        });
+
+        it('should get all items from store when calling getAllFromStore', () => {
+            const namesModule = storeModuleFactory('names');
+            registerStoreModule('names', namesModule);
+            namesModule.setAll([
+                {id: 1, description: 'this is a test'},
+                {id: 2, description: 'this is another test'},
+                {id: 3, description: 'this is the ultimate test'},
+            ]);
+
+            deepStrictEqual(getAllFromStore('names').value, [
+                {id: 1, description: 'this is a test'},
+                {id: 2, description: 'this is another test'},
+                {id: 3, description: 'this is the ultimate test'},
+            ]);
+        });
+
+        it('should get one item from store when calling getByIdFromStore', () => {
+            deepStrictEqual(getByIdFromStore('names', 1), {id: 1, description: 'this is a test'});
+        });
+
+        it('should throw an error when trying to get by id from an unknown module', () => {
+            assert.throws(
+                () => deepStrictEqual(getByIdFromStore('does-not-exist', 12)),
+                error => {
+                    assert(error instanceof StoreModuleNotFoundError);
+                    strictEqual(error.name, 'StoreModuleNotFoundError');
+                    // TODO :: make this one work
+                    // strictEqual(error.message, `Could not find does-not-exist, only these modules exists at the moment: ${moduleNames.toString()}`)
+                    return true;
+                }
+            );
+        });
+
+        // TODO :: is this desired behaviour?
+        it('should return undefined from store when calling getByIdFromStore with an unkown id', () => {
+            deepStrictEqual(getByIdFromStore('names', 12), undefined);
+        });
+    });
+
+    describe('store module response middleware', () => {
+        it('should do nothing when there is no data', () => {
+            strictEqual(responseMiddleware({}), undefined);
+        });
+
+        it('should add data to the store when data is known in the store modules', () => {
+            responseMiddleware({data: {names: [{id: 4, description: 'added test data'}]}});
+            deepStrictEqual(getByIdFromStore('names', 4), {id: 4, description: 'added test data'});
         });
     });
 });
