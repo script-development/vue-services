@@ -1,9 +1,8 @@
 /**
+ * @todo move to types.d.ts
  * @typedef {Object} Translation
  * @property {string} singular the singular translation
  * @property {string} plural the plural translation
- *
- * @typedef {import('../../errors/MissingTranslationError').MissingTranslationError} MissingTranslationError
  */
 
 import {MissingTranslationError} from '../../errors/MissingTranslationError';
@@ -11,11 +10,36 @@ import {MissingTranslationError} from '../../errors/MissingTranslationError';
 const PLURAL = 'plural';
 const SINGULAR = 'singular';
 
+/** @type {Object.<string, Translation>} */
+const TRANSLATIONS = {};
+
+/**
+ * Get plural or singular translation for given value
+ *
+ * @param {String} value
+ * @param {PLURAL | SINGULAR} pluralOrSingular
+ *
+ * @throws {MissingTranslationError}
+ */
+const getTranslation = (value, pluralOrSingular) => {
+    const translation = TRANSLATIONS[value];
+
+    if (!translation) throw new MissingTranslationError(`Missing translation for ${value}`);
+    if (!translation[pluralOrSingular]) {
+        throw new MissingTranslationError(`Missing ${pluralOrSingular} translation for ${value}`);
+    }
+
+    return translation[pluralOrSingular];
+};
+
 /**
  * Capitalize the give value
  * @param {String} value
  */
 const capitalize = value => `${value[0].toUpperCase()}${value.substr(1)}`;
+
+/** @param {string} value */
+export const getPluralTranslation = value => getTranslation(value, PLURAL);
 
 export class TranslatorService {
     constructor() {
@@ -24,26 +48,6 @@ export class TranslatorService {
          * @private
          */
         this._translations = {};
-    }
-
-    /**
-     * Get plural or singular translation for given value
-     *
-     * @param {String} value
-     * @param {PLURAL | SINGULAR} pluralOrSingular
-     *
-     * @throws {MissingTranslationError}
-     * @private
-     */
-    _getTranslation(value, pluralOrSingular) {
-        const translation = this._translations[value];
-
-        if (!translation) throw new MissingTranslationError(`Missing translation for ${value}`);
-        if (!translation[pluralOrSingular]) {
-            throw new MissingTranslationError(`Missing ${pluralOrSingular} translation for ${value}`);
-        }
-
-        return translation[pluralOrSingular];
     }
 
     /**

@@ -4,6 +4,35 @@
  * @typedef {import('vue-router').RouteConfig} RouteConfig
  */
 
+import {getPluralTranslation} from '../../translator';
+
+export const CREATE_PAGE_NAME = '.create';
+export const EDIT_PAGE_NAME = '.edit';
+export const OVERVIEW_PAGE_NAME = '.overview';
+export const SHOW_PAGE_NAME = '.show';
+
+/**
+ *
+ * @param {string} moduleName
+ */
+export const newRouteSettings = moduleName => {
+    const names = {
+        base: moduleName,
+        create: moduleName + CREATE_PAGE_NAME,
+        edit: moduleName + EDIT_PAGE_NAME,
+        overview: moduleName + OVERVIEW_PAGE_NAME,
+        show: moduleName + SHOW_PAGE_NAME,
+    };
+
+    const paths = {
+        base: '/' + getPluralTranslation(moduleName),
+    };
+    return {
+        names,
+        paths,
+    };
+};
+
 export class RouteSettings {
     /**
      *
@@ -11,13 +40,6 @@ export class RouteSettings {
      */
     constructor(translationService) {
         this._translationService = translationService;
-
-        /** route names */
-        this._baseName;
-        this._editName;
-        this._showName;
-        this._overviewName;
-        this._createName;
 
         /** route paths */
         this._basePath;
@@ -62,22 +84,6 @@ export class RouteSettings {
         this._createPageAdminOnly = false;
         this._createPageAuthOnly = true;
     }
-
-    // prettier-ignore
-    /** returns the create name part of the route */
-    get createPageName() { return '.create'; }
-
-    // prettier-ignore
-    /** returns the edit name part of the route */
-    get editPageName() { return '.edit'; }
-
-    // prettier-ignore
-    /** returns the overview name part of the route */
-    get overviewPageName() { return '.overview'; }
-
-    // prettier-ignore
-    /** returns the show name part of the route */
-    get showPageName() { return '.show'; }
 
     // prettier-ignore
     /** returns if the show page is only accessible by the admin */
@@ -126,57 +132,6 @@ export class RouteSettings {
     set createPageAdminOnly(value) { this._createPageAdminOnly = value; }
     // prettier-ignore
     set createPageAuthOnly(value) { this._createPageAuthOnly = value; }
-
-    // prettier-ignore
-    /** @returns {String} */
-    get baseName() { return this._baseName; }
-    // prettier-ignore
-    /** @param {String} value name of the base route */
-    set baseName(value) { this._baseName = value; }
-
-    /** @returns {String} */
-    get editName() {
-        if (this._editName) return this._editName;
-        this._editName = this._baseName + this.editPageName;
-        return this._editName;
-    }
-
-    // prettier-ignore
-    /** @param {String} value name of the route */
-    set editName(value) { this._editName = value; }
-
-    /** @returns {String} */
-    get showName() {
-        if (this._showName) return this._showName;
-        this._showName = this._baseName + this.showPageName;
-        return this._showName;
-    }
-
-    // prettier-ignore
-    /** @param {String} value name of the route */
-    set showName(value) { this._showName = value; }
-
-    /** @returns {String} */
-    get createName() {
-        if (this._createName) return this._createName;
-        this._createName = this._baseName + this.createPageName;
-        return this._createName;
-    }
-
-    // prettier-ignore
-    /** @param {String} value name of the route */
-    set createName(value) { this._createName = value; }
-
-    /** @returns {String} */
-    get overviewName() {
-        if (this._overviewName) return this._overviewName;
-        this._overviewName = this._baseName + this.overviewPageName;
-        return this._overviewName;
-    }
-
-    // prettier-ignore
-    /** @param {String} value name of the route */
-    set overviewName(value) { this._overviewName = value; }
 
     // prettier-ignore
     /** @returns {String} */
