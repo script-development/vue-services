@@ -1,16 +1,15 @@
 /**
  * @todo move to types.d.ts
- * @typedef {Object} Translation
- * @property {string} singular the singular translation
- * @property {string} plural the plural translation
+ * @typedef {import('../../../types/types').Translation} Translation
+ * @typedef {import('../../../types/types').Translations} Translations
  */
 
 import {MissingTranslationError} from '../../errors/MissingTranslationError';
-// TODO :: this is not done!
+
 const PLURAL = 'plural';
 const SINGULAR = 'singular';
 
-/** @type {Object.<string, Translation>} */
+/** @type {Translations} */
 const TRANSLATIONS = {};
 
 /**
