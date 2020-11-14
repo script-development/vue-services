@@ -147,6 +147,7 @@ describe('router serivce', () => {
         });
     });
 
+    // TODO :: find out how to test the router, can't get it to work
     // describe('router before middleware', () => {
     //     before(() => {
     //         // global.document = {querySelector: () => {}};
