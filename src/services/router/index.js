@@ -1,11 +1,10 @@
 /**
- * @typedef {import("vue-router").RouteRecord} RouteRecord
+ * @typedef {import("vue-router").RouteRecordRaw} RouteRecordRaw
  * @typedef {import("vue-router").NavigationGuard} NavigationGuard
  * @typedef {import("vue-router").NavigationHookAfter} NavigationHookAfter
  * @typedef {import('vue-router').LocationQuery} LocationQuery
  *
- * @typedef {import("./factory").RouteFactory} RouteFactory
- * @typedef {import("./settings").RouteSettings} RouteSettings
+ * @typedef {import('../../../types/services/router').RouteSettings} RouteSettings
  */
 
 import {createRouter, createWebHistory} from 'vue-router';
@@ -58,8 +57,16 @@ router.afterEach((to, from) => {
 /** @param {NavigationHookAfter} middleware */
 export const registerAfterMiddleware = middleware => routerAfterMiddleware.push(middleware);
 
-/** @param {RouteRecord} routes */
+/** @param {RouteRecordRaw} routes */
 export const addRoutes = routes => router.options.routes.push(routes);
+
+/** @param {RouteSettings} settings */
+export const addRoutesBasedOnRouteSettings = settings => {
+    const record = settings.base;
+    delete settings.base;
+    record.children = Object.values(settings);
+    addRoutes(record);
+};
 
 /**
  * Go to the give route by name, optional id and query
@@ -92,7 +99,7 @@ export const getCurrentRouteQuery = () => router.currentRoute.value.query;
 /** Get the id from the params from the current route */
 export const getCurrentRouteId = () => router.currentRoute.value.params.id;
 /** Get the name from the current route */
-export const getCurrentRouteName = () => router.currentRoute.value.name;
+export const getCurrentRouteName = () => router.currentRoute.value.name.toString();
 
 /**
  * checks if the given string is in the current routes name

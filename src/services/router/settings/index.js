@@ -1,6 +1,7 @@
 /**
  * @typedef {import('vue').Component} Component
  * @typedef {import('vue-router').RouteRecordRaw} RouteRecordRaw
+ * @typedef {import('../../../../types/services/router').RouteSettings} RouteSettings
  */
 
 import {
@@ -47,7 +48,9 @@ const translationConversion = {
     [SHOW]: getCapitalizedSingularTranslation,
 };
 
+// TODO :: children requires different route?
 /**
+ * Creates a route record for the route settings
  *
  * @param {string} moduleName
  * @param {CREATE | EDIT | OVERVIEW | SHOW} part
@@ -79,13 +82,14 @@ const partialFactory = (moduleName, part, component) => {
  * @param {Component} [createComponent]
  * @param {Component} [editComponent]
  * @param {Component} [showComponent]
+ *
+ * @returns {RouteSettings}
  */
 export default (moduleName, baseComponent, overviewComponent, createComponent, editComponent, showComponent) => {
     const routeSettings = {
         base: {
             path: '/' + getPluralTranslation(moduleName),
             component: baseComponent,
-            meta: {auth: true},
         },
     };
 
