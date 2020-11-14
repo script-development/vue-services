@@ -13,10 +13,10 @@
     ],
     "repository": "github:script-development/vue-services",
     "scripts": {
+        "dev": "vite --root dev/",
         "test": "nyc mocha --require @babel/register --recursive",
         "test:watch": "mocha --require @babel/register --watch --recursive",
-        "build": "eslint ./src && rollup src/index.js --file dist/index.js --format iife",
-        "dev": "rollup -c scripts/config.js",
+        "build": "rollup -c scripts/config.js",
         "watch": "rollup -c scripts/config.js --watch",
         "pub": "npm version patch && npm publish",
         "docs": "typedoc",
@@ -46,11 +46,13 @@
         "rollup": "^2.26.11",
         "sinon": "^9.2.1",
         "typedoc": "^0.19.1",
-        "typescript": "^4.0.2"
+        "typescript": "^4.0.2",
+        "vite": "^1.0.0-rc.8",
+        "@vue/compiler-sfc": "^3.0.2"
     },
     "dependencies": {
         "axios": "0.20.0",
-        "vue": "^3.0.0-rc.1",
+        "vue": "^3.0.2",
         "vue-router": "^4.0.0-beta.13"
     },
     "peerDependencies": {
