@@ -98,7 +98,7 @@ export const goToRoute = (name, id, query) => {
 /** Get the query from the current route */
 export const getCurrentRouteQuery = () => router.currentRoute.value.query;
 /** Get the id from the params from the current route */
-export const getCurrentRouteId = () => router.currentRoute.value.params.id;
+export const getCurrentRouteId = () => router.currentRoute.value.params.id.toString();
 /** Get the name from the current route */
 export const getCurrentRouteName = () => router.currentRoute.value.name.toString();
 
