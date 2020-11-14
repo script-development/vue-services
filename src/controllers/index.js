@@ -13,8 +13,7 @@ import RouteSettingFactory from '../services/router/settings';
 import {deleteRequest, getRequest, postRequest} from '../services/http';
 import {generateAndRegisterDefaultStoreModule, getAllFromStore, getByIdFromStore} from '../services/store';
 import {setTranslation} from '../services/translator';
-import {goToRoute} from '../../types/services/router';
-import {addRoutesBasedOnRouteSettings, getCurrentRouteId} from '../services/router';
+import {addRoutesBasedOnRouteSettings, getCurrentRouteId, goToRoute} from '../services/router';
 
 /**
  * @param {string} moduleName
