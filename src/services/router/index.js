@@ -16,12 +16,13 @@ const router = createRouter({
 });
 
 /**
- * Checks if there is a target route name in the route query
- * If there is, it will redirect to that route
+ * Checks if there is a target route name in the route query.
+ * If there is, it will redirect to that route.
+ * Exported for testing purposes
  *
  * @type {NavigationGuard}
  */
-const beforeMiddleware = (to, from) => {
+export const beforeMiddleware = (to, from) => {
     /** @type {string} */
     // @ts-ignore
     const fromQuery = from.query.from;

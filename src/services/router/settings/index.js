@@ -50,7 +50,8 @@ const translationConversion = {
 
 // TODO :: children requires different route?
 /**
- * Creates a route record for the route settings
+ * Creates a route record for the route settings.
+ * Exported for testing purposes. Is not exported in the final product
  *
  * @param {string} moduleName
  * @param {CREATE | EDIT | OVERVIEW | SHOW} part
@@ -58,14 +59,14 @@ const translationConversion = {
  *
  * @returns {RouteRecordRaw}
  */
-const partialFactory = (moduleName, part, component) => {
+export const partialFactory = (moduleName, part, component) => {
     return {
         name: moduleName + nameConversion[part],
         path: pathConversion[part],
         component,
         meta: {
             auth: true,
-            title: translationConversion[part] + titleConversion[part],
+            title: translationConversion[part](moduleName) + titleConversion[part],
         },
         children: undefined,
     };
