@@ -10,3 +10,6 @@ export type Cache = {[key: string]: number};
 export type Item = {id: string | undefined; [property: string]: any};
 
 export type State = Ref<{[id: string]: Item}>;
+
+export type Translation = {singular: string; plural: string};
+export type Translations = {[moduleName: string]: Translation};

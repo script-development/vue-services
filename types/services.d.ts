@@ -6,17 +6,6 @@ import {StoreService} from './storeService';
 import {Component} from 'vue/types/index';
 import {Item} from './controllers';
 
-export type Translation = {
-    /**
-     * the singular translation
-     */
-    singular: string;
-    /**
-     * the plural translation
-     */
-    plural: string;
-};
-
 type Credentials = {email: string; password: string; rememberMe: boolean};
 type RepeatPasswordData = {password: string; repeatPassword: string; [key: string]: string};
 
@@ -56,74 +45,6 @@ export class EventService {
      * @param {Function} [cancelAction] the being used when click on cancel
      */
     modal(message: string, okAction: Function, cancelAction?: Function): void;
-}
-
-export const PLURAL = 'plural';
-export const SINGULAR = 'singular';
-
-export class TranslatorService {
-    /** @type {Object.<string, Translation>}*/
-    private _translations: {
-        [key: string]: Translation;
-    };
-    /**
-     * Get plural or singular translation for given value
-     *
-     * @param {String} value
-     * @param {PLURAL | SINGULAR} pluralOrSingular
-     *
-     * @throws {MissingTranslationError}
-     *
-     * @private
-     */
-    private _getTranslation(value: string, pluralOrSingular: typeof PLURAL | typeof SINGULAR): string;
-    /**
-     * Get the plural translation for the given value
-     *
-     * @param {String} value
-     *
-     * @throws {MissingTranslationError}
-     */
-    getPlural(value: string): string;
-    /**
-     * Get the singular translation for the given value
-     *
-     * @param {String} value
-     *
-     * @throws {MissingTranslationError}
-     */
-    getSingular(value: string): string;
-    /**
-     * Get the singular translation for the given value and capitalize it
-     *
-     * @param {String} value
-     *
-     * @throws {MissingTranslationError}
-     */
-    getCapitalizedSingular(value: string): string;
-    /**
-     * Get the plural translation for the given value and capitalize it
-     *
-     * @param {String} value
-     *
-     * @throws {MissingTranslationError}
-     */
-    getCapitalizedPlural(value: string): string;
-    /**
-     * Get the either the singular or plural translation, based on the given count
-     * Return the string `${count} ${translation}`
-     *
-     * @param {Number} count
-     * @param {String} value
-     *
-     * @throws {MissingTranslationError}
-     */
-    maybePluralize(count: number, value: string): string;
-    /**
-     * @param {string} key
-     * @param {Translation} translation
-     */
-    setTranslation(key: string, translation: Translation): void;
 }
 
 type ErrorBag = {
