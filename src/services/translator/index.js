@@ -38,8 +38,41 @@ const getTranslation = (value, pluralOrSingular) => {
  */
 const capitalize = value => `${value[0].toUpperCase()}${value.substr(1)}`;
 
-/** @param {string} value */
+/**
+ * Get the plural translation for the given value
+ *
+ * @param {String} value
+ *
+ * @throws {MissingTranslationError}
+ */
 export const getPluralTranslation = value => getTranslation(value, PLURAL);
+
+/**
+ * Get the plural translation for the given value and capitalize it
+ *
+ * @param {String} value
+ *
+ * @throws {MissingTranslationError}
+ */
+export const getCapitalizedPluralTranslation = value => capitalize(getPluralTranslation(value));
+
+/**
+ * Get the singular translation for the given value
+ *
+ * @param {String} value
+ *
+ * @throws {MissingTranslationError}
+ */
+export const getSingularTranslation = value => getTranslation(value, SINGULAR);
+
+/**
+ * Get the singular translation for the given value and capitalize it
+ *
+ * @param {String} value
+ *
+ * @throws {MissingTranslationError}
+ */
+export const getCapitalizedSingularTranslation = value => capitalize(getSingularTranslation(value));
 
 export class TranslatorService {
     constructor() {
@@ -48,50 +81,6 @@ export class TranslatorService {
          * @private
          */
         this._translations = {};
-    }
-
-    /**
-     * Get the plural translation for the given value
-     *
-     * @param {String} value
-     *
-     * @throws {MissingTranslationError}
-     */
-    getPlural(value) {
-        return this._getTranslation(value, PLURAL);
-    }
-
-    /**
-     * Get the singular translation for the given value
-     *
-     * @param {String} value
-     *
-     * @throws {MissingTranslationError}
-     */
-    getSingular(value) {
-        return this._getTranslation(value, SINGULAR);
-    }
-
-    /**
-     * Get the singular translation for the given value and capitalize it
-     *
-     * @param {String} value
-     *
-     * @throws {MissingTranslationError}
-     */
-    getCapitalizedSingular(value) {
-        return capitalize(this.getSingular(value));
-    }
-
-    /**
-     * Get the plural translation for the given value and capitalize it
-     *
-     * @param {String} value
-     *
-     * @throws {MissingTranslationError}
-     */
-    getCapitalizedPlural(value) {
-        return capitalize(this.getPlural(value));
     }
 
     /**
