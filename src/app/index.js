@@ -8,6 +8,7 @@
  */
 
 import {createApp} from 'vue';
+import {router} from '../services/router';
 
 /**
  * Start the app and set required settings
@@ -29,6 +30,7 @@ export const startApp = (mainComponent, controllers) => {
     for (const controller in controllers) controllers[controller].init();
 
     const app = createApp(mainComponent);
+    app.use(router);
     app.mount('#app');
 
     // this._eventService.app = createApp(mainComponent);

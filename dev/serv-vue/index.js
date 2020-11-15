@@ -1,70 +1,6 @@
-import {createApp, defineComponent, ref, computed} from 'vue';
-import axios from 'axios';
+import {createApp, defineComponent, h, ref, computed} from 'vue';
 import {createRouter, createWebHistory} from 'vue-router';
-
-/**
- * @typedef {import('../services/router').RouterService} RouterService
- * @typedef {import('../services/event').EventService} EventService
- * @typedef {import('../services/auth').AuthService} AuthService
- * @typedef {import('../services/staticdata').StaticDataService} StaticDataService
- * @typedef {import('../controllers').BaseController} BaseController
- * @typedef {import('vue').Component} Component
- */
-
-/**
- * Start the app and set required settings
- *
- * @param {Component} mainComponent the main app component
- * @param {String} defaultLoggedInPageName the page to go to when logged in
- * @param {Component} loginPage the login page
- * @param {Object<string,BaseController>} controllers the login page
- * @param {[string,Object<string,string>]} [staticData] the static data
- */
-// export const startApp = (mainComponent, defaultLoggedInPageName, loginPage, controllers, staticData) => {
-const startApp = (mainComponent, controllers) => {
-    // if (staticData) this._staticDataService.createStoreModules(staticData);
-
-    // this._authService.defaultLoggedInPageName = defaultLoggedInPageName;
-    // this._authService.loginPage = loginPage;
-    // this._authService.setRoutes();
-
-    for (const controller in controllers) controllers[controller].init();
-
-    const app = createApp(mainComponent);
-    app.mount('#app');
-
-    // this._eventService.app = createApp(mainComponent);
-    // this._eventService.app.use(this._routerService.router);
-    // this._eventService.app.mount('#app');
-
-    // TODO :: could even do this first and .then(()=>this._authService.getLoggedInUser())
-    // or make it a setting
-    // if (this._authService.isLoggedin) this._authService.getLoggedInUser();
-};
-
-const name = 'default';
-
-var MinimalRouterView = defineComponent({
-    name: 'MinimalRouterView',
-    functional: true,
-    props: {
-        depth: {
-            type: Number,
-            default: 0,
-        },
-    },
-    render(h, {props, children, parent, data}) {
-        const route = parent.$route;
-        const matched = route.matched[props.depth];
-        const component = matched && matched.components[name];
-
-        // render empty node if no matched route or no config component
-        if (!matched || !component) {
-            return h();
-        }
-        return h(component, data, children);
-    },
-});
+import axios from 'axios';
 
 class MissingTranslationError extends Error {
     constructor(...params) {
@@ -258,6 +194,172 @@ var RouteSettingFactory = (
 
     return routeSettings;
 };
+
+/**
+ * @typedef {import("vue-router").RouteRecordRaw} RouteRecordRaw
+ * @typedef {import("vue-router").NavigationGuard} NavigationGuard
+ * @typedef {import("vue-router").NavigationHookAfter} NavigationHookAfter
+ * @typedef {import('vue-router').LocationQuery} LocationQuery
+ *
+ * @typedef {import('../../../types/services/router').RouteSettings} RouteSettings
+ */
+
+// exported only to use in the app starter to bind the router
+const router = createRouter({
+    history: createWebHistory(),
+    routes: [],
+});
+
+/**
+ * Checks if there is a target route name in the route query.
+ * If there is, it will redirect to that route.
+ * Exported for testing purposes
+ *
+ * @type {NavigationGuard}
+ */
+const beforeMiddleware = (to, from) => {
+    /** @type {string} */
+    // @ts-ignore
+    const fromQuery = from.query.from;
+    if (!fromQuery) return false;
+
+    if (fromQuery === to.fullPath) return false;
+
+    router.push({name: fromQuery});
+    return true;
+};
+
+/** @type {NavigationGuard[]} */
+const routerBeforeMiddleware = [beforeMiddleware];
+router.beforeEach((to, from, next) => {
+    for (const middlewareFunc of routerBeforeMiddleware) {
+        // MiddlewareFunc will return true if it encountered problems
+        if (middlewareFunc(to, from, next)) return next(false);
+    }
+    return next();
+});
+
+/** @type {NavigationHookAfter[]} */
+const routerAfterMiddleware = [];
+router.afterEach((to, from) => {
+    for (const middlewareFunc of routerAfterMiddleware) {
+        middlewareFunc(to, from);
+    }
+});
+
+/** @param {RouteRecordRaw} routes */
+const addRoutes = routes => router.addRoute(routes);
+
+/** @param {RouteSettings} settings */
+const addRoutesBasedOnRouteSettings = settings => {
+    const record = settings.base;
+    delete settings.base;
+    record.children = Object.values(settings);
+    addRoutes(record);
+};
+
+/**
+ * Go to the give route by name, optional id and query
+ * If going to a route you are already on, it catches the given error
+ *
+ * @param {String} name the name of the new route
+ * @param {String} [id] the optional id for the params of the new route
+ * @param {LocationQuery} [query] the optional query for the new route
+ */
+const goToRoute = (name, id, query) => {
+    if (onPage(name) && !query && !id) return;
+
+    /** @type {import('vue-router').RouteLocationRaw} */
+    const route = {name};
+    if (id) route.params = {id};
+    if (query) route.query = query;
+
+    router.push(route).catch(err => {
+        // TODO :: vue-3 :: check if NavigationDuplicated error is still the same name
+        // Ignore the vue-router err regarding navigating to the page they are already on.
+        if (err && err.name != 'NavigationDuplicated') {
+            // But print any other errors to the console
+            console.error(err);
+        }
+    });
+};
+
+/** Get the current route */
+const getCurrentRoute = () => router.currentRoute;
+/** Get the id from the params from the current route */
+const getCurrentRouteId = () => router.currentRoute.value.params.id.toString();
+/** Get the name from the current route */
+const getCurrentRouteName = () => router.currentRoute.value.name.toString();
+
+/**
+ * checks if the given string is in the current routes name
+ * @param {string} pageName the name of the page to check
+ */
+const onPage = pageName => getCurrentRouteName().toString().includes(pageName);
+
+/**
+ * @typedef {import('../services/router').RouterService} RouterService
+ * @typedef {import('../services/event').EventService} EventService
+ * @typedef {import('../services/auth').AuthService} AuthService
+ * @typedef {import('../services/staticdata').StaticDataService} StaticDataService
+ * @typedef {import('../controllers').BaseController} BaseController
+ * @typedef {import('vue').Component} Component
+ */
+
+/**
+ * Start the app and set required settings
+ *
+ * @param {Component} mainComponent the main app component
+ * @param {String} defaultLoggedInPageName the page to go to when logged in
+ * @param {Component} loginPage the login page
+ * @param {Object<string,BaseController>} controllers the login page
+ * @param {[string,Object<string,string>]} [staticData] the static data
+ */
+// export const startApp = (mainComponent, defaultLoggedInPageName, loginPage, controllers, staticData) => {
+const startApp = (mainComponent, controllers) => {
+    // if (staticData) this._staticDataService.createStoreModules(staticData);
+
+    // this._authService.defaultLoggedInPageName = defaultLoggedInPageName;
+    // this._authService.loginPage = loginPage;
+    // this._authService.setRoutes();
+
+    for (const controller in controllers) controllers[controller].init();
+
+    const app = createApp(mainComponent);
+    app.use(router);
+    app.mount('#app');
+
+    // this._eventService.app = createApp(mainComponent);
+    // this._eventService.app.use(this._routerService.router);
+    // this._eventService.app.mount('#app');
+
+    // TODO :: could even do this first and .then(()=>this._authService.getLoggedInUser())
+    // or make it a setting
+    // if (this._authService.isLoggedin) this._authService.getLoggedInUser();
+};
+
+const name = 'default';
+
+var MinimalRouterView = defineComponent({
+    name: 'MinimalRouterView',
+    functional: true,
+    props: {
+        depth: {
+            type: Number,
+            default: 0,
+        },
+    },
+    setup(props) {
+        const matched = getCurrentRoute().value.matched[props.depth];
+        const component = matched && matched.components[name];
+
+        // render empty node if no matched route or no config component
+        if (!matched || !component) {
+            return () => h('div', [404]);
+        }
+        return () => h(component);
+    },
+});
 
 /**
  * @typedef {import('axios').AxiosRequestConfig} AxiosRequestConfig
@@ -582,104 +684,6 @@ const generateAndRegisterDefaultStoreModule = moduleName =>
     registerStoreModule(moduleName, StoreModuleFactory(moduleName));
 
 /**
- * @typedef {import("vue-router").RouteRecordRaw} RouteRecordRaw
- * @typedef {import("vue-router").NavigationGuard} NavigationGuard
- * @typedef {import("vue-router").NavigationHookAfter} NavigationHookAfter
- * @typedef {import('vue-router').LocationQuery} LocationQuery
- *
- * @typedef {import('../../../types/services/router').RouteSettings} RouteSettings
- */
-
-const router = createRouter({
-    history: createWebHistory(),
-    routes: [],
-});
-
-/**
- * Checks if there is a target route name in the route query.
- * If there is, it will redirect to that route.
- * Exported for testing purposes
- *
- * @type {NavigationGuard}
- */
-const beforeMiddleware = (to, from) => {
-    /** @type {string} */
-    // @ts-ignore
-    const fromQuery = from.query.from;
-    if (!fromQuery) return false;
-
-    if (fromQuery === to.fullPath) return false;
-
-    router.push({name: fromQuery});
-    return true;
-};
-
-/** @type {NavigationGuard[]} */
-const routerBeforeMiddleware = [beforeMiddleware];
-router.beforeEach((to, from, next) => {
-    for (const middlewareFunc of routerBeforeMiddleware) {
-        // MiddlewareFunc will return true if it encountered problems
-        if (middlewareFunc(to, from, next)) return next(false);
-    }
-    return next();
-});
-
-/** @type {NavigationHookAfter[]} */
-const routerAfterMiddleware = [];
-router.afterEach((to, from) => {
-    for (const middlewareFunc of routerAfterMiddleware) {
-        middlewareFunc(to, from);
-    }
-});
-
-/** @param {RouteRecordRaw} routes */
-const addRoutes = routes => router.options.routes.push(routes);
-
-/** @param {RouteSettings} settings */
-const addRoutesBasedOnRouteSettings = settings => {
-    const record = settings.base;
-    delete settings.base;
-    record.children = Object.values(settings);
-    addRoutes(record);
-};
-
-/**
- * Go to the give route by name, optional id and query
- * If going to a route you are already on, it catches the given error
- *
- * @param {String} name the name of the new route
- * @param {String} [id] the optional id for the params of the new route
- * @param {LocationQuery} [query] the optional query for the new route
- */
-const goToRoute = (name, id, query) => {
-    if (onPage(name) && !query && !id) return;
-
-    /** @type {import('vue-router').RouteLocationRaw} */
-    const route = {name};
-    if (id) route.params = {id};
-    if (query) route.query = query;
-
-    router.push(route).catch(err => {
-        // TODO :: vue-3 :: check if NavigationDuplicated error is still the same name
-        // Ignore the vue-router err regarding navigating to the page they are already on.
-        if (err && err.name != 'NavigationDuplicated') {
-            // But print any other errors to the console
-            console.error(err);
-        }
-    });
-};
-/** Get the id from the params from the current route */
-const getCurrentRouteId = () => router.currentRoute.value.params.id.toString();
-/** Get the name from the current route */
-const getCurrentRouteName = () => router.currentRoute.value.name.toString();
-
-/**
- * checks if the given string is in the current routes name
- * @param {string} pageName the name of the page to check
- */
-const onPage = pageName => getCurrentRouteName().toString().includes(pageName);
-
-/**
  * @typedef {import('vue-router').LocationQuery} LocationQuery
  *
  * @typedef {import('../../types/types').Item} Item
@@ -701,7 +705,9 @@ var index = (moduleName, components, translation) => {
     if (!components.base) {
         components.base = defineComponent({
             name: `${moduleName}-base`,
-            render: h => h(MinimalRouterView, {props: {depth: 1}}),
+            // TODO :: find out if the minimal router view actually works as intended
+            render: () => h(MinimalRouterView, {depth: 1}),
+            // render: () => h(RouterView),
             // TODO #9 @Goosterhof
             mounted: readStoreAction,
         });

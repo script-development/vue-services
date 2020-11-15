@@ -5,7 +5,8 @@
  * @typedef {import('../../types/types').Translation} Translation
  *
  */
-import {defineComponent} from 'vue';
+import {defineComponent, h} from 'vue';
+// import {RouterView} from 'vue-router';
 
 import MinimalRouterView from './MinimalRouterView';
 
@@ -29,7 +30,9 @@ export default (moduleName, components, translation) => {
     if (!components.base) {
         components.base = defineComponent({
             name: `${moduleName}-base`,
-            render: h => h(MinimalRouterView, {props: {depth: 1}}),
+            // TODO :: find out if the minimal router view actually works as intended
+            render: () => h(MinimalRouterView, {depth: 1}),
+            // render: () => h(RouterView),
             // TODO #9 @Goosterhof
             mounted: readStoreAction,
         });

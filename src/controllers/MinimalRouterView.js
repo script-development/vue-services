@@ -1,4 +1,6 @@
-import {defineComponent} from 'vue';
+import {defineComponent, h} from 'vue';
+import {} from 'vue-router';
+import {getCurrentRoute} from '../services/router';
 
 const name = 'default';
 
@@ -11,15 +13,14 @@ export default defineComponent({
             default: 0,
         },
     },
-    render(h, {props, children, parent, data}) {
-        const route = parent.$route;
-        const matched = route.matched[props.depth];
+    setup(props) {
+        const matched = getCurrentRoute().value.matched[props.depth];
         const component = matched && matched.components[name];
 
         // render empty node if no matched route or no config component
         if (!matched || !component) {
-            return h();
+            return () => h('div', [404]);
         }
-        return h(component, data, children);
+        return () => h(component);
     },
 });
