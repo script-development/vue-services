@@ -1,5 +1,4 @@
 <template>
-    <div>OVERVIEW</div>
     <table>
         <thead>
             <tr>
@@ -7,8 +6,8 @@
             </tr>
         </thead>
         <tbody>
-            <tr>
-                <td>{{ users }}</td>
+            <tr v-for="user in users" :key="user.id">
+                <td>{{ user.name }}</td>
             </tr>
         </tbody>
     </table>
@@ -17,10 +16,10 @@
 <script>
 import {computed} from 'vue';
 import {usersModule} from '../../controllers/users';
+
 export default {
     setup() {
-        const users = usersModule.getAll;
-        return {users};
+        return {users: usersModule.getAll};
     },
 };
 </script>

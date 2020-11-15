@@ -26,6 +26,7 @@ module.exports = {
             'lodash.uniq',
             'lodash.uniqby',
             'lodash.values',
+            'faker',
         ],
     },
 };
