@@ -15,7 +15,7 @@
 
 <script>
 import {computed} from 'vue';
-import {usersModule} from '../../controllers/users';
+import {usersModule} from '../../modules/users';
 
 export default {
     setup() {

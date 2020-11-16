@@ -1,3 +1,3 @@
 export {startApp} from './app';
 
-export {moduleFactory} from './controllers';
+export {moduleFactory} from './module';

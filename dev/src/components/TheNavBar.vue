@@ -6,8 +6,8 @@
     </div>
 </template>
 <script>
-import {usersModule} from '../controllers/users';
-import {dashboardModule} from '../controllers/dashboard';
+import {usersModule} from '../modules/users';
+import {dashboardModule} from '../modules/dashboard';
 
 export default {
     setup() {

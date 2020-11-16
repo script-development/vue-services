@@ -299,32 +299,29 @@ const getCurrentRouteName = () => router.currentRoute.value.name.toString();
 const onPage = pageName => getCurrentRouteName().toString().includes(pageName);
 
 /**
- * @typedef {import('../services/router').RouterService} RouterService
- * @typedef {import('../services/event').EventService} EventService
- * @typedef {import('../services/auth').AuthService} AuthService
- * @typedef {import('../services/staticdata').StaticDataService} StaticDataService
- * @typedef {import('../controllers').BaseController} BaseController
  * @typedef {import('vue').Component} Component
+ *
+ * @typedef {import('../../types/types').Modules} Modules
  */
+// * @param {string} defaultLoggedInPageName the page to go to when logged in
+// * @param {Component} loginPage the login page
+// * @param {[string,Object<string,string>]} [staticData] the static data
 
 /**
  * Start the app and set required settings
  *
  * @param {Component} mainComponent the main app component
- * @param {String} defaultLoggedInPageName the page to go to when logged in
- * @param {Component} loginPage the login page
- * @param {Object<string,BaseController>} controllers the login page
- * @param {[string,Object<string,string>]} [staticData] the static data
+ * @param {Modules} modules the login page
  */
-// export const startApp = (mainComponent, defaultLoggedInPageName, loginPage, controllers, staticData) => {
-const startApp = (mainComponent, controllers) => {
+const startApp = (mainComponent, modules) => {
+    // export const startApp = (mainComponent, defaultLoggedInPageName, loginPage, modules, staticData) => {
     // if (staticData) this._staticDataService.createStoreModules(staticData);
 
     // this._authService.defaultLoggedInPageName = defaultLoggedInPageName;
     // this._authService.loginPage = loginPage;
     // this._authService.setRoutes();
 
-    for (const controller in controllers) controllers[controller].init();
+    for (const moduleName in modules) modules[moduleName].init();
 
     const app = vue.createApp(mainComponent);
     app.use(router);
