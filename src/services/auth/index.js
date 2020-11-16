@@ -104,12 +104,12 @@ registerResponseErrorMiddleware(responseErrorMiddleware);
 /** @type {NavigationGuard} */
 export const beforeMiddleware = ({meta}) => {
     if (!isLoggedIn.value && meta.auth) {
-        this.goToLoginPage();
+        goToLoginPage();
         return true;
     }
 
     if (isLoggedIn.value && meta.cantSeeWhenLoggedIn) {
-        this.goToStandardLoggedInPage();
+        goToDefaultLoggedInPage();
         return true;
     }
 
@@ -142,12 +142,13 @@ export const login = async credentials => {
     setKeepALive(credentials.rememberMe);
     return postRequest(apiLoginRoute, credentials).then(response => {
         setLoggedInAndUser(response.data.user);
+        goToDefaultLoggedInPage();
         return response;
     });
 };
 
 export const logout = async () => {
-    return postRequest(apiLogoutRoute).then(response => {
+    return postRequest(apiLogoutRoute, {}).then(response => {
         logoutOfApp();
         return response;
     });

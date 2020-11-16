@@ -2,11 +2,19 @@
  * @typedef {import('vue').Component} Component
  *
  * @typedef {import('../../types/types').Modules} Modules
+ * @typedef {import('../../types/types').AuthComponents} AuthComponents
  */
 
 import {createApp} from 'vue';
 import {router} from '../services/router';
-// import {setDefaultLoggedInPageName} from '../services/auth';
+import {
+    setAuthRoutes,
+    setDefaultLoggedInPageName,
+    setForgotPasswordPage,
+    setLoginPage,
+    setResetPasswordPage,
+    setSetPasswordPage,
+} from '../services/auth';
 // * @param {[string,Object<string,string>]} [staticData] the static data
 
 /**
@@ -15,12 +23,17 @@ import {router} from '../services/router';
  * @param {Component} mainComponent the main app component
  * @param {Modules} modules the login page
  * @param {string} defaultLoggedInPageName the page to go to when logged in
- * @param {Object} authComponents the page to go to when logged in
+ * @param {AuthComponents} authComponents the page to go to when logged in
  */
 export const startApp = (mainComponent, modules, defaultLoggedInPageName, authComponents) => {
-    // setDefaultLoggedInPageName(defaultLoggedInPageName);
+    setDefaultLoggedInPageName(defaultLoggedInPageName);
     // set auth pages
+    setLoginPage(authComponents.login);
+    setResetPasswordPage(authComponents.resetPassword);
+    if (authComponents.forgotPassword) setForgotPasswordPage(authComponents.forgotPassword);
+    if (authComponents.setPassword) setSetPasswordPage(authComponents.setPassword);
     // set auth routes
+    setAuthRoutes();
 
     // if (staticData) this._staticDataService.createStoreModules(staticData);
 

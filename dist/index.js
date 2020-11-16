@@ -241,6 +241,9 @@ router.beforeEach((to, from, next) => {
     return next();
 });
 
+/** @param {NavigationGuard} middleware */
+const registerBeforeMiddleware = middleware => routerBeforeMiddleware.push(middleware);
+
 /** @type {NavigationHookAfter[]} */
 const routerAfterMiddleware = [];
 router.afterEach((to, from) => {
@@ -290,75 +293,33 @@ const goToRoute = (name, id, query) => {
 const getCurrentRoute = () => router.currentRoute;
 /** Get the id from the params from the current route */
 const getCurrentRouteId = () => router.currentRoute.value.params.id.toString();
-/** Get the name from the current route */
-const getCurrentRouteName = () => router.currentRoute.value.name.toString();
 
 /**
  * checks if the given string is in the current routes name
  * @param {string} pageName the name of the page to check
  */
-const onPage = pageName => getCurrentRouteName().toString().includes(pageName);
+const onPage = pageName => router.currentRoute.value.name?.toString().includes(pageName);
 
-/**
- * @typedef {import('vue').Component} Component
- *
- * @typedef {import('../../types/types').Modules} Modules
- */
-// import {setDefaultLoggedInPageName} from '../services/auth';
-// * @param {[string,Object<string,string>]} [staticData] the static data
-
-/**
- * Start the app and set required settings
- *
- * @param {Component} mainComponent the main app component
- * @param {Modules} modules the login page
- * @param {string} defaultLoggedInPageName the page to go to when logged in
- * @param {Object} authComponents the page to go to when logged in
- */
-const startApp = (mainComponent, modules, defaultLoggedInPageName, authComponents) => {
-    // setDefaultLoggedInPageName(defaultLoggedInPageName);
-    // set auth pages
-    // set auth routes
-
-    // if (staticData) this._staticDataService.createStoreModules(staticData);
-
-    for (const moduleName in modules) modules[moduleName].init();
-
-    const app = vue.createApp(mainComponent);
-    app.use(router);
-    app.mount('#app');
-
-    // this._eventService.app = createApp(mainComponent);
-    // this._eventService.app.use(this._routerService.router);
-    // this._eventService.app.mount('#app');
-
-    // TODO :: could even do this first and .then(()=>this._authService.getLoggedInUser())
-    // or make it a setting
-    // if (this._authService.isLoggedin) this._authService.getLoggedInUser();
+var LoginPage = {
+    render(h) {
+        h('div', ['Implement your own login page!']);
+    },
 };
 
-const name = 'default';
-
-var MinimalRouterView = vue.defineComponent({
-    name: 'MinimalRouterView',
-    functional: true,
-    props: {
-        depth: {
-            type: Number,
-            default: 0,
-        },
+var ResetPasswordPage = {
+    render(h) {
+        h('div', ['Implement your own reset password page!']);
     },
-    setup(props) {
-        const matched = getCurrentRoute().value.matched[props.depth];
-        const component = matched && matched.components[name];
+};
 
-        // render empty node if no matched route or no config component
-        if (!matched || !component) {
-            return () => vue.h('div', [404]);
-        }
-        return () => vue.h(component);
-    },
-});
+class MissingDefaultLoggedinPageError extends Error {
+    constructor(...params) {
+        // Pass remaining arguments (including vendor specific ones) to parent constructor
+        super(...params);
+
+        this.name = 'MissingDefaultLoggedinPageError';
+    }
+}
 
 /**
  * @typedef {import('axios').AxiosRequestConfig} AxiosRequestConfig
@@ -452,14 +413,8 @@ const deleteRequest = async endpoint => http.delete(endpoint);
 /** @param {ResponseMiddleware} middlewareFunc */
 const registerResponseMiddleware = middlewareFunc => responseMiddleware.push(middlewareFunc);
 
-class StoreModuleNotFoundError extends Error {
-    constructor(...params) {
-        // Pass remaining arguments (including vendor specific ones) to parent constructor
-        super(...params);
-
-        this.name = 'StoreModuleNotFoundError';
-    }
-}
+/** @param {ResponseErrorMiddleware} middlewareFunc */
+const registerResponseErrorMiddleware = middlewareFunc => responseErrorMiddleware.push(middlewareFunc);
 
 const KEEP_A_LIVE_KEY = 'keepALive';
 /** setting keepALive here so we don't have to Parse it each time we get it */
@@ -506,6 +461,256 @@ const getItemFromStorage = (key, parse) => {
         // }
     }
 };
+
+/** Empty the storage */
+const clearStorage = () => {
+    // TODO :: Stryker ConditionalExpression survived, when mutated to false
+    if (!keepALive) return;
+    localStorage.clear();
+};
+
+/** @param {Boolean} value */
+const setKeepALive = value => {
+    localStorage.setItem(KEEP_A_LIVE_KEY, JSON.stringify(value));
+    keepALive = value;
+};
+
+/** *
+ * @typedef {import('vue').Component} Component
+ * @typedef {import('vue-router').NavigationGuard} NavigationGuard
+ *
+ * @typedef {import('../../../types/types').LoginCredentials} LoginCredentials
+ * @typedef {import('../../../types/types').ResetPasswordData} ResetPasswordData
+ * @typedef {import('../../../types/types').ResponseErrorMiddleware} ResponseErrorMiddleware
+ * @typedef {import('../../../types/types').IsLoggedIn} IsLoggedIn
+ * @typedef {import('../../../types/types').LoggedInUser} LoggedInUser
+ * @typedef {import('../../../types/types').Item} Item
+ */
+
+const LOGIN_ROUTE_NAME = 'Login';
+const FORGOT_PASSWORD_ROUTE_NAME = 'ForgotPassword';
+const RESET_PASSWORD_ROUTE_NAME = 'ResetPassword';
+const SET_PASSWORD_ROUTE_NAME = 'SetPassword';
+
+const APP_NAME = process.env.MIX_APP_NAME || 'Harry';
+const IS_LOGGED_IN_KEY = APP_NAME + ' is magical';
+const LOGGED_IN_USER_KEY = APP_NAME + ' is supreme';
+
+const apiLoginRoute = '/login';
+const apiLogoutRoute = '/logout';
+
+let defaultLoggedInPageName;
+
+let resetPasswordPage = ResetPasswordPage;
+let loginPage = LoginPage;
+let forgotPasswordPage;
+let setPasswordPage;
+
+const setResetPasswordPage = page => (resetPasswordPage = page);
+const setLoginPage = page => (loginPage = page);
+const setForgotPasswordPage = page => (forgotPasswordPage = page);
+const setSetPasswordPage = page => (setPasswordPage = page);
+
+/**
+ * Set the default logged in page name
+ * @param {string} name
+ */
+const setDefaultLoggedInPageName = name => (defaultLoggedInPageName = name);
+const goToDefaultLoggedInPage = () => {
+    if (!defaultLoggedInPageName) {
+        throw new MissingDefaultLoggedinPageError('Please add the default login page to the appStarter');
+    }
+    goToRoute(defaultLoggedInPageName);
+};
+
+const goToLoginPage = () => goToRoute(LOGIN_ROUTE_NAME);
+
+/** @type {IsLoggedIn} */
+const isLoggedIn = vue.ref(getItemFromStorage(IS_LOGGED_IN_KEY, true) || false);
+/** @type {LoggedInUser} */
+const loggedInUser = vue.ref(getItemFromStorage(LOGGED_IN_USER_KEY, true) || {});
+
+// exported for testing purposes, not exported to the user
+/** @type {ResponseErrorMiddleware} */
+const responseErrorMiddleware$1 = ({response}) => {
+    if (!response) return;
+    const {status} = response;
+    // TODO :: make this work
+    if (status == 403) {
+        goToDefaultLoggedInPage();
+    } else if (status == 401) {
+        // TODO :: if 401 returns, is it really logged out from the server?
+        // only need to logout of the app, because on the backend the user is already logged out
+        logoutOfApp();
+    }
+};
+
+registerResponseErrorMiddleware(responseErrorMiddleware$1);
+
+// TODO :: maybe even add the possibility to add auth middleware here?
+// or push it directly to the router?
+// exported for testing purposes, not exported to the user
+/** @type {NavigationGuard} */
+const beforeMiddleware$1 = ({meta}) => {
+    if (!isLoggedIn.value && meta.auth) {
+        goToLoginPage();
+        return true;
+    }
+
+    if (isLoggedIn.value && meta.cantSeeWhenLoggedIn) {
+        goToDefaultLoggedInPage();
+        return true;
+    }
+
+    return false;
+};
+
+registerBeforeMiddleware(beforeMiddleware$1);
+
+/** @param {Item} user */
+const setLoggedInAndUser = user => {
+    // set the logged in user
+    loggedInUser.value = user;
+    setItemInStorage(LOGGED_IN_USER_KEY, user);
+    // set is logged in
+    isLoggedIn.value = true;
+    setItemInStorage(IS_LOGGED_IN_KEY, true);
+};
+
+const logoutOfApp = () => {
+    clearStorage();
+    // TODO :: or reload state? transition from this is not rly smooth
+    window.location.reload();
+};
+
+/**
+ *
+ * @param {LoginCredentials} credentials
+ */
+const login = async credentials => {
+    setKeepALive(credentials.rememberMe);
+    return postRequest(apiLoginRoute, credentials).then(response => {
+        setLoggedInAndUser(response.data.user);
+        goToDefaultLoggedInPage();
+        return response;
+    });
+};
+
+const logout = async () => {
+    return postRequest(apiLogoutRoute, {}).then(response => {
+        logoutOfApp();
+        return response;
+    });
+};
+
+const setAuthRoutes = () => {
+    addRoute({
+        path: '/inloggen',
+        name: LOGIN_ROUTE_NAME,
+        component: loginPage,
+        meta: {auth: false, cantSeeWhenLoggedIn: true, title: 'Login'},
+    });
+
+    addRoute({
+        path: '/wachtwoord-resetten',
+        name: RESET_PASSWORD_ROUTE_NAME,
+        component: resetPasswordPage,
+        meta: {auth: false, cantSeeWhenLoggedIn: true, title: 'Wachtwoord resetten'},
+    });
+
+    if (forgotPasswordPage) {
+        addRoute({
+            path: '/wachtwoord-resetten',
+            name: FORGOT_PASSWORD_ROUTE_NAME,
+            component: forgotPasswordPage,
+            meta: {auth: false, cantSeeWhenLoggedIn: true, title: 'Wachtwoord vergeten'},
+        });
+    }
+
+    if (setPasswordPage) {
+        addRoute({
+            path: '/wachtwoord-setten',
+            name: SET_PASSWORD_ROUTE_NAME,
+            component: setPasswordPage,
+            meta: {auth: false, cantSeeWhenLoggedIn: true, title: 'Wachtwoord setten'},
+        });
+    }
+};
+
+/**
+ * @typedef {import('vue').Component} Component
+ *
+ * @typedef {import('../../types/types').Modules} Modules
+ * @typedef {import('../../types/types').AuthComponents} AuthComponents
+ */
+// * @param {[string,Object<string,string>]} [staticData] the static data
+
+/**
+ * Start the app and set required settings
+ *
+ * @param {Component} mainComponent the main app component
+ * @param {Modules} modules the login page
+ * @param {string} defaultLoggedInPageName the page to go to when logged in
+ * @param {AuthComponents} authComponents the page to go to when logged in
+ */
+const startApp = (mainComponent, modules, defaultLoggedInPageName, authComponents) => {
+    setDefaultLoggedInPageName(defaultLoggedInPageName);
+    // set auth pages
+    setLoginPage(authComponents.login);
+    setResetPasswordPage(authComponents.resetPassword);
+    if (authComponents.forgotPassword) setForgotPasswordPage(authComponents.forgotPassword);
+    if (authComponents.setPassword) setSetPasswordPage(authComponents.setPassword);
+    // set auth routes
+    setAuthRoutes();
+
+    // if (staticData) this._staticDataService.createStoreModules(staticData);
+
+    for (const moduleName in modules) modules[moduleName].init();
+
+    const app = vue.createApp(mainComponent);
+    app.use(router);
+    app.mount('#app');
+
+    // this._eventService.app = createApp(mainComponent);
+    // this._eventService.app.use(this._routerService.router);
+    // this._eventService.app.mount('#app');
+
+    // TODO :: could even do this first and .then(()=>this._authService.getLoggedInUser())
+    // or make it a setting
+    // if (this._authService.isLoggedin) this._authService.getLoggedInUser();
+};
+
+const name = 'default';
+
+var MinimalRouterView = vue.defineComponent({
+    name: 'MinimalRouterView',
+    functional: true,
+    props: {
+        depth: {
+            type: Number,
+            default: 0,
+        },
+    },
+    setup(props) {
+        const matched = getCurrentRoute().value.matched[props.depth];
+        const component = matched && matched.components[name];
+
+        // render empty node if no matched route or no config component
+        if (!matched || !component) {
+            return () => vue.h('div', [404]);
+        }
+        return () => vue.h(component);
+    },
+});
+
+class StoreModuleNotFoundError extends Error {
+    constructor(...params) {
+        // Pass remaining arguments (including vendor specific ones) to parent constructor
+        super(...params);
+
+        this.name = 'StoreModuleNotFoundError';
+    }
+}
 
 /**
  * @typedef {import('../../../../types/types').State} State
@@ -852,5 +1057,8 @@ const moduleFactory = (moduleName, components, translation) => {
 //     }
 // }
 
+exports.isLoggedIn = isLoggedIn;
+exports.login = login;
+exports.logout = logout;
 exports.moduleFactory = moduleFactory;
 exports.startApp = startApp;

@@ -24,5 +24,12 @@ createServer({
 
         this.get('/users', schema => schema.users.all());
         this.get('/dashboard', schema => schema.users.all());
+
+        // Auth routes
+        this.post('/login', schema => {
+            console.log(schema);
+            return schema.users.findBy({id: 1});
+        });
+        this.post('/logout', () => {});
     },
 });

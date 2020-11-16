@@ -109,7 +109,7 @@ export const getCurrentRouteName = () => router.currentRoute.value.name.toString
  * checks if the given string is in the current routes name
  * @param {string} pageName the name of the page to check
  */
-const onPage = pageName => getCurrentRouteName().toString().includes(pageName);
+const onPage = pageName => router.currentRoute.value.name?.toString().includes(pageName);
 
 export const onCreatePage = () => onPage(CREATE_PAGE_NAME);
 /** returns if you are on the edit page */

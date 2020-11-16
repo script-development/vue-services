@@ -1,5 +1,5 @@
 import {AxiosError, AxiosRequestConfig, AxiosResponse} from 'axios';
-import {Ref} from 'vue';
+import {Component, Ref} from 'vue';
 import {Module} from './module';
 
 export type RequestMiddleware = (request: AxiosRequestConfig) => void;
@@ -17,12 +17,19 @@ export type Translations = {[moduleName: string]: Translation};
 
 export type Modules = {[moduleName: string]: Module};
 
+export type AuthComponents = {
+    login: Component;
+    resetPassword: Component;
+    forgotPassword?: Component;
+    setPassword?: Component;
+};
+
 export type LoginCredentials = {
     /** the email to login with */
     email: string;
     /** the password to login with */
     password: string;
-    /** if you want a consistent login */
+    /** if you want a persistent login */
     rememberMe: boolean;
 };
 
