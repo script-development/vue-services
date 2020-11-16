@@ -1,14 +1,6 @@
-'use strict';
-
-Object.defineProperty(exports, '__esModule', { value: true });
-
-var vue = require('vue');
-var vueRouter = require('vue-router');
-var axios = require('axios');
-
-function _interopDefaultLegacy (e) { return e && typeof e === 'object' && 'default' in e ? e : { 'default': e }; }
-
-var axios__default = /*#__PURE__*/_interopDefaultLegacy(axios);
+import {createApp, defineComponent, h, ref, computed} from 'vue';
+import {createRouter, createWebHistory} from 'vue-router';
+import axios from 'axios';
 
 class MissingTranslationError extends Error {
     constructor(...params) {
@@ -180,7 +172,14 @@ const partialFactory = (moduleName, part, component) => {
  *
  * @returns {RouteSettings}
  */
-var RouteSettingFactory = (moduleName, baseComponent, overviewComponent, createComponent, editComponent, showComponent) => {
+var RouteSettingFactory = (
+    moduleName,
+    baseComponent,
+    overviewComponent,
+    createComponent,
+    editComponent,
+    showComponent
+) => {
     const routeSettings = {
         base: {
             path: '/' + getPluralTranslation(moduleName),
@@ -206,8 +205,8 @@ var RouteSettingFactory = (moduleName, baseComponent, overviewComponent, createC
  */
 
 // exported only to use in the app starter to bind the router
-const router = vueRouter.createRouter({
-    history: vueRouter.createWebHistory(),
+const router = createRouter({
+    history: createWebHistory(),
     routes: [],
 });
 
@@ -326,7 +325,7 @@ const startApp = (mainComponent, controllers) => {
 
     for (const controller in controllers) controllers[controller].init();
 
-    const app = vue.createApp(mainComponent);
+    const app = createApp(mainComponent);
     app.use(router);
     app.mount('#app');
 
@@ -341,7 +340,7 @@ const startApp = (mainComponent, controllers) => {
 
 const name = 'default';
 
-var MinimalRouterView = vue.defineComponent({
+var MinimalRouterView = defineComponent({
     name: 'MinimalRouterView',
     functional: true,
     props: {
@@ -356,9 +355,9 @@ var MinimalRouterView = vue.defineComponent({
 
         // render empty node if no matched route or no config component
         if (!matched || !component) {
-            return () => vue.h('div', [404]);
+            return () => h('div', [404]);
         }
-        return () => vue.h(component);
+        return () => h(component);
     },
 });
 
@@ -385,7 +384,7 @@ const preCache = localStorage.getItem(CACHE_KEY);
 /** @type {Cache} */
 const cache = preCache ? JSON.parse(preCache) : {};
 
-const http = axios__default['default'].create({
+const http = axios.create({
     baseURL: API_URL,
     withCredentials: false,
     headers: {
@@ -529,11 +528,11 @@ const getItemFromStorage = (key, parse) => {
  */
 var StoreModuleFactory = moduleName => {
     /** @type {State} */
-    const state = vue.ref(getItemFromStorage(moduleName, true) ?? {});
+    const state = ref(getItemFromStorage(moduleName, true) ?? {});
 
     return {
         /** Get all items from the store */
-        all: vue.computed(() => Object.values(state.value)),
+        all: computed(() => Object.values(state.value)),
         // TODO :: byId computed? Will it be reactive this way?
         /**
          * Get an item from the state by id
@@ -704,10 +703,10 @@ var index = (moduleName, components, translation) => {
     const readStoreAction = () => getRequest(moduleName);
 
     if (!components.base) {
-        components.base = vue.defineComponent({
+        components.base = defineComponent({
             name: `${moduleName}-base`,
             // TODO :: find out if the minimal router view actually works as intended
-            render: () => vue.h(MinimalRouterView, {depth: 1}),
+            render: () => h(MinimalRouterView, {depth: 1}),
             // render: () => h(RouterView),
             // TODO #9 @Goosterhof
             mounted: readStoreAction,
@@ -851,5 +850,4 @@ var index = (moduleName, components, translation) => {
 //     }
 // }
 
-exports.moduleFactory = index;
-exports.startApp = startApp;
+export {index as moduleFactory, startApp};

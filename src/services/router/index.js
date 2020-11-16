@@ -10,7 +10,8 @@
 import {createRouter, createWebHistory} from 'vue-router';
 import {CREATE_PAGE_NAME, EDIT_PAGE_NAME, OVERVIEW_PAGE_NAME, SHOW_PAGE_NAME} from './settings';
 
-const router = createRouter({
+// exported only to use in the app starter to bind the router
+export const router = createRouter({
     history: createWebHistory(),
     routes: [],
 });
@@ -59,7 +60,7 @@ router.afterEach((to, from) => {
 export const registerAfterMiddleware = middleware => routerAfterMiddleware.push(middleware);
 
 /** @param {RouteRecordRaw} routes */
-export const addRoutes = routes => router.options.routes.push(routes);
+export const addRoutes = routes => router.addRoute(routes);
 
 /** @param {RouteSettings} settings */
 export const addRoutesBasedOnRouteSettings = settings => {
@@ -95,10 +96,12 @@ export const goToRoute = (name, id, query) => {
     });
 };
 
+/** Get the current route */
+export const getCurrentRoute = () => router.currentRoute;
 /** Get the query from the current route */
 export const getCurrentRouteQuery = () => router.currentRoute.value.query;
 /** Get the id from the params from the current route */
-export const getCurrentRouteId = () => router.currentRoute.value.params.id;
+export const getCurrentRouteId = () => router.currentRoute.value.params.id.toString();
 /** Get the name from the current route */
 export const getCurrentRouteName = () => router.currentRoute.value.name.toString();
 
