@@ -6,8 +6,7 @@
 
 import {createApp} from 'vue';
 import {router} from '../services/router';
-// * @param {string} defaultLoggedInPageName the page to go to when logged in
-// * @param {Component} loginPage the login page
+// import {setDefaultLoggedInPageName} from '../services/auth';
 // * @param {[string,Object<string,string>]} [staticData] the static data
 
 /**
@@ -15,14 +14,15 @@ import {router} from '../services/router';
  *
  * @param {Component} mainComponent the main app component
  * @param {Modules} modules the login page
+ * @param {string} defaultLoggedInPageName the page to go to when logged in
+ * @param {Object} authComponents the page to go to when logged in
  */
-export const startApp = (mainComponent, modules) => {
-    // export const startApp = (mainComponent, defaultLoggedInPageName, loginPage, modules, staticData) => {
-    // if (staticData) this._staticDataService.createStoreModules(staticData);
+export const startApp = (mainComponent, modules, defaultLoggedInPageName, authComponents) => {
+    // setDefaultLoggedInPageName(defaultLoggedInPageName);
+    // set auth pages
+    // set auth routes
 
-    // this._authService.defaultLoggedInPageName = defaultLoggedInPageName;
-    // this._authService.loginPage = loginPage;
-    // this._authService.setRoutes();
+    // if (staticData) this._staticDataService.createStoreModules(staticData);
 
     for (const moduleName in modules) modules[moduleName].init();
 

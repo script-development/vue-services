@@ -66,6 +66,7 @@ export const partialFactory = (moduleName, part, component) => {
         component,
         meta: {
             auth: true,
+            cantSeeWhenLoggedIn: false,
             title: translationConversion[part](moduleName) + titleConversion[part],
         },
         children: undefined,

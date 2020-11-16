@@ -28,7 +28,7 @@ export function registerBeforeMiddleware(middleware: NavigationGuard): void;
 
 export function registerAfterMiddleware(middleware: NavigationHookAfter): void;
 
-export function addRoutes(routes: RouteRecordRaw): void;
+export function addRoute(routes: RouteRecordRaw): void;
 
 export declare function addRoutesBasedOnRouteSettings(settings: RouteSettings): RouteRecordRaw;
 

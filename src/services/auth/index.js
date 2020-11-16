@@ -1,300 +1,211 @@
-/**
- * @typedef {import('../router').RouterService} RouterService
- * @typedef {import('../router').BeforeMiddleware} BeforeMiddleware
- * @typedef {import('../store').StoreService} StoreService
- * @typedef {import('../storage').StorageService} StorageService
- * @typedef {import('../http').HTTPService} HTTPService
- * @typedef {import('../http').ResponseErrorMiddleware} ResponseErrorMiddleware
-
+/** *
  * @typedef {import('vue').Component} Component
+ * @typedef {import('vue-router').NavigationGuard} NavigationGuard
  *
- * @typedef {Object} Credentials
- * @property {String} email the email to login with
- * @property {String} password the password to login with
- * @property {Boolean} rememberMe if you want a consistent login
- *
- * @typedef {Object} ResetPasswordData
- * @property {String} password
- * @property {String} repeatPassword
+ * @typedef {import('../../../types/types').LoginCredentials} LoginCredentials
+ * @typedef {import('../../../types/types').ResetPasswordData} ResetPasswordData
+ * @typedef {import('../../../types/types').ResponseErrorMiddleware} ResponseErrorMiddleware
+ * @typedef {import('../../../types/types').IsLoggedIn} IsLoggedIn
+ * @typedef {import('../../../types/types').LoggedInUser} LoggedInUser
+ * @typedef {import('../../../types/types').Item} Item
  */
 
-import storeModule from './store';
 import LoginPage from '../../pages/auth/Login';
-import ForgotPasswordPage from '../../pages/auth/ForgotPassword';
 import ResetPasswordPage from '../../pages/auth/ResetPassword';
 import {MissingDefaultLoggedinPageError} from '../../errors/MissingDefaultLoggedinPageError';
 
-const LOGIN_ACTION = 'login';
-const LOGOUT_ACTION = 'logout';
+import {ref} from 'vue';
+
+import {getRequest, postRequest, registerResponseErrorMiddleware} from '../http';
+import {addRoute, goToRoute, registerBeforeMiddleware} from '../router';
+import {clearStorage, getItemFromStorage, setItemInStorage, setKeepALive} from '../storage';
 
 const LOGIN_ROUTE_NAME = 'Login';
 const FORGOT_PASSWORD_ROUTE_NAME = 'ForgotPassword';
 const RESET_PASSWORD_ROUTE_NAME = 'ResetPassword';
 const SET_PASSWORD_ROUTE_NAME = 'SetPassword';
 
-const STORE_MODULE_NAME = 'auth';
+const APP_NAME = process.env.MIX_APP_NAME || 'Harry';
+const IS_LOGGED_IN_KEY = APP_NAME + ' is magical';
+const LOGGED_IN_USER_KEY = APP_NAME + ' is supreme';
 
-export class AuthService {
-    /**
-     * @param {RouterService} routerService
-     * @param {StoreService} storeService
-     * @param {StorageService} storageService
-     * @param {HTTPService} httpService
-     */
-    constructor(routerService, storeService, storageService, httpService) {
-        this._routerService = routerService;
-        this._storeService = storeService;
-        this._storageService = storageService;
-        this._httpService = httpService;
+const apiLoginRoute = '/login';
+const apiLogoutRoute = '/logout';
+const apiLoggedInCheckRoute = '/me';
+const apiSendResetPasswordEmailRoute = '/send-email-reset-password';
+const apiResetpasswordRoute = '/resetpassword';
 
-        this._storeService.registerModule(STORE_MODULE_NAME, storeModule(storageService, httpService, this));
+let defaultLoggedInPageName;
 
-        this._apiLoginRoute = '/login';
-        this._apiLogoutRoute = '/logout';
-        this._apiLoggedInCheckRoute = '/me';
-        this._apiSendEmailResetPasswordRoute = '/send-email-reset-password';
-        this._apiResetpasswordRoute = '/resetpassword';
+let resetPasswordPage = ResetPasswordPage;
+let loginPage = LoginPage;
+let forgotPasswordPage;
+let setPasswordPage;
 
-        this._defaultLoggedInPageName;
-        this._loginPage = LoginPage;
-        this._forgotPasswordPage = ForgotPasswordPage;
-        this._resetPasswordPage = ResetPasswordPage;
-        this._setPasswordPage;
+export const setResetPasswordPage = page => (resetPasswordPage = page);
+export const setLoginPage = page => (loginPage = page);
+export const setForgotPasswordPage = page => (forgotPasswordPage = page);
+export const setSetPasswordPage = page => (setPasswordPage = page);
 
-        this._httpService.registerResponseErrorMiddleware(this.responseErrorMiddleware);
-        this._routerService.registerBeforeMiddleware(this.routeMiddleware);
+/**
+ * Set the default logged in page name
+ * @param {string} name
+ */
+export const setDefaultLoggedInPageName = name => (defaultLoggedInPageName = name);
+const goToDefaultLoggedInPage = () => {
+    if (!defaultLoggedInPageName) {
+        throw new MissingDefaultLoggedinPageError('Please add the default login page to the appStarter');
+    }
+    goToRoute(defaultLoggedInPageName);
+};
+
+export const goToLoginPage = () => goToRoute(LOGIN_ROUTE_NAME);
+export const goToResetPasswordPage = () => goToRoute(RESET_PASSWORD_ROUTE_NAME);
+export const goToForgotPasswordPage = () => {
+    if (!forgotPasswordPage) {
+        console.warn('no forgot password page set');
+        return;
+    }
+    goToRoute(FORGOT_PASSWORD_ROUTE_NAME);
+};
+export const goToSetPasswordPage = () => {
+    if (!setPasswordPage) {
+        console.warn('no set password page set');
+        return;
+    }
+    goToRoute(SET_PASSWORD_ROUTE_NAME);
+};
+
+/** @type {IsLoggedIn} */
+export const isLoggedIn = ref(getItemFromStorage(IS_LOGGED_IN_KEY, true) || false);
+/** @type {LoggedInUser} */
+export const loggedInUser = ref(getItemFromStorage(LOGGED_IN_USER_KEY, true) || {});
+
+// exported for testing purposes, not exported to the user
+/** @type {ResponseErrorMiddleware} */
+export const responseErrorMiddleware = ({response}) => {
+    if (!response) return;
+    const {status} = response;
+    // TODO :: make this work
+    if (status == 403) {
+        goToDefaultLoggedInPage();
+    } else if (status == 401) {
+        // TODO :: if 401 returns, is it really logged out from the server?
+        // only need to logout of the app, because on the backend the user is already logged out
+        logoutOfApp();
+    }
+};
+
+registerResponseErrorMiddleware(responseErrorMiddleware);
+
+// TODO :: maybe even add the possibility to add auth middleware here?
+// or push it directly to the router?
+// exported for testing purposes, not exported to the user
+/** @type {NavigationGuard} */
+export const beforeMiddleware = ({meta}) => {
+    if (!isLoggedIn.value && meta.auth) {
+        this.goToLoginPage();
+        return true;
     }
 
-    get apiLoginRoute() {
-        return this._apiLoginRoute;
+    if (isLoggedIn.value && meta.cantSeeWhenLoggedIn) {
+        this.goToStandardLoggedInPage();
+        return true;
     }
 
-    set apiLoginRoute(route) {
-        if (!route.startsWith('/')) route = '/' + route;
-        this._apiLoginRoute = route;
+    return false;
+};
+
+registerBeforeMiddleware(beforeMiddleware);
+
+/** @param {Item} user */
+const setLoggedInAndUser = user => {
+    // set the logged in user
+    loggedInUser.value = user;
+    setItemInStorage(LOGGED_IN_USER_KEY, user);
+    // set is logged in
+    isLoggedIn.value = true;
+    setItemInStorage(IS_LOGGED_IN_KEY, true);
+};
+
+const logoutOfApp = () => {
+    clearStorage();
+    // TODO :: or reload state? transition from this is not rly smooth
+    window.location.reload();
+};
+
+/**
+ *
+ * @param {LoginCredentials} credentials
+ */
+export const login = async credentials => {
+    setKeepALive(credentials.rememberMe);
+    return postRequest(apiLoginRoute, credentials).then(response => {
+        setLoggedInAndUser(response.data.user);
+        return response;
+    });
+};
+
+export const logout = async () => {
+    return postRequest(apiLogoutRoute).then(response => {
+        logoutOfApp();
+        return response;
+    });
+};
+
+export const checkIfLoggedIn = async () => {
+    return getRequest(apiLoggedInCheckRoute).then(response => {
+        setLoggedInAndUser(response.data.user);
+        return response;
+    });
+};
+
+/** @param {string} email */
+export const sendResetPasswordEmail = async email => {
+    return postRequest(apiSendResetPasswordEmailRoute, {email}).then(response => {
+        goToLoginPage();
+        return response;
+    });
+};
+
+/** @param {ResetPasswordData} data */
+export const resetPassword = async data => {
+    return postRequest(apiResetpasswordRoute, data).then(response => {
+        goToLoginPage();
+        return response;
+    });
+};
+
+export const setAuthRoutes = () => {
+    addRoute({
+        path: '/inloggen',
+        name: LOGIN_ROUTE_NAME,
+        component: loginPage,
+        meta: {auth: false, cantSeeWhenLoggedIn: true, title: 'Login'},
+    });
+
+    addRoute({
+        path: '/wachtwoord-resetten',
+        name: RESET_PASSWORD_ROUTE_NAME,
+        component: resetPasswordPage,
+        meta: {auth: false, cantSeeWhenLoggedIn: true, title: 'Wachtwoord resetten'},
+    });
+
+    if (forgotPasswordPage) {
+        addRoute({
+            path: '/wachtwoord-resetten',
+            name: FORGOT_PASSWORD_ROUTE_NAME,
+            component: forgotPasswordPage,
+            meta: {auth: false, cantSeeWhenLoggedIn: true, title: 'Wachtwoord vergeten'},
+        });
     }
 
-    get apiLogoutRoute() {
-        return this._apiLogoutRoute;
+    if (setPasswordPage) {
+        addRoute({
+            path: '/wachtwoord-setten',
+            name: SET_PASSWORD_ROUTE_NAME,
+            component: setPasswordPage,
+            meta: {auth: false, cantSeeWhenLoggedIn: true, title: 'Wachtwoord setten'},
+        });
     }
-
-    set apiLogoutRoute(route) {
-        if (!route.startsWith('/')) route = '/' + route;
-        this._apiLogoutRoute = route;
-    }
-
-    get apiLoggedInCheckRoute() {
-        return this._apiLoggedInCheckRoute;
-    }
-
-    set apiLoggedInCheckRoute(route) {
-        if (!route.startsWith('/')) route = '/' + route;
-        this._apiLoggedInCheckRoute = route;
-    }
-
-    get apiSendEmailResetPasswordRoute() {
-        return this._apiSendEmailResetPasswordRoute;
-    }
-
-    set apiSendEmailResetPasswordRoute(route) {
-        if (!route.startsWith('/')) route = '/' + route;
-        this._apiSendEmailResetPasswordRoute = route;
-    }
-
-    get apiResetpasswordRoute() {
-        return this._apiResetpasswordRoute;
-    }
-
-    set apiResetpasswordRoute(route) {
-        if (!route.startsWith('/')) route = '/' + route;
-        this._apiResetpasswordRoute = route;
-    }
-
-    get isLoggedin() {
-        // TODO :: where to set isLoggedIn?
-        return this._storeService.get(STORE_MODULE_NAME, 'isLoggedIn');
-    }
-
-    // TODO :: this is not basic usage, how to implement this?
-    get isAdmin() {
-        // TODO :: where to set isAdmin?
-        return this._storeService.get(STORE_MODULE_NAME, 'isAdmin');
-    }
-
-    get loggedInUser() {
-        return this._storeService.get(STORE_MODULE_NAME, 'loggedInUser');
-    }
-
-    get defaultLoggedInPageName() {
-        if (!this._defaultLoggedInPageName)
-            throw new MissingDefaultLoggedinPageError('Please add the default login page to the appStarter');
-        return this._defaultLoggedInPageName;
-    }
-
-    // prettier-ignore
-    /** @param {string} pageName */
-    set defaultLoggedInPageName(pageName){this._defaultLoggedInPageName = pageName;}
-
-    // prettier-ignore
-    get loginPage() { return this._loginPage; }
-
-    // prettier-ignore
-    /** @param {Component} page*/
-    set loginPage(page) { this._loginPage = page; }
-
-    // prettier-ignore
-    get forgotPasswordPage() { return this._forgotPasswordPage; }
-
-    // prettier-ignore
-    /** @param {Component} page*/
-    set forgotPasswordPage(page) { this._forgotPasswordPage = page; }
-
-    // prettier-ignore
-    get resetPasswordPage() { return this._resetPasswordPage; }
-
-    // prettier-ignore
-    /** @param {Component} page*/
-    set resetPasswordPage(page) { this._resetPasswordPage = page; }
-
-    // prettier-ignore
-    get setPasswordPage() { return this._setPasswordPage; }
-
-    // prettier-ignore
-    /** @param {Component} page*/
-    set setPasswordPage(page) { this._setPasswordPage = page; }
-
-    /**
-     * Login to the app
-     * @param {Credentials} credentials the credentials to login with
-     */
-    login(credentials) {
-        return this._storeService.dispatch(STORE_MODULE_NAME, LOGIN_ACTION, credentials);
-    }
-
-    logout() {
-        return this._storeService.dispatch(STORE_MODULE_NAME, LOGOUT_ACTION);
-    }
-
-    /**
-     * Send a reset password email to the given email
-     * @param {String} email
-     */
-    sendEmailResetPassword(email) {
-        return this._storeService.dispatch(STORE_MODULE_NAME, 'sendEmailResetPassword', email);
-    }
-
-    /**
-     * @param {ResetPasswordData} data
-     */
-    resetPassword(data) {
-        return this._storeService.dispatch(STORE_MODULE_NAME, 'resetPassword', data);
-    }
-
-    // prettier-ignore
-    goToStandardLoggedInPage() { this._routerService.goToRoute(this.defaultLoggedInPageName); }
-
-    // prettier-ignore
-    goToLoginPage() { this._routerService.goToRoute(LOGIN_ROUTE_NAME); }
-
-    // prettier-ignore
-    goToForgotPasswordPage() { this._routerService.goToRoute(FORGOT_PASSWORD_ROUTE_NAME); }
-
-    // prettier-ignore
-    goToResetPasswordPage() { this._routerService.goToRoute(RESET_PASSWORD_ROUTE_NAME); }
-
-    // prettier-ignore
-    goToSetPasswordPage() { this._routerService.goToRoute(SET_PASSWORD_ROUTE_NAME); }
-
-    /**
-     * Sends a request to the server to get the logged in user
-     */
-    getLoggedInUser() {
-        this._storeService.dispatch(STORE_MODULE_NAME, 'me');
-    }
-
-    /** @returns {ResponseErrorMiddleware} */
-    get responseErrorMiddleware() {
-        return ({response}) => {
-            if (!response) return;
-            const {status} = response;
-            if (status == 403) {
-                this.goToStandardLoggedInPage();
-            } else if (status == 401) {
-                this._storeService.dispatch(STORE_MODULE_NAME, 'logoutApp');
-            }
-        };
-    }
-
-    /** @returns {BeforeMiddleware} */
-    get routeMiddleware() {
-        return to => {
-            const isLoggedIn = this.isLoggedin;
-            const isAdmin = this.isAdmin;
-
-            if (!isLoggedIn && to.meta.auth) {
-                this.goToLoginPage();
-                return true;
-            }
-
-            if (isLoggedIn && to.meta.cantSeeWhenLoggedIn) {
-                this.goToStandardLoggedInPage();
-                return true;
-            }
-
-            if (!isAdmin && to.meta.admin) {
-                this.goToStandardLoggedInPage();
-                return true;
-            }
-
-            return false;
-        };
-    }
-
-    setRoutes() {
-        const routes = [
-            this._routerService._factory.createConfig(
-                '/inloggen',
-                LOGIN_ROUTE_NAME,
-                this.loginPage,
-                false,
-                false,
-                'Login',
-                true
-            ),
-            this._routerService._factory.createConfig(
-                '/wachtwoord-vergeten',
-                FORGOT_PASSWORD_ROUTE_NAME,
-                this.forgotPasswordPage,
-                false,
-                false,
-                'Wachtwoord vergeten',
-                true
-            ),
-            this._routerService._factory.createConfig(
-                '/wachtwoord-resetten',
-                RESET_PASSWORD_ROUTE_NAME,
-                this.resetPasswordPage,
-                false,
-                false,
-                'Wachtwoord resetten',
-                true
-            ),
-        ];
-
-        if (this.setPasswordPage) {
-            routes.push(
-                this._routerService._factory.createConfig(
-                    '/wachtwoord-setten',
-                    SET_PASSWORD_ROUTE_NAME,
-                    this.setPasswordPage,
-                    false,
-                    false,
-                    'Wachtwoord setten',
-                    true
-                )
-            );
-        }
-
-        this._routerService.addRoutes(routes);
-    }
-}
+};

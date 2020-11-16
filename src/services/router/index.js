@@ -60,14 +60,14 @@ router.afterEach((to, from) => {
 export const registerAfterMiddleware = middleware => routerAfterMiddleware.push(middleware);
 
 /** @param {RouteRecordRaw} routes */
-export const addRoutes = routes => router.addRoute(routes);
+export const addRoute = routes => router.addRoute(routes);
 
 /** @param {RouteSettings} settings */
 export const addRoutesBasedOnRouteSettings = settings => {
     const record = settings.base;
     delete settings.base;
     record.children = Object.values(settings);
-    addRoutes(record);
+    addRoute(record);
 };
 
 /**

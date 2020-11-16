@@ -16,3 +16,20 @@ export type Translation = {singular: string; plural: string};
 export type Translations = {[moduleName: string]: Translation};
 
 export type Modules = {[moduleName: string]: Module};
+
+export type LoginCredentials = {
+    /** the email to login with */
+    email: string;
+    /** the password to login with */
+    password: string;
+    /** if you want a consistent login */
+    rememberMe: boolean;
+};
+
+export type ResetPasswordData = {
+    password: string;
+    repeatPassword: string;
+};
+
+export type IsLoggedIn = Ref<boolean>;
+export type LoggedInUser = Ref<Item>;

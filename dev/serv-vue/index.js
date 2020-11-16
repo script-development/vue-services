@@ -152,6 +152,7 @@ const partialFactory = (moduleName, part, component) => {
         component,
         meta: {
             auth: true,
+            cantSeeWhenLoggedIn: false,
             title: translationConversion[part](moduleName) + titleConversion[part],
         },
         children: undefined,
@@ -248,14 +249,14 @@ router.afterEach((to, from) => {
 });
 
 /** @param {RouteRecordRaw} routes */
-const addRoutes = routes => router.addRoute(routes);
+const addRoute = routes => router.addRoute(routes);
 
 /** @param {RouteSettings} settings */
 const addRoutesBasedOnRouteSettings = settings => {
     const record = settings.base;
     delete settings.base;
     record.children = Object.values(settings);
-    addRoutes(record);
+    addRoute(record);
 };
 
 /**
@@ -302,8 +303,7 @@ const onPage = pageName => getCurrentRouteName().toString().includes(pageName);
  *
  * @typedef {import('../../types/types').Modules} Modules
  */
-// * @param {string} defaultLoggedInPageName the page to go to when logged in
-// * @param {Component} loginPage the login page
+// import {setDefaultLoggedInPageName} from '../services/auth';
 // * @param {[string,Object<string,string>]} [staticData] the static data
 
 /**
@@ -311,14 +311,15 @@ const onPage = pageName => getCurrentRouteName().toString().includes(pageName);
  *
  * @param {Component} mainComponent the main app component
  * @param {Modules} modules the login page
+ * @param {string} defaultLoggedInPageName the page to go to when logged in
+ * @param {Object} authComponents the page to go to when logged in
  */
-const startApp = (mainComponent, modules) => {
-    // export const startApp = (mainComponent, defaultLoggedInPageName, loginPage, modules, staticData) => {
-    // if (staticData) this._staticDataService.createStoreModules(staticData);
+const startApp = (mainComponent, modules, defaultLoggedInPageName, authComponents) => {
+    // setDefaultLoggedInPageName(defaultLoggedInPageName);
+    // set auth pages
+    // set auth routes
 
-    // this._authService.defaultLoggedInPageName = defaultLoggedInPageName;
-    // this._authService.loginPage = loginPage;
-    // this._authService.setRoutes();
+    // if (staticData) this._staticDataService.createStoreModules(staticData);
 
     for (const moduleName in modules) modules[moduleName].init();
 
