@@ -3,6 +3,8 @@
  *
  * @typedef {import('../../types/types').Item} Item
  * @typedef {import('../../types/types').Translation} Translation
+ * @typedef {import('../../types/module').ModuleFactoryComponents} ModuleFactoryComponents
+ * @typedef {import('../../types/module').Module} Module
  *
  */
 import {defineComponent, h} from 'vue';
@@ -18,10 +20,12 @@ import {addRoutesBasedOnRouteSettings, getCurrentRouteId, goToRoute} from '../se
 
 /**
  * @param {string} moduleName
- * @param {Object} components
+ * @param {ModuleFactoryComponents} components
  * @param {Translation} translation
+ *
+ * @returns {Module}
  */
-export default (moduleName, components, translation) => {
+export const moduleFactory = (moduleName, components, translation) => {
     generateAndRegisterDefaultStoreModule(moduleName);
     setTranslation(moduleName, translation);
 
@@ -54,13 +58,13 @@ export default (moduleName, components, translation) => {
         /**
          * Go the the show page for the given id
          *
-         * @param {String} id id of item to go to the show page
+         * @param {string} id id of item to go to the show page
          */
         goToShowPage: id => goToRoute(routeSettings.show.name.toString(), id),
         /**
          * Go to the edit page for this controller
          *
-         * @param {String} id
+         * @param {string} id
          * @param {LocationQuery} [query] the optional query for the new route
          */
         goToEditPage: (id, query) => goToRoute(routeSettings.edit.name.toString(), id, query),
@@ -74,7 +78,7 @@ export default (moduleName, components, translation) => {
          * Sends a delete request to the server.
          * Delete's the given id from the server
          *
-         * @param {number} id the id to delete from the server
+         * @param {string} id the id to delete from the server
          */
         destroyStoreAction: id =>
             deleteRequest(`${moduleName}/${id}`).then(response => {
@@ -103,14 +107,14 @@ export default (moduleName, components, translation) => {
         /**
          * Sends a get request to the server, which returns a single item on the server based on the given id
          *
-         * @param {Number} id the id to be read
+         * @param {string} id the id to be read
          */
         showStoreAction: id => getRequest(`${moduleName}/${id}`),
 
         /**
          * Sends a get request to the server, which returns a single item on the server based on the given id
          *
-         * @param {Number} id the id to be read
+         * @param {string} id the id to be read
          */
         showStoreActionByCurrentRouteId: () => getRequest(`${moduleName}/${getCurrentRouteId()}`),
 
@@ -118,12 +122,11 @@ export default (moduleName, components, translation) => {
          * get all items from the store from this controller
          */
         get getAll() {
-            // TODO :: test this
             return getAllFromStore(moduleName);
         },
         /**
          * Get an item from the store based on the given id
-         * @param {String} id get the item from the store based on id
+         * @param {string} id get the item from the store based on id
          */
         getById: id => getByIdFromStore(moduleName, id),
 
