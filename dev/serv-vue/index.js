@@ -691,14 +691,15 @@ var MinimalRouterView = defineComponent({
         },
     },
     setup(props) {
-        const matched = getCurrentRoute().value.matched[props.depth];
-        const component = matched && matched.components[name];
-
-        // render empty node if no matched route or no config component
-        if (!matched || !component) {
-            return () => h('div', [404]);
-        }
-        return () => h(component);
+        return () => {
+            const matched = getCurrentRoute().value.matched[props.depth];
+            const component = matched && matched.components[name];
+            // render empty node if no matched route or no config component
+            if (!matched || !component) {
+                return () => h('div', [404]);
+            }
+            return h(component);
+        };
     },
 });
 
@@ -912,7 +913,7 @@ const moduleFactory = (moduleName, components, translation) => {
     if (!components.base) {
         components.base = defineComponent({
             name: `${moduleName}-base`,
-            // TODO :: find out if the minimal router view actually works as intended
+            // TODO :: check if this works in every case
             render: () => h(MinimalRouterView, {depth: 1}),
             // render: () => h(RouterView),
             // TODO #9 @Goosterhof

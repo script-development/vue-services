@@ -692,14 +692,15 @@ var MinimalRouterView = vue.defineComponent({
         },
     },
     setup(props) {
-        const matched = getCurrentRoute().value.matched[props.depth];
-        const component = matched && matched.components[name];
-
-        // render empty node if no matched route or no config component
-        if (!matched || !component) {
-            return () => vue.h('div', [404]);
-        }
-        return () => vue.h(component);
+        return () => {
+            const matched = getCurrentRoute().value.matched[props.depth];
+            const component = matched && matched.components[name];
+            // render empty node if no matched route or no config component
+            if (!matched || !component) {
+                return () => vue.h('div', [404]);
+            }
+            return vue.h(component);
+        };
     },
 });
 
@@ -913,7 +914,7 @@ const moduleFactory = (moduleName, components, translation) => {
     if (!components.base) {
         components.base = vue.defineComponent({
             name: `${moduleName}-base`,
-            // TODO :: find out if the minimal router view actually works as intended
+            // TODO :: check if this works in every case
             render: () => vue.h(MinimalRouterView, {depth: 1}),
             // render: () => h(RouterView),
             // TODO #9 @Goosterhof

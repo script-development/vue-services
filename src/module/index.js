@@ -34,7 +34,7 @@ export const moduleFactory = (moduleName, components, translation) => {
     if (!components.base) {
         components.base = defineComponent({
             name: `${moduleName}-base`,
-            // TODO :: find out if the minimal router view actually works as intended
+            // TODO :: check if this works in every case
             render: () => h(MinimalRouterView, {depth: 1}),
             // render: () => h(RouterView),
             // TODO #9 @Goosterhof

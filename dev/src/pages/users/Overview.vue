@@ -6,7 +6,7 @@
             </tr>
         </thead>
         <tbody>
-            <tr v-for="user in users" :key="user.id">
+            <tr @click="goToShow(user.id)" v-for="user in users" :key="user.id">
                 <td>{{ user.name }}</td>
             </tr>
         </tbody>
@@ -19,7 +19,10 @@ import {usersModule} from '../../modules/users';
 
 export default {
     setup() {
-        return {users: usersModule.getAll};
+        return {
+            users: usersModule.getAll,
+            goToShow: id => usersModule.goToShowPage(id),
+        };
     },
 };
 </script>
