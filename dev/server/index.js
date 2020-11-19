@@ -23,13 +23,19 @@ createServer({
         this.namespace = 'api';
 
         this.get('/users', schema => schema.users.all());
+        this.get(
+            '/users/:id',
+            (schema, request) => {
+                const user = schema.users.findBy(request.params);
+                user.attrs.comment = 'this is a test';
+                return {users: user};
+            },
+            {timing: 500}
+        );
         this.get('/dashboard', schema => schema.users.all());
 
         // Auth routes
-        this.post('/login', schema => {
-            console.log(schema);
-            return schema.users.findBy({id: 1});
-        });
+        this.post('/login', schema => schema.users.findBy({id: 1}));
         this.post('/logout', () => {});
     },
 });

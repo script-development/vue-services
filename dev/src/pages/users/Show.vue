@@ -1,11 +1,14 @@
 <template>
-    <div>Showy</div>
+    <div>{{ user }}</div>
 </template>
 
 <script>
+import {onMounted} from 'vue';
+import {userModule} from '../../modules/user';
 export default {
     setup() {
-        return {};
+        onMounted(userModule.showStoreActionByCurrentRouteId);
+        return {user: userModule.getByCurrentRouteId};
     },
 };
 </script>

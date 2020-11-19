@@ -32,7 +32,7 @@ export default moduleName => {
          * @param {string} id
          * @returns {Item}
          */
-        byId: id => state.value[id],
+        byId: id => computed(() => state.value[id]),
         /**
          * Set data in the state.
          * Data can be of any kind.

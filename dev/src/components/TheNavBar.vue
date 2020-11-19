@@ -8,14 +8,14 @@
     </div>
 </template>
 <script>
-import {usersModule} from '../modules/users';
+import {userModule} from '../modules/user';
 import {dashboardModule} from '../modules/dashboard';
 import {isLoggedIn, logout} from '../../serv-vue';
 
 export default {
     setup() {
         return {
-            goToUsersOverview: usersModule.goToOverviewPage,
+            goToUsersOverview: userModule.goToOverviewPage,
             goToDashboard: dashboardModule.goToOverviewPage,
             isLoggedIn: isLoggedIn,
             logout,

@@ -1,4 +1,3 @@
-import {AxiosResponse} from 'axios';
 import {ComputedRef} from 'vue';
 import {Item} from '../types';
 

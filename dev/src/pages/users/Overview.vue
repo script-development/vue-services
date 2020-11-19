@@ -15,13 +15,13 @@
 
 <script>
 import {computed} from 'vue';
-import {usersModule} from '../../modules/users';
+import {userModule} from '../../modules/user';
 
 export default {
     setup() {
         return {
-            users: usersModule.getAll,
-            goToShow: id => usersModule.goToShowPage(id),
+            users: userModule.getAll,
+            goToShow: id => userModule.goToShowPage(id),
         };
     },
 };
