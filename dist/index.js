@@ -743,7 +743,6 @@ var StoreModuleFactory = moduleName => {
          * Get an item from the state by id
          *
          * @param {string} id
-         * @returns {Item}
          */
         byId: id => vue.computed(() => state.value[id]),
         /**
@@ -860,8 +859,6 @@ const getAllFromStore = moduleName => {
  *
  * @param {String} moduleName the module from which to get all
  * @param {String} id the id of the data object to get
- *
- * @return {Item}
  */
 const getByIdFromStore = (moduleName, id) => {
     // TODO :: check if this is always called when the computed changes

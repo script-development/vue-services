@@ -67,8 +67,6 @@ export const getAllFromStore = moduleName => {
  *
  * @param {String} moduleName the module from which to get all
  * @param {String} id the id of the data object to get
- *
- * @return {Item}
  */
 export const getByIdFromStore = (moduleName, id) => {
     // TODO :: check if this is always called when the computed changes

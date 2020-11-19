@@ -104,11 +104,11 @@ describe('Store Service', () => {
         });
 
         it('should get an item by id when byId is called', () => {
-            deepStrictEqual(storeModule.byId(4), {id: 4, name: 'Klaske'});
+            deepStrictEqual(storeModule.byId(4).value, {id: 4, name: 'Klaske'});
         });
 
         it('should get undefined when byId is called on a non existing id', () => {
-            strictEqual(storeModule.byId(14), undefined);
+            strictEqual(storeModule.byId(14).value, undefined);
         });
 
         it('should replace all items from data when data is an array with multiple items', () => {
@@ -185,7 +185,7 @@ describe('Store Service', () => {
         });
 
         it('should get one item from store when calling getByIdFromStore', () => {
-            deepStrictEqual(getByIdFromStore('names', 1), {id: 1, description: 'this is a test'});
+            deepStrictEqual(getByIdFromStore('names', 1).value, {id: 1, description: 'this is a test'});
         });
 
         it('should throw an error when trying to get by id from an unknown module', () => {
@@ -203,7 +203,7 @@ describe('Store Service', () => {
 
         // TODO :: is this desired behaviour?
         it('should return undefined from store when calling getByIdFromStore with an unkown id', () => {
-            deepStrictEqual(getByIdFromStore('names', 12), undefined);
+            deepStrictEqual(getByIdFromStore('names', 12).value, undefined);
         });
     });
 
@@ -214,7 +214,7 @@ describe('Store Service', () => {
 
         it('should add data to the store when data is known in the store modules', () => {
             responseMiddleware({data: {names: [{id: 4, description: 'added test data'}]}});
-            deepStrictEqual(getByIdFromStore('names', 4), {id: 4, description: 'added test data'});
+            deepStrictEqual(getByIdFromStore('names', 4).value, {id: 4, description: 'added test data'});
         });
     });
 });

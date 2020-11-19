@@ -5,7 +5,7 @@ export type StoreModule = {
     /** Get all items from the store */
     all: ComputedRef<Item[]>;
     /** Get an item from the state by id */
-    byId(id: string): Item;
+    byId(id: string): ComputedRef<Item>;
     /**
      * Set data in the state.
      * Data can be of any kind.
@@ -34,10 +34,8 @@ export function getAllFromStore(moduleName: string): ComputedRef<Item[]>;
  *
  * @param {String} moduleName the module from which to get all
  * @param {String} id the id of the data object to get
- *
- * @return {Item}
  */
-export function getByIdFromStore(moduleName: string, id: string): Item;
+export function getByIdFromStore(moduleName: string, id: string): ComputedRef<Item>;
 
 // TODO :: will probably not need this one here, since it will not be exported in the final product
 /**

@@ -30,7 +30,6 @@ export default moduleName => {
          * Get an item from the state by id
          *
          * @param {string} id
-         * @returns {Item}
          */
         byId: id => computed(() => state.value[id]),
         /**
