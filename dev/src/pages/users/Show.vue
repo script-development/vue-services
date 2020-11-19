@@ -7,7 +7,7 @@ import {onMounted} from 'vue';
 import {userModule} from '../../modules/user';
 export default {
     setup() {
-        onMounted(userModule.showStoreActionByCurrentRouteId);
+        onMounted(() => userModule.showStoreActionByCurrentRouteId());
         return {user: userModule.getByCurrentRouteId};
     },
 };
