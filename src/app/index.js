@@ -18,7 +18,10 @@ import {
 // * @param {[string,Object<string,string>]} [staticData] the static data
 
 /**
- * Start the app and set required settings
+ * Start the app.
+ * Set required settings.
+ * Init the modules.
+ * Set the static data.
  *
  * @param {Component} mainComponent the main app component
  * @param {Modules} modules the login page

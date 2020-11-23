@@ -1,28 +1,21 @@
 import {Component} from 'vue';
-import {RouterService} from './routerService';
-import {EventService, AuthService, StaticDataService} from './services';
-import {BaseController} from './controllers';
+import {AuthComponents, Modules} from './types';
 
-export class AppStarter {
-    _routerService: RouterService;
-    _eventService: EventService;
-    _authService: AuthService;
-    _staticDataService: StaticDataService;
-    _creatorInit: Function;
-    /**
-     * Start the app and set required settings
-     *
-     * @param {Component} mainComponent the main app component
-     * @param {String} defaultLoggedInPageName the page name to go to when logged in
-     * @param {Component} loginPage the login page
-     * @param {Object<string,BaseController>} controllers the controllers used by the app
-     * @param {[string,Object<string,string>]} [staticData] the static data
-     */
-    start(
-        mainComponent: Component,
-        defaultLoggedInPageName: string,
-        loginPage: Component,
-        controllers: {[controllerName: string]: BaseController},
-        staticData?: [string, {[key: string]: string}]
-    ): void;
-}
+/**
+ * Start the app.
+ * Set required settings.
+ * Init the modules.
+ * Set the static data.
+ *
+ * @param {Component} mainComponent the main app component
+ * @param {Modules} modules the login page
+ * @param {string} defaultLoggedInPageName the page to go to when logged in
+ * @param {AuthComponents} authComponents the page to go to when logged in
+ */
+export function startApp(
+    mainComponent: Component,
+    modules: Modules,
+    defaultLoggedInPageName: string,
+    authComponents: AuthComponents
+    // staticData?:
+): void;
