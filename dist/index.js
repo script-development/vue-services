@@ -1058,7 +1058,7 @@ const moduleFactory = (moduleName, components, translation) => {
 //     }
 // }
 
-const toastCss = vue.ref({
+const toastCss = {
     visibility: 'visisble',
     'min-width': '250px',
     'margin-left': '-125px',
@@ -1071,28 +1071,139 @@ const toastCss = vue.ref({
     'z-index': '1',
     left: '50%',
     bottom: '30px',
-});
+};
 
 const ToastComponent = vue.defineComponent({
     props: {message: {type: String, required: true}, show: {type: Boolean, required: true}},
+    setup: (props, ctx) => () =>
+        vue.h('div', {style: toastCss, class: props.show ? 'show-toast' : 'hide-toast'}, [
+            vue.h('span', [props.message]),
+            vue.h(
+                'button',
+                {
+                    onclick: () => {
+                        if (props.show) ctx.emit('hide');
+                    },
+                },
+                ['X']
+            ),
+        ]),
+});
+
+/* The Modal (background) CSS */
+const modalOverlayCSS = {
+    position: 'fixed' /* Stay in place */,
+    'z-index': 1 /* Sit on top */,
+    left: 0,
+    top: 0,
+    width: '100%' /* Full width */,
+    height: '100%' /* Full height */,
+    overflow: 'auto' /* Enable scroll if needed */,
+    'background-color': 'rgba(0,0,0,0.4)' /* Black w/ opacity */,
+};
+
+const modalContentCSS = {
+    'background-color': '#fefefe',
+    margin: '15% auto' /* 15% from the top and centered */,
+    padding: '20px',
+    border: '1px solid #888',
+    width: '80%' /* Could be more or less, depending on screen size */,
+};
+
+const ModalComponent = vue.defineComponent({
+    props: {
+        id: {
+            type: String,
+            required: false,
+        },
+
+        title: {
+            type: String,
+            required: false,
+        },
+        titleTag: {
+            type: String,
+            required: false,
+            default: 'h5',
+        },
+        titleClass: {
+            type: Array,
+            required: false,
+        },
+
+        message: {
+            type: String,
+            required: false,
+        },
+
+        // TODO :: could use translations to default this
+        okTitle: {
+            type: String,
+            required: false,
+            default: 'Ok',
+        },
+        okAction: {
+            type: Function,
+            required: true,
+        },
+
+        cancelTitle: {
+            type: String,
+            required: false,
+            default: 'Cancel',
+        },
+        cancelAction: {
+            type: Function,
+            required: false,
+        },
+    },
+
     setup(props, ctx) {
-        console.log('setting up toast', props.message);
-        return () => {
-            console.log('rendering toast', props.message);
-            return vue.h('div', {style: toastCss.value, class: props.show ? 'show-toast' : 'hide-toast'}, [
-                vue.h('span', [props.message]),
+        const overLayOptions = {style: modalOverlayCSS};
+        if (props.id) overLayOptions.id = props.id;
+
+        const contentChildren = [];
+
+        if (props.title) {
+            const titleOptions = {};
+            if (props.titleClass) titleOptions.class = props.titleClass;
+            contentChildren.push(vue.h(props.titleTag, titleOptions, [props.title]));
+        }
+
+        if (props.message) {
+            const bodyOptions = {};
+            contentChildren.push(vue.h('p', bodyOptions, [props.message]));
+        }
+
+        if (props.cancelAction) {
+            contentChildren.push(
                 vue.h(
                     'button',
                     {
                         onclick: () => {
-                            if (!props.show) return;
-                            ctx.emit('hide');
+                            props.cancelAction();
+                            ctx.emit('close');
                         },
                     },
-                    ['X']
-                ),
-            ]);
-        };
+                    [props.cancelTitle]
+                )
+            );
+        }
+
+        contentChildren.push(
+            vue.h(
+                'button',
+                {
+                    onclick: () => {
+                        props.okAction();
+                        ctx.emit('close');
+                    },
+                },
+                [props.okTitle]
+            )
+        );
+
+        return () => vue.h('div', overLayOptions, [vue.h('div', {style: modalContentCSS}, contentChildren)]);
     },
 });
 
@@ -1116,6 +1227,8 @@ style.sheet.insertRule(`@keyframes fadeout { from {bottom: 30px; opacity: 1;} to
 
 /** @type {ToastMessages} */
 const toastMessages = vue.ref([]);
+const modals = vue.ref([]);
+
 /**
  * The default duration for a toast message.
  * Can be overwritten.
@@ -1153,16 +1266,25 @@ const hideToastMessageAfterDelay = message => {
 
 const eventApp = vue.defineComponent({
     render() {
-        return toastMessages.value.map(message => {
-            return vue.h(ToastComponent, {
-                message: message.message,
-                show: message.show,
-                onHide: () => hideToastMessage(message),
-                // TODO :: what if there are two of the same messages active?
-                // this will trow error
-                key: message.message,
-            });
-        });
+        return [
+            toastMessages.value.map(message => {
+                return vue.h(ToastComponent, {
+                    message: message.message,
+                    show: message.show,
+                    onHide: () => hideToastMessage(message),
+                    // TODO :: what if there are two of the same messages active?
+                    // this will trow error
+                    key: message.message,
+                });
+            }),
+            modals.value.map((modal, index) => {
+                return vue.h(ModalComponent, {
+                    message: modal.message,
+                    okAction: modal.okAction,
+                    onClose: () => modals.value.splice(index, 1),
+                });
+            }),
+        ];
     },
 });
 
@@ -1196,34 +1318,12 @@ const responseErrorMiddleware$2 = ({response}) => {
 };
 
 registerResponseErrorMiddleware(responseErrorMiddleware$2);
-//     /**
-//      * pops up a modal with the given message
-//      * @param {String} message the message being shown by the modal
-//      * @param {Function} okAction the function being used when click on ok
-//      * @param {Function} [cancelAction] the being used when click on cancel
-//      */
-//     modal(message, okAction, cancelAction) {
-//         // TODO :: vue-3 :: make modal great again
-//         console.log('MODAL', message, okAction, cancelAction);
-//         // this._app.$bvModal
-//         //     .msgBoxConfirm(message, {
-//         //         size: 'm',
-//         //         buttonSize: 'm',
-//         //         okVariant: 'primary',
-//         //         okTitle: 'Ja',
-//         //         cancelTitle: 'Nee',
-//         //         headerClass: 'p-2',
-//         //         footerClass: 'p-2 confirm',
-//         //         hideHeaderClose: true,
-//         //         centered: true,
-//         //     })
-//         //     .then(value => {
-//         //         if (value && okAction) okAction();
-//         //         else if (cancelAction) cancelAction();
-//         //     });
-//     }
-// }
 
+const createModal = message => {
+    modals.value.push({message: message, okAction: () => console.log('OK!')});
+};
+
+exports.createModal = createModal;
 exports.createToastMessage = createToastMessage;
 exports.isLoggedIn = isLoggedIn;
 exports.login = login;

@@ -4,4 +4,4 @@ export {moduleFactory} from './module';
 
 export {login, isLoggedIn, logout} from './services/auth';
 
-export {createToastMessage} from './services/event';
+export {createToastMessage, createModal} from './services/event';

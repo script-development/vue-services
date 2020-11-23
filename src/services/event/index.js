@@ -11,6 +11,7 @@
 import {createApp, defineComponent, h, ref} from 'vue';
 import {registerResponseErrorMiddleware, registerResponseMiddleware} from '../http';
 import {ToastComponent} from './Toast';
+import {ModalComponent} from './Modal';
 
 const style = document.createElement('style');
 document.head.appendChild(style);
@@ -22,6 +23,8 @@ style.sheet.insertRule(`@keyframes fadeout { from {bottom: 30px; opacity: 1;} to
 
 /** @type {ToastMessages} */
 const toastMessages = ref([]);
+const modals = ref([]);
+
 /**
  * The default duration for a toast message.
  * Can be overwritten.
@@ -59,16 +62,25 @@ const hideToastMessageAfterDelay = message => {
 
 const eventApp = defineComponent({
     render() {
-        return toastMessages.value.map(message => {
-            return h(ToastComponent, {
-                message: message.message,
-                show: message.show,
-                onHide: () => hideToastMessage(message),
-                // TODO :: what if there are two of the same messages active?
-                // this will trow error
-                key: message.message,
-            });
-        });
+        return [
+            toastMessages.value.map(message => {
+                return h(ToastComponent, {
+                    message: message.message,
+                    show: message.show,
+                    onHide: () => hideToastMessage(message),
+                    // TODO :: what if there are two of the same messages active?
+                    // this will trow error
+                    key: message.message,
+                });
+            }),
+            modals.value.map((modal, index) => {
+                return h(ModalComponent, {
+                    message: modal.message,
+                    okAction: modal.okAction,
+                    onClose: () => modals.value.splice(index, 1),
+                });
+            }),
+        ];
     },
 });
 
@@ -102,30 +114,7 @@ export const responseErrorMiddleware = ({response}) => {
 };
 
 registerResponseErrorMiddleware(responseErrorMiddleware);
-//     /**
-//      * pops up a modal with the given message
-//      * @param {String} message the message being shown by the modal
-//      * @param {Function} okAction the function being used when click on ok
-//      * @param {Function} [cancelAction] the being used when click on cancel
-//      */
-//     modal(message, okAction, cancelAction) {
-//         // TODO :: vue-3 :: make modal great again
-//         console.log('MODAL', message, okAction, cancelAction);
-//         // this._app.$bvModal
-//         //     .msgBoxConfirm(message, {
-//         //         size: 'm',
-//         //         buttonSize: 'm',
-//         //         okVariant: 'primary',
-//         //         okTitle: 'Ja',
-//         //         cancelTitle: 'Nee',
-//         //         headerClass: 'p-2',
-//         //         footerClass: 'p-2 confirm',
-//         //         hideHeaderClose: true,
-//         //         centered: true,
-//         //     })
-//         //     .then(value => {
-//         //         if (value && okAction) okAction();
-//         //         else if (cancelAction) cancelAction();
-//         //     });
-//     }
-// }
+
+export const createModal = message => {
+    modals.value.push({message: message, okAction: () => console.log('OK!')});
+};
