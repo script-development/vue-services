@@ -35,7 +35,12 @@ createServer({
         this.get('/dashboard', schema => schema.users.all());
 
         // Auth routes
-        this.post('/login', schema => schema.users.findBy({id: 1}));
+        this.post('/login', schema => {
+            return {
+                user: schema.users.findBy({id: 1}),
+                message: 'Successfully logged in',
+            };
+        });
         this.post('/logout', () => {});
     },
 });
