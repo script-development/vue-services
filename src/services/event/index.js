@@ -1,11 +1,15 @@
 /**
  * @typedef {import("vue").App} App
+ *
  * @typedef {import("../../../types/types").ToastMessages} ToastMessages
  * @typedef {import("../../../types/types").ToastMessage} ToastMessage
  * @typedef {import("../../../types/types").ToastVariant} ToastVariant
+ * @typedef {import("../../../types/types").ResponseMiddleware} ResponseMiddleware
+ * @typedef {import("../../../types/types").ResponseErrorMiddleware} ResponseErrorMiddleware
  */
 
 import {createApp, defineComponent, h, ref} from 'vue';
+import {registerResponseErrorMiddleware, registerResponseMiddleware} from '../http';
 import {ToastComponent} from './Toast';
 
 const style = document.createElement('style');
@@ -85,79 +89,19 @@ export const createToastMessage = (message, variant = 'success', duration = defa
     toastMessages.value.push(toastMessage);
 };
 
-// export class EventService {
-//     /**
-//      *
-//      * @param {HTTPService} httpService the http service for communication with the API
-//      */
-//     constructor(httpService) {
-//         this._app;
-//         this._httpService = httpService;
+/** @type {ResponseMiddleware} */
+export const responseMiddleware = ({data}) => {
+    if (data && data.message) createToastMessage(data.message);
+};
 
-//         this._httpService.registerResponseMiddleware(this.responseMiddleware);
-//         this._httpService.registerResponseErrorMiddleware(this.responseErrorMiddleware);
-//     }
+registerResponseMiddleware(responseMiddleware);
 
-//     // prettier-ignore
-//     /** @returns {App} */
-//     get app() { return this._app; }
+/** @type {ResponseErrorMiddleware} */
+export const responseErrorMiddleware = ({response}) => {
+    if (response && response.data.message) createToastMessage(response.data.message, 'error');
+};
 
-//     set app(app) {
-//         // if (!app.$bvToast) {
-//         //     Vue.use(ToastPlugin);
-//         // }
-
-//         // if (!app.$bvModal) {
-//         //     Vue.user(ModalPlugin);
-//         // }
-//         this._app = app;
-//     }
-
-//     /** @returns {ResponseMiddleware} */
-//     get responseMiddleware() {
-//         return ({data}) => {
-//             if (data && data.message) this.successToast(data.message);
-//         };
-//     }
-
-//     /** @returns {ResponseErrorMiddleware} */
-//     get responseErrorMiddleware() {
-//         return ({response}) => {
-//             if (response && response.data.message) this.dangerToast(response.data.message);
-//         };
-//     }
-
-//     /**
-//      * pops up a toast with given message in the given variance
-//      * @param {String} message the message being shown by the toast
-//      * @param {String} variant the toast variant
-//      */
-//     toast(message, variant) {
-//         // TODO :: vue-3 :: make toast great again
-//         console.log('TOAST', message, variant);
-//         // this._app.$bvToast.toast(`${message}`, {
-//         //     variant,
-//         //     solid: true,
-//         //     toaster: 'b-toaster-bottom-left',
-//         // });
-//     }
-
-//     /**
-//      * pops up a success toast
-//      * @param {String} message the message being shown by the toast
-//      */
-//     successToast(message) {
-//         this.toast(message, 'success');
-//     }
-
-//     /**
-//      * pops up a danger toast
-//      * @param {String} message the message being shown by the toast
-//      */
-//     dangerToast(message) {
-//         this.toast(message, 'danger');
-//     }
-
+registerResponseErrorMiddleware(responseErrorMiddleware);
 //     /**
 //      * pops up a modal with the given message
 //      * @param {String} message the message being shown by the modal
