@@ -6,6 +6,7 @@
 </template>
 
 <script>
+import {ref} from 'vue';
 import {createToastMessage} from '../serv-vue';
 import TheNavBar from './components/TheNavBar.vue';
 
@@ -15,7 +16,13 @@ export default {
         TheNavBar,
     },
     setup() {
-        return {toast: () => createToastMessage('hello', 'success')};
+        const message = ref('hello');
+        return {
+            toast: () => {
+                message.value += '1';
+                createToastMessage(message.value, 'success');
+            },
+        };
     },
 };
 </script>

@@ -646,7 +646,10 @@ const setAuthRoutes = () => {
 // * @param {[string,Object<string,string>]} [staticData] the static data
 
 /**
- * Start the app and set required settings
+ * Start the app.
+ * Set required settings.
+ * Init the modules.
+ * Set the static data.
  *
  * @param {Component} mainComponent the main app component
  * @param {Modules} modules the login page
@@ -1055,21 +1058,6 @@ const moduleFactory = (moduleName, components, translation) => {
 //     }
 // }
 
-/**
- * @typedef {import("vue").App} App
- */
-
-const style = document.createElement('style');
-document.head.appendChild(style);
-
-style.sheet.insertRule('.show-toast {animation: fadein 0.5s;}');
-style.sheet.insertRule('.hide-toast {animation: fadeout 0.5s;}');
-style.sheet.insertRule(`@keyframes fadein { from {bottom: 0; opacity: 0;} to {bottom: 30px; opacity: 1;}}`);
-style.sheet.insertRule(`@keyframes fadeout { from {bottom: 30px; opacity: 1;} to {bottom: 0; opacity: 0;} }`);
-
-const toasty = document.createElement('div');
-document.body.appendChild(toasty);
-
 const toastCss = vue.ref({
     visibility: 'visisble',
     'min-width': '250px',
@@ -1085,49 +1073,111 @@ const toastCss = vue.ref({
     bottom: '30px',
 });
 
-const toastMessages = vue.ref(['asd']);
-
-const toastElement = vue.defineComponent({
-    props: {
-        message: {type: String, required: true},
-        index: {type: Number, required: true},
-    },
-    setup(props) {
-        const show = vue.ref(true);
-        return () =>
-            vue.h('div', {style: toastCss.value, class: show.value ? 'show-toast' : 'hide-toast'}, [
+const ToastComponent = vue.defineComponent({
+    props: {message: {type: String, required: true}, show: {type: Boolean, required: true}},
+    setup(props, ctx) {
+        console.log('setting up toast', props.message);
+        return () => {
+            console.log('rendering toast', props.message);
+            return vue.h('div', {style: toastCss.value, class: props.show ? 'show-toast' : 'hide-toast'}, [
                 vue.h('span', [props.message]),
                 vue.h(
                     'button',
                     {
                         onclick: () => {
-                            show.value = false;
-                            setTimeout(() => toastMessages.value.splice(props.index, 1), 490);
+                            if (!props.show) return;
+                            ctx.emit('hide');
                         },
                     },
                     ['X']
                 ),
             ]);
+        };
     },
 });
 
-const toastTemplate = vue.defineComponent({
-    props: {
-        variant: {
-            type: String,
-            required: false,
-            default: 'success',
-        },
-    },
+/**
+ * @typedef {import("vue").App} App
+ * @typedef {import("../../../types/types").ToastMessages} ToastMessages
+ * @typedef {import("../../../types/types").ToastMessage} ToastMessage
+ * @typedef {import("../../../types/types").ToastVariant} ToastVariant
+ */
+
+const style = document.createElement('style');
+document.head.appendChild(style);
+
+style.sheet.insertRule('.show-toast {animation: fadein 0.5s;}');
+style.sheet.insertRule('.hide-toast {animation: fadeout 0.5s;}');
+style.sheet.insertRule(`@keyframes fadein { from {bottom: 0; opacity: 0;} to {bottom: 30px; opacity: 1;}}`);
+style.sheet.insertRule(`@keyframes fadeout { from {bottom: 30px; opacity: 1;} to {bottom: 0; opacity: 0;} }`);
+
+/** @type {ToastMessages} */
+const toastMessages = vue.ref([]);
+/**
+ * The default duration for a toast message.
+ * Can be overwritten.
+ */
+let defaultToastMessageDuration = 1500;
+
+/**
+ * Hide the toast message after a timeout and delete it from toastMessages
+ * @param {ToastMessage} message
+ */
+const hideToastMessage = message => {
+    clearTimeout(message.timeoutId);
+
+    // TODO :: because this is called from render the ref becomes itself
+    // and it's being called from the render function and outside the render function
+    if (message.show.value) message.show.value = false;
+    // @ts-ignore, see TODO above
+    else if (message.show) message.show = false;
+
+    message.timeoutId = setTimeout(() => {
+        const index = toastMessages.value.findIndex(t => t.message === message.message);
+        toastMessages.value.splice(index, 1);
+    }, 450);
+};
+
+/**
+ * Hide the toast message after the given duration
+ *
+ * @param {ToastMessage} message the message to remove after the delay
+ */
+const hideToastMessageAfterDelay = message => {
+    clearTimeout(message.timeoutId);
+    message.timeoutId = setTimeout(() => hideToastMessage(message), message.duration);
+};
+
+const eventApp = vue.defineComponent({
     render() {
-        return toastMessages.value.map((message, index) => vue.h(toastElement, {message, index}));
+        return toastMessages.value.map(message => {
+            return vue.h(ToastComponent, {
+                message: message.message,
+                show: message.show,
+                onHide: () => hideToastMessage(message),
+                // TODO :: what if there are two of the same messages active?
+                // this will trow error
+                key: message.message,
+            });
+        });
     },
 });
 
-vue.createApp(toastTemplate).mount(toasty);
+const eventContainer = document.createElement('div');
+document.body.appendChild(eventContainer);
+vue.createApp(eventApp).mount(eventContainer);
 
-const createToastMessage = (message, variant) => {
-    toastMessages.value.push(message);
+/**
+ * Create a toast message
+ *
+ * @param {string} message the message to show
+ * @param {ToastVariant} [variant] the variant of the toast, default = success
+ * @param {number} [duration] the duration the toast stays visisble, default = defaultToastMessageDuration
+ */
+const createToastMessage = (message, variant = 'success', duration = defaultToastMessageDuration) => {
+    const toastMessage = {message, variant, duration, show: vue.ref(true)};
+    hideToastMessageAfterDelay(toastMessage);
+    toastMessages.value.push(toastMessage);
 };
 
 // export class EventService {
