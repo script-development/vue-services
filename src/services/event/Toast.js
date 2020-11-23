@@ -1,6 +1,6 @@
-import {defineComponent, h, ref} from 'vue';
+import {defineComponent, h} from 'vue';
 
-const toastCss = ref({
+const toastCss = {
     visibility: 'visisble',
     'min-width': '250px',
     'margin-left': '-125px',
@@ -13,27 +13,21 @@ const toastCss = ref({
     'z-index': '1',
     left: '50%',
     bottom: '30px',
-});
+};
 
 export const ToastComponent = defineComponent({
     props: {message: {type: String, required: true}, show: {type: Boolean, required: true}},
-    setup(props, ctx) {
-        console.log('setting up toast', props.message);
-        return () => {
-            console.log('rendering toast', props.message);
-            return h('div', {style: toastCss.value, class: props.show ? 'show-toast' : 'hide-toast'}, [
-                h('span', [props.message]),
-                h(
-                    'button',
-                    {
-                        onclick: () => {
-                            if (!props.show) return;
-                            ctx.emit('hide');
-                        },
+    setup: (props, ctx) => () =>
+        h('div', {style: toastCss, class: props.show ? 'show-toast' : 'hide-toast'}, [
+            h('span', [props.message]),
+            h(
+                'button',
+                {
+                    onclick: () => {
+                        if (props.show) ctx.emit('hide');
                     },
-                    ['X']
-                ),
-            ]);
-        };
-    },
+                },
+                ['X']
+            ),
+        ]),
 });
