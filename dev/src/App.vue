@@ -25,7 +25,8 @@ export default {
             },
             modal: () => {
                 message.value += '1';
-                createModal(message.value);
+                const modal = {message: message.value, okAction: () => console.log('OK!')};
+                createModal(modal);
             },
         };
     },

@@ -27,6 +27,23 @@ export type ToastMessage = {
 };
 export type ToastMessages = Ref<ToastMessage[]>;
 
+export type Modal = {
+    id?: string;
+    title?: string;
+    titleTag?: string;
+    titleClass?: string[];
+
+    message?: string;
+
+    okTitle?: string;
+    okAction: () => void;
+
+    cancelTitle?: string;
+    cancelAction?: () => void;
+};
+
+export type Modals = Ref<Modal[]>;
+
 export type AuthComponents = {
     login: Component;
     resetPassword: Component;

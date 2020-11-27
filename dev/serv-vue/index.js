@@ -1212,6 +1212,8 @@ const ModalComponent = defineComponent({
  * @typedef {import("../../../types/types").ToastMessages} ToastMessages
  * @typedef {import("../../../types/types").ToastMessage} ToastMessage
  * @typedef {import("../../../types/types").ToastVariant} ToastVariant
+ * @typedef {import("../../../types/types").Modals} Modals
+ * @typedef {import("../../../types/types").Modal} Modal
  * @typedef {import("../../../types/types").ResponseMiddleware} ResponseMiddleware
  * @typedef {import("../../../types/types").ResponseErrorMiddleware} ResponseErrorMiddleware
  */
@@ -1226,6 +1228,7 @@ style.sheet.insertRule(`@keyframes fadeout { from {bottom: 30px; opacity: 1;} to
 
 /** @type {ToastMessages} */
 const toastMessages = ref([]);
+/** @type {Modals} */
 const modals = ref([]);
 
 /**
