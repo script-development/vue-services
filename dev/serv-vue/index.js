@@ -760,10 +760,10 @@ var StoreModuleFactory = moduleName => {
                 if (!data.id) return;
 
                 // TODO :: vue-3 :: check if vue-3 is reactive this way
-                state.value[data.id] = data;
+                state.value[data.id] = Object.freeze(data);
             } else if (data.length === 1) {
                 // if data has an array with 1 entry, put it in the state
-                state.value[data[0].id] = data[0];
+                state.value[data[0].id] = Object.freeze(data[0]);
             } else {
                 // if data has more entries, then that's the new baseline
                 for (const id in state.value) {
@@ -781,12 +781,12 @@ var StoreModuleFactory = moduleName => {
                     // if the entry for this id is larger then the current entry, do nothing
                     if (Object.values(state.value[id]).length > Object.values(newData).length) continue;
 
-                    state.value[newData.id] = newData;
+                    state.value[newData.id] = Object.freeze(newData);
                 }
 
                 // put all remaining new data in the state
                 for (const newData of data) {
-                    state.value[newData.id] = newData;
+                    state.value[newData.id] = Object.freeze(newData);
                 }
             }
 
@@ -1321,8 +1321,10 @@ const responseErrorMiddleware$2 = ({response}) => {
 
 registerResponseErrorMiddleware(responseErrorMiddleware$2);
 
-const createModal = message => {
-    modals.value.push({message: message, okAction: () => console.log('OK!')});
-};
+/**
+ *
+ * @param {Modal} modal
+ */
+const createModal = modal => modals.value.push(modal);
 
 export {createModal, createToastMessage, isLoggedIn, login, logout, moduleFactory, startApp};
