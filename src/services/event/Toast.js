@@ -1,33 +1,57 @@
 import {defineComponent, h} from 'vue';
 
-const toastCss = {
-    visibility: 'visisble',
-    'min-width': '250px',
-    'margin-left': '-125px',
-    'background-color': '#333',
-    color: '#fff',
-    'text-align': 'center',
-    'border-radius': '2px',
-    padding: '16px',
-    position: 'fixed',
-    'z-index': '1',
-    left: '50%',
-    bottom: '30px',
-};
+/**
+ * Extra toast styling, for the animations
+ */
+const style = document.createElement('style');
+document.head.appendChild(style);
+
+style.sheet.insertRule('.show-toast {animation: fadein 0.5s;}');
+style.sheet.insertRule('.hide-toast {animation: fadeout 0.5s;}');
+style.sheet.insertRule(`@keyframes fadein { from {bottom: 0; opacity: 0;} to {bottom: 30px; opacity: 1;}}`);
+style.sheet.insertRule(`@keyframes fadeout { from {bottom: 30px; opacity: 1;} to {bottom: 0; opacity: 0;} }`);
+
+const VARIANTS = [
+    'danger',
+    'success',
+    'primary',
+    'secondary',
+    'warning',
+    'info',
+    'light',
+    'dark',
+    'white',
+    'transparent',
+];
+
+/** @param {string} variant */
+const validVariant = variant => VARIANTS.includes(variant);
 
 export const ToastComponent = defineComponent({
-    props: {message: {type: String, required: true}, show: {type: Boolean, required: true}},
-    setup: (props, ctx) => () =>
-        h('div', {style: toastCss, class: props.show ? 'show-toast' : 'hide-toast'}, [
-            h('span', [props.message]),
-            h(
-                'button',
-                {
-                    onclick: () => {
-                        if (props.show) ctx.emit('hide');
-                    },
-                },
-                ['X']
-            ),
-        ]),
+    props: {
+        message: {type: String, required: true},
+        show: {type: Boolean, required: true},
+        variant: {type: String, required: false, default: 'success', validator: validVariant},
+    },
+    setup: (props, ctx) => {
+        const closeButton = h('button', {
+            class: 'btn-close ml-auto mr-2',
+            onclick: () => {
+                if (props.show) ctx.emit('hide');
+            },
+        });
+
+        const messageElement = h('div', {class: 'toast-body'}, [props.message]);
+
+        const variant = `bg-${props.variant}`;
+
+        return () => {
+            const classes = [
+                'toast d-flex align-items-center border-0',
+                variant,
+                props.show ? 'show-toast' : 'hide-toast',
+            ];
+            return h('div', {class: classes, style: {opacity: 1}}, [messageElement, closeButton]);
+        };
+    },
 });

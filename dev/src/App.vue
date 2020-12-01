@@ -21,7 +21,7 @@ export default {
         return {
             toast: () => {
                 message.value += '1';
-                createToastMessage(message.value, 'success');
+                createToastMessage(message.value);
             },
             modal: () => {
                 message.value += '1';

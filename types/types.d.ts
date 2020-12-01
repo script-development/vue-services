@@ -17,10 +17,21 @@ export type Translations = {[moduleName: string]: Translation};
 
 export type Modules = {[moduleName: string]: Module};
 
-export type ToastVariant = 'error' | 'success';
+export type ToastVariant =
+    | 'danger'
+    | 'success'
+    | 'primary'
+    | 'secondary'
+    | 'warning'
+    | 'info'
+    | 'light'
+    | 'dark'
+    | 'white'
+    | 'transparent';
+
 export type ToastMessage = {
     message: string;
-    variant: ToastVariant;
+    variant?: ToastVariant;
     duration: number;
     show: Ref<Boolean>;
     timeoutId?: NodeJS.Timeout;

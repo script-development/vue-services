@@ -15,14 +15,6 @@ import {registerResponseErrorMiddleware, registerResponseMiddleware} from '../ht
 import {ToastComponent} from './Toast';
 import {ModalComponent} from './Modal';
 
-const style = document.createElement('style');
-document.head.appendChild(style);
-
-style.sheet.insertRule('.show-toast {animation: fadein 0.5s;}');
-style.sheet.insertRule('.hide-toast {animation: fadeout 0.5s;}');
-style.sheet.insertRule(`@keyframes fadein { from {bottom: 0; opacity: 0;} to {bottom: 30px; opacity: 1;}}`);
-style.sheet.insertRule(`@keyframes fadeout { from {bottom: 30px; opacity: 1;} to {bottom: 0; opacity: 0;} }`);
-
 /** @type {ToastMessages} */
 const toastMessages = ref([]);
 /** @type {Modals} */
@@ -70,6 +62,7 @@ const eventApp = defineComponent({
                 return h(ToastComponent, {
                     message: message.message,
                     show: message.show,
+                    variant: message.variant,
                     onHide: () => hideToastMessage(message),
                     // TODO :: what if there are two of the same messages active?
                     // this will trow error
@@ -113,7 +106,7 @@ registerResponseMiddleware(responseMiddleware);
 
 /** @type {ResponseErrorMiddleware} */
 export const responseErrorMiddleware = ({response}) => {
-    if (response && response.data.message) createToastMessage(response.data.message, 'error');
+    if (response && response.data.message) createToastMessage(response.data.message, 'danger');
 };
 
 registerResponseErrorMiddleware(responseErrorMiddleware);
