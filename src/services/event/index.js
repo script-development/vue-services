@@ -57,6 +57,8 @@ const hideToastMessageAfterDelay = message => {
 
 const eventApp = defineComponent({
     render() {
+        if (modals.value.length) document.body.classList.add('modal-open');
+        else document.body.classList.remove('modal-open');
         return [
             toastMessages.value.map(message => {
                 return h(ToastComponent, {

@@ -46,6 +46,7 @@ export const ToastComponent = defineComponent({
         const variant = `bg-${props.variant}`;
 
         return () => {
+            // need to define classes here, to make it reactive when props.show changes
             const classes = [
                 'toast d-flex align-items-center border-0',
                 variant,

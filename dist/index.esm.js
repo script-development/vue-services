@@ -1096,6 +1096,7 @@ const ToastComponent = defineComponent({
         const variant = `bg-${props.variant}`;
 
         return () => {
+            // need to define classes here, to make it reactive when props.show changes
             const classes = [
                 'toast d-flex align-items-center border-0',
                 variant,
@@ -1105,26 +1106,6 @@ const ToastComponent = defineComponent({
         };
     },
 });
-
-/* The Modal (background) CSS */
-const modalOverlayCSS = {
-    position: 'fixed' /* Stay in place */,
-    'z-index': 1 /* Sit on top */,
-    left: 0,
-    top: 0,
-    width: '100%' /* Full width */,
-    height: '100%' /* Full height */,
-    overflow: 'auto' /* Enable scroll if needed */,
-    'background-color': 'rgba(0,0,0,0.4)' /* Black w/ opacity */,
-};
-
-const modalContentCSS = {
-    'background-color': '#fefefe',
-    margin: '15% auto' /* 15% from the top and centered */,
-    padding: '20px',
-    border: '1px solid #888',
-    width: '80%' /* Could be more or less, depending on screen size */,
-};
 
 const ModalComponent = defineComponent({
     props: {
@@ -1143,7 +1124,7 @@ const ModalComponent = defineComponent({
             default: 'h5',
         },
         titleClass: {
-            type: Array,
+            type: String,
             required: false,
         },
 
@@ -1175,42 +1156,42 @@ const ModalComponent = defineComponent({
     },
 
     setup(props, ctx) {
-        const overLayOptions = {style: modalOverlayCSS};
-        if (props.id) overLayOptions.id = props.id;
+        const closeModal = () => {
+            if (props.cancelAction) props.cancelAction();
+            ctx.emit('close');
+        };
 
         const contentChildren = [];
 
+        const headerChildren = [];
         if (props.title) {
-            const titleOptions = {};
-            if (props.titleClass) titleOptions.class = props.titleClass;
-            contentChildren.push(h(props.titleTag, titleOptions, [props.title]));
+            const titleOptions = {class: 'modal-title '};
+            if (props.titleClass) titleOptions.class += props.titleClass;
+            headerChildren.push(h(props.titleTag, titleOptions, [props.title]));
         }
 
+        headerChildren.push(h('button', {class: 'btn-close', onclick: closeModal}));
+
+        contentChildren.push(h('div', {class: 'modal-header'}, [headerChildren]));
+
+        const bodyChildren = [];
         if (props.message) {
-            const bodyOptions = {};
-            contentChildren.push(h('p', bodyOptions, [props.message]));
+            bodyChildren.push(h('p', [props.message]));
         }
+        contentChildren.push(h('div', {class: 'modal-body'}, [bodyChildren]));
 
+        const footerChildren = [];
         if (props.cancelAction) {
-            contentChildren.push(
-                h(
-                    'button',
-                    {
-                        onclick: () => {
-                            props.cancelAction();
-                            ctx.emit('close');
-                        },
-                    },
-                    [props.cancelTitle]
-                )
-            );
+            footerChildren.push(h('button', {class: 'btn btn-secondary', onclick: closeModal}, [props.cancelTitle]));
         }
 
-        contentChildren.push(
+        footerChildren.push(
             h(
                 'button',
                 {
+                    class: 'btn btn-primary',
                     onclick: () => {
+                        // TODO :: could probably use then / promises to only close when done with the action
                         props.okAction();
                         ctx.emit('close');
                     },
@@ -1218,8 +1199,18 @@ const ModalComponent = defineComponent({
                 [props.okTitle]
             )
         );
+        contentChildren.push(h('div', {class: 'modal-footer'}, [footerChildren]));
 
-        return () => h('div', overLayOptions, [h('div', {style: modalContentCSS}, contentChildren)]);
+        const overLayOptions = {
+            class: 'modal fade show',
+            style: {display: 'block', 'background-color': 'rgba(0,0,0,0.4)'},
+        };
+        if (props.id) overLayOptions.id = props.id;
+
+        return () =>
+            h('div', overLayOptions, [
+                h('div', {class: 'modal-dialog'}, [h('div', {class: 'modal-content'}, contentChildren)]),
+            ]);
     },
 });
 
@@ -1277,6 +1268,8 @@ const hideToastMessageAfterDelay = message => {
 
 const eventApp = defineComponent({
     render() {
+        if (modals.value.length) document.body.classList.add('modal-open');
+        else document.body.classList.remove('modal-open');
         return [
             toastMessages.value.map(message => {
                 return h(ToastComponent, {
