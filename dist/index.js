@@ -252,6 +252,9 @@ router.afterEach((to, from) => {
     }
 });
 
+/** @param {NavigationHookAfter} middleware */
+const registerAfterMiddleware = middleware => routerAfterMiddleware.push(middleware);
+
 /** @param {RouteRecordRaw} routes */
 const addRoute = routes => router.addRoute(routes);
 
@@ -1346,6 +1349,50 @@ registerResponseErrorMiddleware(responseErrorMiddleware$2);
  */
 const createModal = modal => modals.value.push(modal);
 
+var NotFoundPage = {
+    render(h) {
+        return h('div', ['ERROR 404']);
+    },
+};
+
+/**
+ * @typedef {import('vue-router').NavigationHookAfter} NavigationHookAfter
+ *
+ * @typedef {import('../../../types/types').ResponseErrorMiddleware} ResponseErrorMiddleware
+ * @typedef {import('../../../types/types').ErrorBagRef} ErrorBagRef
+ */
+
+/** @type {ErrorBagRef} */
+const errors = vue.ref({});
+
+addRoute({
+    path: '/:pathMatch(.*)*',
+    name: 'not.found',
+    component: NotFoundPage,
+    meta: {title: 'Pagina niet gevonden', auth: true},
+});
+
+/** @type {NavigationHookAfter} */
+const routeMiddleware = () => (errors.value = {});
+registerAfterMiddleware(routeMiddleware);
+
+/** @type {ResponseErrorMiddleware} */
+const responseErrorMiddleware$3 = ({response}) => {
+    if (response && response.data.errors) errors.value = response.data.errors;
+};
+registerResponseErrorMiddleware(responseErrorMiddleware$3);
+
+const BaseFormError = vue.defineComponent({
+    props: {property: {type: String, required: true}},
+    setup(props) {
+        return () => {
+            if (!errors.value[props.property]) return;
+            return vue.h('div', {class: 'invalid-feedback d-block'}, [errors.value[props.property][0]]);
+        };
+    },
+});
+
+exports.BaseFormError = BaseFormError;
 exports.createModal = createModal;
 exports.createToastMessage = createToastMessage;
 exports.isLoggedIn = isLoggedIn;

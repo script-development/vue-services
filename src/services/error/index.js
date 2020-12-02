@@ -1,79 +1,40 @@
 /**
- * @typedef {import('../store').StoreService} StoreService
- * @typedef {import('../router').RouterService} RouterService
- * @typedef {import('../router').AfterMiddleware} AfterMiddleware
- * @typedef {import('../http').HTTPService} HTTPService
- * @typedef {import('../http').ResponseErrorMiddleware} ResponseErrorMiddleware
+ * @typedef {import('vue-router').NavigationHookAfter} NavigationHookAfter
  *
- * @typedef {Object.<string, string[]} ErrorBag
+ * @typedef {import('../../../types/types').ResponseErrorMiddleware} ResponseErrorMiddleware
+ * @typedef {import('../../../types/types').ErrorBagRef} ErrorBagRef
  */
-// TODO :: use a standard or must it be set?
+import {defineComponent, h, ref} from 'vue';
 import NotFoundPage from '../../pages/errors/404';
+import {registerResponseErrorMiddleware} from '../http';
+import {addRoute, registerAfterMiddleware} from '../router';
 
-const STORE_MODULE_NAME = 'errors';
+/** @type {ErrorBagRef} */
+const errors = ref({});
 
-export class ErrorService {
-    /**
-     * @param {StoreService} storeService
-     * @param {RouterService} routerService
-     * @param {HTTPService} httpService the http service for communication with the API
-     */
-    constructor(storeService, routerService, httpService) {
-        this._storeService = storeService;
+addRoute({
+    path: '/:pathMatch(.*)*',
+    name: 'not.found',
+    component: NotFoundPage,
+    meta: {title: 'Pagina niet gevonden', auth: true},
+});
 
-        this._storeService.generateAndSetDefaultStoreModule(STORE_MODULE_NAME, '', {
-            getters: {[STORE_MODULE_NAME]: state => state[this._storeService.getAllItemsStateName(false)]},
-        });
+/** @type {NavigationHookAfter} */
+export const routeMiddleware = () => (errors.value = {});
+registerAfterMiddleware(routeMiddleware);
 
-        this._routerService = routerService;
-        this._routerService.addRoutes([
-            {
-                path: '/:pathMatch(.*)*',
-                name: 'not-found',
-                component: NotFoundPage,
-                meta: {
-                    title: 'Pagina niet gevonden',
-                    auth: true,
-                },
-            },
-        ]);
+/** @type {ResponseErrorMiddleware} */
+export const responseErrorMiddleware = ({response}) => {
+    if (response && response.data.errors) errors.value = response.data.errors;
+};
+registerResponseErrorMiddleware(responseErrorMiddleware);
 
-        this._routerService.registerAfterMiddleware(this.routeMiddleware);
-
-        this._httpService = httpService;
-        this._httpService.registerResponseErrorMiddleware(this.responseErrorMiddleware);
-    }
-
-    /**
-     * Get all the known errors
-     * @returns {ErrorBag}
-     */
-    getErrors() {
-        return this._storeService.get(STORE_MODULE_NAME, STORE_MODULE_NAME);
-    }
-
-    /**
-     * Store the given errors, overriding every known error
-     *
-     * @param {ErrorBag} errors
-     */
-    setErrors(errors) {
-        this._storeService.setAllInStore(STORE_MODULE_NAME, errors);
-    }
-
-    // prettier-ignore
-    /** Clear every known error */
-    destroyErrors() { this.setErrors({}); }
-
-    /** @returns {ResponseErrorMiddleware} */
-    get responseErrorMiddleware() {
-        return ({response}) => {
-            if (response && response.data.errors) this.setErrors(response.data.errors);
+export const BaseFormError = defineComponent({
+    props: {property: {type: String, required: true}},
+    setup(props) {
+        return () => {
+            if (!errors.value[props.property]) return;
+            return h('div', {class: 'invalid-feedback d-block'}, [errors.value[props.property][0]]);
         };
-    }
-
-    /** @returns {AfterMiddleware} */
-    get routeMiddleware() {
-        return _ => this.setErrors({});
-    }
-}
+    },
+});

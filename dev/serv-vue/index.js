@@ -251,6 +251,9 @@ router.afterEach((to, from) => {
     }
 });
 
+/** @param {NavigationHookAfter} middleware */
+const registerAfterMiddleware = middleware => routerAfterMiddleware.push(middleware);
+
 /** @param {RouteRecordRaw} routes */
 const addRoute = routes => router.addRoute(routes);
 
@@ -1345,4 +1348,47 @@ registerResponseErrorMiddleware(responseErrorMiddleware$2);
  */
 const createModal = modal => modals.value.push(modal);
 
-export {createModal, createToastMessage, isLoggedIn, login, logout, moduleFactory, startApp};
+var NotFoundPage = {
+    render(h) {
+        return h('div', ['ERROR 404']);
+    },
+};
+
+/**
+ * @typedef {import('vue-router').NavigationHookAfter} NavigationHookAfter
+ *
+ * @typedef {import('../../../types/types').ResponseErrorMiddleware} ResponseErrorMiddleware
+ * @typedef {import('../../../types/types').ErrorBagRef} ErrorBagRef
+ */
+
+/** @type {ErrorBagRef} */
+const errors = ref({});
+
+addRoute({
+    path: '/:pathMatch(.*)*',
+    name: 'not.found',
+    component: NotFoundPage,
+    meta: {title: 'Pagina niet gevonden', auth: true},
+});
+
+/** @type {NavigationHookAfter} */
+const routeMiddleware = () => (errors.value = {});
+registerAfterMiddleware(routeMiddleware);
+
+/** @type {ResponseErrorMiddleware} */
+const responseErrorMiddleware$3 = ({response}) => {
+    if (response && response.data.errors) errors.value = response.data.errors;
+};
+registerResponseErrorMiddleware(responseErrorMiddleware$3);
+
+const BaseFormError = defineComponent({
+    props: {property: {type: String, required: true}},
+    setup(props) {
+        return () => {
+            if (!errors.value[props.property]) return;
+            return h('div', {class: 'invalid-feedback d-block'}, [errors.value[props.property][0]]);
+        };
+    },
+});
+
+export {BaseFormError, createModal, createToastMessage, isLoggedIn, login, logout, moduleFactory, startApp};

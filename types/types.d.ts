@@ -17,6 +17,9 @@ export type Translations = {[moduleName: string]: Translation};
 
 export type Modules = {[moduleName: string]: Module};
 
+type ErrorBag = {[property: string]: string[]};
+export type ErrorBagRef = Ref<ErrorBag>;
+
 export type ToastVariant =
     | 'danger'
     | 'success'
