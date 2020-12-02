@@ -500,14 +500,22 @@ const apiLogoutRoute = '/logout';
 
 let defaultLoggedInPageName;
 
+/** @type {Component} */
 let resetPasswordPage = ResetPasswordPage;
+/** @type {Component} */
 let loginPage = LoginPage;
+/** @type {Component} */
 let forgotPasswordPage;
+/** @type {Component} */
 let setPasswordPage;
 
+/** @param {Component} page */
 const setResetPasswordPage = page => (resetPasswordPage = page);
+/** @param {Component} page */
 const setLoginPage = page => (loginPage = page);
+/** @param {Component} page */
 const setForgotPasswordPage = page => (forgotPasswordPage = page);
+/** @param {Component} page */
 const setSetPasswordPage = page => (setPasswordPage = page);
 
 /**

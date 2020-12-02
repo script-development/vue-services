@@ -37,14 +37,22 @@ const apiResetpasswordRoute = '/resetpassword';
 
 let defaultLoggedInPageName;
 
+/** @type {Component} */
 let resetPasswordPage = ResetPasswordPage;
+/** @type {Component} */
 let loginPage = LoginPage;
+/** @type {Component} */
 let forgotPasswordPage;
+/** @type {Component} */
 let setPasswordPage;
 
+/** @param {Component} page */
 export const setResetPasswordPage = page => (resetPasswordPage = page);
+/** @param {Component} page */
 export const setLoginPage = page => (loginPage = page);
+/** @param {Component} page */
 export const setForgotPasswordPage = page => (forgotPasswordPage = page);
+/** @param {Component} page */
 export const setSetPasswordPage = page => (setPasswordPage = page);
 
 /**
