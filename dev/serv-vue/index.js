@@ -1423,6 +1423,7 @@ export {
     getPluralTranslation,
     getRequest,
     getSingularTranslation,
+    goToRoute,
     isLoggedIn,
     login,
     logout,

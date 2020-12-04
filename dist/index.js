@@ -1423,6 +1423,7 @@ exports.getCapitalizedSingularTranslation = getCapitalizedSingularTranslation;
 exports.getPluralTranslation = getPluralTranslation;
 exports.getRequest = getRequest;
 exports.getSingularTranslation = getSingularTranslation;
+exports.goToRoute = goToRoute;
 exports.isLoggedIn = isLoggedIn;
 exports.login = login;
 exports.logout = logout;

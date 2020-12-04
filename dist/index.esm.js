@@ -1405,4 +1405,4 @@ const BaseFormError = defineComponent({
     },
 });
 
-export { BaseFormError, addRoute, createModal, createToastMessage, download, getCapitalizedPluralTranslation, getCapitalizedSingularTranslation, getPluralTranslation, getRequest, getSingularTranslation, isLoggedIn, login, logout, moduleFactory, postRequest, startApp };
+export { BaseFormError, addRoute, createModal, createToastMessage, download, getCapitalizedPluralTranslation, getCapitalizedSingularTranslation, getPluralTranslation, getRequest, getSingularTranslation, goToRoute, isLoggedIn, login, logout, moduleFactory, postRequest, startApp };

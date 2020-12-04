@@ -11,7 +11,7 @@ export {BaseFormError} from './services/error';
 
 export {getRequest, postRequest, download} from './services/http';
 
-export {addRoute} from './services/router';
+export {addRoute, goToRoute} from './services/router';
 
 export {
     getPluralTranslation,
