@@ -327,6 +327,9 @@ class MissingDefaultLoggedinPageError extends Error {
 // TODO :: heavilly dependant on webpack and laravel mix
 // TODO :: how to test these branches?
 const API_URL = process.env.MIX_APP_URL ? `${process.env.MIX_APP_URL}/api` : '/api';
+const HEADERS_TO_TYPE = {
+    'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet': 'application/xlsx',
+};
 
 const CACHE_KEY = 'HTTP_CACHE';
 
@@ -404,6 +407,24 @@ const postRequest = async (endpoint, data) => http.post(endpoint, data);
  * @param {String} endpoint the endpoint for the get
  */
 const deleteRequest = async endpoint => http.delete(endpoint);
+
+/**
+ * download a file from the backend
+ * type should be resolved automagically, if not, then you can pass the type
+ * @param {String} endpoint the endpoint for the download
+ * @param {String} documentName the name of the document to be downloaded
+ * @param {String} [type] the downloaded document type
+ */
+const download = async (endpoint, documentName, type) =>
+    http.get(endpoint, {responseType: 'blob'}).then(response => {
+        if (!type) type = HEADERS_TO_TYPE[response.headers['content-type']];
+        const blob = new Blob([response.data], {type});
+        const link = document.createElement('a');
+        link.href = window.URL.createObjectURL(blob);
+        link.download = documentName;
+        link.click();
+        return response;
+    });
 
 /** @param {ResponseMiddleware} middlewareFunc */
 const registerResponseMiddleware = middlewareFunc => responseMiddleware.push(middlewareFunc);
@@ -1342,7 +1363,7 @@ registerResponseErrorMiddleware(responseErrorMiddleware$2);
 const createModal = modal => modals.value.push(modal);
 
 var NotFoundPage = {
-    render(h) {
+    render() {
         return h('div', ['ERROR 404']);
     },
 };
@@ -1384,4 +1405,4 @@ const BaseFormError = defineComponent({
     },
 });
 
-export { BaseFormError, createModal, createToastMessage, isLoggedIn, login, logout, moduleFactory, startApp };
+export { BaseFormError, addRoute, createModal, createToastMessage, download, getCapitalizedPluralTranslation, getCapitalizedSingularTranslation, getPluralTranslation, getRequest, getSingularTranslation, isLoggedIn, login, logout, moduleFactory, postRequest, startApp };
