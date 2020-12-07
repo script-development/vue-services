@@ -1125,6 +1125,26 @@ class RouteSettings {
  * @typedef {import('axios').AxiosRequestConfig} AxiosRequestConfig
  */
 
+/**
+ * Makes a deep copy
+ * If it's not an object or array, it will return toCopy
+ *
+ * @param {any} toCopy Can be anything to make a copy of
+ */
+const deepCopy = toCopy => {
+    if (typeof toCopy !== 'object' || toCopy === null) {
+        return toCopy;
+    }
+
+    const copiedObject = Array.isArray(toCopy) ? [] : {};
+
+    for (const key in toCopy) {
+        copiedObject[key] = deepCopy(toCopy[key]);
+    }
+
+    return copiedObject;
+};
+
 class StoreModuleFactory {
     /**
      * @param {HTTPService} httpService the http service for communication with the API
@@ -1254,7 +1274,7 @@ class StoreModuleFactory {
      * */
     createDefaultActions(endpoint) {
         const actions = {
-            [this.setAllAction]: ({commit}, allData) => commit(this.setAllMutation, allData),
+            [this.setAllAction]: ({commit}, allData) => commit(this.setAllMutation, deepCopy(allData)),
         };
 
         if (!endpoint) return actions;
@@ -3789,9 +3809,10 @@ class BaseController {
      */
     get update() {
         return (item, goToRouteName) =>
-            this._storeService.update(this._APIEndpoint, item).then(() => {
+            this._storeService.update(this._APIEndpoint, item).then(response => {
                 if (!goToRouteName) return this._goToPageAfterEditAction(item.id);
                 this._routerService.goToRoute(goToRouteName);
+                return response;
             });
     }
 
@@ -3802,9 +3823,10 @@ class BaseController {
      */
     get create() {
         return (item, goToRouteName) =>
-            this._storeService.create(this._APIEndpoint, item).then(() => {
+            this._storeService.create(this._APIEndpoint, item).then(response => {
                 if (!goToRouteName) return this._goToPageAfterCreateAction(item.id);
                 this._routerService.goToRoute(goToRouteName);
+                return response;
             });
     }
 

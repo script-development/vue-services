@@ -5,6 +5,26 @@
  */
 import Vue from 'vue';
 
+/**
+ * Makes a deep copy
+ * If it's not an object or array, it will return toCopy
+ *
+ * @param {any} toCopy Can be anything to make a copy of
+ */
+const deepCopy = toCopy => {
+    if (typeof toCopy !== 'object' || toCopy === null) {
+        return toCopy;
+    }
+
+    const copiedObject = Array.isArray(toCopy) ? [] : {};
+
+    for (const key in toCopy) {
+        copiedObject[key] = deepCopy(toCopy[key]);
+    }
+
+    return copiedObject;
+};
+
 export class StoreModuleFactory {
     /**
      * @param {HTTPService} httpService the http service for communication with the API
@@ -134,7 +154,7 @@ export class StoreModuleFactory {
      * */
     createDefaultActions(endpoint) {
         const actions = {
-            [this.setAllAction]: ({commit}, allData) => commit(this.setAllMutation, allData),
+            [this.setAllAction]: ({commit}, allData) => commit(this.setAllMutation, deepCopy(allData)),
         };
 
         if (!endpoint) return actions;
