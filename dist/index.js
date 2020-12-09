@@ -3810,7 +3810,10 @@ class BaseController {
     get update() {
         return (item, goToRouteName) =>
             this._storeService.update(this._APIEndpoint, item).then(response => {
-                if (!goToRouteName) return this._goToPageAfterEditAction(item.id);
+                if (!goToRouteName) {
+                    this._goToPageAfterEditAction(item.id);
+                    return response;
+                }
                 this._routerService.goToRoute(goToRouteName);
                 return response;
             });
@@ -3824,7 +3827,10 @@ class BaseController {
     get create() {
         return (item, goToRouteName) =>
             this._storeService.create(this._APIEndpoint, item).then(response => {
-                if (!goToRouteName) return this._goToPageAfterCreateAction(item.id);
+                if (!goToRouteName) {
+                    this._goToPageAfterCreateAction(item.id);
+                    return response;
+                }
                 this._routerService.goToRoute(goToRouteName);
                 return response;
             });
@@ -3837,9 +3843,13 @@ class BaseController {
      */
     get destroy() {
         return (id, goToRouteName) =>
-            this._storeService.destroy(this._APIEndpoint, id).then(() => {
-                if (!goToRouteName) return this._goToPageAfterDeleteAction(id);
+            this._storeService.destroy(this._APIEndpoint, id).then(response => {
+                if (!goToRouteName) {
+                    this._goToPageAfterDeleteAction(id);
+                    return response;
+                }
                 this._routerService.goToRoute(goToRouteName);
+                return response;
             });
     }
 
