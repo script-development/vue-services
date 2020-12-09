@@ -759,6 +759,26 @@ class StoreModuleNotFoundError extends Error {
 // TODO :: JSDoc and vsCode can't handle the Item|Item[] parameter
 
 /**
+ * Makes a deep copy
+ * If it's not an object or array, it will return toCopy
+ *
+ * @param {any} toCopy Can be anything to make a copy of
+ */
+const deepCopy = toCopy => {
+    if (typeof toCopy !== 'object' || toCopy === null) {
+        return toCopy;
+    }
+
+    const copiedObject = Array.isArray(toCopy) ? [] : {};
+
+    for (const key in toCopy) {
+        copiedObject[key] = deepCopy(toCopy[key]);
+    }
+
+    return copiedObject;
+};
+
+/**
  * Creates a store module for the given module name.
  * When extra store functionality is given, it will extend the base module with the extra functionality.
  *
@@ -786,7 +806,8 @@ var StoreModuleFactory = moduleName => {
          *
          * @param {Item|Item[]} data the data to set
          */
-        setAll: data => {
+        setAll: originalData => {
+            const data = deepCopy(originalData);
             if (!data.length) {
                 // if data is not an array it probably recieves a single item with an id
                 // if that's not the case then return
@@ -1418,6 +1439,7 @@ exports.addRoute = addRoute;
 exports.createModal = createModal;
 exports.createToastMessage = createToastMessage;
 exports.download = download;
+exports.getAllFromStore = getAllFromStore;
 exports.getCapitalizedPluralTranslation = getCapitalizedPluralTranslation;
 exports.getCapitalizedSingularTranslation = getCapitalizedSingularTranslation;
 exports.getPluralTranslation = getPluralTranslation;

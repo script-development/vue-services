@@ -13,6 +13,8 @@ export {getRequest, postRequest, download} from './services/http';
 
 export {addRoute, goToRoute} from './services/router';
 
+export {getAllFromStore} from './services/store';
+
 export {
     getPluralTranslation,
     getCapitalizedPluralTranslation,
