@@ -5,14 +5,6 @@ const {strictEqual} = assert;
 
 import {deleteServiceFromCache, newService} from '../../helpers';
 
-const sleep = time => {
-    return new Promise(resolve => {
-        setTimeout(() => {
-            resolve();
-        }, time);
-    });
-};
-
 describe('Loading Service', () => {
     after(() => deleteServiceFromCache('loading'));
 
@@ -24,12 +16,6 @@ describe('Loading Service', () => {
     });
 
     describe('setLoading function', () => {
-        // const {loading, setLoading, setMinTimeSpinner, setSpinnerTimeout} = newService('loading');
-        // TODO :: maybe use sinon.useFakeTimers? check https://sinonjs.org/releases/v1.17.6/fake-timers/
-        // setting spinner timeout and mintime spinner to lower value, so the tests speed up
-        // setSpinnerTimeout(20);
-        // setMinTimeSpinner(20);
-
         it('should not change loading when loading is already false', () => {
             const {loading, setLoading} = newService('loading');
             setLoading(false);

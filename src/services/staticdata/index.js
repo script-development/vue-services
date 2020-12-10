@@ -1,6 +1,15 @@
 /**
- * @typedef {import('../store').StoreService} StoreService
- * @typedef {import('../http').HTTPService} HTTPService
+ * @typedef {import('../../../types/services/store').Store} Store
+ * @typedef {import('../../../types/services/store').registerStoreModule} registerStoreModule
+ * @typedef {import('../../../types/services/store/factory').StoreModuleFactory} StoreModuleFactory
+ */
+
+import {registerStoreModule} from '../store';
+import {getRequest} from '../http';
+import StoreModuleFactory from '../store/factory';
+
+/**
+ * Define msgpack for later use
  */
 let msgpack;
 /**
@@ -20,96 +29,74 @@ try {
 
 const MSG_PACK_DATA_TYPE = 'msg-pack';
 
-export class StaticDataService {
-    /**
-     * @param {StoreService} storeService
-     * @param {HTTPService} httpService the http service for communication with the API
-     */
-    constructor(storeService, httpService) {
-        this._storeService = storeService;
-        this._httpService = httpService;
+const apiStaticDataEndpoint = 'staticdata';
 
-        this._data = {
-            normal: [],
-            msgpack: [],
-        };
+const DATA = {
+    normal: [],
+    msgpack: [],
+};
 
-        this._apiStaticDataEndpoint = 'staticdata';
-    }
-    /**
-     * initiates the setup for the default store modules
-     *
-     * @param {[string,Object<string,string>]} data Modulenames
-     */
-    createStoreModules(data) {
-        for (const moduleName of data) {
-            if (typeof moduleName == 'string') {
-                this.createStoreModule(moduleName);
-            } else if (typeof moduleName == 'object' && Object.values(moduleName) == MSG_PACK_DATA_TYPE) {
-                this.createStoreModuleMsgPack(Object.keys(moduleName).toString());
-            }
+/** @type {Store} */
+const store = {};
+
+/**
+ * initiates the setup for the default store modules
+ *
+ * @param {[string,Object<string,string>]} data Modulenames
+ */
+export const createStoreModules = data => {
+    for (const moduleName of data) {
+        if (typeof moduleName == 'string') {
+            store[moduleName] = StoreModuleFactory(moduleName);
+            DATA.normal.push(moduleName);
+        } else if (typeof moduleName == 'object' && Object.values(moduleName) == MSG_PACK_DATA_TYPE) {
+            createStoreModuleMsgPack(Object.keys(moduleName).toString());
         }
     }
+};
 
-    /**
-     * Creates and registers modules for the staticdata
-     *
-     * @param {string} storeModuleName Modulenames
-     */
-    createStoreModule(storeModuleName) {
-        this._data.normal.push(storeModuleName);
-
-        this._storeService.generateAndSetDefaultStoreModule(storeModuleName);
+/**
+ * Create module for static data with msg-pack lite(peerDependencies)
+ *
+ * @param {string} storeModuleName Modulenames
+ */
+export const createStoreModuleMsgPack = storeModuleName => {
+    if (!msgpack) {
+        console.error('MESSAGE PACK NOT INSTALLED');
+        return console.warn('run the following command to install messagepack: npm --save @msgpack/msgpack');
     }
 
-    /**
-     * Create module for static data with msg-pack lite(peerDependencies)
-     *
-     * @param {string} storeModuleName Modulenames
-     */
-    createStoreModuleMsgPack(storeModuleName) {
-        if (!msgpack) {
-            console.error('MESSAGE PACK NOT INSTALLED');
-            return console.warn('run the following command to install messagepack: npm --save @msgpack/msgpack');
-        }
-        this._data.msgpack.push(storeModuleName);
+    const storeModule = StoreModuleFactory(storeModuleName);
 
-        const storeModule = this._storeService._factory.createDefaultStore(storeModuleName);
-        storeModule.actions[this._storeService._factory.readAction] = () =>
-            this._httpService.get(storeModuleName, {responseType: 'arraybuffer'}).then(response => {
-                this._storeService.setAllInStore(storeModuleName, msgpack.decode(new Uint8Array(response.data)));
-                return response;
-            });
-        this._storeService.registerModule(storeModuleName, storeModule);
+    getRequest(storeModuleName, {responseType: 'arraybuffer'}).then(response => {
+        storeModule.setAll(storeModuleName, msgpack.decode(new Uint8Array(response.data)));
+        return response;
+    });
+    registerStoreModule(storeModuleName, storeModule);
+};
+
+/**
+ * Sends an action to the store which reads all the staticdata from the server defined in the 'constants/staticdata.js' file
+ */
+export const getStaticData = async () => {
+    const response = await getRequest(apiStaticDataEndpoint);
+
+    for (const staticDataName of DATA.normal) {
+        store[staticDataName].setAll(response.data[staticDataName]);
     }
+};
 
-    /**
-     * Sends an action to the store which reads all the staticdata from the server defined in the 'constants/staticdata.js' file
-     */
-    getStaticData() {
-        this._httpService.get(this._apiStaticDataEndpoint);
+/**
+ * Get all from a specifid segment in the staticdata store
+ *
+ * @param {String} data the module from which to get all
+ */
+export const getStaticDataSegment = data => store[data].all;
 
-        for (const staticDataName of this._data.msgpack) {
-            this._storeService.read(staticDataName);
-        }
-    }
-
-    /**
-     * Get all from data from the given store module
-     *
-     * @param {String} data the module from which to get all
-     */
-    getAll(data) {
-        return this._storeService.getAllFromStore(data);
-    }
-
-    /**
-     * Get all data from the given store module by id
-     *
-     * @param {String} data the module from which to get all
-     * @param {Number} id the id of the data object to get
-     */
-    getById(data, id) {
-        return this._storeService.getByIdFromStore(data, id);
-    }
-}
+/**
+ * Get all data from the given store module by id
+ *
+ * @param {String} data the module from which to get all
+ * @param {Number} id the id of the data object to get
+ */
+export const byId = (data, id) => store[data].byId(id);
