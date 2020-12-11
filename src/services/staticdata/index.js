@@ -31,13 +31,18 @@ const MSG_PACK_DATA_TYPE = 'msg-pack';
 
 const apiStaticDataEndpoint = 'staticdata';
 
-const DATA = {
+/** Exporting for testing purposes */
+export const DATA = {
     normal: [],
     msgpack: [],
 };
 
-/** @type {Store} */
-const store = {};
+/**
+ * Exporting for testing purposes
+ *
+ * @type {Store}
+ */
+export const store = {};
 
 /**
  * initiates the setup for the default store modules
@@ -87,9 +92,9 @@ export const getStaticData = async () => {
 };
 
 /**
- * Get all from a specifid segment in the staticdata store
+ * Get all from a specific segment in the staticdata store
  *
- * @param {String} data the module from which to get all
+ * @param {String} data the module from which to get all data from
  */
 export const getStaticDataSegment = data => store[data].all;
 

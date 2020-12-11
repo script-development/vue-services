@@ -15,7 +15,7 @@ import {
     setResetPasswordPage,
     setSetPasswordPage,
 } from '../services/auth';
-// * @param {[string,Object<string,string>]} [staticData] the static data
+import {createStoreModules} from '../services/staticdata';
 
 /**
  * Start the app.
@@ -27,8 +27,9 @@ import {
  * @param {Modules} modules the login page
  * @param {string} defaultLoggedInPageName the page to go to when logged in
  * @param {AuthComponents} authComponents the page to go to when logged in
+ * @param {[string,Object<string,string>]} [staticData] the static data
  */
-export const startApp = (mainComponent, modules, defaultLoggedInPageName, authComponents) => {
+export const startApp = (mainComponent, modules, defaultLoggedInPageName, authComponents, staticData) => {
     setDefaultLoggedInPageName(defaultLoggedInPageName);
     // set auth pages
     setLoginPage(authComponents.login);
@@ -38,7 +39,7 @@ export const startApp = (mainComponent, modules, defaultLoggedInPageName, authCo
     // set auth routes
     setAuthRoutes();
 
-    // if (staticData) this._staticDataService.createStoreModules(staticData);
+    if (staticData) createStoreModules(staticData);
 
     for (const moduleName in modules) modules[moduleName].init();
 
