@@ -5,6 +5,7 @@
  * @typedef {import('vue-router').LocationQuery} LocationQuery
  *
  * @typedef {import('../../../types/services/router').RouteSettings} RouteSettings
+ * @typedef {import('../../../types/module').Module} Module
  */
 
 import {createRouter, createWebHistory} from 'vue-router';
@@ -104,6 +105,11 @@ export const getCurrentRouteQuery = () => router.currentRoute.value.query;
 export const getCurrentRouteId = () => router.currentRoute.value.params.id.toString();
 /** Get the name from the current route */
 export const getCurrentRouteName = () => router.currentRoute.value.name.toString();
+/**
+ * Get the module binded to the current route
+ * @returns {Module}
+ */
+export const getCurrentModule = () => router.currentRoute.value.meta?.module;
 
 /**
  * checks if the given string is in the current routes name

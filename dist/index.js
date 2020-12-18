@@ -102,6 +102,7 @@ const setTranslation = (moduleName, translation) => (TRANSLATIONS[moduleName] = 
  * @typedef {import('vue').Component} Component
  * @typedef {import('vue-router').RouteRecordRaw} RouteRecordRaw
  * @typedef {import('../../../../types/services/router').RouteSettings} RouteSettings
+ * @typedef {import('../../../../types/module').Module} Module
  */
 
 const CREATE_PAGE_NAME = '.create';
@@ -173,6 +174,7 @@ const partialFactory = (moduleName, part, component) => {
  * Does not add the optional routes otherwise
  *
  * @param {string} moduleName
+ * @param {Module} moduleToBind
  * @param {Component} baseComponent
  * @param {Component} [overviewComponent]
  * @param {Component} [createComponent]
@@ -181,11 +183,20 @@ const partialFactory = (moduleName, part, component) => {
  *
  * @returns {RouteSettings}
  */
-var RouteSettingFactory = (moduleName, baseComponent, overviewComponent, createComponent, editComponent, showComponent) => {
+var RouteSettingFactory = (
+    moduleName,
+    moduleToBind,
+    baseComponent,
+    overviewComponent,
+    createComponent,
+    editComponent,
+    showComponent
+) => {
     const routeSettings = {
         base: {
             path: '/' + getPluralTranslation(moduleName),
             component: baseComponent,
+            meta: {module: moduleToBind},
         },
     };
 
@@ -204,6 +215,7 @@ var RouteSettingFactory = (moduleName, baseComponent, overviewComponent, createC
  * @typedef {import('vue-router').LocationQuery} LocationQuery
  *
  * @typedef {import('../../../types/services/router').RouteSettings} RouteSettings
+ * @typedef {import('../../../types/module').Module} Module
  */
 
 // exported only to use in the app starter to bind the router
@@ -296,6 +308,11 @@ const goToRoute = (name, id, query) => {
 const getCurrentRoute = () => router.currentRoute;
 /** Get the id from the params from the current route */
 const getCurrentRouteId = () => router.currentRoute.value.params.id.toString();
+/**
+ * Get the module binded to the current route
+ * @returns {Module}
+ */
+const getCurrentModule = () => router.currentRoute.value.meta?.module;
 
 /**
  * checks if the given string is in the current routes name
@@ -669,76 +686,6 @@ const setAuthRoutes = () => {
     }
 };
 
-/**
- * @typedef {import('vue').Component} Component
- *
- * @typedef {import('../../types/types').Modules} Modules
- * @typedef {import('../../types/types').AuthComponents} AuthComponents
- */
-// * @param {[string,Object<string,string>]} [staticData] the static data
-
-/**
- * Start the app.
- * Set required settings.
- * Init the modules.
- * Set the static data.
- *
- * @param {Component} mainComponent the main app component
- * @param {Modules} modules the login page
- * @param {string} defaultLoggedInPageName the page to go to when logged in
- * @param {AuthComponents} authComponents the page to go to when logged in
- */
-const startApp = (mainComponent, modules, defaultLoggedInPageName, authComponents) => {
-    setDefaultLoggedInPageName(defaultLoggedInPageName);
-    // set auth pages
-    setLoginPage(authComponents.login);
-    setResetPasswordPage(authComponents.resetPassword);
-    if (authComponents.forgotPassword) setForgotPasswordPage(authComponents.forgotPassword);
-    if (authComponents.setPassword) setSetPasswordPage(authComponents.setPassword);
-    // set auth routes
-    setAuthRoutes();
-
-    // if (staticData) this._staticDataService.createStoreModules(staticData);
-
-    for (const moduleName in modules) modules[moduleName].init();
-
-    const app = vue.createApp(mainComponent);
-    app.use(router);
-    app.mount('#app');
-
-    // this._eventService.app = createApp(mainComponent);
-    // this._eventService.app.use(this._routerService.router);
-    // this._eventService.app.mount('#app');
-
-    // TODO :: could even do this first and .then(()=>this._authService.getLoggedInUser())
-    // or make it a setting
-    // if (this._authService.isLoggedin) this._authService.getLoggedInUser();
-};
-
-const name = 'default';
-
-var MinimalRouterView = vue.defineComponent({
-    name: 'MinimalRouterView',
-    functional: true,
-    props: {
-        depth: {
-            type: Number,
-            default: 0,
-        },
-    },
-    setup(props) {
-        return () => {
-            const matched = getCurrentRoute().value.matched[props.depth];
-            const component = matched && matched.components[name];
-            // render empty node if no matched route or no config component
-            if (!matched || !component) {
-                return () => vue.h('div', [404]);
-            }
-            return vue.h(component);
-        };
-    },
-});
-
 class StoreModuleNotFoundError extends Error {
     constructor(...params) {
         // Pass remaining arguments (including vendor specific ones) to parent constructor
@@ -942,6 +889,145 @@ const generateAndRegisterDefaultStoreModule = moduleName =>
     registerStoreModule(moduleName, StoreModuleFactory(moduleName));
 
 /**
+ * @typedef {import('../../../types/services/store').Store} Store
+ * @typedef {import('../../../types/services/store').registerStoreModule} registerStoreModule
+ * @typedef {import('../../../types/services/store/factory').StoreModuleFactory} StoreModuleFactory
+ */
+
+/**
+ * Define msgpack for later use
+ */
+let msgpack;
+/**
+ * Gives a warning in webpack, check this issue: https://github.com/webpack/webpack/issues/7713
+ * this is the way to go for now
+ *
+ * to ignore this error, add the following webpack config in webpack.config.js:
+ * {externals: {'@msgpack/msgpack': true}}
+ *
+ * or when using 'laravel-mix', the following to webpack.mix.js:
+ * mix.webpackConfig({externals: {'@msgpack/msgpack': 'msgpack'}});
+ */
+try {
+    msgpack = require('@msgpack/msgpack');
+    // eslint-disable-next-line
+} catch (error) {}
+
+const MSG_PACK_DATA_TYPE = 'msg-pack';
+
+/**
+ * Exporting for testing purposes
+ *
+ * @type {Store}
+ */
+const store$1 = {};
+
+/**
+ * initiates the setup for the default store modules
+ *
+ * @param {[string,Object<string,string>]} data Modulenames
+ */
+const createStoreModules = data => {
+    for (const moduleName of data) {
+        if (typeof moduleName == 'string') {
+            store$1[moduleName] = StoreModuleFactory(moduleName);
+        } else if (typeof moduleName == 'object' && Object.values(moduleName) == MSG_PACK_DATA_TYPE) {
+            createStoreModuleMsgPack(Object.keys(moduleName).toString());
+        }
+    }
+};
+
+/**
+ * Create module for static data with msg-pack lite(peerDependencies)
+ *
+ * @param {string} storeModuleName Modulenames
+ */
+const createStoreModuleMsgPack = storeModuleName => {
+    if (!msgpack) {
+        console.error('MESSAGE PACK NOT INSTALLED');
+        return console.warn('run the following command to install messagepack: npm --save @msgpack/msgpack');
+    }
+
+    const storeModule = StoreModuleFactory(storeModuleName);
+
+    getRequest(storeModuleName, {responseType: 'arraybuffer'}).then(response => {
+        storeModule.setAll(storeModuleName, msgpack.decode(new Uint8Array(response.data)));
+        return response;
+    });
+    registerStoreModule(storeModuleName, storeModule);
+};
+
+/**
+ * @typedef {import('vue').Component} Component
+ *
+ * @typedef {import('../../types/types').Modules} Modules
+ * @typedef {import('../../types/types').AuthComponents} AuthComponents
+ */
+
+/**
+ * Start the app.
+ * Set required settings.
+ * Init the modules.
+ * Set the static data.
+ *
+ * @param {Component} mainComponent the main app component
+ * @param {Modules} modules the login page
+ * @param {string} defaultLoggedInPageName the page to go to when logged in
+ * @param {AuthComponents} authComponents the page to go to when logged in
+ * @param {[string,Object<string,string>]} [staticData] the static data
+ */
+const startApp = (mainComponent, modules, defaultLoggedInPageName, authComponents, staticData) => {
+    setDefaultLoggedInPageName(defaultLoggedInPageName);
+    // set auth pages
+    setLoginPage(authComponents.login);
+    setResetPasswordPage(authComponents.resetPassword);
+    if (authComponents.forgotPassword) setForgotPasswordPage(authComponents.forgotPassword);
+    if (authComponents.setPassword) setSetPasswordPage(authComponents.setPassword);
+    // set auth routes
+    setAuthRoutes();
+
+    if (staticData) createStoreModules(staticData);
+
+    for (const moduleName in modules) modules[moduleName].init();
+
+    const app = vue.createApp(mainComponent);
+    app.use(router);
+    app.mount('#app');
+
+    // this._eventService.app = createApp(mainComponent);
+    // this._eventService.app.use(this._routerService.router);
+    // this._eventService.app.mount('#app');
+
+    // TODO :: could even do this first and .then(()=>this._authService.getLoggedInUser())
+    // or make it a setting
+    // if (this._authService.isLoggedin) this._authService.getLoggedInUser();
+};
+
+const name = 'default';
+
+var MinimalRouterView = vue.defineComponent({
+    name: 'MinimalRouterView',
+    functional: true,
+    props: {
+        depth: {
+            type: Number,
+            default: 0,
+        },
+    },
+    setup(props) {
+        return () => {
+            const matched = getCurrentRoute().value.matched[props.depth];
+            const component = matched && matched.components[name];
+            // render empty node if no matched route or no config component
+            if (!matched || !component) {
+                return () => vue.h('div', [404]);
+            }
+            return vue.h(component);
+        };
+    },
+});
+
+/**
  * @typedef {import('vue-router').LocationQuery} LocationQuery
  *
  * @typedef {import('../../types/types').Item} Item
@@ -950,6 +1036,8 @@ const generateAndRegisterDefaultStoreModule = moduleName =>
  * @typedef {import('../../types/module').Module} Module
  *
  */
+
+// TODO :: refactor to more readable code
 
 /**
  * @param {string} moduleName
@@ -962,51 +1050,7 @@ const moduleFactory = (moduleName, components, translation) => {
     generateAndRegisterDefaultStoreModule(moduleName);
     setTranslation(moduleName, translation);
 
-    const readStoreAction = () => getRequest(moduleName);
-
-    if (!components.base) {
-        components.base = vue.defineComponent({
-            name: `${moduleName}-base`,
-            // TODO :: check if this works in every case
-            render: () => vue.h(MinimalRouterView, {depth: 1}),
-            // render: () => h(RouterView),
-            // TODO #9 @Goosterhof
-            mounted: readStoreAction,
-        });
-    }
-
-    const routeSettings = RouteSettingFactory(
-        moduleName,
-        components.base,
-        components.overview,
-        components.create,
-        components.edit,
-        components.show
-    );
-
-    return {
-        routeSettings,
-        /** Go to the over view page fromm this controller */
-        goToOverviewPage: () => goToRoute(routeSettings.overview.name.toString()),
-        /**
-         * Go the the show page for the given id
-         *
-         * @param {string} id id of item to go to the show page
-         */
-        goToShowPage: id => goToRoute(routeSettings.show.name.toString(), id),
-        /**
-         * Go to the edit page for this controller
-         *
-         * @param {string} id
-         * @param {LocationQuery} [query] the optional query for the new route
-         */
-        goToEditPage: (id, query) => goToRoute(routeSettings.edit.name.toString(), id, query),
-        /**
-         * Go to the create page for this controller
-         *
-         * @param {LocationQuery} [query] the optional query for the new route
-         */
-        goToCreatePage: query => goToRoute(routeSettings.create.name.toString(), undefined, query),
+    const createdModule = {
         /**
          * Sends a delete request to the server.
          * Delete's the given id from the server
@@ -1032,10 +1076,6 @@ const moduleFactory = (moduleName, components, translation) => {
          * @param {Item} item the item to be created
          */
         createStoreAction: item => postRequest(moduleName, item),
-        /**
-         * Sends a get request to the server, which returns all items on the server from that endpoint
-         */
-        readStoreAction,
 
         /**
          * Sends a get request to the server, which returns a single item on the server based on the given id
@@ -1069,13 +1109,64 @@ const moduleFactory = (moduleName, components, translation) => {
         get getByCurrentRouteId() {
             return getByIdFromStore(moduleName, getCurrentRouteId());
         },
-
-        /**
-         * Init the controller.
-         * This will register the routes.
-         */
-        init: () => addRoutesBasedOnRouteSettings(routeSettings),
     };
+
+    /**
+     * Sends a get request to the server, which returns all items on the server from that endpoint
+     */
+    createdModule.readStoreAction = () => getRequest(moduleName);
+
+    if (!components.base) {
+        components.base = vue.defineComponent({
+            name: `${moduleName}-base`,
+            // TODO :: check if this works in every case
+            render: () => vue.h(MinimalRouterView, {depth: 1}),
+            // render: () => h(RouterView),
+            // TODO #9 @Goosterhof
+            mounted: createdModule.readStoreAction,
+        });
+    }
+
+    createdModule.routeSettings = RouteSettingFactory(
+        moduleName,
+        createdModule,
+        components.base,
+        components.overview,
+        components.create,
+        components.edit,
+        components.show
+    );
+
+    /** Go to the over view page fromm this controller */
+    createdModule.goToOverviewPage = () => goToRoute(createdModule.routeSettings.overview.name.toString());
+    /**
+     * Go the the show page for the given id
+     *
+     * @param {string} id id of item to go to the show page
+     */
+    createdModule.goToShowPage = id => goToRoute(createdModule.routeSettings.show.name.toString(), id);
+    /**
+     * Go to the edit page for this controller
+     *
+     * @param {string} id
+     * @param {LocationQuery} [query] the optional query for the new route
+     */
+    createdModule.goToEditPage = (id, query) => goToRoute(createdModule.routeSettings.edit.name.toString(), id, query);
+    /**
+     * Go to the create page for this controller
+     *
+     * @param {LocationQuery} [query] the optional query for the new route
+     */
+    createdModule.goToCreatePage = query =>
+        goToRoute(createdModule.routeSettings.create.name.toString(), undefined, query);
+
+    /**
+     * Init the controller.
+     * This will register the routes.
+     */
+    createdModule.init = () => addRoutesBasedOnRouteSettings(createdModule.routeSettings);
+
+    return createdModule;
 };
 
 // import MinimalRouterView from '../components/MinimalRouterView';
@@ -1442,6 +1533,7 @@ exports.download = download;
 exports.getAllFromStore = getAllFromStore;
 exports.getCapitalizedPluralTranslation = getCapitalizedPluralTranslation;
 exports.getCapitalizedSingularTranslation = getCapitalizedSingularTranslation;
+exports.getCurrentModule = getCurrentModule;
 exports.getPluralTranslation = getPluralTranslation;
 exports.getRequest = getRequest;
 exports.getSingularTranslation = getSingularTranslation;

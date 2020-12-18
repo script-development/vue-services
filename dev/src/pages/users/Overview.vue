@@ -14,7 +14,6 @@
 </template>
 
 <script>
-import {computed} from 'vue';
 import {userModule} from '../../modules/user';
 
 export default {

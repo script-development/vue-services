@@ -1,5 +1,6 @@
 import {Component} from 'vue';
 import {LocationQuery, NavigationGuard, NavigationHookAfter, RouteRecordRaw} from 'vue-router';
+import {Module} from '../module';
 
 export type RouteSettings = {
     base: RouteRecordRaw;
@@ -48,6 +49,8 @@ export function getCurrentRouteQuery(): LocationQuery;
 export function getCurrentRouteId(): string;
 /** Get the name from the current route */
 export function getCurrentRouteName(): string;
+/** Get the name from the current route */
+export function getCurrentModule(): Module;
 
 /** returns if you are on the create page */
 export function onCreatePage(): boolean;

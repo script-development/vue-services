@@ -11,7 +11,7 @@ export {BaseFormError} from './services/error';
 
 export {getRequest, postRequest, download} from './services/http';
 
-export {addRoute, goToRoute} from './services/router';
+export {addRoute, goToRoute, getCurrentModule} from './services/router';
 
 export {getAllFromStore} from './services/store';
 

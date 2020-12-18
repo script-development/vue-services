@@ -2,6 +2,7 @@
  * @typedef {import('vue').Component} Component
  * @typedef {import('vue-router').RouteRecordRaw} RouteRecordRaw
  * @typedef {import('../../../../types/services/router').RouteSettings} RouteSettings
+ * @typedef {import('../../../../types/module').Module} Module
  */
 
 import {
@@ -79,6 +80,7 @@ export const partialFactory = (moduleName, part, component) => {
  * Does not add the optional routes otherwise
  *
  * @param {string} moduleName
+ * @param {Module} moduleToBind
  * @param {Component} baseComponent
  * @param {Component} [overviewComponent]
  * @param {Component} [createComponent]
@@ -87,11 +89,20 @@ export const partialFactory = (moduleName, part, component) => {
  *
  * @returns {RouteSettings}
  */
-export default (moduleName, baseComponent, overviewComponent, createComponent, editComponent, showComponent) => {
+export default (
+    moduleName,
+    moduleToBind,
+    baseComponent,
+    overviewComponent,
+    createComponent,
+    editComponent,
+    showComponent
+) => {
     const routeSettings = {
         base: {
             path: '/' + getPluralTranslation(moduleName),
             component: baseComponent,
+            meta: {module: moduleToBind},
         },
     };
 

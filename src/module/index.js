@@ -18,6 +18,8 @@ import {generateAndRegisterDefaultStoreModule, getAllFromStore, getByIdFromStore
 import {setTranslation} from '../services/translator';
 import {addRoutesBasedOnRouteSettings, getCurrentRouteId, goToRoute} from '../services/router';
 
+// TODO :: refactor to more readable code
+
 /**
  * @param {string} moduleName
  * @param {ModuleFactoryComponents} components
@@ -29,51 +31,7 @@ export const moduleFactory = (moduleName, components, translation) => {
     generateAndRegisterDefaultStoreModule(moduleName);
     setTranslation(moduleName, translation);
 
-    const readStoreAction = () => getRequest(moduleName);
-
-    if (!components.base) {
-        components.base = defineComponent({
-            name: `${moduleName}-base`,
-            // TODO :: check if this works in every case
-            render: () => h(MinimalRouterView, {depth: 1}),
-            // render: () => h(RouterView),
-            // TODO #9 @Goosterhof
-            mounted: readStoreAction,
-        });
-    }
-
-    const routeSettings = RouteSettingFactory(
-        moduleName,
-        components.base,
-        components.overview,
-        components.create,
-        components.edit,
-        components.show
-    );
-
-    return {
-        routeSettings,
-        /** Go to the over view page fromm this controller */
-        goToOverviewPage: () => goToRoute(routeSettings.overview.name.toString()),
-        /**
-         * Go the the show page for the given id
-         *
-         * @param {string} id id of item to go to the show page
-         */
-        goToShowPage: id => goToRoute(routeSettings.show.name.toString(), id),
-        /**
-         * Go to the edit page for this controller
-         *
-         * @param {string} id
-         * @param {LocationQuery} [query] the optional query for the new route
-         */
-        goToEditPage: (id, query) => goToRoute(routeSettings.edit.name.toString(), id, query),
-        /**
-         * Go to the create page for this controller
-         *
-         * @param {LocationQuery} [query] the optional query for the new route
-         */
-        goToCreatePage: query => goToRoute(routeSettings.create.name.toString(), undefined, query),
+    const createdModule = {
         /**
          * Sends a delete request to the server.
          * Delete's the given id from the server
@@ -99,10 +57,6 @@ export const moduleFactory = (moduleName, components, translation) => {
          * @param {Item} item the item to be created
          */
         createStoreAction: item => postRequest(moduleName, item),
-        /**
-         * Sends a get request to the server, which returns all items on the server from that endpoint
-         */
-        readStoreAction,
 
         /**
          * Sends a get request to the server, which returns a single item on the server based on the given id
@@ -136,13 +90,64 @@ export const moduleFactory = (moduleName, components, translation) => {
         get getByCurrentRouteId() {
             return getByIdFromStore(moduleName, getCurrentRouteId());
         },
-
-        /**
-         * Init the controller.
-         * This will register the routes.
-         */
-        init: () => addRoutesBasedOnRouteSettings(routeSettings),
     };
+
+    /**
+     * Sends a get request to the server, which returns all items on the server from that endpoint
+     */
+    createdModule.readStoreAction = () => getRequest(moduleName);
+
+    if (!components.base) {
+        components.base = defineComponent({
+            name: `${moduleName}-base`,
+            // TODO :: check if this works in every case
+            render: () => h(MinimalRouterView, {depth: 1}),
+            // render: () => h(RouterView),
+            // TODO #9 @Goosterhof
+            mounted: createdModule.readStoreAction,
+        });
+    }
+
+    createdModule.routeSettings = RouteSettingFactory(
+        moduleName,
+        createdModule,
+        components.base,
+        components.overview,
+        components.create,
+        components.edit,
+        components.show
+    );
+
+    /** Go to the over view page fromm this controller */
+    createdModule.goToOverviewPage = () => goToRoute(createdModule.routeSettings.overview.name.toString());
+    /**
+     * Go the the show page for the given id
+     *
+     * @param {string} id id of item to go to the show page
+     */
+    createdModule.goToShowPage = id => goToRoute(createdModule.routeSettings.show.name.toString(), id);
+    /**
+     * Go to the edit page for this controller
+     *
+     * @param {string} id
+     * @param {LocationQuery} [query] the optional query for the new route
+     */
+    createdModule.goToEditPage = (id, query) => goToRoute(createdModule.routeSettings.edit.name.toString(), id, query);
+    /**
+     * Go to the create page for this controller
+     *
+     * @param {LocationQuery} [query] the optional query for the new route
+     */
+    createdModule.goToCreatePage = query =>
+        goToRoute(createdModule.routeSettings.create.name.toString(), undefined, query);
+
+    /**
+     * Init the controller.
+     * This will register the routes.
+     */
+    createdModule.init = () => addRoutesBasedOnRouteSettings(createdModule.routeSettings);
+
+    return createdModule;
 };
 
 // import MinimalRouterView from '../components/MinimalRouterView';

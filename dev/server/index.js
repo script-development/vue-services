@@ -6,10 +6,12 @@ createServer({
 
     models: {
         user: Model,
+        company: Model,
     },
 
     seeds(server) {
         server.createList('user', 10);
+        server.createList('company', 100);
     },
 
     factories: {
@@ -17,10 +19,16 @@ createServer({
             id: i => i + 1,
             name: () => faker.name.findName(),
         }),
+        company: Factory.extend({
+            id: i => i + 1,
+            name: () => faker.name.findName(),
+        }),
     },
 
     routes() {
         this.namespace = 'api';
+
+        this.get('/companies', schema => schema.companies.all());
 
         this.get('/users', schema => schema.users.all());
         this.get(
