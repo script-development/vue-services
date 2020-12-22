@@ -150,6 +150,7 @@ export const moduleFactory = (moduleName, components, translation) => {
     return createdModule;
 };
 
+export {MinimalRouterView};
 // import MinimalRouterView from '../components/MinimalRouterView';
 // import {storeService, routerService, eventService, translatorService} from '../services';
 

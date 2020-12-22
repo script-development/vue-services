@@ -5,9 +5,8 @@
  * @typedef {import('vue-router').LocationQuery} LocationQuery
  *
  * @typedef {import('../../../types/services/router').RouteSettings} RouteSettings
- * @typedef {import('../../../types/module').Module} Module
  */
-
+// TODO :: how to fix this error? It's in RouteRecordRaw, create own definition?
 import {createRouter, createWebHistory} from 'vue-router';
 import {CREATE_PAGE_NAME, EDIT_PAGE_NAME, OVERVIEW_PAGE_NAME, SHOW_PAGE_NAME} from './settings';
 
@@ -65,7 +64,9 @@ export const addRoute = routes => router.addRoute(routes);
 
 /** @param {RouteSettings} settings */
 export const addRoutesBasedOnRouteSettings = settings => {
+    // getting the record from the settings
     const record = settings.base;
+    // deleting the record from settings, since it's not it's own child
     delete settings.base;
     record.children = Object.values(settings);
     addRoute(record);
@@ -106,10 +107,10 @@ export const getCurrentRouteId = () => router.currentRoute.value.params.id.toStr
 /** Get the name from the current route */
 export const getCurrentRouteName = () => router.currentRoute.value.name.toString();
 /**
- * Get the module binded to the current route
- * @returns {Module}
+ * Get the module name binded to the current route
+ * @returns {string}
  */
-export const getCurrentModule = () => router.currentRoute.value.meta?.module;
+export const getCurrentRouteModuleName = () => router.currentRoute.value.meta?.moduleName;
 
 /**
  * checks if the given string is in the current routes name

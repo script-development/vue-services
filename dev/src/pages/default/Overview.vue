@@ -16,11 +16,11 @@
 
 <script>
 import {computed} from 'vue';
-import {getCurrentModule} from '../../../serv-vue';
+import {getCurrentRouteModuleName} from '../../../serv-vue';
 
 export default {
     setup() {
-        const activeModule = getCurrentModule();
+        const activeModule = getCurrentRouteModuleName();
         const items = activeModule.getAll;
         return {
             headers: computed(() => (items.value.length ? Object.keys(items.value[0]) : [])),

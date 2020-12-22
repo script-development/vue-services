@@ -1,5 +1,5 @@
 import {AxiosResponse} from 'axios';
-import {Component, ComputedRef} from 'vue';
+import {Component, ComponentOptions, ComputedRef} from 'vue';
 import {LocationQuery} from 'vue-router';
 import {RouteSettings} from './services/router';
 import {Item, Translation} from './types';
@@ -11,6 +11,8 @@ export type ModuleFactoryComponents = {
     edit?: Component;
     show?: Component;
 };
+
+export const MinimalRouterView: ComponentOptions<{depth: number}>;
 
 export type Module = {
     routeSettings: RouteSettings;
