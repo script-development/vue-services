@@ -16,11 +16,16 @@ export {
     goToRoute,
     getCurrentRouteQuery,
     getCurrentRouteModuleName,
+    getCurrentRouteId,
     hasShowPage,
+    hasCreatePage,
+    hasEditPage,
     goToShowPage,
+    goToCreatePage,
+    goToEditPage,
 } from './services/router';
 
-export {getAllFromStore} from './services/store';
+export {getAllFromStore, getByIdFromStore} from './services/store';
 
 export {
     getPluralTranslation,

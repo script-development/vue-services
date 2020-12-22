@@ -99,11 +99,22 @@ export const goToRoute = (name, id, query) => {
 };
 
 /**
- * go to the show page for the given module name
+ * Go to the show page for the given module name
  * @param {string} moduleName name of the module to go to the show page to
  * @param {string} id the id for the given item to show
  */
 export const goToShowPage = (moduleName, id) => goToRoute(moduleName + SHOW_PAGE_NAME, id);
+/**
+ * Go to the edit page for the given module name
+ * @param {string} moduleName name of the module to go to the edit page to
+ * @param {string} id the id for the given item to edit
+ */
+export const goToEditPage = (moduleName, id) => goToRoute(moduleName + EDIT_PAGE_NAME, id);
+/**
+ * Go to the create page for the given module name
+ * @param {string} moduleName name of the module to go to the create page to
+ */
+export const goToCreatePage = moduleName => goToRoute(moduleName + CREATE_PAGE_NAME);
 
 /** Get the current route */
 export const getCurrentRoute = () => router.currentRoute;

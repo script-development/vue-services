@@ -288,11 +288,22 @@ const goToRoute = (name, id, query) => {
 };
 
 /**
- * go to the show page for the given module name
+ * Go to the show page for the given module name
  * @param {string} moduleName name of the module to go to the show page to
  * @param {string} id the id for the given item to show
  */
 const goToShowPage = (moduleName, id) => goToRoute(moduleName + SHOW_PAGE_NAME, id);
+/**
+ * Go to the edit page for the given module name
+ * @param {string} moduleName name of the module to go to the edit page to
+ * @param {string} id the id for the given item to edit
+ */
+const goToEditPage = (moduleName, id) => goToRoute(moduleName + EDIT_PAGE_NAME, id);
+/**
+ * Go to the create page for the given module name
+ * @param {string} moduleName name of the module to go to the create page to
+ */
+const goToCreatePage = moduleName => goToRoute(moduleName + CREATE_PAGE_NAME);
 
 /** Get the current route */
 const getCurrentRoute = () => router.currentRoute;
@@ -317,6 +328,17 @@ const onPage = pageName => router.currentRoute.value.name?.toString().includes(p
  * @param {string} pageName
  */
 const hasPageName = pageName => router.hasRoute(pageName);
+
+/**
+ * returns if the given module name has a create page
+ * @param {string} moduleName
+ */
+const hasCreatePage = moduleName => hasPageName(moduleName + CREATE_PAGE_NAME);
+/**
+ * returns if the given module name has an edit page
+ * @param {string} moduleName
+ */
+const hasEditPage = moduleName => hasPageName(moduleName + EDIT_PAGE_NAME);
 /**
  * returns if the given module name has a show page
  * @param {string} moduleName
@@ -1526,4 +1548,4 @@ const BaseFormError = defineComponent({
     },
 });
 
-export { BaseFormError, MinimalRouterView, addRoute, createModal, createToastMessage, download, getAllFromStore, getCapitalizedPluralTranslation, getCapitalizedSingularTranslation, getCurrentRouteModuleName, getCurrentRouteQuery, getPluralTranslation, getRequest, getSingularTranslation, goToRoute, goToShowPage, hasShowPage, isLoggedIn, login, logout, moduleFactory, postRequest, startApp };
+export { BaseFormError, MinimalRouterView, addRoute, createModal, createToastMessage, download, getAllFromStore, getByIdFromStore, getCapitalizedPluralTranslation, getCapitalizedSingularTranslation, getCurrentRouteId, getCurrentRouteModuleName, getCurrentRouteQuery, getPluralTranslation, getRequest, getSingularTranslation, goToCreatePage, goToEditPage, goToRoute, goToShowPage, hasCreatePage, hasEditPage, hasShowPage, isLoggedIn, login, logout, moduleFactory, postRequest, startApp };

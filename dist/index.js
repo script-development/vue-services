@@ -296,11 +296,22 @@ const goToRoute = (name, id, query) => {
 };
 
 /**
- * go to the show page for the given module name
+ * Go to the show page for the given module name
  * @param {string} moduleName name of the module to go to the show page to
  * @param {string} id the id for the given item to show
  */
 const goToShowPage = (moduleName, id) => goToRoute(moduleName + SHOW_PAGE_NAME, id);
+/**
+ * Go to the edit page for the given module name
+ * @param {string} moduleName name of the module to go to the edit page to
+ * @param {string} id the id for the given item to edit
+ */
+const goToEditPage = (moduleName, id) => goToRoute(moduleName + EDIT_PAGE_NAME, id);
+/**
+ * Go to the create page for the given module name
+ * @param {string} moduleName name of the module to go to the create page to
+ */
+const goToCreatePage = moduleName => goToRoute(moduleName + CREATE_PAGE_NAME);
 
 /** Get the current route */
 const getCurrentRoute = () => router.currentRoute;
@@ -325,6 +336,17 @@ const onPage = pageName => router.currentRoute.value.name?.toString().includes(p
  * @param {string} pageName
  */
 const hasPageName = pageName => router.hasRoute(pageName);
+
+/**
+ * returns if the given module name has a create page
+ * @param {string} moduleName
+ */
+const hasCreatePage = moduleName => hasPageName(moduleName + CREATE_PAGE_NAME);
+/**
+ * returns if the given module name has an edit page
+ * @param {string} moduleName
+ */
+const hasEditPage = moduleName => hasPageName(moduleName + EDIT_PAGE_NAME);
 /**
  * returns if the given module name has a show page
  * @param {string} moduleName
@@ -1541,15 +1563,21 @@ exports.createModal = createModal;
 exports.createToastMessage = createToastMessage;
 exports.download = download;
 exports.getAllFromStore = getAllFromStore;
+exports.getByIdFromStore = getByIdFromStore;
 exports.getCapitalizedPluralTranslation = getCapitalizedPluralTranslation;
 exports.getCapitalizedSingularTranslation = getCapitalizedSingularTranslation;
+exports.getCurrentRouteId = getCurrentRouteId;
 exports.getCurrentRouteModuleName = getCurrentRouteModuleName;
 exports.getCurrentRouteQuery = getCurrentRouteQuery;
 exports.getPluralTranslation = getPluralTranslation;
 exports.getRequest = getRequest;
 exports.getSingularTranslation = getSingularTranslation;
+exports.goToCreatePage = goToCreatePage;
+exports.goToEditPage = goToEditPage;
 exports.goToRoute = goToRoute;
 exports.goToShowPage = goToShowPage;
+exports.hasCreatePage = hasCreatePage;
+exports.hasEditPage = hasEditPage;
 exports.hasShowPage = hasShowPage;
 exports.isLoggedIn = isLoggedIn;
 exports.login = login;

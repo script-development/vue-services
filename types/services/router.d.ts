@@ -47,8 +47,12 @@ export declare function addRoutesBasedOnRouteSettings(settings: RouteSettings): 
  * @param {LocationQuery} [query] the optional query for the new route
  */
 export function goToRoute(name: string, id?: string, query?: LocationQuery): void;
-/**go to the show page for the given module name */
+/** Go to the show page for the given module name */
 export function goToShowPage(moduleName: string, id: string): void;
+/** Go to the edit page for the given module name */
+export function goToEditPage(moduleName: string, id: string): void;
+/** Go to the show page for the given module name */
+export function goToCreatePage(moduleName: string): void;
 
 export function getCurrentRoute(): Ref<RouteLocationNormalizedLoaded>;
 /** Get the query from the current route */
