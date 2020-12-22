@@ -102,7 +102,6 @@ const setTranslation = (moduleName, translation) => (TRANSLATIONS[moduleName] = 
  * @typedef {import('vue').Component} Component
  * @typedef {import('vue-router').RouteRecordRaw} RouteRecordRaw
  * @typedef {import('../../../../types/services/router').RouteSettings} RouteSettings
- * @typedef {import('../../../../types/module').Module} Module
  */
 
 const CREATE_PAGE_NAME = '.create';
@@ -174,7 +173,6 @@ const partialFactory = (moduleName, part, component) => {
  * Does not add the optional routes otherwise
  *
  * @param {string} moduleName
- * @param {Module} moduleToBind
  * @param {Component} baseComponent
  * @param {Component} [overviewComponent]
  * @param {Component} [createComponent]
@@ -183,20 +181,12 @@ const partialFactory = (moduleName, part, component) => {
  *
  * @returns {RouteSettings}
  */
-var RouteSettingFactory = (
-    moduleName,
-    moduleToBind,
-    baseComponent,
-    overviewComponent,
-    createComponent,
-    editComponent,
-    showComponent
-) => {
+var RouteSettingFactory = (moduleName, baseComponent, overviewComponent, createComponent, editComponent, showComponent) => {
     const routeSettings = {
         base: {
             path: '/' + getPluralTranslation(moduleName),
             component: baseComponent,
-            meta: {module: moduleToBind},
+            meta: {moduleName},
         },
     };
 
@@ -215,7 +205,6 @@ var RouteSettingFactory = (
  * @typedef {import('vue-router').LocationQuery} LocationQuery
  *
  * @typedef {import('../../../types/services/router').RouteSettings} RouteSettings
- * @typedef {import('../../../types/module').Module} Module
  */
 
 // exported only to use in the app starter to bind the router
@@ -272,7 +261,9 @@ const addRoute = routes => router.addRoute(routes);
 
 /** @param {RouteSettings} settings */
 const addRoutesBasedOnRouteSettings = settings => {
+    // getting the record from the settings
     const record = settings.base;
+    // deleting the record from settings, since it's not it's own child
     delete settings.base;
     record.children = Object.values(settings);
     addRoute(record);
@@ -304,21 +295,41 @@ const goToRoute = (name, id, query) => {
     });
 };
 
+/**
+ * go to the show page for the given module name
+ * @param {string} moduleName name of the module to go to the show page to
+ * @param {string} id the id for the given item to show
+ */
+const goToShowPage = (moduleName, id) => goToRoute(moduleName + SHOW_PAGE_NAME, id);
+
 /** Get the current route */
 const getCurrentRoute = () => router.currentRoute;
+/** Get the query from the current route */
+const getCurrentRouteQuery = () => router.currentRoute.value.query;
 /** Get the id from the params from the current route */
 const getCurrentRouteId = () => router.currentRoute.value.params.id.toString();
 /**
- * Get the module binded to the current route
- * @returns {Module}
+ * Get the module name binded to the current route
+ * @returns {string}
  */
-const getCurrentModule = () => router.currentRoute.value.meta?.module;
+const getCurrentRouteModuleName = () => router.currentRoute.value.meta?.moduleName;
 
 /**
  * checks if the given string is in the current routes name
  * @param {string} pageName the name of the page to check
  */
 const onPage = pageName => router.currentRoute.value.name?.toString().includes(pageName);
+
+/**
+ * Checks if the page name exists in the routes
+ * @param {string} pageName
+ */
+const hasPageName = pageName => router.hasRoute(pageName);
+/**
+ * returns if the given module name has a show page
+ * @param {string} moduleName
+ */
+const hasShowPage = moduleName => hasPageName(moduleName + SHOW_PAGE_NAME);
 
 var LoginPage = {
     render(h) {
@@ -1129,7 +1140,6 @@ const moduleFactory = (moduleName, components, translation) => {
 
     createdModule.routeSettings = RouteSettingFactory(
         moduleName,
-        createdModule,
         components.base,
         components.overview,
         components.create,
@@ -1168,7 +1178,6 @@ const moduleFactory = (moduleName, components, translation) => {
 
     return createdModule;
 };
-
 // import MinimalRouterView from '../components/MinimalRouterView';
 // import {storeService, routerService, eventService, translatorService} from '../services';
 
@@ -1526,6 +1535,7 @@ const BaseFormError = vue.defineComponent({
 });
 
 exports.BaseFormError = BaseFormError;
+exports.MinimalRouterView = MinimalRouterView;
 exports.addRoute = addRoute;
 exports.createModal = createModal;
 exports.createToastMessage = createToastMessage;
@@ -1533,11 +1543,14 @@ exports.download = download;
 exports.getAllFromStore = getAllFromStore;
 exports.getCapitalizedPluralTranslation = getCapitalizedPluralTranslation;
 exports.getCapitalizedSingularTranslation = getCapitalizedSingularTranslation;
-exports.getCurrentModule = getCurrentModule;
+exports.getCurrentRouteModuleName = getCurrentRouteModuleName;
+exports.getCurrentRouteQuery = getCurrentRouteQuery;
 exports.getPluralTranslation = getPluralTranslation;
 exports.getRequest = getRequest;
 exports.getSingularTranslation = getSingularTranslation;
 exports.goToRoute = goToRoute;
+exports.goToShowPage = goToShowPage;
+exports.hasShowPage = hasShowPage;
 exports.isLoggedIn = isLoggedIn;
 exports.login = login;
 exports.logout = logout;

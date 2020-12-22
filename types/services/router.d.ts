@@ -47,6 +47,8 @@ export declare function addRoutesBasedOnRouteSettings(settings: RouteSettings): 
  * @param {LocationQuery} [query] the optional query for the new route
  */
 export function goToRoute(name: string, id?: string, query?: LocationQuery): void;
+/**go to the show page for the given module name */
+export function goToShowPage(moduleName: string, id: string): void;
 
 export function getCurrentRoute(): Ref<RouteLocationNormalizedLoaded>;
 /** Get the query from the current route */
@@ -66,3 +68,12 @@ export function onEditPage(): boolean;
 export function onOverviewPage(): boolean;
 /** returns if you are on the show page */
 export function onShowPage(): boolean;
+
+/** returns if the given module name has a create page */
+export function hasCreatePage(moduleName: string): boolean;
+/** returns if the given module name has an edit page */
+export function hasEditPage(moduleName: string): boolean;
+/** returns if the given module name has an overview page */
+export function hasOverviewPage(moduleName: string): boolean;
+/** returns if the given module name has a show page */
+export function hasShowPage(moduleName: string): boolean;

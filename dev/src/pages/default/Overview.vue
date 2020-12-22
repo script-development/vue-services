@@ -16,16 +16,20 @@
 
 <script>
 import {computed} from 'vue';
-import {getCurrentRouteModuleName} from '../../../serv-vue';
+import {getCurrentRouteModuleName, getAllFromStore, hasShowPage, goToShowPage} from '../../../serv-vue';
 
 export default {
     setup() {
-        const activeModule = getCurrentRouteModuleName();
-        const items = activeModule.getAll;
+        const activeModuleName = getCurrentRouteModuleName();
+        console.log(activeModuleName);
+        const items = getAllFromStore(activeModuleName);
         return {
             headers: computed(() => (items.value.length ? Object.keys(items.value[0]) : [])),
             items,
-            goToShow: id => activeModule.goToShowPage(id),
+            goToShow: id => {
+                if (!hasShowPage(activeModuleName)) return;
+                goToShowPage(activeModuleName, id);
+            },
         };
     },
 };

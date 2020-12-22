@@ -110,7 +110,6 @@ export const moduleFactory = (moduleName, components, translation) => {
 
     createdModule.routeSettings = RouteSettingFactory(
         moduleName,
-        createdModule,
         components.base,
         components.overview,
         components.create,

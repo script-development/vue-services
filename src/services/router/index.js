@@ -98,6 +98,13 @@ export const goToRoute = (name, id, query) => {
     });
 };
 
+/**
+ * go to the show page for the given module name
+ * @param {string} moduleName name of the module to go to the show page to
+ * @param {string} id the id for the given item to show
+ */
+export const goToShowPage = (moduleName, id) => goToRoute(moduleName + SHOW_PAGE_NAME, id);
+
 /** Get the current route */
 export const getCurrentRoute = () => router.currentRoute;
 /** Get the query from the current route */
@@ -125,3 +132,30 @@ export const onEditPage = () => onPage(EDIT_PAGE_NAME);
 export const onOverviewPage = () => onPage(OVERVIEW_PAGE_NAME);
 /** returns if you are on the show page */
 export const onShowPage = () => onPage(SHOW_PAGE_NAME);
+
+/**
+ * Checks if the page name exists in the routes
+ * @param {string} pageName
+ */
+const hasPageName = pageName => router.hasRoute(pageName);
+
+/**
+ * returns if the given module name has a create page
+ * @param {string} moduleName
+ */
+export const hasCreatePage = moduleName => hasPageName(moduleName + CREATE_PAGE_NAME);
+/**
+ * returns if the given module name has an edit page
+ * @param {string} moduleName
+ */
+export const hasEditPage = moduleName => hasPageName(moduleName + EDIT_PAGE_NAME);
+/**
+ * returns if the given module name has an overview page
+ * @param {string} moduleName
+ */
+export const hasOverviewPage = moduleName => hasPageName(moduleName + OVERVIEW_PAGE_NAME);
+/**
+ * returns if the given module name has a show page
+ * @param {string} moduleName
+ */
+export const hasShowPage = moduleName => hasPageName(moduleName + SHOW_PAGE_NAME);
