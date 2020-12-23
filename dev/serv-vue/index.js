@@ -311,6 +311,11 @@ const goToEditPage = (moduleName, id) => goToRoute(moduleName + EDIT_PAGE_NAME, 
  * @param {string} moduleName name of the module to go to the create page to
  */
 const goToCreatePage = moduleName => goToRoute(moduleName + CREATE_PAGE_NAME);
+/**
+ * Go to the overview page for the given module name
+ * @param {string} moduleName name of the module to go to the overview page to
+ */
+const goToOverviewPage = moduleName => goToRoute(moduleName + OVERVIEW_PAGE_NAME);
 
 /** Get the current route */
 const getCurrentRoute = () => router.currentRoute;
@@ -1578,6 +1583,7 @@ export {
     goBack,
     goToCreatePage,
     goToEditPage,
+    goToOverviewPage,
     goToRoute,
     goToShowPage,
     hasCreatePage,

@@ -51,8 +51,10 @@ export function goToRoute(name: string, id?: string, query?: LocationQuery): voi
 export function goToShowPage(moduleName: string, id: string): void;
 /** Go to the edit page for the given module name */
 export function goToEditPage(moduleName: string, id: string): void;
-/** Go to the show page for the given module name */
+/** Go to the create page for the given module name */
 export function goToCreatePage(moduleName: string): void;
+/** Go to the overview page for the given module name */
+export function goToOverviewPage(moduleName: string): void;
 
 export function getCurrentRoute(): Ref<RouteLocationNormalizedLoaded>;
 /** Get the query from the current route */

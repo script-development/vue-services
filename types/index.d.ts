@@ -23,6 +23,7 @@ export {
     goToShowPage,
     goToCreatePage,
     goToEditPage,
+    goToOverviewPage,
     goBack,
 } from './services/router';
 
