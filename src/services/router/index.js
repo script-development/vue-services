@@ -170,3 +170,6 @@ export const hasOverviewPage = moduleName => hasPageName(moduleName + OVERVIEW_P
  * @param {string} moduleName
  */
 export const hasShowPage = moduleName => hasPageName(moduleName + SHOW_PAGE_NAME);
+
+/** go back one page */
+export const goBack = () => router.back();

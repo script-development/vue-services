@@ -345,6 +345,9 @@ const hasEditPage = moduleName => hasPageName(moduleName + EDIT_PAGE_NAME);
  */
 const hasShowPage = moduleName => hasPageName(moduleName + SHOW_PAGE_NAME);
 
+/** go back one page */
+const goBack = () => router.back();
+
 var LoginPage = {
     render(h) {
         h('div', ['Implement your own login page!']);
@@ -1548,4 +1551,4 @@ const BaseFormError = defineComponent({
     },
 });
 
-export { BaseFormError, MinimalRouterView, addRoute, createModal, createToastMessage, download, getAllFromStore, getByIdFromStore, getCapitalizedPluralTranslation, getCapitalizedSingularTranslation, getCurrentRouteId, getCurrentRouteModuleName, getCurrentRouteQuery, getPluralTranslation, getRequest, getSingularTranslation, goToCreatePage, goToEditPage, goToRoute, goToShowPage, hasCreatePage, hasEditPage, hasShowPage, isLoggedIn, login, logout, moduleFactory, postRequest, startApp };
+export { BaseFormError, MinimalRouterView, addRoute, createModal, createToastMessage, download, getAllFromStore, getByIdFromStore, getCapitalizedPluralTranslation, getCapitalizedSingularTranslation, getCurrentRouteId, getCurrentRouteModuleName, getCurrentRouteQuery, getPluralTranslation, getRequest, getSingularTranslation, goBack, goToCreatePage, goToEditPage, goToRoute, goToShowPage, hasCreatePage, hasEditPage, hasShowPage, isLoggedIn, login, logout, moduleFactory, postRequest, startApp };

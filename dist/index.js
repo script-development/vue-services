@@ -353,6 +353,9 @@ const hasEditPage = moduleName => hasPageName(moduleName + EDIT_PAGE_NAME);
  */
 const hasShowPage = moduleName => hasPageName(moduleName + SHOW_PAGE_NAME);
 
+/** go back one page */
+const goBack = () => router.back();
+
 var LoginPage = {
     render(h) {
         h('div', ['Implement your own login page!']);
@@ -1572,6 +1575,7 @@ exports.getCurrentRouteQuery = getCurrentRouteQuery;
 exports.getPluralTranslation = getPluralTranslation;
 exports.getRequest = getRequest;
 exports.getSingularTranslation = getSingularTranslation;
+exports.goBack = goBack;
 exports.goToCreatePage = goToCreatePage;
 exports.goToEditPage = goToEditPage;
 exports.goToRoute = goToRoute;

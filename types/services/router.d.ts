@@ -81,3 +81,6 @@ export function hasEditPage(moduleName: string): boolean;
 export function hasOverviewPage(moduleName: string): boolean;
 /** returns if the given module name has a show page */
 export function hasShowPage(moduleName: string): boolean;
+
+/** go back one page */
+export function goBack(): void;

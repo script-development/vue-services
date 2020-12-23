@@ -23,6 +23,7 @@ export {
     goToShowPage,
     goToCreatePage,
     goToEditPage,
+    goBack,
 } from './services/router';
 
 export {getAllFromStore, getByIdFromStore} from './services/store';
