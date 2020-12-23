@@ -85,12 +85,12 @@ export type Module = {
      * Get an item from the store based on the given id
      * @param {string} id get the item from the store based on id
      */
-    getById(id: string): Item;
+    getById(id: string): ComputedRef<Item>;
 
     /**
      * Get an item based on the current route id
      */
-    getByCurrentRouteId: Item;
+    getByCurrentRouteId: ComputedRef<Item>;
 
     /**
      * Init the controller.
