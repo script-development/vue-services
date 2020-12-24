@@ -25,11 +25,11 @@ export const loggedInUser: LoggedInUser;
 export const responseErrorMiddleware: ResponseErrorMiddleware;
 export const beforeMiddleware: NavigationGuard;
 
-export async function login(credentials: LoginCredentials): AxiosResponse;
-export async function logout(): AxiosResponse;
-export async function checkIfLoggedIn(): AxiosResponse;
+export function login(credentials: LoginCredentials): Promise<AxiosResponse<any>>;
+export function logout(): Promise<AxiosResponse<any>>;
+export function checkIfLoggedIn(): Promise<AxiosResponse<any>>;
 
-export async function sendResetPasswordEmail(email: string): AxiosResponse;
-export async function sendResetPasswordEmail(data: ResetPasswordData): AxiosResponse;
+export function sendResetPasswordEmail(email: string): Promise<AxiosResponse<any>>;
+export function sendResetPasswordEmail(data: ResetPasswordData): Promise<AxiosResponse<any>>;
 
 export function setAuthRoutes(): void;
