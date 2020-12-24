@@ -35,3 +35,5 @@ export {
     getCapitalizedSingularTranslation,
     getSingularTranslation,
 } from './services/translator';
+
+export {getStaticDataFromServer, getStaticDataItemById, getStaticDataSegment} from './services/staticdata';

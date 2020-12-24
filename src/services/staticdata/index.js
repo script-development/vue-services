@@ -100,14 +100,14 @@ export const getStaticDataFromServer = async () => {
 /**
  * Get all from a specific segment in the staticdata store
  *
- * @param {String} data the module from which to get all data from
+ * @param {string} staticDataName the name of the segement to get data from
  */
-export const getStaticDataSegment = data => store[data].all;
+export const getStaticDataSegment = staticDataName => store[staticDataName].all;
 
 /**
- * Get all data from the given store module by id
+ * Get all data from the given staticDataName by id
  *
- * @param {String} data the module from which to get all
- * @param {String} id the id of the data object to get
+ * @param {string} staticDataName the name of the segement to get data from
+ * @param {string} id the id of the data object to get
  */
-export const getStaticDataItemById = (data, id) => store[data].byId(id);
+export const getStaticDataItemById = (staticDataName, id) => store[staticDataName].byId(id);

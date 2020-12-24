@@ -949,6 +949,14 @@ try {
 
 const MSG_PACK_DATA_TYPE = 'msg-pack';
 
+const apiStaticDataEndpoint = 'staticdata';
+
+/** Exporting for testing purposes */
+const DATA = {
+    normal: [],
+    msgpack: [],
+};
+
 /**
  * Exporting for testing purposes
  *
@@ -965,6 +973,7 @@ const createStaticDataStoreModules = data => {
     for (const staticDataNameOrObject of data) {
         if (typeof staticDataNameOrObject == 'string') {
             store$1[staticDataNameOrObject] = StoreModuleFactory(staticDataNameOrObject);
+            DATA.normal.push(staticDataNameOrObject);
             continue;
         }
 
@@ -987,7 +996,40 @@ const createStoreModuleMsgPack = staticDataName => {
         return console.warn('run the following command to install messagepack: npm --save @msgpack/msgpack');
     }
     store$1[staticDataName] = StoreModuleFactory(staticDataName);
+    DATA.msgpack.push(staticDataName);
 };
+
+/**
+ * Sends requests to the server which recieves all the staticdata from the server defined in DATA
+ */
+const getStaticDataFromServer = async () => {
+    const response = await getRequest(apiStaticDataEndpoint);
+
+    for (const staticDataName of DATA.normal) {
+        store$1[staticDataName].setAll(response.data[staticDataName]);
+    }
+
+    for (const staticDataName of DATA.msgpack) {
+        const response = await getRequest(staticDataName, {responseType: 'arraybuffer'});
+
+        store$1[staticDataName].setAll(msgpack.decode(new Uint8Array(response.data)));
+    }
+};
+
+/**
+ * Get all from a specific segment in the staticdata store
+ *
+ * @param {string} staticDataName the name of the segement to get data from
+ */
+const getStaticDataSegment = staticDataName => store$1[staticDataName].all;
+
+/**
+ * Get all data from the given staticDataName by id
+ *
+ * @param {string} staticDataName the name of the segement to get data from
+ * @param {string} id the id of the data object to get
+ */
+const getStaticDataItemById = (staticDataName, id) => store$1[staticDataName].byId(id);
 
 /**
  * @typedef {import('vue').Component} Component
@@ -1556,4 +1598,4 @@ const BaseFormError = defineComponent({
     },
 });
 
-export { BaseFormError, MinimalRouterView, addRoute, createModal, createToastMessage, download, getAllFromStore, getByIdFromStore, getCapitalizedPluralTranslation, getCapitalizedSingularTranslation, getCurrentRouteId, getCurrentRouteModuleName, getCurrentRouteQuery, getPluralTranslation, getRequest, getSingularTranslation, goBack, goToCreatePage, goToEditPage, goToOverviewPage, goToRoute, goToShowPage, hasCreatePage, hasEditPage, hasShowPage, isLoggedIn, login, logout, moduleFactory, postRequest, startApp };
+export { BaseFormError, MinimalRouterView, addRoute, createModal, createToastMessage, download, getAllFromStore, getByIdFromStore, getCapitalizedPluralTranslation, getCapitalizedSingularTranslation, getCurrentRouteId, getCurrentRouteModuleName, getCurrentRouteQuery, getPluralTranslation, getRequest, getSingularTranslation, getStaticDataFromServer, getStaticDataItemById, getStaticDataSegment, goBack, goToCreatePage, goToEditPage, goToOverviewPage, goToRoute, goToShowPage, hasCreatePage, hasEditPage, hasShowPage, isLoggedIn, login, logout, moduleFactory, postRequest, startApp };
