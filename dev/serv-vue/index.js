@@ -986,7 +986,7 @@ const createStaticDataStoreModules = data => {
 
         for (const staticDataName in staticDataNameOrObject) {
             if (staticDataNameOrObject[staticDataName] === MSG_PACK_DATA_TYPE) {
-                createStoreModuleMsgPack(Object.keys(staticDataName).toString());
+                createStoreModuleMsgPack(staticDataName);
             }
         }
     }
@@ -1028,7 +1028,7 @@ const getStaticDataFromServer = async () => {
  *
  * @param {string} staticDataName the name of the segement to get data from
  */
-const getStaticDataSegment = staticDataName => store$1[staticDataName].all;
+const getStaticDataSegment = staticDataName => store$1[staticDataName].all.value;
 
 /**
  * Get all data from the given staticDataName by id
@@ -1036,7 +1036,7 @@ const getStaticDataSegment = staticDataName => store$1[staticDataName].all;
  * @param {string} staticDataName the name of the segement to get data from
  * @param {string} id the id of the data object to get
  */
-const getStaticDataItemById = (staticDataName, id) => store$1[staticDataName].byId(id);
+const getStaticDataItemById = (staticDataName, id) => store$1[staticDataName].byId(id).value;
 
 /**
  * @typedef {import('vue').Component} Component

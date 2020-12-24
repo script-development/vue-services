@@ -60,7 +60,7 @@ export const createStaticDataStoreModules = data => {
 
         for (const staticDataName in staticDataNameOrObject) {
             if (staticDataNameOrObject[staticDataName] === MSG_PACK_DATA_TYPE) {
-                createStoreModuleMsgPack(Object.keys(staticDataName).toString());
+                createStoreModuleMsgPack(staticDataName);
             }
         }
     }
@@ -102,7 +102,7 @@ export const getStaticDataFromServer = async () => {
  *
  * @param {string} staticDataName the name of the segement to get data from
  */
-export const getStaticDataSegment = staticDataName => store[staticDataName].all;
+export const getStaticDataSegment = staticDataName => store[staticDataName].all.value;
 
 /**
  * Get all data from the given staticDataName by id
@@ -110,4 +110,4 @@ export const getStaticDataSegment = staticDataName => store[staticDataName].all;
  * @param {string} staticDataName the name of the segement to get data from
  * @param {string} id the id of the data object to get
  */
-export const getStaticDataItemById = (staticDataName, id) => store[staticDataName].byId(id);
+export const getStaticDataItemById = (staticDataName, id) => store[staticDataName].byId(id).value;

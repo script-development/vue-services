@@ -1,4 +1,3 @@
-import {ComputedRef} from 'vue';
 import {Item} from '../types';
 
 /**
@@ -6,7 +5,7 @@ import {Item} from '../types';
  *
  * @param {string} staticDataName the name of the segement to get data from
  */
-export function getStaticDataSegment(staticDataName: string): void;
+export function getStaticDataSegment(staticDataName: string): Item[];
 
 /**
  * Get all data from the given staticDataName by id
@@ -14,7 +13,7 @@ export function getStaticDataSegment(staticDataName: string): void;
  * @param {string} data the name of the segement to get data from
  * @param {string} id the id of the data object to get
  */
-export function getStaticDataItemById(staticDataName: string, id: string): ComputedRef<Item>;
+export function getStaticDataItemById(staticDataName: string, id: string): Item;
 
 /**
  * Sends requests to the server which recieves all the staticdata from the server defined in DATA
