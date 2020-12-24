@@ -81,3 +81,6 @@ export type ResetPasswordData = {
 
 export type IsLoggedIn = Ref<boolean>;
 export type LoggedInUser = Ref<Item>;
+
+export const MSG_PACK_DATA_TYPE = 'msg-pack';
+export type StaticDataTypes = [string | {[staticDataName: string]: typeof MSG_PACK_DATA_TYPE}];

@@ -924,7 +924,8 @@ const generateAndRegisterDefaultStoreModule = moduleName =>
 /**
  * @typedef {import('../../../types/services/store').Store} Store
  * @typedef {import('../../../types/services/store').registerStoreModule} registerStoreModule
- * @typedef {import('../../../types/services/store/factory').StoreModuleFactory} StoreModuleFactory
+ * @typedef {import('../../../types/services/store').StoreModuleFactory} StoreModuleFactory
+ * @typedef {import('../../../types/types').StaticDataTypes} StaticDataTypes
  */
 
 /**
@@ -958,14 +959,19 @@ const store$1 = {};
 /**
  * initiates the setup for the default store modules
  *
- * @param {[string,Object<string,string>]} data Modulenames
+ * @param {StaticDataTypes} data
  */
-const createStoreModules = data => {
-    for (const moduleName of data) {
-        if (typeof moduleName == 'string') {
-            store$1[moduleName] = StoreModuleFactory(moduleName);
-        } else if (typeof moduleName == 'object' && Object.values(moduleName) == MSG_PACK_DATA_TYPE) {
-            createStoreModuleMsgPack(Object.keys(moduleName).toString());
+const createStaticDataStoreModules = data => {
+    for (const staticDataNameOrObject of data) {
+        if (typeof staticDataNameOrObject == 'string') {
+            store$1[staticDataNameOrObject] = StoreModuleFactory(staticDataNameOrObject);
+            continue;
+        }
+
+        for (const staticDataName in staticDataNameOrObject) {
+            if (staticDataNameOrObject[staticDataName] === MSG_PACK_DATA_TYPE) {
+                createStoreModuleMsgPack(Object.keys(staticDataName).toString());
+            }
         }
     }
 };
@@ -973,21 +979,14 @@ const createStoreModules = data => {
 /**
  * Create module for static data with msg-pack lite(peerDependencies)
  *
- * @param {string} storeModuleName Modulenames
+ * @param {string} staticDataName
  */
-const createStoreModuleMsgPack = storeModuleName => {
+const createStoreModuleMsgPack = staticDataName => {
     if (!msgpack) {
         console.error('MESSAGE PACK NOT INSTALLED');
         return console.warn('run the following command to install messagepack: npm --save @msgpack/msgpack');
     }
-
-    const storeModule = StoreModuleFactory(storeModuleName);
-
-    getRequest(storeModuleName, {responseType: 'arraybuffer'}).then(response => {
-        storeModule.setAll(storeModuleName, msgpack.decode(new Uint8Array(response.data)));
-        return response;
-    });
-    registerStoreModule(storeModuleName, storeModule);
+    store$1[staticDataName] = StoreModuleFactory(staticDataName);
 };
 
 /**
@@ -995,6 +994,7 @@ const createStoreModuleMsgPack = storeModuleName => {
  *
  * @typedef {import('../../types/types').Modules} Modules
  * @typedef {import('../../types/types').AuthComponents} AuthComponents
+ * @typedef {import('../../types/types').StaticDataTypes} StaticDataTypes
  */
 
 /**
@@ -1007,7 +1007,7 @@ const createStoreModuleMsgPack = storeModuleName => {
  * @param {Modules} modules the login page
  * @param {string} defaultLoggedInPageName the page to go to when logged in
  * @param {AuthComponents} authComponents the page to go to when logged in
- * @param {[string,Object<string,string>]} [staticData] the static data
+ * @param {StaticDataTypes} [staticData] the static data
  */
 const startApp = (mainComponent, modules, defaultLoggedInPageName, authComponents, staticData) => {
     setDefaultLoggedInPageName(defaultLoggedInPageName);
@@ -1019,7 +1019,7 @@ const startApp = (mainComponent, modules, defaultLoggedInPageName, authComponent
     // set auth routes
     setAuthRoutes();
 
-    if (staticData) createStoreModules(staticData);
+    if (staticData) createStaticDataStoreModules(staticData);
 
     for (const moduleName in modules) modules[moduleName].init();
 

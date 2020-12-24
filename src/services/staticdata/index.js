@@ -1,7 +1,8 @@
 /**
  * @typedef {import('../../../types/services/store').Store} Store
  * @typedef {import('../../../types/services/store').registerStoreModule} registerStoreModule
- * @typedef {import('../../../types/services/store/factory').StoreModuleFactory} StoreModuleFactory
+ * @typedef {import('../../../types/services/store').StoreModuleFactory} StoreModuleFactory
+ * @typedef {import('../../../types/types').StaticDataTypes} StaticDataTypes
  */
 
 import {registerStoreModule} from '../store';
@@ -47,15 +48,20 @@ export const store = {};
 /**
  * initiates the setup for the default store modules
  *
- * @param {[string,Object<string,string>]} data Modulenames
+ * @param {StaticDataTypes} data
  */
-export const createStoreModules = data => {
-    for (const moduleName of data) {
-        if (typeof moduleName == 'string') {
-            store[moduleName] = StoreModuleFactory(moduleName);
-            DATA.normal.push(moduleName);
-        } else if (typeof moduleName == 'object' && Object.values(moduleName) == MSG_PACK_DATA_TYPE) {
-            createStoreModuleMsgPack(Object.keys(moduleName).toString());
+export const createStaticDataStoreModules = data => {
+    for (const staticDataNameOrObject of data) {
+        if (typeof staticDataNameOrObject == 'string') {
+            store[staticDataNameOrObject] = StoreModuleFactory(staticDataNameOrObject);
+            DATA.normal.push(staticDataNameOrObject);
+            continue;
+        }
+
+        for (const staticDataName in staticDataNameOrObject) {
+            if (staticDataNameOrObject[staticDataName] === MSG_PACK_DATA_TYPE) {
+                createStoreModuleMsgPack(Object.keys(staticDataName).toString());
+            }
         }
     }
 };
@@ -63,31 +69,31 @@ export const createStoreModules = data => {
 /**
  * Create module for static data with msg-pack lite(peerDependencies)
  *
- * @param {string} storeModuleName Modulenames
+ * @param {string} staticDataName
  */
-export const createStoreModuleMsgPack = storeModuleName => {
+export const createStoreModuleMsgPack = staticDataName => {
     if (!msgpack) {
         console.error('MESSAGE PACK NOT INSTALLED');
         return console.warn('run the following command to install messagepack: npm --save @msgpack/msgpack');
     }
-
-    const storeModule = StoreModuleFactory(storeModuleName);
-
-    getRequest(storeModuleName, {responseType: 'arraybuffer'}).then(response => {
-        storeModule.setAll(storeModuleName, msgpack.decode(new Uint8Array(response.data)));
-        return response;
-    });
-    registerStoreModule(storeModuleName, storeModule);
+    store[staticDataName] = StoreModuleFactory(staticDataName);
+    DATA.msgpack.push(staticDataName);
 };
 
 /**
- * Sends an action to the store which reads all the staticdata from the server defined in the 'constants/staticdata.js' file
+ * Sends requests to the server which recieves all the staticdata from the server defined in DATA
  */
-export const getStaticData = async () => {
+export const getStaticDataFromServer = async () => {
     const response = await getRequest(apiStaticDataEndpoint);
 
     for (const staticDataName of DATA.normal) {
         store[staticDataName].setAll(response.data[staticDataName]);
+    }
+
+    for (const staticDataName of DATA.msgpack) {
+        const response = await getRequest(staticDataName, {responseType: 'arraybuffer'});
+
+        store[staticDataName].setAll(msgpack.decode(new Uint8Array(response.data)));
     }
 };
 
@@ -102,6 +108,6 @@ export const getStaticDataSegment = data => store[data].all;
  * Get all data from the given store module by id
  *
  * @param {String} data the module from which to get all
- * @param {Number} id the id of the data object to get
+ * @param {String} id the id of the data object to get
  */
-export const byId = (data, id) => store[data].byId(id);
+export const getStaticDataItemById = (data, id) => store[data].byId(id);

@@ -6,12 +6,17 @@ import {Item} from '../types';
  *
  * @param {String} data the module from which to get all data from
  */
-export function getStaticDataSegment(data: String): void
+export function getStaticDataSegment(data: String): void;
 
 /**
  * Get all data from the given store module by id
  *
  * @param {String} data the module from which to get all
- * @param {Number} id the id of the data object to get
+ * @param {String} id the id of the data object to get
  */
-export function byId(data: string, id: number): ComputedRef<Item>
+export function getStaticDataItemById(data: string, id: string): ComputedRef<Item>;
+
+/**
+ * Sends requests to the server which recieves all the staticdata from the server defined in DATA
+ */
+export function getStaticDataFromServer(): Promise<void>;

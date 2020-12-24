@@ -3,6 +3,7 @@
  *
  * @typedef {import('../../types/types').Modules} Modules
  * @typedef {import('../../types/types').AuthComponents} AuthComponents
+ * @typedef {import('../../types/types').StaticDataTypes} StaticDataTypes
  */
 
 import {createApp} from 'vue';
@@ -15,7 +16,7 @@ import {
     setResetPasswordPage,
     setSetPasswordPage,
 } from '../services/auth';
-import {createStoreModules} from '../services/staticdata';
+import {createStaticDataStoreModules} from '../services/staticdata';
 
 /**
  * Start the app.
@@ -27,7 +28,7 @@ import {createStoreModules} from '../services/staticdata';
  * @param {Modules} modules the login page
  * @param {string} defaultLoggedInPageName the page to go to when logged in
  * @param {AuthComponents} authComponents the page to go to when logged in
- * @param {[string,Object<string,string>]} [staticData] the static data
+ * @param {StaticDataTypes} [staticData] the static data
  */
 export const startApp = (mainComponent, modules, defaultLoggedInPageName, authComponents, staticData) => {
     setDefaultLoggedInPageName(defaultLoggedInPageName);
@@ -39,7 +40,7 @@ export const startApp = (mainComponent, modules, defaultLoggedInPageName, authCo
     // set auth routes
     setAuthRoutes();
 
-    if (staticData) createStoreModules(staticData);
+    if (staticData) createStaticDataStoreModules(staticData);
 
     for (const moduleName in modules) modules[moduleName].init();
 
