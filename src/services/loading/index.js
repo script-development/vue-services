@@ -21,6 +21,14 @@ registerResponseErrorMiddleware(() => setLoading(false));
  * @returns {Ref<boolean>}
  */
 export const loading = ref(false);
+
+/**
+ * get the spinner loading state
+ *
+ * @returns {Ref<boolean>}
+ */
+export const spinnerLoading = ref(false);
+
 /**
  * Set the loading state.
  * Does not set the state immediatly after recieving false.
@@ -29,6 +37,7 @@ export const loading = ref(false);
  * @param {Boolean} newLoading the loading state
  */
 export const setLoading = newLoading => {
+    loading.value = newLoading;
     if (loadingTimeoutId) clearTimeout(loadingTimeoutId);
 
     let timeout = spinnerTimeout;
@@ -45,5 +54,5 @@ export const setLoading = newLoading => {
         loadingTimeStart = undefined;
     }
 
-    loadingTimeoutId = setTimeout(() => (loading.value = newLoading), timeout);
+    loadingTimeoutId = setTimeout(() => (spinnerLoading.value = newLoading), timeout);
 };

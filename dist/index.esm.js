@@ -345,6 +345,11 @@ const hasCreatePage = moduleName => hasPageName(moduleName + CREATE_PAGE_NAME);
  */
 const hasEditPage = moduleName => hasPageName(moduleName + EDIT_PAGE_NAME);
 /**
+ * returns if the given module name has an overview page
+ * @param {string} moduleName
+ */
+const hasOverviewPage = moduleName => hasPageName(moduleName + OVERVIEW_PAGE_NAME);
+/**
  * returns if the given module name has a show page
  * @param {string} moduleName
  */
@@ -483,6 +488,9 @@ const download = async (endpoint, documentName, type) =>
         link.click();
         return response;
     });
+
+/** @param {RequestMiddleware} middlewareFunc */
+const registerRequestMiddleware = middlewareFunc => requestMiddleware.push(middlewareFunc);
 
 /** @param {ResponseMiddleware} middlewareFunc */
 const registerResponseMiddleware = middlewareFunc => responseMiddleware.push(middlewareFunc);
@@ -1276,6 +1284,62 @@ const moduleFactory = (moduleName, components, translation) => {
 // }
 
 /**
+ * @typedef {import('vue').Ref} Ref
+ */
+
+let spinnerTimeout = 500;
+let minTimeSpinner = 1000;
+
+let loadingTimeoutId;
+let loadingTimeStart;
+
+registerRequestMiddleware(() => setLoading(true));
+registerResponseMiddleware(() => setLoading(false));
+registerResponseErrorMiddleware(() => setLoading(false));
+
+/**
+ * get the loading state
+ *
+ * @returns {Ref<boolean>}
+ */
+const loading = ref(false);
+
+/**
+ * get the spinner loading state
+ *
+ * @returns {Ref<boolean>}
+ */
+const spinnerLoading = ref(false);
+
+/**
+ * Set the loading state.
+ * Does not set the state immediatly after recieving false.
+ * It only sets it before 500ms or after 1500ms.
+ *
+ * @param {Boolean} newLoading the loading state
+ */
+const setLoading = newLoading => {
+    loading.value = newLoading;
+    if (loadingTimeoutId) clearTimeout(loadingTimeoutId);
+
+    let timeout = spinnerTimeout;
+
+    if (newLoading) {
+        // set the time the loading started
+        loadingTimeStart = Date.now();
+    } else if (loadingTimeStart) {
+        // get the response time from the request
+        const responseTime = Date.now() - loadingTimeStart;
+        // check the time the spinner is already active and how many ms it should stay active to get to the min time of the spinner
+        timeout = minTimeSpinner - responseTime + spinnerTimeout;
+        if (timeout < 0) timeout = 0;
+        loadingTimeStart = undefined;
+    }
+
+    loadingTimeoutId = setTimeout(() => (spinnerLoading.value = newLoading), timeout);
+};
+
+/**
  * Extra toast styling, for the animations
  */
 const style = document.createElement('style');
@@ -1598,4 +1662,4 @@ const BaseFormError = defineComponent({
     },
 });
 
-export { BaseFormError, MinimalRouterView, addRoute, createModal, createToastMessage, download, getAllFromStore, getByIdFromStore, getCapitalizedPluralTranslation, getCapitalizedSingularTranslation, getCurrentRouteId, getCurrentRouteModuleName, getCurrentRouteQuery, getPluralTranslation, getRequest, getSingularTranslation, getStaticDataFromServer, getStaticDataItemById, getStaticDataSegment, goBack, goToCreatePage, goToEditPage, goToOverviewPage, goToRoute, goToShowPage, hasCreatePage, hasEditPage, hasShowPage, isLoggedIn, login, logout, moduleFactory, postRequest, startApp };
+export { BaseFormError, MinimalRouterView, addRoute, createModal, createToastMessage, download, getAllFromStore, getByIdFromStore, getCapitalizedPluralTranslation, getCapitalizedSingularTranslation, getCurrentRouteId, getCurrentRouteModuleName, getCurrentRouteQuery, getPluralTranslation, getRequest, getSingularTranslation, getStaticDataFromServer, getStaticDataItemById, getStaticDataSegment, goBack, goToCreatePage, goToEditPage, goToOverviewPage, goToRoute, goToShowPage, hasCreatePage, hasEditPage, hasOverviewPage, hasShowPage, isLoggedIn, loading, login, logout, moduleFactory, postRequest, startApp };
