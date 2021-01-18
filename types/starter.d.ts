@@ -11,18 +11,12 @@ export class AppStarter {
     _creatorInit: Function;
     /**
      * Start the app and set required settings
-     *
-     * @param {Component} mainComponent the main app component
-     * @param {String} defaultLoggedInPageName the page name to go to when logged in
-     * @param {Component} loginPage the login page
-     * @param {Object<string,BaseController>} controllers the controllers used by the app
-     * @param {[string,Object<string,string>]} [staticData] the static data
      */
     start(
         mainComponent: Component,
         defaultLoggedInPageName: string,
         loginPage: Component,
         controllers: {[controllerName: string]: BaseController},
-        staticData?: [string, {[key: string]: string}]
+        staticData?: readonly (string | {[key: string]: string})[]
     ): void;
 }
