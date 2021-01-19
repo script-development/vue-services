@@ -13,7 +13,7 @@ import {
 import {RouterService} from './routerService';
 import {StoreService} from './storeService';
 
-export {BaseController} from './controllers';
+export {BaseController, Item} from './controllers';
 export {Translation} from './services';
 
 import {
