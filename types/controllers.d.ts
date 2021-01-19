@@ -6,7 +6,10 @@ import {AxiosRequestConfig} from 'axios';
 import {Component} from 'vue';
 
 type GetterMethod = (state: any) => any;
-export type Item = {id?: string | number; [key: string]: any};
+export interface Item {
+    id?: string | number;
+    [key: string]: any;
+}
 
 export class BaseController {
     /**
