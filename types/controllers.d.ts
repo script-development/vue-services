@@ -86,19 +86,19 @@ export class BaseController {
      * @param {Item} item The item with the information to be updated
      * @param {String} [goToRouteName] the optional route to go to after the item has been succesfully updated
      */
-    get update(): (item: Item, goToRouteName: string) => Promise<void>;
+    get update(): (item: Item, goToRouteName?: string) => Promise<void>;
     /**
      * Send a create to the api
      * @param {Item} item The item with the information to be created
      * @param {String} [goToRouteName] the optional route to go to after the item has been succesfully created
      */
-    get create(): (item: Item, goToRouteName: string) => Promise<void>;
+    get create(): (item: Item, goToRouteName?: string) => Promise<void>;
     /**
      * Send a delete to the api
      * @param {String|Number} id The id of the item to be deleted
      * @param {String} [goToRouteName] the optional route to go to after the item has been succesfully deleted
      */
-    get destroy(): (id: string | number, goToRouteName: string) => Promise<void>;
+    get destroy(): (id: string | number, goToRouteName?: string) => Promise<void>;
     /**
      * Send a delete to the api without changing route afterwards
      *
