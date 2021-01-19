@@ -3,7 +3,7 @@ import {RouterService, RouteSettings} from './routerService';
 import {EventService, TranslatorService, Translation} from './services';
 import {Module, ActionMethod, MutationMethod} from 'vuex';
 import {AxiosRequestConfig} from 'axios';
-import {CreateElement, Component} from 'vue';
+import {Component} from 'vue';
 
 type GetterMethod = (state: any) => any;
 export type Item = {[key: string]: any};
@@ -130,15 +130,12 @@ export class BaseController {
      * The base page for the current controller
      * Sned a read request to the server on mount
      */
-    get basePage(): {
-        render: (h: CreateElement) => any;
-        mounted: () => Promise<any>;
-    };
+    get basePage(): Component;
 
-    get overviewPage(): Component;
-    get createPage(): Component;
-    get showPage(): Component;
-    get editPage(): Component;
+    get overviewPage(): Component | boolean;
+    get createPage(): Component | boolean;
+    get showPage(): Component | boolean;
+    get editPage(): Component | boolean;
     /**
      * init the controller
      * this will add a module to the store and register routes
