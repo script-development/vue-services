@@ -2,7 +2,7 @@ import {StoreService} from './storeService';
 import {RouterService, RouteSettings} from './routerService';
 import {EventService, TranslatorService, Translation} from './services';
 import {Module, ActionMethod, MutationMethod} from 'vuex';
-import {AxiosRequestConfig} from 'axios';
+import {AxiosRequestConfig, AxiosResponse} from 'axios';
 import {Component} from 'vue';
 
 type GetterMethod = (state: any) => any;
@@ -87,48 +87,48 @@ export class BaseController {
     /**
      * Send an update to the api
      * @param {Item} item The item with the information to be updated
-     * @param {String} [goToRouteName] the optional route to go to after the item has been succesfully updated
+     * @param {string|boolean} [goToRouteName] the optional route to go to after the item has been succesfully updated
      */
-    get update(): (item: Item, goToRouteName?: string) => Promise<void>;
+    get update(): (item: Item, goToRouteName?: string | boolean) => AxiosResponse<void>;
     /**
      * Send a create to the api
      * @param {Item} item The item with the information to be created
-     * @param {String} [goToRouteName] the optional route to go to after the item has been succesfully created
+     * @param {string|boolean} [goToRouteName] the optional route to go to after the item has been succesfully created
      */
-    get create(): (item: Item, goToRouteName?: string) => Promise<void>;
+    get create(): (item: Item, goToRouteName?: string | boolean) => AxiosResponse<void>;
     /**
      * Send a delete to the api
      * @param {String|Number} id The id of the item to be deleted
-     * @param {String} [goToRouteName] the optional route to go to after the item has been succesfully deleted
+     * @param {string|boolean} [goToRouteName] the optional route to go to after the item has been succesfully deleted
      */
-    get destroy(): (id: string | number, goToRouteName?: string) => Promise<void>;
+    get destroy(): (id: string | number, goToRouteName?: string | boolean) => AxiosResponse<void>;
     /**
      * Send a delete to the api without changing route afterwards
      *
      * @param {String|Number} id The id of the item to be deleted
      */
-    get destroyByIdWithoutRouteChange(): (id: string | number) => Promise<any>;
+    get destroyByIdWithoutRouteChange(): (id: string | number) => AxiosResponse<any>;
     /**
      * Send a delete with current route id to the api
      */
-    get destroyByCurrentRouteId(): () => Promise<void>;
+    get destroyByCurrentRouteId(): () => AxiosResponse<void>;
     /**
      * Send a read request for the current controller
      * StoreService will catch the data and put it in store
      */
-    get read(): () => Promise<any>;
+    get read(): () => AxiosResponse<any>;
     /**
      * Send a read request for an item with id of the current route
      * StoreService will catch the data and put it in store
      */
-    get showByCurrentRouteId(): () => Promise<any>;
+    get showByCurrentRouteId(): () => AxiosResponse<any>;
     /**
      * Send a read request for an item with the given id
      * StoreService will catch the data and put it in store
      *
      * @param {String|Number} id the id of the item to read from the server
      */
-    get show(): (id: string | number) => Promise<any>;
+    get show(): (id: string | number) => AxiosResponse<any>;
     /**
      * The base page for the current controller
      * Sned a read request to the server on mount
