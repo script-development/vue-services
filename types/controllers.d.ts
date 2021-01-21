@@ -89,46 +89,46 @@ export class BaseController {
      * @param {Item} item The item with the information to be updated
      * @param {string|boolean} [goToRouteName] the optional route to go to after the item has been succesfully updated
      */
-    get update(): (item: Item, goToRouteName?: string | boolean) => AxiosResponse<void>;
+    get update(): (item: Item, goToRouteName?: string | boolean) => Promise<AxiosResponse<any>>;
     /**
      * Send a create to the api
      * @param {Item} item The item with the information to be created
      * @param {string|boolean} [goToRouteName] the optional route to go to after the item has been succesfully created
      */
-    get create(): (item: Item, goToRouteName?: string | boolean) => AxiosResponse<void>;
+    get create(): (item: Item, goToRouteName?: string | boolean) => Promise<AxiosResponse<any>>;
     /**
      * Send a delete to the api
      * @param {String|Number} id The id of the item to be deleted
      * @param {string|boolean} [goToRouteName] the optional route to go to after the item has been succesfully deleted
      */
-    get destroy(): (id: string | number, goToRouteName?: string | boolean) => AxiosResponse<void>;
+    get destroy(): (id: string | number, goToRouteName?: string | boolean) => Promise<AxiosResponse<any>>;
     /**
      * Send a delete to the api without changing route afterwards
      *
      * @param {String|Number} id The id of the item to be deleted
      */
-    get destroyByIdWithoutRouteChange(): (id: string | number) => AxiosResponse<any>;
+    get destroyByIdWithoutRouteChange(): (id: string | number) => Promise<AxiosResponse<any>>;
     /**
      * Send a delete with current route id to the api
      */
-    get destroyByCurrentRouteId(): () => AxiosResponse<void>;
+    get destroyByCurrentRouteId(): () => Promise<AxiosResponse<any>>;
     /**
      * Send a read request for the current controller
      * StoreService will catch the data and put it in store
      */
-    get read(): () => AxiosResponse<any>;
+    get read(): () => Promise<AxiosResponse<any>>;
     /**
      * Send a read request for an item with id of the current route
      * StoreService will catch the data and put it in store
      */
-    get showByCurrentRouteId(): () => AxiosResponse<any>;
+    get showByCurrentRouteId(): () => Promise<AxiosResponse<any>>;
     /**
      * Send a read request for an item with the given id
      * StoreService will catch the data and put it in store
      *
      * @param {String|Number} id the id of the item to read from the server
      */
-    get show(): (id: string | number) => AxiosResponse<any>;
+    get show(): (id: string | number) => Promise<AxiosResponse<any>>;
     /**
      * The base page for the current controller
      * Sned a read request to the server on mount

@@ -104,9 +104,10 @@ export class HTTPService {
      * send a post request to the given endpoint with the given data
      * @param {String} endpoint the endpoint for the post
      * @param {any} data the data to be send to the server
+     * @param {AxiosRequestConfig} [options] the optional request options
      */
-    post(endpoint, data) {
-        return this._http.post(endpoint, data);
+    post(endpoint, data, options) {
+        return this._http.post(endpoint, data, options);
     }
 
     /**

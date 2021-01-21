@@ -47,8 +47,9 @@ export class HTTPService {
      * send a post request to the given endpoint with the given data
      * @param {String} endpoint the endpoint for the post
      * @param {any} data the data to be send to the server
+     * @param {AxiosRequestConfig} [options] the optional request options
      */
-    post(endpoint: string, data: any): Promise<AxiosResponse>;
+    post(endpoint: string, data: any, options?: AxiosRequestConfig): Promise<AxiosResponse>;
     /**
      * send a delete request to the given endpoint
      * @param {String} endpoint the endpoint for the get
