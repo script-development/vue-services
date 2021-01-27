@@ -49,7 +49,7 @@
         "axios": "0.20.0",
         "bootstrap-vue": "^2.15.0",
         "vue": "2.6.12",
-        "vue-router": "3.4.3",
+        "vue-router": "3.5.1",
         "vuex": "3.5.1"
     },
     "peerDependencies": {
