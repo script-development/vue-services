@@ -83,4 +83,4 @@ export type IsLoggedIn = Ref<boolean>;
 export type LoggedInUser = Ref<Item>;
 
 export const MSG_PACK_DATA_TYPE = 'msg-pack';
-export type StaticDataTypes = [string | {[staticDataName: string]: typeof MSG_PACK_DATA_TYPE}];
+export type StaticDataTypes = readonly (string | {[staticDataName: string]: typeof MSG_PACK_DATA_TYPE})[];

@@ -1,3 +1,4 @@
+// TODO :: is old, only eventservice needs to be rewritten
 import {Vue} from 'vue/types/vue';
 import {StoreService} from './storeService';
 
