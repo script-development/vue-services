@@ -86,7 +86,7 @@ export class EventService {
      * @param {Function} [cancelAction] the being used when click on cancel
      */
     modal(message, okAction, cancelAction) {
-        this._app.$bvModal
+        return this._app.$bvModal
             .msgBoxConfirm(message, {
                 size: 'm',
                 buttonSize: 'm',
