@@ -1,6 +1,6 @@
 {
     "name": "@script-development/vue-services",
-    "version": "0.2.22",
+    "version": "0.2.23",
     "description": "Services for Vue SPA App",
     "main": "dist/index.js",
     "module": "dist/index.esm.js",
@@ -71,6 +71,6 @@
         ]
     },
     "bin": {
-        "servvue": "./cli/index.js"
+        "servvue": "cli/index.js"
     }
 }
