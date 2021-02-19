@@ -20,7 +20,8 @@
         "pub": "npm version patch && npm publish",
         "docs": "typedoc",
         "lint": "eslint ./src",
-        "mutate": "stryker run"
+        "mutate": "stryker run",
+        "postinstall": "husky install"
     },
     "author": "Script",
     "license": "MIT",
@@ -35,9 +36,9 @@
         "axios-mock-adapter": "^1.18.2",
         "eslint": "^7.12.1",
         "eslint-plugin-mocha": "^8.0.0",
-        "husky": "^5.0.9",
         "mocha": "^8.1.3",
         "nyc": "^15.1.0",
+        "husky": "^5.0.9",
         "prettier": "^2.1.1",
         "pretty-quick": "^3.1.0",
         "rollup": "^2.26.11",
