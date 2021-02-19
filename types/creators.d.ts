@@ -258,7 +258,7 @@ type DetailListField = {
     label: string;
     key?: string;
     formatter?: DetailListFormatter;
-    unorderedList: ListElementEntry[];
+    unorderedList?: ListElementEntry[];
 };
 
 export class FormCreator {
