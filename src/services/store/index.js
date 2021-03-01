@@ -1,11 +1,10 @@
 /**
  * @typedef {import('./factory').StoreModuleFactory} StoreModuleFactory
  * @typedef {import('../http').HTTPService} HTTPService
- * @typedef {import('vuex').Store} Store
- * @typedef {import('vuex').Module} Module
+ * @typedef {import('vuex').Store<{}>} Store
+ * @typedef {import('vuex').Module<string,{}>} Module
  * @typedef {import('axios').AxiosRequestConfig} AxiosRequestConfig
  *
- * @typedef {import('../../errors/StoreModuleNotFoundError').StoreModuleNotFoundError} StoreModuleNotFoundError
  * @typedef {import('../../controllers').Item} Item
  */
 
@@ -21,7 +20,7 @@ export class StoreService {
      * @param {HTTPService} httpService the http service for communication with the API
      */
     constructor(factory, httpService) {
-        this._store = new Vuex.Store();
+        this._store = new Vuex.Store({});
         this._factory = factory;
         this._httpService = httpService;
 
