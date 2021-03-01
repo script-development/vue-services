@@ -21,7 +21,7 @@
         "docs": "typedoc",
         "lint": "eslint ./src",
         "mutate": "stryker run",
-        "postinstall": "husky install",
+        "prepare": "husky install",
         "prepublishOnly": "pinst --disable",
         "postpublish": "pinst --enable"
     },
