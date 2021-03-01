@@ -2,7 +2,6 @@
  * @typedef {import("vue-router").RouteConfig} RouteConfig
  * @typedef {import("vue-router").Route} Route
  * @typedef {import("vue-router").NavigationGuardNext} NavigationGuardNext
- * @typedef {import("vue-router").default} VueRouter
  * @typedef {import("./factory").RouteFactory} RouteFactory
  * @typedef {import("./settings").RouteSettings} RouteSettings
  *

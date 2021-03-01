@@ -2,7 +2,6 @@
  * @typedef {import('axios').AxiosRequestConfig} AxiosRequestConfig
  * @typedef {import('../storage').StorageService} StorageService
  * @typedef {import('axios').AxiosResponse} AxiosResponse
- * @typedef {import('axios').AxiosRequestConfig} AxiosRequestConfig
  * @typedef {import('axios').AxiosError} AxiosError
  *
  * @typedef {Object<string,number>} Cache
