@@ -1,9 +1,5 @@
 /**
- * @typedef {Object} Translation
- * @property {string} singular the singular translation
- * @property {string} plural the plural translation
- *
- * @typedef {import('../../errors/MissingTranslationError').MissingTranslationError} MissingTranslationError
+ * @typedef {import('../../../types/services').Translation} Translation
  */
 
 import {MissingTranslationError} from '../../errors/MissingTranslationError';

@@ -106,8 +106,8 @@ export class EventService {
     modal(message: string, okAction: Function, cancelAction?: Function): void;
 }
 
-export const PLURAL = 'plural';
-export const SINGULAR = 'singular';
+export type PLURAL = 'plural';
+export type SINGULAR = 'singular';
 
 export class TranslatorService {
     /** @type {Object.<string, Translation>}*/
@@ -117,18 +117,11 @@ export class TranslatorService {
     /**
      * Get plural or singular translation for given value
      *
-     * @param {String} value
-     * @param {PLURAL | SINGULAR} pluralOrSingular
-     *
      * @throws {MissingTranslationError}
-     *
-     * @private
      */
-    private _getTranslation(value: string, pluralOrSingular: typeof PLURAL | typeof SINGULAR): string;
+    private _getTranslation(value: string, pluralOrSingular: PLURAL | SINGULAR): string;
     /**
      * Get the plural translation for the given value
-     *
-     * @param {String} value
      *
      * @throws {MissingTranslationError}
      */
@@ -136,23 +129,17 @@ export class TranslatorService {
     /**
      * Get the singular translation for the given value
      *
-     * @param {String} value
-     *
      * @throws {MissingTranslationError}
      */
     getSingular(value: string): string;
     /**
      * Get the singular translation for the given value and capitalize it
      *
-     * @param {String} value
-     *
      * @throws {MissingTranslationError}
      */
     getCapitalizedSingular(value: string): string;
     /**
      * Get the plural translation for the given value and capitalize it
-     *
-     * @param {String} value
      *
      * @throws {MissingTranslationError}
      */
@@ -161,16 +148,10 @@ export class TranslatorService {
      * Get the either the singular or plural translation, based on the given count
      * Return the string `${count} ${translation}`
      *
-     * @param {Number} count
-     * @param {String} value
-     *
      * @throws {MissingTranslationError}
      */
     maybePluralize(count: number, value: string): string;
-    /**
-     * @param {string} key
-     * @param {Translation} translation
-     */
+
     setTranslation(key: string, translation: Translation): void;
 }
 
