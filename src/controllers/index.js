@@ -110,7 +110,7 @@ export class BaseController {
      * @param {String|Number} id get the item from the store base don id
      */
     getById(id) {
-        return this._storeService.getByIdFromStore(this._APIEndpoint, id);
+        return this._storeService.getByIdFromStore(this._APIEndpoint, id.toString());
     }
 
     /**

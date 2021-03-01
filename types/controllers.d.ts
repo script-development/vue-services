@@ -79,7 +79,7 @@ export class BaseController {
      * Get an item from the store based on the given id
      * @param {String|Number} id get the item from the store base don id
      */
-    getById(id: number): Item;
+    getById(id: number|String): Item;
     /**
      * Get an item based on the current route id
      */
