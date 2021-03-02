@@ -1,4 +1,18 @@
-module.exports = {
+import {defineConfig} from 'vite';
+import vue from '@vitejs/plugin-vue';
+
+export default defineConfig({
+    plugins: [vue()],
+    // server: {
+    //     // cors: true,
+    //     proxy: {
+    //         '^/api/.*': {
+    //             target: 'http://localhost:8000',
+    //             changeOrigin: true,
+    //             secure: false,
+    //         },
+    //     },
+    // },
     optimizeDeps: {
         include: [
             'lodash.get',
@@ -29,4 +43,4 @@ module.exports = {
             'faker',
         ],
     },
-};
+});
