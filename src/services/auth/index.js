@@ -16,7 +16,7 @@ import {MissingDefaultLoggedinPageError} from '../../errors/MissingDefaultLogged
 
 import {ref} from 'vue';
 
-import {getRequest, postRequest, registerResponseErrorMiddleware} from '../http';
+import {getRequest, getRequestWithoutCache, postRequest, registerResponseErrorMiddleware} from '../http';
 import {addRoute, goToRoute, registerBeforeMiddleware} from '../router';
 import {clearStorage, getItemFromStorage, setItemInStorage, setKeepALive} from '../storage';
 
@@ -25,7 +25,8 @@ const FORGOT_PASSWORD_ROUTE_NAME = 'ForgotPassword';
 const RESET_PASSWORD_ROUTE_NAME = 'ResetPassword';
 const SET_PASSWORD_ROUTE_NAME = 'SetPassword';
 
-const APP_NAME = process.env.MIX_APP_NAME || 'Harry';
+// TODO :: how to determine the app name?
+const APP_NAME = 'Harry';
 const IS_LOGGED_IN_KEY = APP_NAME + ' is magical';
 const LOGGED_IN_USER_KEY = APP_NAME + ' is supreme';
 
@@ -35,7 +36,7 @@ const apiLoggedInCheckRoute = '/me';
 const apiSendResetPasswordEmailRoute = '/send-email-reset-password';
 const apiResetpasswordRoute = '/resetpassword';
 
-let defaultLoggedInPageName;
+let defaultLoggedInPageName = '';
 
 /** @type {Component} */
 let resetPasswordPage = ResetPasswordPage;
@@ -163,7 +164,7 @@ export const logout = async () => {
 };
 
 export const checkIfLoggedIn = async () => {
-    return getRequest(apiLoggedInCheckRoute).then(response => {
+    return getRequestWithoutCache(apiLoggedInCheckRoute).then(response => {
         setLoggedInAndUser(response.data.user);
         return response;
     });

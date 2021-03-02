@@ -67,7 +67,7 @@ export const setBaseURL = value => (baseURL = value);
 
 /**
  * send a get request to the given endpoint
- * @param {String} endpoint the endpoint for the get
+ * @param {string} endpoint the endpoint for the get
  * @param {AxiosRequestConfig} [options] the optional request options
  */
 export const getRequest = async (endpoint, options) => {
@@ -86,24 +86,31 @@ export const getRequest = async (endpoint, options) => {
 };
 
 /**
+ * send a get request to the given endpoint without using cache
+ * @param {string} endpoint the endpoint for the get
+ * @param {AxiosRequestConfig} [options] the optional request options
+ */
+export const getRequestWithoutCache = async (endpoint, options) => http.get(endpoint, options);
+
+/**
  * send a post request to the given endpoint with the given data
- * @param {String} endpoint the endpoint for the post
+ * @param {string} endpoint the endpoint for the post
  * @param {any} data the data to be send to the server
  */
 export const postRequest = async (endpoint, data) => http.post(endpoint, data);
 
 /**
  * send a delete request to the given endpoint
- * @param {String} endpoint the endpoint for the get
+ * @param {string} endpoint the endpoint for the get
  */
 export const deleteRequest = async endpoint => http.delete(endpoint);
 
 /**
  * download a file from the backend
  * type should be resolved automagically, if not, then you can pass the type
- * @param {String} endpoint the endpoint for the download
- * @param {String} documentName the name of the document to be downloaded
- * @param {String} [type] the downloaded document type
+ * @param {string} endpoint the endpoint for the download
+ * @param {string} documentName the name of the document to be downloaded
+ * @param {string} [type] the downloaded document type
  */
 export const download = async (endpoint, documentName, type) =>
     http.get(endpoint, {responseType: 'blob'}).then(response => {
