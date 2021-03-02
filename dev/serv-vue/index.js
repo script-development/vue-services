@@ -1,5 +1,5 @@
-import {ref, computed, createApp, defineComponent, h} from 'vue';
-import {createRouter, createWebHistory} from 'vue-router';
+import { ref, computed, createApp, defineComponent, h } from 'vue';
+import { createRouter, createWebHistory } from 'vue-router';
 import axios from 'axios';
 
 class MissingTranslationError extends Error {
@@ -173,14 +173,7 @@ const partialFactory = (moduleName, part, component) => {
  *
  * @returns {RouteSettings}
  */
-var RouteSettingFactory = (
-    moduleName,
-    baseComponent,
-    overviewComponent,
-    createComponent,
-    editComponent,
-    showComponent
-) => {
+var RouteSettingFactory = (moduleName, baseComponent, overviewComponent, createComponent, editComponent, showComponent) => {
     const routeSettings = {
         base: {
             path: '/' + getPluralTranslation(moduleName),
@@ -394,9 +387,8 @@ class MissingDefaultLoggedinPageError extends Error {
  * @typedef {import('../../../types/types').ResponseMiddleware} ResponseMiddleware
  * @typedef {import('../../../types/types').ResponseErrorMiddleware} ResponseErrorMiddleware
  */
-// TODO :: heavilly dependant on webpack and laravel mix
-// TODO :: how to test these branches?
-const API_URL = process.env.MIX_APP_URL ? `${process.env.MIX_APP_URL}/api` : '/api';
+
+/** @type {Object<string,string>} */
 const HEADERS_TO_TYPE = {
     'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet': 'application/xlsx',
 };
@@ -404,7 +396,8 @@ const HEADERS_TO_TYPE = {
 const CACHE_KEY = 'HTTP_CACHE';
 
 /** @type {number} */
-let cacheDuration = 10;
+let cacheDuration = 0;
+let baseURL = '/api';
 
 // Not using storageService here, cause it always needs to be stored in the localStorage
 const preCache = localStorage.getItem(CACHE_KEY);
@@ -413,7 +406,7 @@ const preCache = localStorage.getItem(CACHE_KEY);
 const cache = preCache ? JSON.parse(preCache) : {};
 
 const http = axios.create({
-    baseURL: API_URL,
+    baseURL,
     withCredentials: false,
     headers: {
         Accept: 'application/json',
@@ -1669,41 +1662,4 @@ const BaseFormError = defineComponent({
     },
 });
 
-export {
-    BaseFormError,
-    MinimalRouterView,
-    addRoute,
-    createModal,
-    createToastMessage,
-    download,
-    getAllFromStore,
-    getByIdFromStore,
-    getCapitalizedPluralTranslation,
-    getCapitalizedSingularTranslation,
-    getCurrentRouteId,
-    getCurrentRouteModuleName,
-    getCurrentRouteQuery,
-    getPluralTranslation,
-    getRequest,
-    getSingularTranslation,
-    getStaticDataFromServer,
-    getStaticDataItemById,
-    getStaticDataSegment,
-    goBack,
-    goToCreatePage,
-    goToEditPage,
-    goToOverviewPage,
-    goToRoute,
-    goToShowPage,
-    hasCreatePage,
-    hasEditPage,
-    hasOverviewPage,
-    hasShowPage,
-    isLoggedIn,
-    loading,
-    login,
-    logout,
-    moduleFactory,
-    postRequest,
-    startApp,
-};
+export { BaseFormError, MinimalRouterView, addRoute, createModal, createToastMessage, download, getAllFromStore, getByIdFromStore, getCapitalizedPluralTranslation, getCapitalizedSingularTranslation, getCurrentRouteId, getCurrentRouteModuleName, getCurrentRouteQuery, getPluralTranslation, getRequest, getSingularTranslation, getStaticDataFromServer, getStaticDataItemById, getStaticDataSegment, goBack, goToCreatePage, goToEditPage, goToOverviewPage, goToRoute, goToShowPage, hasCreatePage, hasEditPage, hasOverviewPage, hasShowPage, isLoggedIn, loading, login, logout, moduleFactory, postRequest, startApp };
