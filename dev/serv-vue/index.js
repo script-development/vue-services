@@ -394,9 +394,6 @@ const HEADERS_TO_TYPE = {
 };
 
 const CACHE_KEY = 'HTTP_CACHE';
-
-/** @type {number} */
-let cacheDuration = 0;
 let baseURL = '/api';
 
 // Not using storageService here, cause it always needs to be stored in the localStorage
@@ -444,19 +441,16 @@ http.interceptors.response.use(
  * @param {AxiosRequestConfig} [options] the optional request options
  */
 const getRequest = async (endpoint, options) => {
-    // get currentTimeStamp in seconds
-    const currentTimeStamp = Math.floor(Date.now() / 1000);
-    if (cache[endpoint] && !options) {
-        // if it has been less then the cache duration since last requested this get request, do nothing
-        if (currentTimeStamp - cache[endpoint] < cacheDuration) return;
-    }
-
-    return http.get(endpoint, options).then(response => {
-        cache[endpoint] = currentTimeStamp;
-        localStorage.setItem(CACHE_KEY, JSON.stringify(cache));
-        return response;
-    });
+    // If there is no cache duration, then there is no need to use the cache
+    return getRequestWithoutCache(endpoint, options);
 };
+
+/**
+ * send a get request to the given endpoint without using cache
+ * @param {string} endpoint the endpoint for the get
+ * @param {AxiosRequestConfig} [options] the optional request options
+ */
+const getRequestWithoutCache = async (endpoint, options) => http.get(endpoint, options);
 
 /**
  * send a post request to the given endpoint with the given data

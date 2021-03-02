@@ -71,6 +71,9 @@ export const setBaseURL = value => (baseURL = value);
  * @param {AxiosRequestConfig} [options] the optional request options
  */
 export const getRequest = async (endpoint, options) => {
+    // If there is no cache duration, then there is no need to use the cache
+    if (!cacheDuration) return getRequestWithoutCache(endpoint, options);
+
     // get currentTimeStamp in seconds
     const currentTimeStamp = Math.floor(Date.now() / 1000);
     if (cache[endpoint] && !options) {
