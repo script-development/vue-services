@@ -1,16 +1,14 @@
 /**
  * @typedef {import('../../../types/services/store').Store} Store
- * @typedef {import('../../../types/services/store').registerStoreModule} registerStoreModule
  * @typedef {import('../../../types/services/store').StoreModuleFactory} StoreModuleFactory
  * @typedef {import('../../../types/types').StaticDataTypes} StaticDataTypes
  */
-
-import {registerStoreModule} from '../store';
 import {getRequestWithoutCache} from '../http';
 import StoreModuleFactory from '../store/factory';
 
 /**
  * Define msgpack for later use
+ * @type {{decode:Function} | undefined}
  */
 let msgpack;
 /**
@@ -24,6 +22,7 @@ let msgpack;
  * mix.webpackConfig({externals: {'@msgpack/msgpack': 'msgpack'}});
  */
 try {
+    // eslint-disable-next-line
     msgpack = require('@msgpack/msgpack');
     // eslint-disable-next-line
 } catch (error) {}
@@ -94,6 +93,12 @@ export const getStaticDataFromServer = async () => {
 
     for (const staticDataName of DATA.msgpack) {
         const response = await getRequestWithoutCache(staticDataName, {responseType: 'arraybuffer'});
+
+        if (!msgpack) {
+            console.error('MESSAGE PACK NOT INSTALLED');
+            console.warn('run the following command to install messagepack: npm --save @msgpack/msgpack');
+            return response;
+        }
 
         store[staticDataName].setAll(msgpack.decode(new Uint8Array(response.data)));
     }
