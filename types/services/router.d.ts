@@ -7,11 +7,16 @@ import {
     RouteRecordRaw,
 } from 'vue-router';
 
+// TODO :: something?
 export type RouteSettings = {
     base: RouteRecordRaw;
+    // @ts-ignore
     create?: RouteRecordRaw;
+    // @ts-ignore
     overview?: RouteRecordRaw;
+    // @ts-ignore
     edit?: RouteRecordRaw;
+    // @ts-ignore
     show?: RouteRecordRaw;
     [extraRoutes: string]: RouteRecordRaw;
 };
@@ -36,21 +41,21 @@ export function registerAfterMiddleware(middleware: NavigationHookAfter): void;
 
 export function addRoute(routes: RouteRecordRaw): void;
 
-export declare function addRoutesBasedOnRouteSettings(settings: RouteSettings): RouteRecordRaw;
+export function addRoutesBasedOnRouteSettings(settings: RouteSettings): RouteRecordRaw;
 
 /**
  * Go to the give route by name, optional id and query
  * If going to a route you are already on, it catches the given error
  *
  * @param {String} name the name of the new route
- * @param {String} [id] the optional id for the params of the new route
+ * @param {number} [id] the optional id for the params of the new route
  * @param {LocationQuery} [query] the optional query for the new route
  */
-export function goToRoute(name: string, id?: string, query?: LocationQuery): void;
+export function goToRoute(name: string, id?: number, query?: LocationQuery): void;
 /** Go to the show page for the given module name */
-export function goToShowPage(moduleName: string, id: string): void;
+export function goToShowPage(moduleName: string, id: number): void;
 /** Go to the edit page for the given module name */
-export function goToEditPage(moduleName: string, id: string): void;
+export function goToEditPage(moduleName: string, id: number): void;
 /** Go to the create page for the given module name */
 export function goToCreatePage(moduleName: string): void;
 /** Go to the overview page for the given module name */
@@ -60,7 +65,7 @@ export function getCurrentRoute(): Ref<RouteLocationNormalizedLoaded>;
 /** Get the query from the current route */
 export function getCurrentRouteQuery(): LocationQuery;
 /** Get the id from the params from the current route */
-export function getCurrentRouteId(): string;
+export function getCurrentRouteId(): number;
 /** Get the name from the current route */
 export function getCurrentRouteName(): string;
 /** Get the module name binded to the current route */

@@ -8,17 +8,17 @@ export type ResponseErrorMiddleware = (error: AxiosError) => void;
 
 export type Cache = {[key: string]: number};
 
-export type Item = {id?: string; [property: string]: any};
+export type Item = {id?: number; [property: string]: any};
 
-export type State = Ref<{[id: string]: Item}>;
+type ErrorBag = {[property: string]: string[]};
+export type ErrorBagRef = Ref<ErrorBag>;
+
+export type State = Ref<{[id: number]: Item}>;
 
 export type Translation = {singular: string; plural: string};
 export type Translations = {[moduleName: string]: Translation};
 
 export type Modules = {[moduleName: string]: Module};
-
-type ErrorBag = {[property: string]: string[]};
-export type ErrorBagRef = Ref<ErrorBag>;
 
 export type ToastVariant =
     | 'danger'

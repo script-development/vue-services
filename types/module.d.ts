@@ -21,16 +21,16 @@ export type Module = {
     /**
      * Go the the show page for the given id
      *
-     * @param {string} id id of item to go to the show page
+     * @param {number} id id of item to go to the show page
      */
-    goToShowPage(id: string): void;
+    goToShowPage(id: number): void;
     /**
      * Go to the edit page for this controller
      *
-     * @param {string} id
+     * @param {number} id
      * @param {LocationQuery} [query] the optional query for the new route
      */
-    goToEditPage(id: string, query?: LocationQuery): void;
+    goToEditPage(id: number, query?: LocationQuery): void;
     /**
      * Go to the create page for this controller
      *
@@ -41,56 +41,54 @@ export type Module = {
      * Sends a delete request to the server.
      * Delete's the given id from the server
      *
-     * @param {string} id the id to delete from the server
+     * @param {number} id the id to delete from the server
      */
-    destroyStoreAction(id: string): Promise<AxiosResponse>;
+    destroyItemRequest(id: number): Promise<AxiosResponse>;
 
     /**
      * Sends a post request to the server, which updates the given item on the server
      *
      * @param {Item} item the item to be updated
      */
-    updateStoreAction(item: Item): Promise<AxiosResponse>;
+    updateItemRequest(item: Item): Promise<AxiosResponse>;
 
     /**
      * Sends a post request to the server, which creates the item on the server
      *
      * @param {Item} item the item to be created
      */
-    createStoreAction(item: Item): Promise<AxiosResponse>;
+    createItemRequest(item: Item): Promise<AxiosResponse>;
     /**
      * Sends a get request to the server, which returns all items on the server from that endpoint
      */
-    readStoreAction(): Promise<AxiosResponse>;
+    fetchAllFromServer(): Promise<AxiosResponse | undefined>;
 
     /**
      * Sends a get request to the server, which returns a single item on the server based on the given id
      *
-     * @param {string} id the id to be read
+     * @param {number} id the id to be read
      */
-    showStoreAction(id: string): Promise<AxiosResponse>;
+    fetchItemFromServer(id: number): Promise<AxiosResponse | undefined>;
 
     /**
      * Sends a get request to the server, which returns a single item on the server based on the given id
-     *
-     * @param {string} id the id to be read
      */
-    showStoreActionByCurrentRouteId(): Promise<AxiosResponse>;
+    fetchItemFromServerByCurrentRouteId(): Promise<AxiosResponse | undefined>;
 
     /**
      * get all items from the store from this controller
      */
-    getAll: ComputedRef<Item[]>;
+    getAllFromStore: ComputedRef<Item[]>;
     /**
      * Get an item from the store based on the given id
-     * @param {string} id get the item from the store based on id
+     * @param {number} id get the item from the store based on id
      */
-    getById(id: string): ComputedRef<Item>;
+    getByIdFromStore(id: number): ComputedRef<Item>;
 
     /**
      * Get an item based on the current route id
      */
-    getByCurrentRouteId: ComputedRef<Item>;
+    getByCurrentRouteIdFromStore: ComputedRef<Item>;
 
     /**
      * Init the controller.

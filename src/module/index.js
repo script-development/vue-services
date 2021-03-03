@@ -18,8 +18,6 @@ import {generateAndRegisterDefaultStoreModule, getAllFromStore, getByIdFromStore
 import {setTranslation} from '../services/translator';
 import {addRoutesBasedOnRouteSettings, getCurrentRouteId, goToRoute} from '../services/router';
 
-// TODO :: refactor to more readable code
-
 /**
  * @param {string} moduleName
  * @param {ModuleFactoryComponents} components
@@ -31,14 +29,16 @@ export const moduleFactory = (moduleName, components, translation) => {
     generateAndRegisterDefaultStoreModule(moduleName);
     setTranslation(moduleName, translation);
 
+    /** @type {Module} */
+    // @ts-ignore It's not a complete module yet, don't want to set everything to undefined or null first
     const createdModule = {
         /**
          * Sends a delete request to the server.
          * Delete's the given id from the server
          *
-         * @param {string} id the id to delete from the server
+         * @param {number} id the id to delete from the server
          */
-        destroyStoreAction: id =>
+        destroyItemRequest: id =>
             deleteRequest(`${moduleName}/${id}`).then(response => {
                 // deleteFromStore?
                 return response;
@@ -49,53 +49,51 @@ export const moduleFactory = (moduleName, components, translation) => {
          *
          * @param {Item} item the item to be updated
          */
-        updateStoreAction: item => postRequest(`${moduleName}/${item.id}`, item),
+        updateItemRequest: item => postRequest(`${moduleName}/${item.id}`, item),
 
         /**
          * Sends a post request to the server, which creates the item on the server
          *
          * @param {Item} item the item to be created
          */
-        createStoreAction: item => postRequest(moduleName, item),
+        createItemRequest: item => postRequest(moduleName, item),
+
+        /**
+         * Sends a get request to the server, which returns all items on the server from that endpoint
+         */
+        fetchAllFromServer: () => getRequest(moduleName),
 
         /**
          * Sends a get request to the server, which returns a single item on the server based on the given id
          *
-         * @param {string} id the id to be read
+         * @param {number} id the id to be read
          */
-        showStoreAction: id => getRequest(`${moduleName}/${id}`),
+        fetchItemFromServer: id => getRequest(`${moduleName}/${id}`),
 
         /**
-         * Sends a get request to the server, which returns a single item on the server based on the given id
-         *
-         * @param {string} id the id to be read
+         * Sends a get request to the server, which returns a single item on the server based on the current route id
          */
-        showStoreActionByCurrentRouteId: () => getRequest(`${moduleName}/${getCurrentRouteId()}`),
+        fetchItemFromServerByCurrentRouteId: () => getRequest(`${moduleName}/${getCurrentRouteId()}`),
 
         /**
-         * get all items from the store from this controller
+         * get all items from the store from this module
          */
-        get getAll() {
+        get getAllFromStore() {
             return getAllFromStore(moduleName);
         },
         /**
          * Get an item from the store based on the given id
-         * @param {string} id get the item from the store based on id
+         * @param {number} id get the item from the store based on id
          */
-        getById: id => getByIdFromStore(moduleName, id),
+        getByIdFromStore: id => getByIdFromStore(moduleName, id),
 
         /**
          * Get an item based on the current route id
          */
-        get getByCurrentRouteId() {
+        get getByCurrentRouteIdFromStore() {
             return getByIdFromStore(moduleName, getCurrentRouteId());
         },
     };
-
-    /**
-     * Sends a get request to the server, which returns all items on the server from that endpoint
-     */
-    createdModule.readStoreAction = () => getRequest(moduleName);
 
     if (!components.base) {
         components.base = defineComponent({
@@ -104,7 +102,7 @@ export const moduleFactory = (moduleName, components, translation) => {
             render: () => h(MinimalRouterView, {depth: 1}),
             // render: () => h(RouterView),
             // TODO #9 @Goosterhof
-            mounted: createdModule.readStoreAction,
+            mounted: createdModule.fetchAllFromServer,
         });
     }
 
@@ -118,27 +116,42 @@ export const moduleFactory = (moduleName, components, translation) => {
     );
 
     /** Go to the over view page fromm this controller */
-    createdModule.goToOverviewPage = () => goToRoute(createdModule.routeSettings.overview.name.toString());
+    createdModule.goToOverviewPage = () => {
+        if (!createdModule.routeSettings.overview) return;
+        if (!createdModule.routeSettings.overview.name) return;
+        goToRoute(createdModule.routeSettings.overview.name.toString());
+    };
     /**
      * Go the the show page for the given id
      *
-     * @param {string} id id of item to go to the show page
+     * @param {number} id id of item to go to the show page
      */
-    createdModule.goToShowPage = id => goToRoute(createdModule.routeSettings.show.name.toString(), id);
+    createdModule.goToShowPage = id => {
+        if (!createdModule.routeSettings.show) return;
+        if (!createdModule.routeSettings.show.name) return;
+        goToRoute(createdModule.routeSettings.show.name.toString(), id);
+    };
     /**
      * Go to the edit page for this controller
      *
-     * @param {string} id
+     * @param {number} id
      * @param {LocationQuery} [query] the optional query for the new route
      */
-    createdModule.goToEditPage = (id, query) => goToRoute(createdModule.routeSettings.edit.name.toString(), id, query);
+    createdModule.goToEditPage = (id, query) => {
+        if (!createdModule.routeSettings.edit) return;
+        if (!createdModule.routeSettings.edit.name) return;
+        goToRoute(createdModule.routeSettings.edit.name.toString(), id, query);
+    };
     /**
      * Go to the create page for this controller
      *
      * @param {LocationQuery} [query] the optional query for the new route
      */
-    createdModule.goToCreatePage = query =>
+    createdModule.goToCreatePage = query => {
+        if (!createdModule.routeSettings.create) return;
+        if (!createdModule.routeSettings.create.name) return;
         goToRoute(createdModule.routeSettings.create.name.toString(), undefined, query);
+    };
 
     /**
      * Init the controller.

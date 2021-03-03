@@ -199,12 +199,9 @@ var RouteSettingFactory = (moduleName, baseComponent, overviewComponent, createC
 };
 
 /**
- * @typedef {import("vue-router").RouteRecordRaw} RouteRecordRaw
  * @typedef {import("vue-router").NavigationGuard} NavigationGuard
  * @typedef {import("vue-router").NavigationHookAfter} NavigationHookAfter
  * @typedef {import('vue-router').LocationQuery} LocationQuery
- *
- * @typedef {import('../../../types/services/router').RouteSettings} RouteSettings
  */
 
 // exported only to use in the app starter to bind the router
@@ -256,16 +253,20 @@ router.afterEach((to, from) => {
 /** @param {NavigationHookAfter} middleware */
 const registerAfterMiddleware = middleware => routerAfterMiddleware.push(middleware);
 
-/** @param {RouteRecordRaw} routes */
+/** @param {import("vue-router").RouteRecordRaw} routes */
 const addRoute = routes => router.addRoute(routes);
 
-/** @param {RouteSettings} settings */
+/** @param {import('../../../types/services/router').RouteSettings} settings */
 const addRoutesBasedOnRouteSettings = settings => {
     // getting the record from the settings
     const record = settings.base;
-    // deleting the record from settings, since it's not it's own child
-    delete settings.base;
-    record.children = Object.values(settings);
+
+    record.children = [];
+    for (const type in settings) {
+        if (type === 'base') continue;
+        record.children.push(settings[type]);
+    }
+
     addRoute(record);
 };
 
@@ -273,8 +274,8 @@ const addRoutesBasedOnRouteSettings = settings => {
  * Go to the give route by name, optional id and query
  * If going to a route you are already on, it catches the given error
  *
- * @param {String} name the name of the new route
- * @param {String} [id] the optional id for the params of the new route
+ * @param {string} name the name of the new route
+ * @param {number} [id] the optional id for the params of the new route
  * @param {LocationQuery} [query] the optional query for the new route
  */
 const goToRoute = (name, id, query) => {
@@ -298,13 +299,13 @@ const goToRoute = (name, id, query) => {
 /**
  * Go to the show page for the given module name
  * @param {string} moduleName name of the module to go to the show page to
- * @param {string} id the id for the given item to show
+ * @param {number} id the id for the given item to show
  */
 const goToShowPage = (moduleName, id) => goToRoute(moduleName + SHOW_PAGE_NAME, id);
 /**
  * Go to the edit page for the given module name
  * @param {string} moduleName name of the module to go to the edit page to
- * @param {string} id the id for the given item to edit
+ * @param {number} id the id for the given item to edit
  */
 const goToEditPage = (moduleName, id) => goToRoute(moduleName + EDIT_PAGE_NAME, id);
 /**
@@ -323,12 +324,13 @@ const getCurrentRoute = () => router.currentRoute;
 /** Get the query from the current route */
 const getCurrentRouteQuery = () => router.currentRoute.value.query;
 /** Get the id from the params from the current route */
-const getCurrentRouteId = () => router.currentRoute.value.params.id.toString();
+const getCurrentRouteId = () => parseInt(router.currentRoute.value.params.id.toString());
 /**
  * Get the module name binded to the current route
  * @returns {string}
  */
-const getCurrentRouteModuleName = () => router.currentRoute.value.meta?.moduleName;
+const getCurrentRouteModuleName = () =>
+    typeof router.currentRoute.value.meta?.moduleName === 'string' ? router.currentRoute.value.meta?.moduleName : '';
 
 /**
  * checks if the given string is in the current routes name
@@ -788,7 +790,7 @@ var StoreModuleFactory = moduleName => {
         /**
          * Get an item from the state by id
          *
-         * @param {string} id
+         * @param {number} id
          */
         byId: id => vue.computed(() => state.value[id]),
         /**
@@ -850,14 +852,14 @@ var StoreModuleFactory = moduleName => {
 /** @type {Store} */
 const store$1 = {};
 
-/** @type {String[]} */
+/** @type {string[]} */
 const moduleNames = [];
 
 /**
  * Checks if requested module exists in the store
  * If not, throws a StoreModuleNotFoundError
  *
- * @param {String} moduleName the name to check if exists
+ * @param {string} moduleName the name to check if exists
  *
  * @throws {StoreModuleNotFoundError} when the given moduleName does not exist
  */
@@ -891,7 +893,7 @@ registerResponseMiddleware(responseMiddleware$1);
 /**
  * Get all from data from the given store module
  *
- * @param {String} moduleName the module from which to get all
+ * @param {string} moduleName the module from which to get all
  *
  * @returns {import('vue').ComputedRef<Item[]>}
  */
@@ -904,8 +906,8 @@ const getAllFromStore = moduleName => {
 /**
  * Get all data from the given store module by id
  *
- * @param {String} moduleName the module from which to get all
- * @param {String} id the id of the data object to get
+ * @param {string} moduleName the module from which to get all
+ * @param {number} id the id of the data object to get
  */
 const getByIdFromStore = (moduleName, id) => {
     // TODO :: check if this is always called when the computed changes
@@ -916,7 +918,7 @@ const getByIdFromStore = (moduleName, id) => {
 /**
  * set the store module in the store
  *
- * @param {String} moduleName the name of the module
+ * @param {string} moduleName the name of the module
  * @param {StoreModule} storeModule the module to add to the store
  */
 const registerStoreModule = (moduleName, storeModule) => {
@@ -927,7 +929,7 @@ const registerStoreModule = (moduleName, storeModule) => {
 /**
  * generate and set the default store module in the store
  *
- * @param {String} moduleName the name of the module
+ * @param {string} moduleName the name of the module
  */
 const generateAndRegisterDefaultStoreModule = moduleName =>
     registerStoreModule(moduleName, StoreModuleFactory(moduleName));
@@ -1127,8 +1129,6 @@ var MinimalRouterView = vue.defineComponent({
  *
  */
 
-// TODO :: refactor to more readable code
-
 /**
  * @param {string} moduleName
  * @param {ModuleFactoryComponents} components
@@ -1140,14 +1140,16 @@ const moduleFactory = (moduleName, components, translation) => {
     generateAndRegisterDefaultStoreModule(moduleName);
     setTranslation(moduleName, translation);
 
+    /** @type {Module} */
+    // @ts-ignore It's not a complete module yet, don't want to set everything to undefined or null first
     const createdModule = {
         /**
          * Sends a delete request to the server.
          * Delete's the given id from the server
          *
-         * @param {string} id the id to delete from the server
+         * @param {number} id the id to delete from the server
          */
-        destroyStoreAction: id =>
+        destroyItemRequest: id =>
             deleteRequest(`${moduleName}/${id}`).then(response => {
                 // deleteFromStore?
                 return response;
@@ -1158,53 +1160,51 @@ const moduleFactory = (moduleName, components, translation) => {
          *
          * @param {Item} item the item to be updated
          */
-        updateStoreAction: item => postRequest(`${moduleName}/${item.id}`, item),
+        updateItemRequest: item => postRequest(`${moduleName}/${item.id}`, item),
 
         /**
          * Sends a post request to the server, which creates the item on the server
          *
          * @param {Item} item the item to be created
          */
-        createStoreAction: item => postRequest(moduleName, item),
+        createItemRequest: item => postRequest(moduleName, item),
+
+        /**
+         * Sends a get request to the server, which returns all items on the server from that endpoint
+         */
+        fetchAllFromServer: () => getRequest(moduleName),
 
         /**
          * Sends a get request to the server, which returns a single item on the server based on the given id
          *
-         * @param {string} id the id to be read
+         * @param {number} id the id to be read
          */
-        showStoreAction: id => getRequest(`${moduleName}/${id}`),
+        fetchItemFromServer: id => getRequest(`${moduleName}/${id}`),
 
         /**
-         * Sends a get request to the server, which returns a single item on the server based on the given id
-         *
-         * @param {string} id the id to be read
+         * Sends a get request to the server, which returns a single item on the server based on the current route id
          */
-        showStoreActionByCurrentRouteId: () => getRequest(`${moduleName}/${getCurrentRouteId()}`),
+        fetchItemFromServerByCurrentRouteId: () => getRequest(`${moduleName}/${getCurrentRouteId()}`),
 
         /**
-         * get all items from the store from this controller
+         * get all items from the store from this module
          */
-        get getAll() {
+        get getAllFromStore() {
             return getAllFromStore(moduleName);
         },
         /**
          * Get an item from the store based on the given id
-         * @param {string} id get the item from the store based on id
+         * @param {number} id get the item from the store based on id
          */
-        getById: id => getByIdFromStore(moduleName, id),
+        getByIdFromStore: id => getByIdFromStore(moduleName, id),
 
         /**
          * Get an item based on the current route id
          */
-        get getByCurrentRouteId() {
+        get getByCurrentRouteIdFromStore() {
             return getByIdFromStore(moduleName, getCurrentRouteId());
         },
     };
-
-    /**
-     * Sends a get request to the server, which returns all items on the server from that endpoint
-     */
-    createdModule.readStoreAction = () => getRequest(moduleName);
 
     if (!components.base) {
         components.base = vue.defineComponent({
@@ -1213,7 +1213,7 @@ const moduleFactory = (moduleName, components, translation) => {
             render: () => vue.h(MinimalRouterView, {depth: 1}),
             // render: () => h(RouterView),
             // TODO #9 @Goosterhof
-            mounted: createdModule.readStoreAction,
+            mounted: createdModule.fetchAllFromServer,
         });
     }
 
@@ -1227,27 +1227,42 @@ const moduleFactory = (moduleName, components, translation) => {
     );
 
     /** Go to the over view page fromm this controller */
-    createdModule.goToOverviewPage = () => goToRoute(createdModule.routeSettings.overview.name.toString());
+    createdModule.goToOverviewPage = () => {
+        if (!createdModule.routeSettings.overview) return;
+        if (!createdModule.routeSettings.overview.name) return;
+        goToRoute(createdModule.routeSettings.overview.name.toString());
+    };
     /**
      * Go the the show page for the given id
      *
-     * @param {string} id id of item to go to the show page
+     * @param {number} id id of item to go to the show page
      */
-    createdModule.goToShowPage = id => goToRoute(createdModule.routeSettings.show.name.toString(), id);
+    createdModule.goToShowPage = id => {
+        if (!createdModule.routeSettings.show) return;
+        if (!createdModule.routeSettings.show.name) return;
+        goToRoute(createdModule.routeSettings.show.name.toString(), id);
+    };
     /**
      * Go to the edit page for this controller
      *
-     * @param {string} id
+     * @param {number} id
      * @param {LocationQuery} [query] the optional query for the new route
      */
-    createdModule.goToEditPage = (id, query) => goToRoute(createdModule.routeSettings.edit.name.toString(), id, query);
+    createdModule.goToEditPage = (id, query) => {
+        if (!createdModule.routeSettings.edit) return;
+        if (!createdModule.routeSettings.edit.name) return;
+        goToRoute(createdModule.routeSettings.edit.name.toString(), id, query);
+    };
     /**
      * Go to the create page for this controller
      *
      * @param {LocationQuery} [query] the optional query for the new route
      */
-    createdModule.goToCreatePage = query =>
+    createdModule.goToCreatePage = query => {
+        if (!createdModule.routeSettings.create) return;
+        if (!createdModule.routeSettings.create.name) return;
         goToRoute(createdModule.routeSettings.create.name.toString(), undefined, query);
+    };
 
     /**
      * Init the controller.

@@ -11,14 +11,14 @@ import StoreModuleFactory from './factory';
 /** @type {Store} */
 const store = {};
 
-/** @type {String[]} */
+/** @type {string[]} */
 const moduleNames = [];
 
 /**
  * Checks if requested module exists in the store
  * If not, throws a StoreModuleNotFoundError
  *
- * @param {String} moduleName the name to check if exists
+ * @param {string} moduleName the name to check if exists
  *
  * @throws {StoreModuleNotFoundError} when the given moduleName does not exist
  */
@@ -52,7 +52,7 @@ registerResponseMiddleware(responseMiddleware);
 /**
  * Get all from data from the given store module
  *
- * @param {String} moduleName the module from which to get all
+ * @param {string} moduleName the module from which to get all
  *
  * @returns {import('vue').ComputedRef<Item[]>}
  */
@@ -65,8 +65,8 @@ export const getAllFromStore = moduleName => {
 /**
  * Get all data from the given store module by id
  *
- * @param {String} moduleName the module from which to get all
- * @param {String} id the id of the data object to get
+ * @param {string} moduleName the module from which to get all
+ * @param {number} id the id of the data object to get
  */
 export const getByIdFromStore = (moduleName, id) => {
     // TODO :: check if this is always called when the computed changes
@@ -77,7 +77,7 @@ export const getByIdFromStore = (moduleName, id) => {
 /**
  * set the store module in the store
  *
- * @param {String} moduleName the name of the module
+ * @param {string} moduleName the name of the module
  * @param {StoreModule} storeModule the module to add to the store
  */
 export const registerStoreModule = (moduleName, storeModule) => {
@@ -88,7 +88,7 @@ export const registerStoreModule = (moduleName, storeModule) => {
 /**
  * generate and set the default store module in the store
  *
- * @param {String} moduleName the name of the module
+ * @param {string} moduleName the name of the module
  */
 export const generateAndRegisterDefaultStoreModule = moduleName =>
     registerStoreModule(moduleName, StoreModuleFactory(moduleName));

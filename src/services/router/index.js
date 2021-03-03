@@ -1,10 +1,7 @@
 /**
- * @typedef {import("vue-router").RouteRecordRaw} RouteRecordRaw
  * @typedef {import("vue-router").NavigationGuard} NavigationGuard
  * @typedef {import("vue-router").NavigationHookAfter} NavigationHookAfter
  * @typedef {import('vue-router').LocationQuery} LocationQuery
- *
- * @typedef {import('../../../types/services/router').RouteSettings} RouteSettings
  */
 // TODO :: how to fix this error? It's in RouteRecordRaw, create own definition?
 import {createRouter, createWebHistory} from 'vue-router';
@@ -59,16 +56,20 @@ router.afterEach((to, from) => {
 /** @param {NavigationHookAfter} middleware */
 export const registerAfterMiddleware = middleware => routerAfterMiddleware.push(middleware);
 
-/** @param {RouteRecordRaw} routes */
+/** @param {import("vue-router").RouteRecordRaw} routes */
 export const addRoute = routes => router.addRoute(routes);
 
-/** @param {RouteSettings} settings */
+/** @param {import('../../../types/services/router').RouteSettings} settings */
 export const addRoutesBasedOnRouteSettings = settings => {
     // getting the record from the settings
     const record = settings.base;
-    // deleting the record from settings, since it's not it's own child
-    delete settings.base;
-    record.children = Object.values(settings);
+
+    record.children = [];
+    for (const type in settings) {
+        if (type === 'base') continue;
+        record.children.push(settings[type]);
+    }
+
     addRoute(record);
 };
 
@@ -76,8 +77,8 @@ export const addRoutesBasedOnRouteSettings = settings => {
  * Go to the give route by name, optional id and query
  * If going to a route you are already on, it catches the given error
  *
- * @param {String} name the name of the new route
- * @param {String} [id] the optional id for the params of the new route
+ * @param {string} name the name of the new route
+ * @param {number} [id] the optional id for the params of the new route
  * @param {LocationQuery} [query] the optional query for the new route
  */
 export const goToRoute = (name, id, query) => {
@@ -101,13 +102,13 @@ export const goToRoute = (name, id, query) => {
 /**
  * Go to the show page for the given module name
  * @param {string} moduleName name of the module to go to the show page to
- * @param {string} id the id for the given item to show
+ * @param {number} id the id for the given item to show
  */
 export const goToShowPage = (moduleName, id) => goToRoute(moduleName + SHOW_PAGE_NAME, id);
 /**
  * Go to the edit page for the given module name
  * @param {string} moduleName name of the module to go to the edit page to
- * @param {string} id the id for the given item to edit
+ * @param {number} id the id for the given item to edit
  */
 export const goToEditPage = (moduleName, id) => goToRoute(moduleName + EDIT_PAGE_NAME, id);
 /**
@@ -126,14 +127,15 @@ export const getCurrentRoute = () => router.currentRoute;
 /** Get the query from the current route */
 export const getCurrentRouteQuery = () => router.currentRoute.value.query;
 /** Get the id from the params from the current route */
-export const getCurrentRouteId = () => router.currentRoute.value.params.id.toString();
+export const getCurrentRouteId = () => parseInt(router.currentRoute.value.params.id.toString());
 /** Get the name from the current route */
-export const getCurrentRouteName = () => router.currentRoute.value.name.toString();
+export const getCurrentRouteName = () => router.currentRoute.value.name?.toString();
 /**
  * Get the module name binded to the current route
  * @returns {string}
  */
-export const getCurrentRouteModuleName = () => router.currentRoute.value.meta?.moduleName;
+export const getCurrentRouteModuleName = () =>
+    typeof router.currentRoute.value.meta?.moduleName === 'string' ? router.currentRoute.value.meta?.moduleName : '';
 
 /**
  * checks if the given string is in the current routes name

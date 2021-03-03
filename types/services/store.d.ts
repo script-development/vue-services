@@ -25,30 +25,21 @@ export function StoreModuleFactory(moduleName: string): StoreModule;
 /**
  * Get all from data from the given store module
  *
- * @param {String} moduleName the module from which to get all
+ * @param {string} moduleName the module from which to get all
  */
 export function getAllFromStore(moduleName: string): ComputedRef<Item[]>;
 
 /**
  * Get all data from the given store module by id
  *
- * @param {String} moduleName the module from which to get all
- * @param {String} id the id of the data object to get
+ * @param {string} moduleName the module from which to get all
+ * @param {number} id the id of the data object to get
  */
-export function getByIdFromStore(moduleName: string, id: string): ComputedRef<Item>;
-
-// TODO :: will probably not need this one here, since it will not be exported in the final product
-/**
- * set the store module in the store
- *
- * @param {String} moduleName the name of the module
- * @param {StoreModule} storeModule the module to add to the store
- */
-export function registerStoreModule(moduleName: string, storeModule: StoreModule): void;
+export function getByIdFromStore(moduleName: string, id: number): ComputedRef<Item>;
 
 /**
  * generate and set the default store module in the store
  *
- * @param {String} moduleName the name of the module
+ * @param {string} moduleName the name of the module
  */
 export function generateAndRegisterDefaultStoreModule(moduleName: string): void;
