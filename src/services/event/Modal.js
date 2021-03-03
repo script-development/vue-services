@@ -5,11 +5,13 @@ export const ModalComponent = defineComponent({
         id: {
             type: String,
             required: false,
+            default: null,
         },
 
         title: {
             type: String,
             required: false,
+            default: null,
         },
         titleTag: {
             type: String,
@@ -19,11 +21,13 @@ export const ModalComponent = defineComponent({
         titleClass: {
             type: String,
             required: false,
+            default: null,
         },
 
         message: {
             type: String,
             required: false,
+            default: null,
         },
 
         // TODO :: could use translations to default this
@@ -45,8 +49,11 @@ export const ModalComponent = defineComponent({
         cancelAction: {
             type: Function,
             required: false,
+            default: null,
         },
     },
+
+    emits: ['close'],
 
     setup(props, ctx) {
         const closeModal = () => {
@@ -54,13 +61,14 @@ export const ModalComponent = defineComponent({
             ctx.emit('close');
         };
 
+        /** @type {import('vue').VNodeArrayChildren} */
         const contentChildren = [];
 
         const headerChildren = [];
         if (props.title) {
-            const titleOptions = {class: 'modal-title '};
-            if (props.titleClass) titleOptions.class += props.titleClass;
-            headerChildren.push(h(props.titleTag, titleOptions, [props.title]));
+            const classes = ['modal-title'];
+            if (props.titleClass) classes.push(props.titleClass);
+            headerChildren.push(h(props.titleTag, {class: classes.join(' ')}, [props.title]));
         }
 
         headerChildren.push(h('button', {class: 'btn-close', onclick: closeModal}));
@@ -95,10 +103,11 @@ export const ModalComponent = defineComponent({
         contentChildren.push(h('div', {class: 'modal-footer'}, [footerChildren]));
 
         const overLayOptions = {
+            id: props.id,
             class: 'modal fade show',
             style: {display: 'block', 'background-color': 'rgba(0,0,0,0.4)'},
         };
-        if (props.id) overLayOptions.id = props.id;
+        // if (props.id) overLayOptions.id = props.id;
 
         return () =>
             h('div', overLayOptions, [

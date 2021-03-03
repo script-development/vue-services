@@ -73,8 +73,7 @@ const eventApp = defineComponent({
             }),
             modals.value.map((modal, index) => {
                 return h(ModalComponent, {
-                    message: modal.message,
-                    okAction: modal.okAction,
+                    ...modal,
                     onClose: () => modals.value.splice(index, 1),
                 });
             }),
