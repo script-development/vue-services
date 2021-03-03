@@ -7,7 +7,7 @@ export {login, isLoggedIn, logout} from './services/auth';
 
 export {loading} from './services/loading';
 
-// export {createToastMessage, createModal} from './services/event';
+export {createToastMessage, createModal} from './services/event';
 
 export {BaseFormError} from './services/error';
 

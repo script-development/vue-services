@@ -1,4 +1,4 @@
-import {Modal, ToastMessage} from '../types';
+import {Modal, ToastMessage, ToastVariant} from '../types';
 
 export let defaultToastMessageDuration: number;
 
@@ -23,7 +23,7 @@ export function hideToastMessageAfterDelay(message: ToastMessage): void;
  * @param {ToastVariant} [variant] the variant of the toast, default = success
  * @param {number} [duration] the duration the toast stays visisble, default = defaultToastMessageDuration
  */
-export function createToastMessage(message: string, variant?: string, duration?: number): void;
+export function createToastMessage(message: string, variant?: ToastVariant, duration?: number): void;
 
 /**
  *
