@@ -5,7 +5,7 @@ export type StoreModule = {
     /** Get all items from the store */
     all: ComputedRef<Item[]>;
     /** Get an item from the state by id */
-    byId(id: string): ComputedRef<Item>;
+    byId(id: number): ComputedRef<Item>;
     /**
      * Set data in the state.
      * Data can be of any kind.

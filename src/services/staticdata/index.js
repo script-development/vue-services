@@ -6,7 +6,7 @@
  */
 
 import {registerStoreModule} from '../store';
-import {getRequest} from '../http';
+import {getRequestWithoutCache} from '../http';
 import StoreModuleFactory from '../store/factory';
 
 /**
@@ -34,7 +34,9 @@ const apiStaticDataEndpoint = 'staticdata';
 
 /** Exporting for testing purposes */
 export const DATA = {
+    /** @type {string[]} */
     normal: [],
+    /** @type {string[]} */
     msgpack: [],
 };
 
@@ -84,17 +86,19 @@ export const createStoreModuleMsgPack = staticDataName => {
  * Sends requests to the server which recieves all the staticdata from the server defined in DATA
  */
 export const getStaticDataFromServer = async () => {
-    const response = await getRequest(apiStaticDataEndpoint);
+    const response = await getRequestWithoutCache(apiStaticDataEndpoint);
 
     for (const staticDataName of DATA.normal) {
         store[staticDataName].setAll(response.data[staticDataName]);
     }
 
     for (const staticDataName of DATA.msgpack) {
-        const response = await getRequest(staticDataName, {responseType: 'arraybuffer'});
+        const response = await getRequestWithoutCache(staticDataName, {responseType: 'arraybuffer'});
 
         store[staticDataName].setAll(msgpack.decode(new Uint8Array(response.data)));
     }
+
+    return response;
 };
 
 /**
@@ -108,6 +112,6 @@ export const getStaticDataSegment = staticDataName => store[staticDataName].all.
  * Get all data from the given staticDataName by id
  *
  * @param {string} staticDataName the name of the segement to get data from
- * @param {string} id the id of the data object to get
+ * @param {number} id the id of the data object to get
  */
 export const getStaticDataItemById = (staticDataName, id) => store[staticDataName].byId(id).value;

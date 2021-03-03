@@ -212,7 +212,7 @@ const router = createRouter({
  *
  * @type {NavigationGuard}
  */
-const beforeMiddleware = (to, from) => {
+const beforeMiddleware$1 = (to, from) => {
     /** @type {string} */
     // @ts-ignore
     const fromQuery = from.query.from;
@@ -225,7 +225,7 @@ const beforeMiddleware = (to, from) => {
 };
 
 /** @type {NavigationGuard[]} */
-const routerBeforeMiddleware = [beforeMiddleware];
+const routerBeforeMiddleware = [beforeMiddleware$1];
 router.beforeEach((to, from, next) => {
     for (const middlewareFunc of routerBeforeMiddleware) {
         // MiddlewareFunc will return true if it encountered problems
@@ -400,7 +400,7 @@ let baseURL = '/api';
 const preCache = localStorage.getItem(CACHE_KEY);
 // TODO :: how to test these branches?
 /** @type {Cache} */
-const cache = preCache ? JSON.parse(preCache) : {};
+preCache ? JSON.parse(preCache) : {};
 
 const http = axios.create({
     baseURL,
@@ -414,9 +414,9 @@ const http = axios.create({
 /** @type {RequestMiddleware[]} */
 const requestMiddleware = [];
 /** @type {ResponseMiddleware[]} */
-const responseMiddleware = [];
+const responseMiddleware$2 = [];
 /** @type {ResponseErrorMiddleware[]} */
-const responseErrorMiddleware = [];
+const responseErrorMiddleware$3 = [];
 
 http.interceptors.request.use(request => {
     for (const middleware of requestMiddleware) middleware(request);
@@ -425,12 +425,12 @@ http.interceptors.request.use(request => {
 
 http.interceptors.response.use(
     response => {
-        for (const middleware of responseMiddleware) middleware(response);
+        for (const middleware of responseMiddleware$2) middleware(response);
         return response;
     },
     error => {
         if (!error.response) return Promise.reject(error);
-        for (const middleware of responseErrorMiddleware) middleware(error);
+        for (const middleware of responseErrorMiddleware$3) middleware(error);
         return Promise.reject(error);
     }
 );
@@ -487,10 +487,10 @@ const download = async (endpoint, documentName, type) =>
 const registerRequestMiddleware = middlewareFunc => requestMiddleware.push(middlewareFunc);
 
 /** @param {ResponseMiddleware} middlewareFunc */
-const registerResponseMiddleware = middlewareFunc => responseMiddleware.push(middlewareFunc);
+const registerResponseMiddleware = middlewareFunc => responseMiddleware$2.push(middlewareFunc);
 
 /** @param {ResponseErrorMiddleware} middlewareFunc */
-const registerResponseErrorMiddleware = middlewareFunc => responseErrorMiddleware.push(middlewareFunc);
+const registerResponseErrorMiddleware = middlewareFunc => responseErrorMiddleware$3.push(middlewareFunc);
 
 const KEEP_A_LIVE_KEY = 'keepALive';
 /** setting keepALive here so we don't have to Parse it each time we get it */
@@ -617,7 +617,7 @@ const loggedInUser = ref(getItemFromStorage(LOGGED_IN_USER_KEY, true) || {});
 
 // exported for testing purposes, not exported to the user
 /** @type {ResponseErrorMiddleware} */
-const responseErrorMiddleware$1 = ({response}) => {
+const responseErrorMiddleware$2 = ({response}) => {
     if (!response) return;
     const {status} = response;
     // TODO :: make this work
@@ -630,13 +630,13 @@ const responseErrorMiddleware$1 = ({response}) => {
     }
 };
 
-registerResponseErrorMiddleware(responseErrorMiddleware$1);
+registerResponseErrorMiddleware(responseErrorMiddleware$2);
 
 // TODO :: maybe even add the possibility to add auth middleware here?
 // or push it directly to the router?
 // exported for testing purposes, not exported to the user
 /** @type {NavigationGuard} */
-const beforeMiddleware$1 = ({meta}) => {
+const beforeMiddleware = ({meta}) => {
     if (!isLoggedIn.value && meta.auth) {
         goToLoginPage();
         return true;
@@ -650,7 +650,7 @@ const beforeMiddleware$1 = ({meta}) => {
     return false;
 };
 
-registerBeforeMiddleware(beforeMiddleware$1);
+registerBeforeMiddleware(beforeMiddleware);
 
 /** @param {Item} user */
 const setLoggedInAndUser = user => {
@@ -840,7 +840,7 @@ var StoreModuleFactory = moduleName => {
  */
 
 /** @type {Store} */
-const store = {};
+const store$1 = {};
 
 /** @type {String[]} */
 const moduleNames = [];
@@ -874,7 +874,7 @@ const responseMiddleware$1 = ({data}) => {
     for (const storeModuleName of moduleNames) {
         if (!data[storeModuleName]) continue;
 
-        store[storeModuleName].setAll(data[storeModuleName]);
+        store$1[storeModuleName].setAll(data[storeModuleName]);
     }
 };
 
@@ -890,7 +890,7 @@ registerResponseMiddleware(responseMiddleware$1);
 const getAllFromStore = moduleName => {
     // TODO :: check if this is always called when the computed changes
     checkIfRequestedModuleExists(moduleName);
-    return store[moduleName].all;
+    return store$1[moduleName].all;
 };
 
 /**
@@ -902,7 +902,7 @@ const getAllFromStore = moduleName => {
 const getByIdFromStore = (moduleName, id) => {
     // TODO :: check if this is always called when the computed changes
     checkIfRequestedModuleExists(moduleName);
-    return store[moduleName].byId(id);
+    return store$1[moduleName].byId(id);
 };
 
 /**
@@ -913,7 +913,7 @@ const getByIdFromStore = (moduleName, id) => {
  */
 const registerStoreModule = (moduleName, storeModule) => {
     moduleNames.push(moduleName);
-    store[moduleName] = storeModule;
+    store$1[moduleName] = storeModule;
 };
 
 /**
@@ -956,7 +956,9 @@ const apiStaticDataEndpoint = 'staticdata';
 
 /** Exporting for testing purposes */
 const DATA = {
+    /** @type {string[]} */
     normal: [],
+    /** @type {string[]} */
     msgpack: [],
 };
 
@@ -965,7 +967,7 @@ const DATA = {
  *
  * @type {Store}
  */
-const store$1 = {};
+const store = {};
 
 /**
  * initiates the setup for the default store modules
@@ -975,7 +977,7 @@ const store$1 = {};
 const createStaticDataStoreModules = data => {
     for (const staticDataNameOrObject of data) {
         if (typeof staticDataNameOrObject == 'string') {
-            store$1[staticDataNameOrObject] = StoreModuleFactory(staticDataNameOrObject);
+            store[staticDataNameOrObject] = StoreModuleFactory(staticDataNameOrObject);
             DATA.normal.push(staticDataNameOrObject);
             continue;
         }
@@ -998,7 +1000,7 @@ const createStoreModuleMsgPack = staticDataName => {
         console.error('MESSAGE PACK NOT INSTALLED');
         return console.warn('run the following command to install messagepack: npm --save @msgpack/msgpack');
     }
-    store$1[staticDataName] = StoreModuleFactory(staticDataName);
+    store[staticDataName] = StoreModuleFactory(staticDataName);
     DATA.msgpack.push(staticDataName);
 };
 
@@ -1006,17 +1008,19 @@ const createStoreModuleMsgPack = staticDataName => {
  * Sends requests to the server which recieves all the staticdata from the server defined in DATA
  */
 const getStaticDataFromServer = async () => {
-    const response = await getRequest(apiStaticDataEndpoint);
+    const response = await getRequestWithoutCache(apiStaticDataEndpoint);
 
     for (const staticDataName of DATA.normal) {
-        store$1[staticDataName].setAll(response.data[staticDataName]);
+        store[staticDataName].setAll(response.data[staticDataName]);
     }
 
     for (const staticDataName of DATA.msgpack) {
-        const response = await getRequest(staticDataName, {responseType: 'arraybuffer'});
+        const response = await getRequestWithoutCache(staticDataName, {responseType: 'arraybuffer'});
 
-        store$1[staticDataName].setAll(msgpack.decode(new Uint8Array(response.data)));
+        store[staticDataName].setAll(msgpack.decode(new Uint8Array(response.data)));
     }
+
+    return response;
 };
 
 /**
@@ -1024,15 +1028,15 @@ const getStaticDataFromServer = async () => {
  *
  * @param {string} staticDataName the name of the segement to get data from
  */
-const getStaticDataSegment = staticDataName => store$1[staticDataName].all.value;
+const getStaticDataSegment = staticDataName => store[staticDataName].all.value;
 
 /**
  * Get all data from the given staticDataName by id
  *
  * @param {string} staticDataName the name of the segement to get data from
- * @param {string} id the id of the data object to get
+ * @param {number} id the id of the data object to get
  */
-const getStaticDataItemById = (staticDataName, id) => store$1[staticDataName].byId(id).value;
+const getStaticDataItemById = (staticDataName, id) => store[staticDataName].byId(id).value;
 
 /**
  * @typedef {import('vue').Component} Component
@@ -1595,18 +1599,18 @@ const createToastMessage = (message, variant = 'success', duration = defaultToas
 };
 
 /** @type {ResponseMiddleware} */
-const responseMiddleware$2 = ({data}) => {
+const responseMiddleware = ({data}) => {
     if (data && data.message) createToastMessage(data.message);
 };
 
-registerResponseMiddleware(responseMiddleware$2);
+registerResponseMiddleware(responseMiddleware);
 
 /** @type {ResponseErrorMiddleware} */
-const responseErrorMiddleware$2 = ({response}) => {
+const responseErrorMiddleware$1 = ({response}) => {
     if (response && response.data.message) createToastMessage(response.data.message, 'danger');
 };
 
-registerResponseErrorMiddleware(responseErrorMiddleware$2);
+registerResponseErrorMiddleware(responseErrorMiddleware$1);
 
 /**
  *
@@ -1642,10 +1646,10 @@ const routeMiddleware = () => (errors.value = {});
 registerAfterMiddleware(routeMiddleware);
 
 /** @type {ResponseErrorMiddleware} */
-const responseErrorMiddleware$3 = ({response}) => {
+const responseErrorMiddleware = ({response}) => {
     if (response && response.data.errors) errors.value = response.data.errors;
 };
-registerResponseErrorMiddleware(responseErrorMiddleware$3);
+registerResponseErrorMiddleware(responseErrorMiddleware);
 
 const BaseFormError = defineComponent({
     props: {property: {type: String, required: true}},
