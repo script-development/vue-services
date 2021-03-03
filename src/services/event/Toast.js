@@ -6,10 +6,12 @@ import {defineComponent, h} from 'vue';
 const style = document.createElement('style');
 document.head.appendChild(style);
 
-style.sheet.insertRule('.show-toast {animation: fadein 0.5s;}');
-style.sheet.insertRule('.hide-toast {animation: fadeout 0.5s;}');
-style.sheet.insertRule(`@keyframes fadein { from {bottom: 0; opacity: 0;} to {bottom: 30px; opacity: 1;}}`);
-style.sheet.insertRule(`@keyframes fadeout { from {bottom: 30px; opacity: 1;} to {bottom: 0; opacity: 0;} }`);
+if (style.sheet) {
+    style.sheet.insertRule('.show-toast {animation: fadein 0.5s;}');
+    style.sheet.insertRule('.hide-toast {animation: fadeout 0.5s;}');
+    style.sheet.insertRule(`@keyframes fadein { from {bottom: 0; opacity: 0;} to {bottom: 30px; opacity: 1;}}`);
+    style.sheet.insertRule(`@keyframes fadeout { from {bottom: 30px; opacity: 1;} to {bottom: 0; opacity: 0;} }`);
+}
 
 const VARIANTS = [
     'danger',
@@ -33,11 +35,12 @@ export const ToastComponent = defineComponent({
         show: {type: Boolean, required: true},
         variant: {type: String, required: false, default: 'success', validator: validVariant},
     },
-    setup: (props, ctx) => {
+    emits: ['hide'],
+    setup: (props, {emit}) => {
         const closeButton = h('button', {
             class: 'btn-close ml-auto mr-2',
             onclick: () => {
-                if (props.show) ctx.emit('hide');
+                if (props.show) emit('hide');
             },
         });
 

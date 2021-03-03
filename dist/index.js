@@ -732,15 +732,6 @@ const setAuthRoutes = () => {
     }
 };
 
-class StoreModuleNotFoundError extends Error {
-    constructor(...params) {
-        // Pass remaining arguments (including vendor specific ones) to parent constructor
-        super(...params);
-
-        this.name = 'StoreModuleNotFoundError';
-    }
-}
-
 /**
  * @typedef {import('../../../../types/types').State} State
  * @typedef {import('../../../../types/types').Item} Item
@@ -843,106 +834,14 @@ var StoreModuleFactory = moduleName => {
 };
 
 /**
- * @typedef {import('../../../types/types').Item} Item
- * @typedef {import('../../../types/types').ResponseMiddleware} ResponseMiddleware
- * @typedef {import('../../../types/services/store').StoreModule} StoreModule
  * @typedef {import('../../../types/services/store').Store} Store
- */
-
-/** @type {Store} */
-const store$1 = {};
-
-/** @type {string[]} */
-const moduleNames = [];
-
-/**
- * Checks if requested module exists in the store
- * If not, throws a StoreModuleNotFoundError
- *
- * @param {string} moduleName the name to check if exists
- *
- * @throws {StoreModuleNotFoundError} when the given moduleName does not exist
- */
-const checkIfRequestedModuleExists = moduleName => {
-    if (moduleNames.indexOf(moduleName) !== -1) return;
-
-    throw new StoreModuleNotFoundError(
-        `Could not find ${moduleName}, only these modules exists at the moment: ${moduleNames.toString()}`
-    );
-};
-
-/**
- * The store service response middleware checks if any of the known modulenames is in the data of the response
- * When there is a modulename in the response it dispatches an action to that module to set the response data in the store
- *
- * it is exported for testing purposes, it's not exported to the users
- *
- * @type {ResponseMiddleware}
- */
-const responseMiddleware$1 = ({data}) => {
-    if (!data) return;
-    for (const storeModuleName of moduleNames) {
-        if (!data[storeModuleName]) continue;
-
-        store$1[storeModuleName].setAll(data[storeModuleName]);
-    }
-};
-
-registerResponseMiddleware(responseMiddleware$1);
-
-/**
- * Get all from data from the given store module
- *
- * @param {string} moduleName the module from which to get all
- *
- * @returns {import('vue').ComputedRef<Item[]>}
- */
-const getAllFromStore = moduleName => {
-    // TODO :: check if this is always called when the computed changes
-    checkIfRequestedModuleExists(moduleName);
-    return store$1[moduleName].all;
-};
-
-/**
- * Get all data from the given store module by id
- *
- * @param {string} moduleName the module from which to get all
- * @param {number} id the id of the data object to get
- */
-const getByIdFromStore = (moduleName, id) => {
-    // TODO :: check if this is always called when the computed changes
-    checkIfRequestedModuleExists(moduleName);
-    return store$1[moduleName].byId(id);
-};
-
-/**
- * set the store module in the store
- *
- * @param {string} moduleName the name of the module
- * @param {StoreModule} storeModule the module to add to the store
- */
-const registerStoreModule = (moduleName, storeModule) => {
-    moduleNames.push(moduleName);
-    store$1[moduleName] = storeModule;
-};
-
-/**
- * generate and set the default store module in the store
- *
- * @param {string} moduleName the name of the module
- */
-const generateAndRegisterDefaultStoreModule = moduleName =>
-    registerStoreModule(moduleName, StoreModuleFactory(moduleName));
-
-/**
- * @typedef {import('../../../types/services/store').Store} Store
- * @typedef {import('../../../types/services/store').registerStoreModule} registerStoreModule
  * @typedef {import('../../../types/services/store').StoreModuleFactory} StoreModuleFactory
  * @typedef {import('../../../types/types').StaticDataTypes} StaticDataTypes
  */
 
 /**
  * Define msgpack for later use
+ * @type {{decode:Function} | undefined}
  */
 let msgpack;
 /**
@@ -956,6 +855,7 @@ let msgpack;
  * mix.webpackConfig({externals: {'@msgpack/msgpack': 'msgpack'}});
  */
 try {
+    // eslint-disable-next-line
     msgpack = require('@msgpack/msgpack');
     // eslint-disable-next-line
 } catch (error) {}
@@ -977,7 +877,7 @@ const DATA = {
  *
  * @type {Store}
  */
-const store = {};
+const store$1 = {};
 
 /**
  * initiates the setup for the default store modules
@@ -987,7 +887,7 @@ const store = {};
 const createStaticDataStoreModules = data => {
     for (const staticDataNameOrObject of data) {
         if (typeof staticDataNameOrObject == 'string') {
-            store[staticDataNameOrObject] = StoreModuleFactory(staticDataNameOrObject);
+            store$1[staticDataNameOrObject] = StoreModuleFactory(staticDataNameOrObject);
             DATA.normal.push(staticDataNameOrObject);
             continue;
         }
@@ -1010,7 +910,7 @@ const createStoreModuleMsgPack = staticDataName => {
         console.error('MESSAGE PACK NOT INSTALLED');
         return console.warn('run the following command to install messagepack: npm --save @msgpack/msgpack');
     }
-    store[staticDataName] = StoreModuleFactory(staticDataName);
+    store$1[staticDataName] = StoreModuleFactory(staticDataName);
     DATA.msgpack.push(staticDataName);
 };
 
@@ -1021,13 +921,19 @@ const getStaticDataFromServer = async () => {
     const response = await getRequestWithoutCache(apiStaticDataEndpoint);
 
     for (const staticDataName of DATA.normal) {
-        store[staticDataName].setAll(response.data[staticDataName]);
+        store$1[staticDataName].setAll(response.data[staticDataName]);
     }
 
     for (const staticDataName of DATA.msgpack) {
         const response = await getRequestWithoutCache(staticDataName, {responseType: 'arraybuffer'});
 
-        store[staticDataName].setAll(msgpack.decode(new Uint8Array(response.data)));
+        if (!msgpack) {
+            console.error('MESSAGE PACK NOT INSTALLED');
+            console.warn('run the following command to install messagepack: npm --save @msgpack/msgpack');
+            return response;
+        }
+
+        store$1[staticDataName].setAll(msgpack.decode(new Uint8Array(response.data)));
     }
 
     return response;
@@ -1038,7 +944,7 @@ const getStaticDataFromServer = async () => {
  *
  * @param {string} staticDataName the name of the segement to get data from
  */
-const getStaticDataSegment = staticDataName => store[staticDataName].all.value;
+const getStaticDataSegment = staticDataName => store$1[staticDataName].all.value;
 
 /**
  * Get all data from the given staticDataName by id
@@ -1046,7 +952,7 @@ const getStaticDataSegment = staticDataName => store[staticDataName].all.value;
  * @param {string} staticDataName the name of the segement to get data from
  * @param {number} id the id of the data object to get
  */
-const getStaticDataItemById = (staticDataName, id) => store[staticDataName].byId(id).value;
+const getStaticDataItemById = (staticDataName, id) => store$1[staticDataName].byId(id).value;
 
 /**
  * @typedef {import('vue').Component} Component
@@ -1118,6 +1024,107 @@ var MinimalRouterView = vue.defineComponent({
         };
     },
 });
+
+class StoreModuleNotFoundError extends Error {
+    constructor(...params) {
+        // Pass remaining arguments (including vendor specific ones) to parent constructor
+        super(...params);
+
+        this.name = 'StoreModuleNotFoundError';
+    }
+}
+
+/**
+ * @typedef {import('../../../types/types').Item} Item
+ * @typedef {import('../../../types/types').ResponseMiddleware} ResponseMiddleware
+ * @typedef {import('../../../types/services/store').StoreModule} StoreModule
+ * @typedef {import('../../../types/services/store').Store} Store
+ */
+
+/** @type {Store} */
+const store = {};
+
+/** @type {string[]} */
+const moduleNames = [];
+
+/**
+ * Checks if requested module exists in the store
+ * If not, throws a StoreModuleNotFoundError
+ *
+ * @param {string} moduleName the name to check if exists
+ *
+ * @throws {StoreModuleNotFoundError} when the given moduleName does not exist
+ */
+const checkIfRequestedModuleExists = moduleName => {
+    if (moduleNames.indexOf(moduleName) !== -1) return;
+
+    throw new StoreModuleNotFoundError(
+        `Could not find ${moduleName}, only these modules exists at the moment: ${moduleNames.toString()}`
+    );
+};
+
+/**
+ * The store service response middleware checks if any of the known modulenames is in the data of the response
+ * When there is a modulename in the response it dispatches an action to that module to set the response data in the store
+ *
+ * it is exported for testing purposes, it's not exported to the users
+ *
+ * @type {ResponseMiddleware}
+ */
+const responseMiddleware$1 = ({data}) => {
+    if (!data) return;
+    for (const storeModuleName of moduleNames) {
+        if (!data[storeModuleName]) continue;
+
+        store[storeModuleName].setAll(data[storeModuleName]);
+    }
+};
+
+registerResponseMiddleware(responseMiddleware$1);
+
+/**
+ * Get all from data from the given store module
+ *
+ * @param {string} moduleName the module from which to get all
+ *
+ * @returns {import('vue').ComputedRef<Item[]>}
+ */
+const getAllFromStore = moduleName => {
+    // TODO :: check if this is always called when the computed changes
+    checkIfRequestedModuleExists(moduleName);
+    return store[moduleName].all;
+};
+
+/**
+ * Get all data from the given store module by id
+ *
+ * @param {string} moduleName the module from which to get all
+ * @param {number} id the id of the data object to get
+ */
+const getByIdFromStore = (moduleName, id) => {
+    // TODO :: check if this is always called when the computed changes
+    checkIfRequestedModuleExists(moduleName);
+    return store[moduleName].byId(id);
+};
+
+/**
+ * set the store module in the store
+ *
+ * @param {string} moduleName the name of the module
+ * @param {StoreModule} storeModule the module to add to the store
+ */
+const registerStoreModule = (moduleName, storeModule) => {
+    moduleNames.push(moduleName);
+    store[moduleName] = storeModule;
+};
+
+/**
+ * generate and set the default store module in the store
+ *
+ * @param {string} moduleName the name of the module
+ */
+const generateAndRegisterDefaultStoreModule = moduleName =>
+    registerStoreModule(moduleName, StoreModuleFactory(moduleName));
 
 /**
  * @typedef {import('vue-router').LocationQuery} LocationQuery
@@ -1209,11 +1216,11 @@ const moduleFactory = (moduleName, components, translation) => {
     if (!components.base) {
         components.base = vue.defineComponent({
             name: `${moduleName}-base`,
+            // TODO #9 @Goosterhof
+            mounted: createdModule.fetchAllFromServer,
             // TODO :: check if this works in every case
             render: () => vue.h(MinimalRouterView, {depth: 1}),
             // render: () => h(RouterView),
-            // TODO #9 @Goosterhof
-            mounted: createdModule.fetchAllFromServer,
         });
     }
 
@@ -1367,10 +1374,12 @@ const setLoading = newLoading => {
 const style = document.createElement('style');
 document.head.appendChild(style);
 
-style.sheet.insertRule('.show-toast {animation: fadein 0.5s;}');
-style.sheet.insertRule('.hide-toast {animation: fadeout 0.5s;}');
-style.sheet.insertRule(`@keyframes fadein { from {bottom: 0; opacity: 0;} to {bottom: 30px; opacity: 1;}}`);
-style.sheet.insertRule(`@keyframes fadeout { from {bottom: 30px; opacity: 1;} to {bottom: 0; opacity: 0;} }`);
+if (style.sheet) {
+    style.sheet.insertRule('.show-toast {animation: fadein 0.5s;}');
+    style.sheet.insertRule('.hide-toast {animation: fadeout 0.5s;}');
+    style.sheet.insertRule(`@keyframes fadein { from {bottom: 0; opacity: 0;} to {bottom: 30px; opacity: 1;}}`);
+    style.sheet.insertRule(`@keyframes fadeout { from {bottom: 30px; opacity: 1;} to {bottom: 0; opacity: 0;} }`);
+}
 
 const VARIANTS = [
     'danger',
@@ -1394,11 +1403,12 @@ const ToastComponent = vue.defineComponent({
         show: {type: Boolean, required: true},
         variant: {type: String, required: false, default: 'success', validator: validVariant},
     },
-    setup: (props, ctx) => {
+    emits: ['hide'],
+    setup: (props, {emit}) => {
         const closeButton = vue.h('button', {
             class: 'btn-close ml-auto mr-2',
             onclick: () => {
-                if (props.show) ctx.emit('hide');
+                if (props.show) emit('hide');
             },
         });
 
@@ -1423,11 +1433,13 @@ const ModalComponent = vue.defineComponent({
         id: {
             type: String,
             required: false,
+            default: null,
         },
 
         title: {
             type: String,
             required: false,
+            default: null,
         },
         titleTag: {
             type: String,
@@ -1437,11 +1449,13 @@ const ModalComponent = vue.defineComponent({
         titleClass: {
             type: String,
             required: false,
+            default: null,
         },
 
         message: {
             type: String,
             required: false,
+            default: null,
         },
 
         // TODO :: could use translations to default this
@@ -1463,8 +1477,11 @@ const ModalComponent = vue.defineComponent({
         cancelAction: {
             type: Function,
             required: false,
+            default: null,
         },
     },
+
+    emits: ['close'],
 
     setup(props, ctx) {
         const closeModal = () => {
@@ -1472,13 +1489,14 @@ const ModalComponent = vue.defineComponent({
             ctx.emit('close');
         };
 
+        /** @type {import('vue').VNodeArrayChildren} */
         const contentChildren = [];
 
         const headerChildren = [];
         if (props.title) {
-            const titleOptions = {class: 'modal-title '};
-            if (props.titleClass) titleOptions.class += props.titleClass;
-            headerChildren.push(vue.h(props.titleTag, titleOptions, [props.title]));
+            const classes = ['modal-title'];
+            if (props.titleClass) classes.push(props.titleClass);
+            headerChildren.push(vue.h(props.titleTag, {class: classes.join(' ')}, [props.title]));
         }
 
         headerChildren.push(vue.h('button', {class: 'btn-close', onclick: closeModal}));
@@ -1513,10 +1531,11 @@ const ModalComponent = vue.defineComponent({
         contentChildren.push(vue.h('div', {class: 'modal-footer'}, [footerChildren]));
 
         const overLayOptions = {
+            id: props.id,
             class: 'modal fade show',
             style: {display: 'block', 'background-color': 'rgba(0,0,0,0.4)'},
         };
-        if (props.id) overLayOptions.id = props.id;
+        // if (props.id) overLayOptions.id = props.id;
 
         return () =>
             vue.h('div', overLayOptions, [
@@ -1595,8 +1614,7 @@ const eventApp = vue.defineComponent({
             }),
             modals.value.map((modal, index) => {
                 return vue.h(ModalComponent, {
-                    message: modal.message,
-                    okAction: modal.okAction,
+                    ...modal,
                     onClose: () => modals.value.splice(index, 1),
                 });
             }),

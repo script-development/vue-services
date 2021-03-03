@@ -7,7 +7,7 @@ export default [
             file: 'dist/index.esm.js',
             format: 'esm',
         },
-        external: ['vue', 'vuex', 'vue-router', 'axios', '@msgpack/msgpack', 'bootstrap-vue'],
+        external: ['vue', 'vuex', 'vue-router', 'axios', '@msgpack/msgpack'],
         plugins: [nodeResolve()],
     },
     {
@@ -16,7 +16,7 @@ export default [
             file: 'dev/serv-vue/index.js',
             format: 'esm',
         },
-        external: ['vue', 'vuex', 'vue-router', 'axios', '@msgpack/msgpack', 'bootstrap-vue'],
+        external: ['vue', 'vuex', 'vue-router', 'axios', '@msgpack/msgpack'],
         plugins: [nodeResolve()],
     },
     {
@@ -26,7 +26,7 @@ export default [
             format: 'cjs',
             // name: "SerVue",
         },
-        external: ['vue', 'vuex', 'vue-router', 'axios', '@msgpack/msgpack', 'bootstrap-vue'],
+        external: ['vue', 'vuex', 'vue-router', 'axios', '@msgpack/msgpack'],
         plugins: [nodeResolve()],
     },
 ];

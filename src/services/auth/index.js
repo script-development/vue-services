@@ -16,7 +16,7 @@ import {MissingDefaultLoggedinPageError} from '../../errors/MissingDefaultLogged
 
 import {ref} from 'vue';
 
-import {getRequest, getRequestWithoutCache, postRequest, registerResponseErrorMiddleware} from '../http';
+import {getRequestWithoutCache, postRequest, registerResponseErrorMiddleware} from '../http';
 import {addRoute, goToRoute, registerBeforeMiddleware} from '../router';
 import {clearStorage, getItemFromStorage, setItemInStorage, setKeepALive} from '../storage';
 
