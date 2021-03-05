@@ -330,6 +330,14 @@ const getCurrentRouteModuleName = () =>
  */
 const onPage = pageName => router.currentRoute.value.name?.toString().includes(pageName);
 
+const onCreatePage = () => onPage(CREATE_PAGE_NAME);
+/** returns if you are on the edit page */
+const onEditPage = () => onPage(EDIT_PAGE_NAME);
+/** returns if you are on the overview page */
+const onOverviewPage = () => onPage(OVERVIEW_PAGE_NAME);
+/** returns if you are on the show page */
+const onShowPage = () => onPage(SHOW_PAGE_NAME);
+
 /**
  * Checks if the page name exists in the routes
  * @param {string} pageName
@@ -1694,4 +1702,4 @@ const BaseFormError = defineComponent({
     },
 });
 
-export { BaseFormError, MinimalRouterView, addRoute, createModal, createToastMessage, download, getAllFromStore, getByIdFromStore, getCapitalizedPluralTranslation, getCapitalizedSingularTranslation, getCurrentRouteId, getCurrentRouteModuleName, getCurrentRouteQuery, getPluralTranslation, getRequest, getSingularTranslation, getStaticDataFromServer, getStaticDataItemById, getStaticDataSegment, goBack, goToCreatePage, goToEditPage, goToOverviewPage, goToRoute, goToShowPage, hasCreatePage, hasEditPage, hasOverviewPage, hasShowPage, isLoggedIn, loading, login, logout, moduleFactory, postRequest, startApp };
+export { BaseFormError, MinimalRouterView, addRoute, createModal, createToastMessage, download, getAllFromStore, getByIdFromStore, getCapitalizedPluralTranslation, getCapitalizedSingularTranslation, getCurrentRouteId, getCurrentRouteModuleName, getCurrentRouteQuery, getPluralTranslation, getRequest, getRequestWithoutCache, getSingularTranslation, getStaticDataFromServer, getStaticDataItemById, getStaticDataSegment, goBack, goToCreatePage, goToEditPage, goToOverviewPage, goToRoute, goToShowPage, hasCreatePage, hasEditPage, hasOverviewPage, hasShowPage, isLoggedIn, loading, login, logout, moduleFactory, onCreatePage, onEditPage, onOverviewPage, onShowPage, postRequest, startApp };

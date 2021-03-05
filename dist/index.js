@@ -338,6 +338,14 @@ const getCurrentRouteModuleName = () =>
  */
 const onPage = pageName => router.currentRoute.value.name?.toString().includes(pageName);
 
+const onCreatePage = () => onPage(CREATE_PAGE_NAME);
+/** returns if you are on the edit page */
+const onEditPage = () => onPage(EDIT_PAGE_NAME);
+/** returns if you are on the overview page */
+const onOverviewPage = () => onPage(OVERVIEW_PAGE_NAME);
+/** returns if you are on the show page */
+const onShowPage = () => onPage(SHOW_PAGE_NAME);
+
 /**
  * Checks if the page name exists in the routes
  * @param {string} pageName
@@ -1717,6 +1725,7 @@ exports.getCurrentRouteModuleName = getCurrentRouteModuleName;
 exports.getCurrentRouteQuery = getCurrentRouteQuery;
 exports.getPluralTranslation = getPluralTranslation;
 exports.getRequest = getRequest;
+exports.getRequestWithoutCache = getRequestWithoutCache;
 exports.getSingularTranslation = getSingularTranslation;
 exports.getStaticDataFromServer = getStaticDataFromServer;
 exports.getStaticDataItemById = getStaticDataItemById;
@@ -1736,5 +1745,9 @@ exports.loading = loading;
 exports.login = login;
 exports.logout = logout;
 exports.moduleFactory = moduleFactory;
+exports.onCreatePage = onCreatePage;
+exports.onEditPage = onEditPage;
+exports.onOverviewPage = onOverviewPage;
+exports.onShowPage = onShowPage;
 exports.postRequest = postRequest;
 exports.startApp = startApp;

@@ -1,5 +1,5 @@
-import {ref, computed, createApp, defineComponent, h} from 'vue';
-import {createRouter, createWebHistory} from 'vue-router';
+import { ref, computed, createApp, defineComponent, h } from 'vue';
+import { createRouter, createWebHistory } from 'vue-router';
 import axios from 'axios';
 
 class MissingTranslationError extends Error {
@@ -173,14 +173,7 @@ const partialFactory = (moduleName, part, component) => {
  *
  * @returns {RouteSettings}
  */
-var RouteSettingFactory = (
-    moduleName,
-    baseComponent,
-    overviewComponent,
-    createComponent,
-    editComponent,
-    showComponent
-) => {
+var RouteSettingFactory = (moduleName, baseComponent, overviewComponent, createComponent, editComponent, showComponent) => {
     const routeSettings = {
         base: {
             path: '/' + getPluralTranslation(moduleName),
@@ -336,6 +329,14 @@ const getCurrentRouteModuleName = () =>
  * @param {string} pageName the name of the page to check
  */
 const onPage = pageName => router.currentRoute.value.name?.toString().includes(pageName);
+
+const onCreatePage = () => onPage(CREATE_PAGE_NAME);
+/** returns if you are on the edit page */
+const onEditPage = () => onPage(EDIT_PAGE_NAME);
+/** returns if you are on the overview page */
+const onOverviewPage = () => onPage(OVERVIEW_PAGE_NAME);
+/** returns if you are on the show page */
+const onShowPage = () => onPage(SHOW_PAGE_NAME);
 
 /**
  * Checks if the page name exists in the routes
@@ -1701,41 +1702,4 @@ const BaseFormError = defineComponent({
     },
 });
 
-export {
-    BaseFormError,
-    MinimalRouterView,
-    addRoute,
-    createModal,
-    createToastMessage,
-    download,
-    getAllFromStore,
-    getByIdFromStore,
-    getCapitalizedPluralTranslation,
-    getCapitalizedSingularTranslation,
-    getCurrentRouteId,
-    getCurrentRouteModuleName,
-    getCurrentRouteQuery,
-    getPluralTranslation,
-    getRequest,
-    getSingularTranslation,
-    getStaticDataFromServer,
-    getStaticDataItemById,
-    getStaticDataSegment,
-    goBack,
-    goToCreatePage,
-    goToEditPage,
-    goToOverviewPage,
-    goToRoute,
-    goToShowPage,
-    hasCreatePage,
-    hasEditPage,
-    hasOverviewPage,
-    hasShowPage,
-    isLoggedIn,
-    loading,
-    login,
-    logout,
-    moduleFactory,
-    postRequest,
-    startApp,
-};
+export { BaseFormError, MinimalRouterView, addRoute, createModal, createToastMessage, download, getAllFromStore, getByIdFromStore, getCapitalizedPluralTranslation, getCapitalizedSingularTranslation, getCurrentRouteId, getCurrentRouteModuleName, getCurrentRouteQuery, getPluralTranslation, getRequest, getRequestWithoutCache, getSingularTranslation, getStaticDataFromServer, getStaticDataItemById, getStaticDataSegment, goBack, goToCreatePage, goToEditPage, goToOverviewPage, goToRoute, goToShowPage, hasCreatePage, hasEditPage, hasOverviewPage, hasShowPage, isLoggedIn, loading, login, logout, moduleFactory, onCreatePage, onEditPage, onOverviewPage, onShowPage, postRequest, startApp };

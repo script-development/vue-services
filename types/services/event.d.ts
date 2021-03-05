@@ -15,7 +15,6 @@ export function hideToastMessage(message: ToastMessage): void;
  */
 export function hideToastMessageAfterDelay(message: ToastMessage): void;
 
-// TODO :: set the defaults
 /**
  * Create a toast message
  *
