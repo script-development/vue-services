@@ -120,8 +120,8 @@ export class CreatePageCreator {
         modelFactory: Function,
         subject: string,
         createAction: Function,
-        title: string,
-        cssClasses: CreatePageCSSClasses
+        title?: string,
+        cssClasses?: CreatePageCSSClasses
     ): Component;
 
     /** @param {String} subject */
@@ -171,6 +171,7 @@ export class EditPageCreator {
         subject: string,
         updateAction?: Function,
         destroyAction?: Function,
+        showAction?: Function,
         titleItemProperty?: string | string[],
         cssClasses?: EditPageCSSClasses
     ): Component;
@@ -242,11 +243,12 @@ type FormGroup = {
     max?: number;
     step?: number;
     description?: [string, string];
+    placeholder?: string;
     component?: Component;
 };
 
 type FormInputData = {
-    cardHeader: string;
+    cardHeader?: string;
     formGroups: FormGroup[];
 };
 
