@@ -14,7 +14,7 @@ export type ModuleFactoryComponents = {
 
 export const MinimalRouterView: ComponentOptions<{depth: number}>;
 
-export type Module = {
+export declare interface Module<T extends object> {
     routeSettings: RouteSettings;
     /** Go to the over view page fromm this controller */
     goToOverviewPage(): void;
@@ -50,14 +50,14 @@ export type Module = {
      *
      * @param {Item} item the item to be updated
      */
-    updateItemRequest(item: Item): Promise<AxiosResponse>;
+    updateItemRequest(item: T): Promise<AxiosResponse>;
 
     /**
      * Sends a post request to the server, which creates the item on the server
      *
      * @param {Item} item the item to be created
      */
-    createItemRequest(item: Item): Promise<AxiosResponse>;
+    createItemRequest(item: T): Promise<AxiosResponse>;
     /**
      * Sends a get request to the server, which returns all items on the server from that endpoint
      */
@@ -78,27 +78,27 @@ export type Module = {
     /**
      * get all items from the store from this controller
      */
-    getAllFromStore: ComputedRef<Item[]>;
+    getAllFromStore: ComputedRef<T[]>;
     /**
      * Get an item from the store based on the given id
      * @param {number} id get the item from the store based on id
      */
-    getByIdFromStore(id: number): ComputedRef<Item>;
+    getByIdFromStore(id: number): ComputedRef<T>;
 
     /**
      * Get an item based on the current route id
      */
-    getByCurrentRouteIdFromStore: ComputedRef<Item>;
+    getByCurrentRouteIdFromStore: ComputedRef<T>;
 
     /**
      * Init the controller.
      * This will register the routes.
      */
     init(): void;
-};
+}
 
 export declare function moduleFactory(
     moduleName: string,
     components: ModuleFactoryComponents,
     translation: Translation
-): Module;
+): Module<any>;

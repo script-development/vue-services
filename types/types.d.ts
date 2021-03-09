@@ -18,7 +18,7 @@ export type State = Ref<{[id: number]: Item}>;
 export type Translation = {singular: string; plural: string};
 export type Translations = {[moduleName: string]: Translation};
 
-export type Modules = {[moduleName: string]: Module};
+export type Modules = {[moduleName: string]: Module<any>};
 
 export type ToastVariant =
     | 'danger'
