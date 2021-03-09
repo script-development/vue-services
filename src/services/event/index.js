@@ -31,7 +31,7 @@ export let defaultToastMessageDuration = 1500;
  * @param {ToastMessage} message
  */
 const hideToastMessage = message => {
-    clearTimeout(message.timeoutId);
+    if (message.timeoutId) clearTimeout(message.timeoutId);
 
     // TODO :: because this is called from render the ref becomes itself
     // and it's being called from the render function and outside the render function
@@ -51,7 +51,7 @@ const hideToastMessage = message => {
  * @param {ToastMessage} message the message to remove after the delay
  */
 const hideToastMessageAfterDelay = message => {
-    clearTimeout(message.timeoutId);
+    if (message.timeoutId) clearTimeout(message.timeoutId);
     message.timeoutId = setTimeout(() => hideToastMessage(message), message.duration);
 };
 

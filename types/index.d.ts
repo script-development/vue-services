@@ -36,6 +36,8 @@ export {
 
 export {getAllFromStore, getByIdFromStore} from './services/store';
 
+export {getItemFromStorage, setItemInStorage} from './services/storage';
+
 export {
     getPluralTranslation,
     getCapitalizedPluralTranslation,

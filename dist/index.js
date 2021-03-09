@@ -521,7 +521,7 @@ let keepALive = storedKeepALive ? JSON.parse(storedKeepALive) : false;
  * If the value is not of type String, it will be converted to String
  *
  * @param {String} key
- * @param {String | any} value
+ * @param {any} value
  */
 const setItemInStorage = (key, value) => {
     // TODO :: Stryker ConditionalExpression survived, when mutated to false
@@ -536,14 +536,15 @@ const setItemInStorage = (key, value) => {
  *
  * @param {String} key
  * @param {Boolean} [parse] if parse is given, then JSON.parse will be used to return a parsed value
+ * @param {any} [defaultValue] the default value, when there is nothing stored
  */
-const getItemFromStorage = (key, parse) => {
+const getItemFromStorage = (key, parse, defaultValue) => {
     // TODO :: Stryker ConditionalExpression survived, when mutated to false
-    if (!keepALive) return null;
+    if (!keepALive) return defaultValue;
 
     const value = localStorage.getItem(key);
     // TODO :: Stryker ConditionalExpression survived, when mutated to false
-    if (!value) return null;
+    if (!value) return defaultValue;
     if (!parse) return value;
 
     try {
@@ -1580,7 +1581,7 @@ let defaultToastMessageDuration = 1500;
  * @param {ToastMessage} message
  */
 const hideToastMessage = message => {
-    clearTimeout(message.timeoutId);
+    if (message.timeoutId) clearTimeout(message.timeoutId);
 
     // TODO :: because this is called from render the ref becomes itself
     // and it's being called from the render function and outside the render function
@@ -1600,7 +1601,7 @@ const hideToastMessage = message => {
  * @param {ToastMessage} message the message to remove after the delay
  */
 const hideToastMessageAfterDelay = message => {
-    clearTimeout(message.timeoutId);
+    if (message.timeoutId) clearTimeout(message.timeoutId);
     message.timeoutId = setTimeout(() => hideToastMessage(message), message.duration);
 };
 
@@ -1723,6 +1724,7 @@ exports.getCapitalizedSingularTranslation = getCapitalizedSingularTranslation;
 exports.getCurrentRouteId = getCurrentRouteId;
 exports.getCurrentRouteModuleName = getCurrentRouteModuleName;
 exports.getCurrentRouteQuery = getCurrentRouteQuery;
+exports.getItemFromStorage = getItemFromStorage;
 exports.getPluralTranslation = getPluralTranslation;
 exports.getRequest = getRequest;
 exports.getRequestWithoutCache = getRequestWithoutCache;
@@ -1750,4 +1752,5 @@ exports.onEditPage = onEditPage;
 exports.onOverviewPage = onOverviewPage;
 exports.onShowPage = onShowPage;
 exports.postRequest = postRequest;
+exports.setItemInStorage = setItemInStorage;
 exports.startApp = startApp;
