@@ -12,7 +12,7 @@ export function getCacheDuration(): number;
  * @param {string} endpoint the endpoint for the get
  * @param {AxiosRequestConfig} [options] the optional request options
  */
-export function getRequest(endpoint: string, options?: AxiosRequestConfig): Promise<AxiosResponse> | undefined;
+export function getRequest(endpoint: string, options?: AxiosRequestConfig): Promise<AxiosResponse | undefined>;
 
 /**
  * send a get request to the given endpoint without using cache
