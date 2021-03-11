@@ -7,7 +7,7 @@
  * @typedef {import('../../types/module').Module<any>} Module
  *
  */
-import {defineComponent, h} from 'vue';
+import {computed, defineComponent, h} from 'vue';
 // import {RouterView} from 'vue-router';
 
 import MinimalRouterView from './MinimalRouterView';
@@ -99,7 +99,7 @@ export const moduleFactory = (moduleName, components, translation) => {
          * Get a copy from an item based on the current route id
          */
         get getCopyByCurrentRouteIdFromStore() {
-            return deepCopy(getByIdFromStore(moduleName, getCurrentRouteId()));
+            return computed(() => deepCopy(getByIdFromStore(moduleName, getCurrentRouteId()).value));
         },
     };
 

@@ -1228,7 +1228,7 @@ const moduleFactory = (moduleName, components, translation) => {
          * Get a copy from an item based on the current route id
          */
         get getCopyByCurrentRouteIdFromStore() {
-            return deepCopy(getByIdFromStore(moduleName, getCurrentRouteId()));
+            return computed(() => deepCopy(getByIdFromStore(moduleName, getCurrentRouteId()).value));
         },
     };
 

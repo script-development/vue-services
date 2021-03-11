@@ -1,5 +1,5 @@
-import { ref, computed, createApp, defineComponent, h } from 'vue';
-import { createRouter, createWebHistory } from 'vue-router';
+import {ref, computed, createApp, defineComponent, h} from 'vue';
+import {createRouter, createWebHistory} from 'vue-router';
 import axios from 'axios';
 
 class MissingTranslationError extends Error {
@@ -173,7 +173,14 @@ const partialFactory = (moduleName, part, component) => {
  *
  * @returns {RouteSettings}
  */
-var RouteSettingFactory = (moduleName, baseComponent, overviewComponent, createComponent, editComponent, showComponent) => {
+var RouteSettingFactory = (
+    moduleName,
+    baseComponent,
+    overviewComponent,
+    createComponent,
+    editComponent,
+    showComponent
+) => {
     const routeSettings = {
         base: {
             path: '/' + getPluralTranslation(moduleName),
@@ -1228,7 +1235,7 @@ const moduleFactory = (moduleName, components, translation) => {
          * Get a copy from an item based on the current route id
          */
         get getCopyByCurrentRouteIdFromStore() {
-            return deepCopy(getByIdFromStore(moduleName, getCurrentRouteId()));
+            return computed(() => deepCopy(getByIdFromStore(moduleName, getCurrentRouteId()).value));
         },
     };
 
@@ -1721,4 +1728,48 @@ const BaseFormError = defineComponent({
     },
 });
 
-export { BaseFormError, MinimalRouterView, addRoute, createModal, createToastMessage, download, getAllFromStore, getByIdFromStore, getCapitalizedPluralTranslation, getCapitalizedSingularTranslation, getCurrentRouteId, getCurrentRouteModuleName, getCurrentRouteQuery, getItemFromStorage, getPluralTranslation, getRequest, getRequestWithoutCache, getSingularTranslation, getStaticDataFromServer, getStaticDataItemById, getStaticDataSegment, goBack, goToCreatePage, goToEditPage, goToOverviewPage, goToRoute, goToShowPage, hasCreatePage, hasEditPage, hasOverviewPage, hasShowPage, isLoggedIn, loading, login, logout, moduleFactory, onCreatePage, onEditPage, onOverviewPage, onShowPage, postRequest, setItemInStorage, startApp };
+export {
+    BaseFormError,
+    MinimalRouterView,
+    addRoute,
+    createModal,
+    createToastMessage,
+    download,
+    getAllFromStore,
+    getByIdFromStore,
+    getCapitalizedPluralTranslation,
+    getCapitalizedSingularTranslation,
+    getCurrentRouteId,
+    getCurrentRouteModuleName,
+    getCurrentRouteQuery,
+    getItemFromStorage,
+    getPluralTranslation,
+    getRequest,
+    getRequestWithoutCache,
+    getSingularTranslation,
+    getStaticDataFromServer,
+    getStaticDataItemById,
+    getStaticDataSegment,
+    goBack,
+    goToCreatePage,
+    goToEditPage,
+    goToOverviewPage,
+    goToRoute,
+    goToShowPage,
+    hasCreatePage,
+    hasEditPage,
+    hasOverviewPage,
+    hasShowPage,
+    isLoggedIn,
+    loading,
+    login,
+    logout,
+    moduleFactory,
+    onCreatePage,
+    onEditPage,
+    onOverviewPage,
+    onShowPage,
+    postRequest,
+    setItemInStorage,
+    startApp,
+};
