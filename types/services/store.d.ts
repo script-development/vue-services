@@ -10,7 +10,7 @@ export type StoreModule = {
      * Set data in the state.
      * Data can be of any kind.
      */
-    setAll(data: Item | Item[]): void;
+    setAll(incomingData: Item | Item[]): void;
 };
 export type Store = {[moduleName: string]: StoreModule};
 

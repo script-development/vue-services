@@ -1,9 +1,16 @@
 /**
+ * @typedef {import("../../types/types").Item} Item
+ */
+// TODO :: needs testing
+
+/**
+ *
  * Makes a deep copy
  * If it's not an object or array, it will return toCopy
  *
  * @param {any} toCopy Can be anything to make a copy of
- * @returns {any}
+ *
+ * @type {((toCopy:Item|Item[]) => Item|Item[]) & ((toCopy:any) => any)}
  */
 export const deepCopy = toCopy => {
     if (typeof toCopy !== 'object' || toCopy === null) {

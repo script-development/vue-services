@@ -742,11 +742,18 @@ const setAuthRoutes = () => {
 };
 
 /**
+ * @typedef {import("../../types/types").Item} Item
+ */
+// TODO :: needs testing
+
+/**
+ *
  * Makes a deep copy
  * If it's not an object or array, it will return toCopy
  *
  * @param {any} toCopy Can be anything to make a copy of
- * @returns {any}
+ *
+ * @type {((toCopy:Item|Item[]) => Item|Item[]) & ((toCopy:any) => any)}
  */
 const deepCopy = toCopy => {
     if (typeof toCopy !== 'object' || toCopy === null) {
@@ -785,12 +792,11 @@ const deepCopy = toCopy => {
  */
 var StoreModuleFactory = moduleName => {
     /** @type {State} */
-    const state = vue.ref(getItemFromStorage(moduleName, true) ?? {});
+    const state = vue.ref(getItemFromStorage(moduleName, true, {}));
 
     return {
         /** Get all items from the store */
         all: vue.computed(() => Object.values(state.value)),
-        // TODO :: byId computed? Will it be reactive this way?
         /**
          * Get an item from the state by id
          *
@@ -801,16 +807,18 @@ var StoreModuleFactory = moduleName => {
          * Set data in the state.
          * Data can be of any kind.
          *
-         * @param {Item|Item[]} data the data to set
+         * @param {Item|Item[]} incomingData the data to set
          */
-        setAll: originalData => {
-            const data = deepCopy(originalData);
-            if (!data.length) {
+        setAll: incomingData => {
+            // Making a deep copy of the data, because we don't want to edit the original data
+            // The original data could be used elsewhere
+            const data = deepCopy(incomingData);
+
+            if (!('length' in data)) {
                 // if data is not an array it probably recieves a single item with an id
                 // if that's not the case then return
                 if (!data.id) return;
 
-                // TODO :: vue-3 :: check if vue-3 is reactive this way
                 state.value[data.id] = Object.freeze(data);
             } else if (data.length === 1) {
                 // if data has an array with 1 entry, put it in the state
@@ -819,10 +827,9 @@ var StoreModuleFactory = moduleName => {
                 // if data has more entries, then that's the new baseline
                 for (const id in state.value) {
                     // search for new data entry
-                    const newDataIndex = data.findIndex(entry => entry.id == id);
+                    const newDataIndex = data.findIndex(entry => entry.id === parseInt(id));
                     // if not found, then delete entry
                     if (newDataIndex === -1) {
-                        // TODO :: vue-3 :: check if vue-3 is reactive this way
                         delete state.value[id];
                         continue;
                     }
