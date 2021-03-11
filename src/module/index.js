@@ -4,7 +4,7 @@
  * @typedef {import('../../types/types').Item} Item
  * @typedef {import('../../types/types').Translation} Translation
  * @typedef {import('../../types/module').ModuleFactoryComponents} ModuleFactoryComponents
- * @typedef {import('../../types/module').Module} Module
+ * @typedef {import('../../types/module').Module<any>} Module
  *
  */
 import {defineComponent, h} from 'vue';
@@ -17,6 +17,7 @@ import {deleteRequest, getRequest, postRequest} from '../services/http';
 import {generateAndRegisterDefaultStoreModule, getAllFromStore, getByIdFromStore} from '../services/store';
 import {setTranslation} from '../services/translator';
 import {addRoutesBasedOnRouteSettings, getCurrentRouteId, goToRoute} from '../services/router';
+import {deepCopy} from '../helpers';
 
 /**
  * @param {string} moduleName
@@ -92,6 +93,13 @@ export const moduleFactory = (moduleName, components, translation) => {
          */
         get getByCurrentRouteIdFromStore() {
             return getByIdFromStore(moduleName, getCurrentRouteId());
+        },
+
+        /**
+         * Get a copy from an item based on the current route id
+         */
+        get getCopyByCurrentRouteIdFromStore() {
+            return deepCopy(getByIdFromStore(moduleName, getCurrentRouteId()));
         },
     };
 

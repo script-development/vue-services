@@ -14,7 +14,7 @@ export type ModuleFactoryComponents = {
 
 export const MinimalRouterView: ComponentOptions<{depth: number}>;
 
-export declare interface Module<T extends object> {
+export declare interface Module<T extends Item> {
     routeSettings: RouteSettings;
     /** Go to the over view page fromm this controller */
     goToOverviewPage(): void;
@@ -78,17 +78,22 @@ export declare interface Module<T extends object> {
     /**
      * get all items from the store from this controller
      */
-    getAllFromStore: ComputedRef<T[]>;
+    getAllFromStore: ComputedRef<Readonly<T>[]>;
     /**
      * Get an item from the store based on the given id
      * @param {number} id get the item from the store based on id
      */
-    getByIdFromStore(id: number): ComputedRef<T>;
+    getByIdFromStore(id: number): ComputedRef<Readonly<T>>;
 
     /**
      * Get an item based on the current route id
      */
-    getByCurrentRouteIdFromStore: ComputedRef<T>;
+    getByCurrentRouteIdFromStore: ComputedRef<Readonly<T>>;
+
+    /**
+     * Get a copy from an item based on the current route id
+     */
+    getCopyByCurrentRouteIdFromStore: ComputedRef<T>;
 
     /**
      * Init the controller.

@@ -734,6 +734,30 @@ const setAuthRoutes = () => {
 };
 
 /**
+ * Makes a deep copy
+ * If it's not an object or array, it will return toCopy
+ *
+ * @param {any} toCopy Can be anything to make a copy of
+ * @returns {any}
+ */
+const deepCopy = toCopy => {
+    if (typeof toCopy !== 'object' || toCopy === null) {
+        return toCopy;
+    }
+
+    /** @type {Object<string,any>} */
+    const copyableObject = {};
+
+    const copiedObject = Array.isArray(toCopy) ? [] : copyableObject;
+
+    for (const key in toCopy) {
+        copiedObject[key] = deepCopy(toCopy[key]);
+    }
+
+    return copiedObject;
+};
+
+/**
  * @typedef {import('../../../../types/types').State} State
  * @typedef {import('../../../../types/types').Item} Item
  * @typedef {import('../../../../types/services/store').StoreModule} StoreModule
@@ -742,26 +766,6 @@ const setAuthRoutes = () => {
 // TODO :: it makes it a lot easier if we only handle id based items
 // changing it to only id based items, need to check if it can handle it
 // TODO :: JSDoc and vsCode can't handle the Item|Item[] parameter
-
-/**
- * Makes a deep copy
- * If it's not an object or array, it will return toCopy
- *
- * @param {any} toCopy Can be anything to make a copy of
- */
-const deepCopy = toCopy => {
-    if (typeof toCopy !== 'object' || toCopy === null) {
-        return toCopy;
-    }
-
-    const copiedObject = Array.isArray(toCopy) ? [] : {};
-
-    for (const key in toCopy) {
-        copiedObject[key] = deepCopy(toCopy[key]);
-    }
-
-    return copiedObject;
-};
 
 /**
  * Creates a store module for the given module name.
@@ -1133,7 +1137,7 @@ const generateAndRegisterDefaultStoreModule = moduleName =>
  * @typedef {import('../../types/types').Item} Item
  * @typedef {import('../../types/types').Translation} Translation
  * @typedef {import('../../types/module').ModuleFactoryComponents} ModuleFactoryComponents
- * @typedef {import('../../types/module').Module} Module
+ * @typedef {import('../../types/module').Module<any>} Module
  *
  */
 
@@ -1211,6 +1215,13 @@ const moduleFactory = (moduleName, components, translation) => {
          */
         get getByCurrentRouteIdFromStore() {
             return getByIdFromStore(moduleName, getCurrentRouteId());
+        },
+
+        /**
+         * Get a copy from an item based on the current route id
+         */
+        get getCopyByCurrentRouteIdFromStore() {
+            return deepCopy(getByIdFromStore(moduleName, getCurrentRouteId()));
         },
     };
 

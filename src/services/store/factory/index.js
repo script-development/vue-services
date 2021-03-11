@@ -5,30 +5,11 @@
  */
 import {computed, ref} from 'vue';
 import {getItemFromStorage, setItemInStorage} from '../../storage';
+import {deepCopy} from '../../../helpers';
 
 // TODO :: it makes it a lot easier if we only handle id based items
 // changing it to only id based items, need to check if it can handle it
 // TODO :: JSDoc and vsCode can't handle the Item|Item[] parameter
-
-/**
- * Makes a deep copy
- * If it's not an object or array, it will return toCopy
- *
- * @param {any} toCopy Can be anything to make a copy of
- */
-const deepCopy = toCopy => {
-    if (typeof toCopy !== 'object' || toCopy === null) {
-        return toCopy;
-    }
-
-    const copiedObject = Array.isArray(toCopy) ? [] : {};
-
-    for (const key in toCopy) {
-        copiedObject[key] = deepCopy(toCopy[key]);
-    }
-
-    return copiedObject;
-};
 
 /**
  * Creates a store module for the given module name.
