@@ -753,7 +753,7 @@ const setAuthRoutes = () => {
  *
  * @param {any} toCopy Can be anything to make a copy of
  *
- * @type {((toCopy:Item|Item[]) => Item|Item[]) & ((toCopy:any) => any)}
+ * @type {((toCopy:Item) => Item) & ((toCopy:Item|Item[]) => Item|Item[]) & ((toCopy:any) => any)}
  */
 const deepCopy = toCopy => {
     if (typeof toCopy !== 'object' || toCopy === null) {
@@ -1152,7 +1152,7 @@ const generateAndRegisterDefaultStoreModule = moduleName =>
  * @typedef {import('../../types/types').Item} Item
  * @typedef {import('../../types/types').Translation} Translation
  * @typedef {import('../../types/module').ModuleFactoryComponents} ModuleFactoryComponents
- * @typedef {import('../../types/module').Module<any>} Module
+ * @typedef {import('../../types/module').Module<Item>} Module
  *
  */
 
@@ -1236,7 +1236,11 @@ const moduleFactory = (moduleName, components, translation) => {
          * Get a copy from an item based on the current route id
          */
         get getCopyByCurrentRouteIdFromStore() {
-            return vue.computed(() => deepCopy(getByIdFromStore(moduleName, getCurrentRouteId()).value));
+            const copy = vue.ref(deepCopy(getByIdFromStore(moduleName, getCurrentRouteId()).value));
+            // TODO :: is it desired to make a lot of watchers this way?
+            // Can we keep track of the watchers and disable them later or something?
+            vue.watch(getByIdFromStore(moduleName, getCurrentRouteId()), newItem => (copy.value = deepCopy(newItem)));
+            return copy;
         },
     };
 

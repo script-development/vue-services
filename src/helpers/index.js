@@ -10,7 +10,7 @@
  *
  * @param {any} toCopy Can be anything to make a copy of
  *
- * @type {((toCopy:Item|Item[]) => Item|Item[]) & ((toCopy:any) => any)}
+ * @type {((toCopy:Item) => Item) & ((toCopy:Item|Item[]) => Item|Item[]) & ((toCopy:any) => any)}
  */
 export const deepCopy = toCopy => {
     if (typeof toCopy !== 'object' || toCopy === null) {

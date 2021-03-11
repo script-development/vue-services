@@ -1,5 +1,5 @@
 import {AxiosResponse} from 'axios';
-import {Component, ComponentOptions, ComputedRef} from 'vue';
+import {Component, ComponentOptions, ComputedRef, Ref} from 'vue';
 import {LocationQuery} from 'vue-router';
 import {RouteSettings} from './services/router';
 import {Item, Translation} from './types';
@@ -93,7 +93,7 @@ export declare interface Module<T extends Item> {
     /**
      * Get a copy from an item based on the current route id
      */
-    getCopyByCurrentRouteIdFromStore: ComputedRef<T>;
+    getCopyByCurrentRouteIdFromStore: Ref<T>;
 
     /**
      * Init the controller.
