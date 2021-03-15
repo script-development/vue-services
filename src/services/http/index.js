@@ -110,9 +110,14 @@ export const deleteRequest = async endpoint => http.delete(endpoint);
 
 /**
  * download a file from the backend
+ *
+ * if you want a specific document name you can set document name
+ * if it's not given, then it will try to resolve the filename from the response headers content-disposition
+ *
  * type should be resolved automagically, if not, then you can pass the type
+ *
  * @param {string} endpoint the endpoint for the download
- * @param {string} documentName the name of the document to be downloaded
+ * @param {string} [documentName] the name of the document to be downloaded
  * @param {string} [type] the downloaded document type
  */
 export const download = async (endpoint, documentName, type) =>
@@ -121,7 +126,24 @@ export const download = async (endpoint, documentName, type) =>
         const blob = new Blob([response.data], {type});
         const link = document.createElement('a');
         link.href = window.URL.createObjectURL(blob);
-        link.download = documentName;
+
+        // If documentName is given use that as the document name
+        if (documentName) {
+            link.download = documentName;
+            link.click();
+            return response;
+        }
+
+        /** @type {string} */
+        const contentHeaders = response.headers['content-disposition'];
+
+        const fileNameString = 'filename="';
+        const firstIndex = contentHeaders.indexOf(fileNameString) + fileNameString.length;
+        // TODO :: do something when the firstindex is not found
+
+        const lastIndex = contentHeaders.substr(firstIndex).indexOf('"');
+        link.download = contentHeaders.substr(firstIndex, lastIndex);
+
         link.click();
         return response;
     });
