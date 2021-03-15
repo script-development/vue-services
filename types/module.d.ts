@@ -14,7 +14,7 @@ export type ModuleFactoryComponents = {
 
 export const MinimalRouterView: ComponentOptions<{depth: number}>;
 
-export declare interface Module<T extends Item> {
+export declare interface Module<T extends Item, NewT> {
     routeSettings: RouteSettings;
     /** Go to the over view page fromm this controller */
     goToOverviewPage(): void;
@@ -57,7 +57,7 @@ export declare interface Module<T extends Item> {
      *
      * @param {Item} item the item to be created
      */
-    createItemRequest(item: T): Promise<AxiosResponse>;
+    createItemRequest(item: NewT): Promise<AxiosResponse>;
     /**
      * Sends a get request to the server, which returns all items on the server from that endpoint
      */
@@ -106,4 +106,4 @@ export declare function moduleFactory(
     moduleName: string,
     components: ModuleFactoryComponents,
     translation: Translation
-): Module<any>;
+): Module<any, any>;
