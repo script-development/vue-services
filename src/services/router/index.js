@@ -4,6 +4,7 @@
  * @typedef {import('vue-router').LocationQuery} LocationQuery
  */
 // TODO :: how to fix this error? It's in RouteRecordRaw, create own definition?
+import {computed} from 'vue';
 import {createRouter, createWebHistory} from 'vue-router';
 import {CREATE_PAGE_NAME, EDIT_PAGE_NAME, OVERVIEW_PAGE_NAME, SHOW_PAGE_NAME} from './settings';
 
@@ -132,10 +133,15 @@ export const getCurrentRouteId = () => parseInt(router.currentRoute.value.params
 export const getCurrentRouteName = () => router.currentRoute.value.name?.toString();
 /**
  * Get the module name binded to the current route
- * @returns {string}
  */
-export const getCurrentRouteModuleName = () =>
-    typeof router.currentRoute.value.meta?.moduleName === 'string' ? router.currentRoute.value.meta?.moduleName : '';
+export const getCurrentRouteModuleName = () => {
+    return computed(() => {
+        const meta = router.currentRoute.value.meta;
+        if (!meta) return '';
+        if (typeof meta.moduleName === 'string') return meta.moduleName;
+        return '';
+    });
+};
 
 /**
  * checks if the given string is in the current routes name

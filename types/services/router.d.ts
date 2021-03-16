@@ -1,4 +1,4 @@
-import {Component, Ref} from 'vue';
+import {Component, ComputedRef, Ref} from 'vue';
 import {
     LocationQuery,
     NavigationGuard,
@@ -69,7 +69,7 @@ export function getCurrentRouteId(): number;
 /** Get the name from the current route */
 export function getCurrentRouteName(): string;
 /** Get the module name binded to the current route */
-export function getCurrentRouteModuleName(): string;
+export function getCurrentRouteModuleName(): ComputedRef<string>;
 
 /** returns if you are on the create page */
 export function onCreatePage(): boolean;

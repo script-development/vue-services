@@ -327,10 +327,15 @@ const getCurrentRouteQuery = () => router.currentRoute.value.query;
 const getCurrentRouteId = () => parseInt(router.currentRoute.value.params.id.toString());
 /**
  * Get the module name binded to the current route
- * @returns {string}
  */
-const getCurrentRouteModuleName = () =>
-    typeof router.currentRoute.value.meta?.moduleName === 'string' ? router.currentRoute.value.meta?.moduleName : '';
+const getCurrentRouteModuleName = () => {
+    return vue.computed(() => {
+        const meta = router.currentRoute.value.meta;
+        if (!meta) return '';
+        if (typeof meta.moduleName === 'string') return meta.moduleName;
+        return '';
+    });
+};
 
 /**
  * checks if the given string is in the current routes name
