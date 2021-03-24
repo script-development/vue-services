@@ -3,14 +3,14 @@ import {Item} from '../types';
 
 export type StoreModule = {
     /** Get all items from the store */
-    all: ComputedRef<Item[]>;
+    all: ComputedRef<Readonly<Item>[]>;
     /** Get an item from the state by id */
-    byId(id: number): ComputedRef<Item>;
+    byId(id: number): ComputedRef<Readonly<Item>>;
     /**
      * Set data in the state.
      * Data can be of any kind.
      */
-    setAll(data: Item | Item[]): void;
+    setAll(incomingData: Item | Item[]): void;
 };
 export type Store = {[moduleName: string]: StoreModule};
 
@@ -27,7 +27,7 @@ export function StoreModuleFactory(moduleName: string): StoreModule;
  *
  * @param {string} moduleName the module from which to get all
  */
-export function getAllFromStore(moduleName: string): ComputedRef<Item[]>;
+export function getAllFromStore(moduleName: string): ComputedRef<Readonly<Item>[]>;
 
 /**
  * Get all data from the given store module by id
@@ -35,7 +35,7 @@ export function getAllFromStore(moduleName: string): ComputedRef<Item[]>;
  * @param {string} moduleName the module from which to get all
  * @param {number} id the id of the data object to get
  */
-export function getByIdFromStore(moduleName: string, id: number): ComputedRef<Item>;
+export function getByIdFromStore(moduleName: string, id: number): ComputedRef<Readonly<Item>>;
 
 /**
  * generate and set the default store module in the store

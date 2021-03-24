@@ -4,10 +4,10 @@
  * @typedef {import('../../types/types').Item} Item
  * @typedef {import('../../types/types').Translation} Translation
  * @typedef {import('../../types/module').ModuleFactoryComponents} ModuleFactoryComponents
- * @typedef {import('../../types/module').Module} Module
+ * @typedef {import('../../types/module').Module<Item>} Module
  *
  */
-import {defineComponent, h} from 'vue';
+import {computed, defineComponent, h, ref, watch} from 'vue';
 // import {RouterView} from 'vue-router';
 
 import MinimalRouterView from './MinimalRouterView';
@@ -17,6 +17,7 @@ import {deleteRequest, getRequest, postRequest} from '../services/http';
 import {generateAndRegisterDefaultStoreModule, getAllFromStore, getByIdFromStore} from '../services/store';
 import {setTranslation} from '../services/translator';
 import {addRoutesBasedOnRouteSettings, getCurrentRouteId, goToRoute} from '../services/router';
+import {deepCopy} from '../helpers';
 
 /**
  * @param {string} moduleName
@@ -92,6 +93,17 @@ export const moduleFactory = (moduleName, components, translation) => {
          */
         get getByCurrentRouteIdFromStore() {
             return getByIdFromStore(moduleName, getCurrentRouteId());
+        },
+
+        /**
+         * Get a copy from an item based on the current route id
+         */
+        get getCopyByCurrentRouteIdFromStore() {
+            const copy = ref(deepCopy(getByIdFromStore(moduleName, getCurrentRouteId()).value));
+            // TODO :: is it desired to make a lot of watchers this way?
+            // Can we keep track of the watchers and disable them later or something?
+            watch(getByIdFromStore(moduleName, getCurrentRouteId()), newItem => (copy.value = deepCopy(newItem)));
+            return copy;
         },
     };
 

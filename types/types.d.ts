@@ -8,12 +8,14 @@ export type ResponseErrorMiddleware = (error: AxiosError) => void;
 
 export type Cache = {[key: string]: number};
 
-export type Item = {id?: number; [property: string]: any};
+export interface Item {
+    id: number;
+}
 
 type ErrorBag = {[property: string]: string[]};
 export type ErrorBagRef = Ref<ErrorBag>;
 
-export type State = Ref<{[id: number]: Item}>;
+export type State = Ref<{[id: number]: Readonly<Item>}>;
 
 export type Translation = {singular: string; plural: string};
 export type Translations = {[moduleName: string]: Translation};

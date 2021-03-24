@@ -1,5 +1,5 @@
-import { ref, computed, createApp, defineComponent, h } from 'vue';
-import { createRouter, createWebHistory } from 'vue-router';
+import {computed, ref, createApp, defineComponent, h, watch} from 'vue';
+import {createRouter, createWebHistory} from 'vue-router';
 import axios from 'axios';
 
 class MissingTranslationError extends Error {
@@ -173,7 +173,14 @@ const partialFactory = (moduleName, part, component) => {
  *
  * @returns {RouteSettings}
  */
-var RouteSettingFactory = (moduleName, baseComponent, overviewComponent, createComponent, editComponent, showComponent) => {
+var RouteSettingFactory = (
+    moduleName,
+    baseComponent,
+    overviewComponent,
+    createComponent,
+    editComponent,
+    showComponent
+) => {
     const routeSettings = {
         base: {
             path: '/' + getPluralTranslation(moduleName),
@@ -319,10 +326,15 @@ const getCurrentRouteQuery = () => router.currentRoute.value.query;
 const getCurrentRouteId = () => parseInt(router.currentRoute.value.params.id.toString());
 /**
  * Get the module name binded to the current route
- * @returns {string}
  */
-const getCurrentRouteModuleName = () =>
-    typeof router.currentRoute.value.meta?.moduleName === 'string' ? router.currentRoute.value.meta?.moduleName : '';
+const getCurrentRouteModuleName = () => {
+    return computed(() => {
+        const meta = router.currentRoute.value.meta;
+        if (!meta) return '';
+        if (typeof meta.moduleName === 'string') return meta.moduleName;
+        return '';
+    });
+};
 
 /**
  * checks if the given string is in the current routes name
@@ -477,9 +489,14 @@ const deleteRequest = async endpoint => http.delete(endpoint);
 
 /**
  * download a file from the backend
+ *
+ * if you want a specific document name you can set document name
+ * if it's not given, then it will try to resolve the filename from the response headers content-disposition
+ *
  * type should be resolved automagically, if not, then you can pass the type
+ *
  * @param {string} endpoint the endpoint for the download
- * @param {string} documentName the name of the document to be downloaded
+ * @param {string} [documentName] the name of the document to be downloaded
  * @param {string} [type] the downloaded document type
  */
 const download = async (endpoint, documentName, type) =>
@@ -488,7 +505,24 @@ const download = async (endpoint, documentName, type) =>
         const blob = new Blob([response.data], {type});
         const link = document.createElement('a');
         link.href = window.URL.createObjectURL(blob);
-        link.download = documentName;
+
+        // If documentName is given use that as the document name
+        if (documentName) {
+            link.download = documentName;
+            link.click();
+            return response;
+        }
+
+        /** @type {string} */
+        const contentHeaders = response.headers['content-disposition'];
+
+        const fileNameString = 'filename="';
+        const firstIndex = contentHeaders.indexOf(fileNameString) + fileNameString.length;
+        // TODO :: do something when the firstindex is not found
+
+        const lastIndex = contentHeaders.substr(firstIndex).indexOf('"');
+        link.download = contentHeaders.substr(firstIndex, lastIndex);
+
         link.click();
         return response;
     });
@@ -734,6 +768,37 @@ const setAuthRoutes = () => {
 };
 
 /**
+ * @typedef {import("../../types/types").Item} Item
+ */
+// TODO :: needs testing
+
+/**
+ *
+ * Makes a deep copy
+ * If it's not an object or array, it will return toCopy
+ *
+ * @param {any} toCopy Can be anything to make a copy of
+ *
+ * @type {((toCopy:Item) => Item) & ((toCopy:Item|Item[]) => Item|Item[]) & ((toCopy:any) => any)}
+ */
+const deepCopy = toCopy => {
+    if (typeof toCopy !== 'object' || toCopy === null) {
+        return toCopy;
+    }
+
+    /** @type {Object<string,any>} */
+    const copyableObject = {};
+
+    const copiedObject = Array.isArray(toCopy) ? [] : copyableObject;
+
+    for (const key in toCopy) {
+        copiedObject[key] = deepCopy(toCopy[key]);
+    }
+
+    return copiedObject;
+};
+
+/**
  * @typedef {import('../../../../types/types').State} State
  * @typedef {import('../../../../types/types').Item} Item
  * @typedef {import('../../../../types/services/store').StoreModule} StoreModule
@@ -742,26 +807,6 @@ const setAuthRoutes = () => {
 // TODO :: it makes it a lot easier if we only handle id based items
 // changing it to only id based items, need to check if it can handle it
 // TODO :: JSDoc and vsCode can't handle the Item|Item[] parameter
-
-/**
- * Makes a deep copy
- * If it's not an object or array, it will return toCopy
- *
- * @param {any} toCopy Can be anything to make a copy of
- */
-const deepCopy = toCopy => {
-    if (typeof toCopy !== 'object' || toCopy === null) {
-        return toCopy;
-    }
-
-    const copiedObject = Array.isArray(toCopy) ? [] : {};
-
-    for (const key in toCopy) {
-        copiedObject[key] = deepCopy(toCopy[key]);
-    }
-
-    return copiedObject;
-};
 
 /**
  * Creates a store module for the given module name.
@@ -773,12 +818,11 @@ const deepCopy = toCopy => {
  */
 var StoreModuleFactory = moduleName => {
     /** @type {State} */
-    const state = ref(getItemFromStorage(moduleName, true) ?? {});
+    const state = ref(getItemFromStorage(moduleName, true, {}));
 
     return {
         /** Get all items from the store */
         all: computed(() => Object.values(state.value)),
-        // TODO :: byId computed? Will it be reactive this way?
         /**
          * Get an item from the state by id
          *
@@ -789,16 +833,18 @@ var StoreModuleFactory = moduleName => {
          * Set data in the state.
          * Data can be of any kind.
          *
-         * @param {Item|Item[]} data the data to set
+         * @param {Item|Item[]} incomingData the data to set
          */
-        setAll: originalData => {
-            const data = deepCopy(originalData);
-            if (!data.length) {
+        setAll: incomingData => {
+            // Making a deep copy of the data, because we don't want to edit the original data
+            // The original data could be used elsewhere
+            const data = deepCopy(incomingData);
+
+            if (!('length' in data)) {
                 // if data is not an array it probably recieves a single item with an id
                 // if that's not the case then return
                 if (!data.id) return;
 
-                // TODO :: vue-3 :: check if vue-3 is reactive this way
                 state.value[data.id] = Object.freeze(data);
             } else if (data.length === 1) {
                 // if data has an array with 1 entry, put it in the state
@@ -807,10 +853,9 @@ var StoreModuleFactory = moduleName => {
                 // if data has more entries, then that's the new baseline
                 for (const id in state.value) {
                     // search for new data entry
-                    const newDataIndex = data.findIndex(entry => entry.id == id);
+                    const newDataIndex = data.findIndex(entry => entry.id === parseInt(id));
                     // if not found, then delete entry
                     if (newDataIndex === -1) {
-                        // TODO :: vue-3 :: check if vue-3 is reactive this way
                         delete state.value[id];
                         continue;
                     }
@@ -1133,7 +1178,7 @@ const generateAndRegisterDefaultStoreModule = moduleName =>
  * @typedef {import('../../types/types').Item} Item
  * @typedef {import('../../types/types').Translation} Translation
  * @typedef {import('../../types/module').ModuleFactoryComponents} ModuleFactoryComponents
- * @typedef {import('../../types/module').Module} Module
+ * @typedef {import('../../types/module').Module<Item>} Module
  *
  */
 
@@ -1211,6 +1256,17 @@ const moduleFactory = (moduleName, components, translation) => {
          */
         get getByCurrentRouteIdFromStore() {
             return getByIdFromStore(moduleName, getCurrentRouteId());
+        },
+
+        /**
+         * Get a copy from an item based on the current route id
+         */
+        get getCopyByCurrentRouteIdFromStore() {
+            const copy = ref(deepCopy(getByIdFromStore(moduleName, getCurrentRouteId()).value));
+            // TODO :: is it desired to make a lot of watchers this way?
+            // Can we keep track of the watchers and disable them later or something?
+            watch(getByIdFromStore(moduleName, getCurrentRouteId()), newItem => (copy.value = deepCopy(newItem)));
+            return copy;
         },
     };
 
@@ -1703,4 +1759,48 @@ const BaseFormError = defineComponent({
     },
 });
 
-export { BaseFormError, MinimalRouterView, addRoute, createModal, createToastMessage, download, getAllFromStore, getByIdFromStore, getCapitalizedPluralTranslation, getCapitalizedSingularTranslation, getCurrentRouteId, getCurrentRouteModuleName, getCurrentRouteQuery, getItemFromStorage, getPluralTranslation, getRequest, getRequestWithoutCache, getSingularTranslation, getStaticDataFromServer, getStaticDataItemById, getStaticDataSegment, goBack, goToCreatePage, goToEditPage, goToOverviewPage, goToRoute, goToShowPage, hasCreatePage, hasEditPage, hasOverviewPage, hasShowPage, isLoggedIn, loading, login, logout, moduleFactory, onCreatePage, onEditPage, onOverviewPage, onShowPage, postRequest, setItemInStorage, startApp };
+export {
+    BaseFormError,
+    MinimalRouterView,
+    addRoute,
+    createModal,
+    createToastMessage,
+    download,
+    getAllFromStore,
+    getByIdFromStore,
+    getCapitalizedPluralTranslation,
+    getCapitalizedSingularTranslation,
+    getCurrentRouteId,
+    getCurrentRouteModuleName,
+    getCurrentRouteQuery,
+    getItemFromStorage,
+    getPluralTranslation,
+    getRequest,
+    getRequestWithoutCache,
+    getSingularTranslation,
+    getStaticDataFromServer,
+    getStaticDataItemById,
+    getStaticDataSegment,
+    goBack,
+    goToCreatePage,
+    goToEditPage,
+    goToOverviewPage,
+    goToRoute,
+    goToShowPage,
+    hasCreatePage,
+    hasEditPage,
+    hasOverviewPage,
+    hasShowPage,
+    isLoggedIn,
+    loading,
+    login,
+    logout,
+    moduleFactory,
+    onCreatePage,
+    onEditPage,
+    onOverviewPage,
+    onShowPage,
+    postRequest,
+    setItemInStorage,
+    startApp,
+};

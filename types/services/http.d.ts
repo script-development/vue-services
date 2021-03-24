@@ -12,7 +12,7 @@ export function getCacheDuration(): number;
  * @param {string} endpoint the endpoint for the get
  * @param {AxiosRequestConfig} [options] the optional request options
  */
-export function getRequest(endpoint: string, options?: AxiosRequestConfig): Promise<AxiosResponse> | undefined;
+export function getRequest(endpoint: string, options?: AxiosRequestConfig): Promise<AxiosResponse | undefined>;
 
 /**
  * send a get request to the given endpoint without using cache
@@ -36,12 +36,17 @@ export function deleteRequest(endpoint: string): Promise<AxiosResponse>;
 
 /**
  * download a file from the backend
+ *
+ * if you want a specific document name you can set document name
+ * if it's not given, then it will try to resolve the filename from the response headers content-disposition
+ *
  * type should be resolved automagically, if not, then you can pass the type
+ *
  * @param {string} endpoint the endpoint for the download
- * @param {string} documentName the name of the document to be downloaded
+ * @param {string} [documentName] the name of the document to be downloaded
  * @param {string} [type] the downloaded document type
  */
-export function download(endpoint: string, documentName: string, type: string): Promise<AxiosResponse>;
+export function download(endpoint: string, documentName?: string, type?: string): Promise<AxiosResponse>;
 
 export function registerRequestMiddleware(middlewareFunc: RequestMiddleware): void;
 export function registerResponseMiddleware(middlewareFunc: ResponseMiddleware): void;
