@@ -1,4 +1,4 @@
-import {Component} from 'vue';
+import {App, Component} from 'vue';
 import {AuthComponents, Modules, StaticDataTypes} from './types';
 
 /**
@@ -19,4 +19,4 @@ export function startApp(
     defaultLoggedInPageName: string,
     authComponents: AuthComponents,
     staticData?: StaticDataTypes
-): void;
+): App<Element>;

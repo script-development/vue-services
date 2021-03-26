@@ -1038,6 +1038,8 @@ const startApp = (mainComponent, modules, defaultLoggedInPageName, authComponent
     app.use(router);
     app.mount('#app');
 
+    return app;
+
     // this._eventService.app = createApp(mainComponent);
     // this._eventService.app.use(this._routerService.router);
     // this._eventService.app.mount('#app');
