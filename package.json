@@ -18,7 +18,8 @@
         "test:watch": "mocha --require @babel/register --watch --recursive",
         "build": "rollup -c scripts/config.js",
         "watch": "rollup -c scripts/config.js --watch",
-        "pub": "npm version patch && npm publish",
+        "pub:patch": "npm version patch && npm publish",
+        "pub": "npm publish",
         "docs": "typedoc",
         "lint": "eslint ./src",
         "mutate": "stryker run",
@@ -72,6 +73,6 @@
         ]
     },
     "bin": {
-        "servvue": "./cli/index.js"
+        "servvue": "cli/index.js"
     }
 }
