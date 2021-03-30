@@ -1660,7 +1660,7 @@ const eventApp = defineComponent({
         });
 
         return [
-            h('div', {class: 'toast-container'}, toasts),
+            h('div', {class: 'toast-container position-absolute bottom-0 start-0', style: 'z-index:9999;'}, toasts),
             modals.value.map((modal, index) => {
                 return h(ModalComponent, {
                     ...modal,
