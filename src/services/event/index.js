@@ -42,7 +42,7 @@ const hideToastMessage = message => {
     message.timeoutId = setTimeout(() => {
         const index = toastMessages.value.findIndex(t => t.message === message.message);
         toastMessages.value.splice(index, 1);
-    }, 450);
+    }, 50);
 };
 
 /**
@@ -59,18 +59,21 @@ const eventApp = defineComponent({
     render() {
         if (modals.value.length) document.body.classList.add('modal-open');
         else document.body.classList.remove('modal-open');
+
+        const toasts = toastMessages.value.map(message => {
+            return h(ToastComponent, {
+                message: message.message,
+                show: message.show,
+                variant: message.variant,
+                onHide: () => hideToastMessage(message),
+                // TODO :: what if there are two of the same messages active?
+                // this will trow error
+                key: message.message,
+            });
+        });
+
         return [
-            toastMessages.value.map(message => {
-                return h(ToastComponent, {
-                    message: message.message,
-                    show: message.show,
-                    variant: message.variant,
-                    onHide: () => hideToastMessage(message),
-                    // TODO :: what if there are two of the same messages active?
-                    // this will trow error
-                    key: message.message,
-                });
-            }),
+            h('div', {class: 'toast-container'}, toasts),
             modals.value.map((modal, index) => {
                 return h(ModalComponent, {
                     ...modal,

@@ -1420,19 +1420,6 @@ const setLoading = newLoading => {
     loadingTimeoutId = setTimeout(() => (spinnerLoading.value = newLoading), timeout);
 };
 
-/**
- * Extra toast styling, for the animations
- */
-const style = document.createElement('style');
-document.head.appendChild(style);
-
-if (style.sheet) {
-    style.sheet.insertRule('.show-toast {animation: fadein 0.5s;}');
-    style.sheet.insertRule('.hide-toast {animation: fadeout 0.5s;}');
-    style.sheet.insertRule(`@keyframes fadein { from {bottom: 0; opacity: 0;} to {bottom: 30px; opacity: 1;}}`);
-    style.sheet.insertRule(`@keyframes fadeout { from {bottom: 30px; opacity: 1;} to {bottom: 0; opacity: 0;} }`);
-}
-
 const VARIANTS = [
     'danger',
     'success',
@@ -1458,24 +1445,24 @@ const ToastComponent = defineComponent({
     emits: ['hide'],
     setup: (props, {emit}) => {
         const closeButton = h('button', {
-            class: 'btn-close ml-auto mr-2',
+            class: 'btn-close m-auto me-2',
             onclick: () => {
                 if (props.show) emit('hide');
             },
         });
 
-        const messageElement = h('div', {class: 'toast-body'}, [props.message]);
+        const headerElement = h('div', {class: 'toast-header border-bottom-0'}, [closeButton]);
+
+        const bodyElement = h('div', {class: 'toast-body', style: 'background-color: rgba(255,255,255,.50)'}, [
+            props.message,
+        ]);
 
         const variant = `bg-${props.variant}`;
 
         return () => {
             // need to define classes here, to make it reactive when props.show changes
-            const classes = [
-                'toast d-flex align-items-center border-0',
-                variant,
-                props.show ? 'show-toast' : 'hide-toast',
-            ];
-            return h('div', {class: classes, style: {opacity: 1}}, [messageElement, closeButton]);
+            const classes = ['toast', variant, props.show ? 'show' : 'hide'];
+            return h('div', {class: classes, style: 'z-index:9999;'}, [headerElement, bodyElement]);
         };
     },
 });
@@ -1635,7 +1622,7 @@ const hideToastMessage = message => {
     message.timeoutId = setTimeout(() => {
         const index = toastMessages.value.findIndex(t => t.message === message.message);
         toastMessages.value.splice(index, 1);
-    }, 450);
+    }, 50);
 };
 
 /**
@@ -1652,18 +1639,21 @@ const eventApp = defineComponent({
     render() {
         if (modals.value.length) document.body.classList.add('modal-open');
         else document.body.classList.remove('modal-open');
+
+        const toasts = toastMessages.value.map(message => {
+            return h(ToastComponent, {
+                message: message.message,
+                show: message.show,
+                variant: message.variant,
+                onHide: () => hideToastMessage(message),
+                // TODO :: what if there are two of the same messages active?
+                // this will trow error
+                key: message.message,
+            });
+        });
+
         return [
-            toastMessages.value.map(message => {
-                return h(ToastComponent, {
-                    message: message.message,
-                    show: message.show,
-                    variant: message.variant,
-                    onHide: () => hideToastMessage(message),
-                    // TODO :: what if there are two of the same messages active?
-                    // this will trow error
-                    key: message.message,
-                });
-            }),
+            h('div', {class: 'toast-container'}, toasts),
             modals.value.map((modal, index) => {
                 return h(ModalComponent, {
                     ...modal,
