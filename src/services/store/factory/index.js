@@ -125,7 +125,9 @@ export class StoreModuleFactory {
                         const newData = allData.splice(newDataIndex, 1)[0];
 
                         // if the entry for this id is larger then the current entry, do nothing
-                        if (Object.values(state[stateName][id]).length > Object.values(newData).length) continue;
+                        
+                        if ((state[stateName][id] != null) && 
+                            (Object.values(state[stateName][id]).length > Object.values(newData).length)) continue;
 
                         Vue.set(state[stateName], newData.id, newData);
                     }
