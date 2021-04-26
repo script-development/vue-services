@@ -14,9 +14,10 @@ let msgpack;
  * mix.webpackConfig({externals: {'@msgpack/msgpack': 'msgpack'}});
  */
 try {
+    // eslint-disable-next-line
     msgpack = require('@msgpack/msgpack');
     // eslint-disable-next-line
-} catch (error) {}
+} catch (error) { }
 
 const MSG_PACK_DATA_TYPE = 'msg-pack';
 
@@ -76,7 +77,7 @@ export class StaticDataService {
 
         const storeModule = this._storeService._factory.createDefaultStore(storeModuleName);
         storeModule.actions[this._storeService._factory.readAction] = () =>
-            this._httpService.get(storeModuleName, {responseType: 'arraybuffer'}).then(response => {
+            this._httpService.get(storeModuleName, { responseType: 'arraybuffer' }).then(response => {
                 this._storeService.setAllInStore(storeModuleName, msgpack.decode(new Uint8Array(response.data)));
                 return response;
             });

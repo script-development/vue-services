@@ -1,12 +1,13 @@
 import Vue from 'vue';
-import {storeService} from '../../services';
+import { storeService } from '../../services/index';
 
 let Multiselect;
 
 try {
+    // eslint-disable-next-line
     Multiselect = require('vue-multiselect').default;
     // eslint-disable-next-line
-} catch (error) {}
+} catch (error) { }
 
 /**
  * Creates a multiselect for a create and edit form
@@ -19,7 +20,7 @@ try {
  */
 export default (moduleName, valueField, textField) =>
     Vue.component('multiselect-input', {
-        props: {value: {required: true, type: Array}},
+        props: { value: { required: true, type: Array } },
         computed: {
             options() {
                 return storeService.getAllFromStore(moduleName);

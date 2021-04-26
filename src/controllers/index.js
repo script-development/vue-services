@@ -10,7 +10,7 @@
  */
 
 import MinimalRouterView from '../components/MinimalRouterView';
-import {storeService, routerService, eventService, translatorService} from '../services';
+import { storeService, routerService, eventService, translatorService } from '../services/index';
 
 export class BaseController {
     /**
@@ -24,7 +24,7 @@ export class BaseController {
         this._translatorService = translatorService;
 
         if (!translation) {
-            translation = {singular: APIEndpoint, plural: APIEndpoint};
+            translation = { singular: APIEndpoint, plural: APIEndpoint };
         }
 
         this._translatorService.setTranslation(APIEndpoint, translation);
@@ -224,7 +224,7 @@ export class BaseController {
     get basePage() {
         return {
             name: `${this.APIEndpoint}-base`,
-            render: h => h(MinimalRouterView, {props: {depth: 1}}),
+            render: h => h(MinimalRouterView, { props: { depth: 1 } }),
             // render: h => h(MinimalRouterView, {props: {depth: 1}}),
             // TODO #9 @Goosterhof
             mounted: () => this.read(),
