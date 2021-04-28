@@ -3,18 +3,18 @@
  */
 
 import Vue from 'vue';
-import {errorService, translatorService, routerService} from '../services';
+import { errorService, translatorService, routerService } from '../services/index';
 
-import {BaseCreator} from './basecreator';
+import { BaseCreator } from './basecreator';
 
-import {CreatePageCreator} from './createpagecreator';
-import {EditPageCreator} from './editpagecreator';
-import {OverviewPageCreator} from './overviewpagecreator';
-import {ShowPageCreator} from './showpagecreator';
+import { CreatePageCreator } from './createpagecreator';
+import { EditPageCreator } from './editpagecreator';
+import { OverviewPageCreator } from './overviewpagecreator';
+import { ShowPageCreator } from './showpagecreator';
 
-import {TableCreator} from './table';
-import {FormCreator} from './form';
-import {DetailListCreator} from './detailList';
+import { TableCreator } from './table';
+import { FormCreator } from './form';
+import { DetailListCreator } from './detailList';
 
 export const baseCreator = new BaseCreator(translatorService);
 

@@ -73,7 +73,6 @@ class StorageService {
  * @typedef {import('axios').AxiosRequestConfig} AxiosRequestConfig
  * @typedef {import('../storage').StorageService} StorageService
  * @typedef {import('axios').AxiosResponse} AxiosResponse
- * @typedef {import('axios').AxiosRequestConfig} AxiosRequestConfig
  * @typedef {import('axios').AxiosError} AxiosError
  *
  * @typedef {Object<string,number>} Cache
@@ -83,6 +82,7 @@ class StorageService {
  * @typedef {(response: AxiosError) => void} ResponseErrorMiddleware
  */
 // TODO :: heavilly dependant on webpack and laravel mix
+// eslint-disable-next-line
 const API_URL = process.env.MIX_APP_URL ? `${process.env.MIX_APP_URL}/api` : '/api';
 const HEADERS_TO_TYPE = {
     'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet': 'application/xlsx',
@@ -144,10 +144,10 @@ class HTTPService {
     }
 
     // prettier-ignore
-    get cacheDuration() {return this._cacheDuration;}
+    get cacheDuration() { return this._cacheDuration; }
 
     // prettier-ignore
-    set cacheDuration(value) {this._cacheDuration = value;}
+    set cacheDuration(value) { this._cacheDuration = value; }
 
     /**
      * send a get request to the given endpoint
@@ -195,9 +195,9 @@ class HTTPService {
      * @param {String} [type] the downloaded document type
      */
     download(endpoint, documentName, type) {
-        return this._http.get(endpoint, {responseType: 'blob'}).then(response => {
+        return this._http.get(endpoint, { responseType: 'blob' }).then(response => {
             if (!type) type = HEADERS_TO_TYPE[response.headers['content-type']];
-            const blob = new Blob([response.data], {type});
+            const blob = new Blob([response.data], { type });
             const link = document.createElement('a');
             link.href = window.URL.createObjectURL(blob);
             link.download = documentName;
@@ -336,11 +336,7 @@ class MissingTranslationError extends Error {
 }
 
 /**
- * @typedef {Object} Translation
- * @property {string} singular the singular translation
- * @property {string} plural the plural translation
- *
- * @typedef {import('../../errors/MissingTranslationError').MissingTranslationError} MissingTranslationError
+ * @typedef {import('../../../types/services').Translation} Translation
  */
 
 const PLURAL = 'plural';
@@ -462,7 +458,6 @@ class RouterConsumedError extends Error {
  * @typedef {import("vue-router").RouteConfig} RouteConfig
  * @typedef {import("vue-router").Route} Route
  * @typedef {import("vue-router").NavigationGuardNext} NavigationGuardNext
- * @typedef {import("vue-router").default} VueRouter
  * @typedef {import("./factory").RouteFactory} RouteFactory
  * @typedef {import("./settings").RouteSettings} RouteSettings
  *
@@ -1371,11 +1366,10 @@ class StoreModuleNotFoundError extends Error {
 /**
  * @typedef {import('./factory').StoreModuleFactory} StoreModuleFactory
  * @typedef {import('../http').HTTPService} HTTPService
- * @typedef {import('vuex').Store} Store
- * @typedef {import('vuex').Module} Module
+ * @typedef {import('vuex').Store<{}>} Store
+ * @typedef {import('vuex').Module<string,{}>} Module
  * @typedef {import('axios').AxiosRequestConfig} AxiosRequestConfig
  *
- * @typedef {import('../../errors/StoreModuleNotFoundError').StoreModuleNotFoundError} StoreModuleNotFoundError
  * @typedef {import('../../controllers').Item} Item
  */
 // Bind the store to Vue and generate empty store
@@ -1387,7 +1381,7 @@ class StoreService {
      * @param {HTTPService} httpService the http service for communication with the API
      */
     constructor(factory, httpService) {
-        this._store = new Vuex.Store();
+        this._store = new Vuex.Store({});
         this._factory = factory;
         this._httpService = httpService;
 
@@ -1714,7 +1708,7 @@ var NotFoundPage = {
  * @typedef {Object.<string, string[]} ErrorBag
  */
 
-const STORE_MODULE_NAME = 'errors';
+const STORE_MODULE_NAME$1 = 'errors';
 
 class ErrorService {
     /**
@@ -1725,8 +1719,8 @@ class ErrorService {
     constructor(storeService, routerService, httpService) {
         this._storeService = storeService;
 
-        this._storeService.generateAndSetDefaultStoreModule(STORE_MODULE_NAME, '', {
-            getters: {[STORE_MODULE_NAME]: state => state[this._storeService.getAllItemsStateName(false)]},
+        this._storeService.generateAndSetDefaultStoreModule(STORE_MODULE_NAME$1, '', {
+            getters: {[STORE_MODULE_NAME$1]: state => state[this._storeService.getAllItemsStateName(false)]},
         });
 
         this._routerService = routerService;
@@ -1752,7 +1746,7 @@ class ErrorService {
      * @returns {ErrorBag}
      */
     getErrors() {
-        return this._storeService.get(STORE_MODULE_NAME, STORE_MODULE_NAME);
+        return this._storeService.get(STORE_MODULE_NAME$1, STORE_MODULE_NAME$1);
     }
 
     /**
@@ -1761,7 +1755,7 @@ class ErrorService {
      * @param {ErrorBag} errors
      */
     setErrors(errors) {
-        this._storeService.setAllInStore(STORE_MODULE_NAME, errors);
+        this._storeService.setAllInStore(STORE_MODULE_NAME$1, errors);
     }
 
     // prettier-ignore
@@ -1879,9 +1873,10 @@ let msgpack;
  * mix.webpackConfig({externals: {'@msgpack/msgpack': 'msgpack'}});
  */
 try {
+    // eslint-disable-next-line
     msgpack = require('@msgpack/msgpack');
     // eslint-disable-next-line
-} catch (error) {}
+} catch (error) { }
 
 const MSG_PACK_DATA_TYPE = 'msg-pack';
 
@@ -1941,7 +1936,7 @@ class StaticDataService {
 
         const storeModule = this._storeService._factory.createDefaultStore(storeModuleName);
         storeModule.actions[this._storeService._factory.readAction] = () =>
-            this._httpService.get(storeModuleName, {responseType: 'arraybuffer'}).then(response => {
+            this._httpService.get(storeModuleName, { responseType: 'arraybuffer' }).then(response => {
                 this._storeService.setAllInStore(storeModuleName, msgpack.decode(new Uint8Array(response.data)));
                 return response;
             });
@@ -1979,6 +1974,7 @@ class StaticDataService {
     }
 }
 
+// eslint-disable-next-line
 const APP_NAME = process.env.MIX_APP_NAME || 'Harry';
 
 const IS_LOGGED_IN = APP_NAME + ' is magical';
@@ -2024,7 +2020,7 @@ var storeModule = (storageService, httpService, authService) => {
             // SET_USER_TO_REGISTER: (state, payload) => (state.userToRegister = payload),// move to register service
         },
         actions: {
-            login: ({commit}, payload) => {
+            login: ({ commit }, payload) => {
                 storageService.keepALive = payload.rememberMe;
                 commit('LOGIN');
                 return httpService.post(authService.apiLoginRoute, payload).then(response => {
@@ -2037,17 +2033,17 @@ var storeModule = (storageService, httpService, authService) => {
                     return response;
                 });
             },
-            logout: ({commit}) => {
+            logout: ({ commit }) => {
                 return httpService.post(authService.apiLogoutRoute).then(response => {
                     commit('LOGOUT');
                     return response;
                 });
             },
 
-            logoutApp: ({commit}) => commit('LOGOUT'),
+            logoutApp: ({ commit }) => commit('LOGOUT'),
 
             sendEmailResetPassword: (_, email) => {
-                return httpService.post(authService.apiSendEmailResetPasswordRoute, {email}).then(response => {
+                return httpService.post(authService.apiSendEmailResetPasswordRoute, { email }).then(response => {
                     if (response.status == 200) authService.goToLoginPage();
                 });
             },
@@ -2058,7 +2054,7 @@ var storeModule = (storageService, httpService, authService) => {
                     .then(() => authService.goToLoginPage());
             },
 
-            me: ({commit}) => {
+            me: ({ commit }) => {
                 return httpService.get(authService.apiLoggedInCheckRoute).then(response => {
                     const user = response.data.user;
                     if (user) commit('SET_LOGGED_IN_USER', user);
@@ -2127,7 +2123,7 @@ const FORGOT_PASSWORD_ROUTE_NAME = 'ForgotPassword';
 const RESET_PASSWORD_ROUTE_NAME = 'ResetPassword';
 const SET_PASSWORD_ROUTE_NAME = 'SetPassword';
 
-const STORE_MODULE_NAME$1 = 'auth';
+const STORE_MODULE_NAME = 'auth';
 
 class AuthService {
     /**
@@ -2142,7 +2138,7 @@ class AuthService {
         this._storageService = storageService;
         this._httpService = httpService;
 
-        this._storeService.registerModule(STORE_MODULE_NAME$1, storeModule(storageService, httpService, this));
+        this._storeService.registerModule(STORE_MODULE_NAME, storeModule(storageService, httpService, this));
 
         this._apiLoginRoute = '/login';
         this._apiLogoutRoute = '/logout';
@@ -2207,17 +2203,17 @@ class AuthService {
 
     get isLoggedin() {
         // TODO :: where to set isLoggedIn?
-        return this._storeService.get(STORE_MODULE_NAME$1, 'isLoggedIn');
+        return this._storeService.get(STORE_MODULE_NAME, 'isLoggedIn');
     }
 
     // TODO :: this is not basic usage, how to implement this?
     get isAdmin() {
         // TODO :: where to set isAdmin?
-        return this._storeService.get(STORE_MODULE_NAME$1, 'isAdmin');
+        return this._storeService.get(STORE_MODULE_NAME, 'isAdmin');
     }
 
     get loggedInUser() {
-        return this._storeService.get(STORE_MODULE_NAME$1, 'loggedInUser');
+        return this._storeService.get(STORE_MODULE_NAME, 'loggedInUser');
     }
 
     get defaultLoggedInPageName() {
@@ -2263,11 +2259,11 @@ class AuthService {
      * @param {Credentials} credentials the credentials to login with
      */
     login(credentials) {
-        return this._storeService.dispatch(STORE_MODULE_NAME$1, LOGIN_ACTION, credentials);
+        return this._storeService.dispatch(STORE_MODULE_NAME, LOGIN_ACTION, credentials);
     }
 
     logout() {
-        return this._storeService.dispatch(STORE_MODULE_NAME$1, LOGOUT_ACTION);
+        return this._storeService.dispatch(STORE_MODULE_NAME, LOGOUT_ACTION);
     }
 
     /**
@@ -2275,14 +2271,14 @@ class AuthService {
      * @param {String} email
      */
     sendEmailResetPassword(email) {
-        return this._storeService.dispatch(STORE_MODULE_NAME$1, 'sendEmailResetPassword', email);
+        return this._storeService.dispatch(STORE_MODULE_NAME, 'sendEmailResetPassword', email);
     }
 
     /**
      * @param {ResetPasswordData} data
      */
     resetPassword(data) {
-        return this._storeService.dispatch(STORE_MODULE_NAME$1, 'resetPassword', data);
+        return this._storeService.dispatch(STORE_MODULE_NAME, 'resetPassword', data);
     }
 
     // prettier-ignore
@@ -2304,7 +2300,7 @@ class AuthService {
      * Sends a request to the server to get the logged in user
      */
     getLoggedInUser() {
-        this._storeService.dispatch(STORE_MODULE_NAME$1, 'me');
+        this._storeService.dispatch(STORE_MODULE_NAME, 'me');
     }
 
     /** @returns {ResponseErrorMiddleware} */
@@ -2315,7 +2311,7 @@ class AuthService {
             if (status == 403) {
                 this.goToStandardLoggedInPage();
             } else if (status == 401) {
-                this._storeService.dispatch(STORE_MODULE_NAME$1, 'logoutApp');
+                this._storeService.dispatch(STORE_MODULE_NAME, 'logoutApp');
             }
         };
     }
@@ -3013,14 +3009,14 @@ class TableCreator {
     }
 }
 
-let updateTimeout;
+let updateTimeout$1;
 
-const update = (emitter, url, value) => {
-    if (updateTimeout) clearTimeout(updateTimeout);
+const update$1 = (emitter, url, value) => {
+    if (updateTimeout$1) clearTimeout(updateTimeout$1);
     if (url && !value.indexOf('http://') == 0 && !value.indexOf('https://') == 0) {
         value = `http://${value}`;
     }
-    updateTimeout = setTimeout(() => emitter(value), 200);
+    updateTimeout$1 = setTimeout(() => emitter(value), 200);
 };
 
 /**
@@ -3039,7 +3035,7 @@ var StringInput = (placeholder, url) => ({
         return h('input', {
             class: 'form-control',
             attrs: {value: props.value, placeholder},
-            on: {input: e => update(listeners.update, url, e.target.value)},
+            on: {input: e => update$1(listeners.update, url, e.target.value)},
         });
     },
 });
@@ -3060,16 +3056,16 @@ var SelectInput = (moduleName, valueField, textField) => ({
             return storeService.getAllFromStore(moduleName);
         },
     },
-    props: {value: {required: true, type: Number}},
+    props: { value: { required: true, type: Number } },
     render(h) {
         const options = this.options.map(option =>
-            h('option', {attrs: {value: option[valueField], selected: option[valueField] == this.value}}, [
+            h('option', { attrs: { value: option[valueField], selected: option[valueField] == this.value } }, [
                 option[textField],
             ])
         );
         return h(
             'select',
-            {class: 'custom-select', on: {input: e => this.$emit('update', parseInt(e.target.value))}},
+            { class: 'custom-select', on: { input: e => this.$emit('update', parseInt(e.target.value)) } },
             options
         );
     },
@@ -3078,9 +3074,10 @@ var SelectInput = (moduleName, valueField, textField) => ({
 let Multiselect;
 
 try {
+    // eslint-disable-next-line
     Multiselect = require('vue-multiselect').default;
     // eslint-disable-next-line
-} catch (error) {}
+} catch (error) { }
 
 /**
  * Creates a multiselect for a create and edit form
@@ -3093,7 +3090,7 @@ try {
  */
 var MultiselectInput = (moduleName, valueField, textField) =>
     Vue.component('multiselect-input', {
-        props: {value: {required: true, type: Array}},
+        props: { value: { required: true, type: Array } },
         computed: {
             options() {
                 return storeService.getAllFromStore(moduleName);
@@ -3136,11 +3133,11 @@ var MultiselectInput = (moduleName, valueField, textField) =>
  * @typedef {(value:string) => string} FormGroupFormatter
  */
 
-let updateTimeout$1;
+let updateTimeout;
 
-const update$1 = (emitter, value) => {
-    if (updateTimeout$1) clearTimeout(updateTimeout$1);
-    updateTimeout$1 = setTimeout(() => {
+const update = (emitter, value) => {
+    if (updateTimeout) clearTimeout(updateTimeout);
+    updateTimeout = setTimeout(() => {
         // Check if it's a float or an int
         if (value.indexOf('.') !== -1) emitter(parseFloat(value));
         else emitter(parseInt(value));
@@ -3197,7 +3194,7 @@ var NumberInput = (min, max, step, formatter) => {
                         input: e => {
                             if (!e.target.value) e.target.value = '0';
 
-                            update$1(updater, e.target.value);
+                            update(updater, e.target.value);
                         },
                         blur: () => {
                             if (!functional) this.isInputActive = false;
@@ -3696,7 +3693,7 @@ class BaseController {
         this._translatorService = translatorService;
 
         if (!translation) {
-            translation = {singular: APIEndpoint, plural: APIEndpoint};
+            translation = { singular: APIEndpoint, plural: APIEndpoint };
         }
 
         this._translatorService.setTranslation(APIEndpoint, translation);
@@ -3782,7 +3779,7 @@ class BaseController {
      * @param {String|Number} id get the item from the store base don id
      */
     getById(id) {
-        return this._storeService.getByIdFromStore(this._APIEndpoint, id);
+        return this._storeService.getByIdFromStore(this._APIEndpoint, id.toString());
     }
 
     /**
@@ -3896,7 +3893,7 @@ class BaseController {
     get basePage() {
         return {
             name: `${this.APIEndpoint}-base`,
-            render: h => h(MinimalRouterView, {props: {depth: 1}}),
+            render: h => h(MinimalRouterView, { props: { depth: 1 } }),
             // render: h => h(MinimalRouterView, {props: {depth: 1}}),
             // TODO #9 @Goosterhof
             mounted: () => this.read(),

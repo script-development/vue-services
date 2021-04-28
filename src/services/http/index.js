@@ -13,6 +13,7 @@
 
 import axios from 'axios';
 // TODO :: heavilly dependant on webpack and laravel mix
+// eslint-disable-next-line
 const API_URL = process.env.MIX_APP_URL ? `${process.env.MIX_APP_URL}/api` : '/api';
 const HEADERS_TO_TYPE = {
     'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet': 'application/xlsx',
@@ -74,10 +75,10 @@ export class HTTPService {
     }
 
     // prettier-ignore
-    get cacheDuration() {return this._cacheDuration;}
+    get cacheDuration() { return this._cacheDuration; }
 
     // prettier-ignore
-    set cacheDuration(value) {this._cacheDuration = value;}
+    set cacheDuration(value) { this._cacheDuration = value; }
 
     /**
      * send a get request to the given endpoint
@@ -125,9 +126,9 @@ export class HTTPService {
      * @param {String} [type] the downloaded document type
      */
     download(endpoint, documentName, type) {
-        return this._http.get(endpoint, {responseType: 'blob'}).then(response => {
+        return this._http.get(endpoint, { responseType: 'blob' }).then(response => {
             if (!type) type = HEADERS_TO_TYPE[response.headers['content-type']];
-            const blob = new Blob([response.data], {type});
+            const blob = new Blob([response.data], { type });
             const link = document.createElement('a');
             link.href = window.URL.createObjectURL(blob);
             link.download = documentName;

@@ -8,7 +8,7 @@ import {
     eventService,
     translatorService,
     staticDataService,
-} from './services';
+} from './services/index';
 
 export {
     baseCreator,
@@ -19,9 +19,9 @@ export {
     createPageCreator,
     showPageCreator,
     editPageCreator,
-} from './creators';
+} from './creators/index';
 
-import {AppStarter} from './app';
+import { AppStarter } from './app/index';
 
 const appStarter = new AppStarter(routerService, eventService, authService, staticDataService);
 
@@ -38,7 +38,7 @@ export {
     appStarter,
 };
 
-export {BaseController} from './controllers';
+export { BaseController } from './controllers/index';
 
 import MinimalRouterView from './components/MinimalRouterView';
-export {MinimalRouterView};
+export { MinimalRouterView };

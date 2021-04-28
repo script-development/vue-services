@@ -1,6 +1,9 @@
+// eslint-disable-next-line
 const fs = require('fs');
+// eslint-disable-next-line
 const path = require('path');
 // TODO :: documentation
+// eslint-disable-next-line
 const PROJECTFOLDER = process.cwd();
 
 module.exports = {
@@ -10,7 +13,7 @@ module.exports = {
     },
 
     createDirectory(directory) {
-        if (!fs.existsSync(directory)) fs.mkdirSync(path.join(directory), {recursive: true});
+        if (!fs.existsSync(directory)) fs.mkdirSync(path.join(directory), { recursive: true });
     },
 
     readFile(file, env) {

@@ -1,4 +1,4 @@
-import {storeService} from '../../services';
+import { storeService } from '../../services/index';
 /**
  * Creates a select input for a create and edit form
  *
@@ -15,16 +15,16 @@ export default (moduleName, valueField, textField) => ({
             return storeService.getAllFromStore(moduleName);
         },
     },
-    props: {value: {required: true, type: Number}},
+    props: { value: { required: true, type: Number } },
     render(h) {
         const options = this.options.map(option =>
-            h('option', {attrs: {value: option[valueField], selected: option[valueField] == this.value}}, [
+            h('option', { attrs: { value: option[valueField], selected: option[valueField] == this.value } }, [
                 option[textField],
             ])
         );
         return h(
             'select',
-            {class: 'custom-select', on: {input: e => this.$emit('update', parseInt(e.target.value))}},
+            { class: 'custom-select', on: { input: e => this.$emit('update', parseInt(e.target.value)) } },
             options
         );
     },
