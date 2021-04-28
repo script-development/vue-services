@@ -55,7 +55,7 @@ export class EditPageCreator {
                 },
             },
             data() {
-                return {editable: {}};
+                return { editable: {} };
             },
             render(h) {
                 // TODO :: notFoundMessage should be clear
@@ -67,14 +67,12 @@ export class EditPageCreator {
                 ];
 
                 if (destroyAction) {
-                    // TODO :: move to method, when there are more b-links
-                    // TODO :: uses Bootstrap-Vue element
                     containerChildren.push(
                         h(
-                            'b-link',
+                            'a',
                             {
-                                class: 'text-danger',
-                                on: {click: destroyAction},
+                                class: 'btn btn-outline-danger mt-2',
+                                on: { click: destroyAction },
                             },
                             [`${pageCreator._translatorService.getCapitalizedSingular(subject)} verwijderen`]
                         )
@@ -129,14 +127,14 @@ export class EditPageCreator {
      * @param {(item:Object<string,any) => void} action
      */
     createForm(form, editable, action) {
-        return this._h('div', {class: 'row mt-3'}, [
+        return this._h('div', { class: 'row mt-3' }, [
             this._baseCreator.col([
                 this._h(form, {
                     props: {
                         editable,
                         errors: this._errorService.getErrors(),
                     },
-                    on: {submit: () => action(editable)},
+                    on: { submit: () => action(editable) },
                 }),
             ]),
         ]);

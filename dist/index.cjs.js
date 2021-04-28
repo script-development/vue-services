@@ -3,10 +3,10 @@
 Object.defineProperty(exports, '__esModule', { value: true });
 
 var axios = require('axios');
-var bootstrapVue = require('bootstrap-vue');
 var Vue = require('vue');
 var VueRouter = require('vue-router');
 var Vuex = require('vuex');
+var bootstrapVue = require('bootstrap-vue');
 
 function _interopDefaultLegacy (e) { return e && typeof e === 'object' && 'default' in e ? e : { 'default': e }; }
 
@@ -259,25 +259,25 @@ class EventService {
 
     set app(app) {
         if (!app.$bvToast) {
-            Vue__default['default'].use(bootstrapVue.ToastPlugin);
+            console.warn('vue toast plugin missing, make sure to import it');
         }
 
         if (!app.$bvModal) {
-            Vue__default['default'].user(bootstrapVue.ModalPlugin);
+            console.warn('vue modal plugin missing, make sure to import it');
         }
         this._app = app;
     }
 
     /** @returns {ResponseMiddleware} */
     get responseMiddleware() {
-        return ({data}) => {
+        return ({ data }) => {
             if (data && data.message) this.successToast(data.message);
         };
     }
 
     /** @returns {ResponseErrorMiddleware} */
     get responseErrorMiddleware() {
-        return ({response}) => {
+        return ({ response }) => {
             if (response && response.data.message) this.dangerToast(response.data.message);
         };
     }
@@ -1241,7 +1241,9 @@ class StoreModuleFactory {
                         const newData = allData.splice(newDataIndex, 1)[0];
 
                         // if the entry for this id is larger then the current entry, do nothing
-                        if (Object.values(state[stateName][id]).length > Object.values(newData).length) continue;
+                        
+                        if ((state[stateName][id] != null) && 
+                            (Object.values(state[stateName][id]).length > Object.values(newData).length)) continue;
 
                         Vue__default['default'].set(state[stateName], newData.id, newData);
                     }
@@ -2658,7 +2660,7 @@ class EditPageCreator {
                 },
             },
             data() {
-                return {editable: {}};
+                return { editable: {} };
             },
             render(h) {
                 // TODO :: notFoundMessage should be clear
@@ -2670,14 +2672,12 @@ class EditPageCreator {
                 ];
 
                 if (destroyAction) {
-                    // TODO :: move to method, when there are more b-links
-                    // TODO :: uses Bootstrap-Vue element
                     containerChildren.push(
                         h(
-                            'b-link',
+                            'a',
                             {
-                                class: 'text-danger',
-                                on: {click: destroyAction},
+                                class: 'btn btn-outline-danger mt-2',
+                                on: { click: destroyAction },
                             },
                             [`${pageCreator._translatorService.getCapitalizedSingular(subject)} verwijderen`]
                         )
@@ -2732,14 +2732,14 @@ class EditPageCreator {
      * @param {(item:Object<string,any) => void} action
      */
     createForm(form, editable, action) {
-        return this._h('div', {class: 'row mt-3'}, [
+        return this._h('div', { class: 'row mt-3' }, [
             this._baseCreator.col([
                 this._h(form, {
                     props: {
                         editable,
                         errors: this._errorService.getErrors(),
                     },
-                    on: {submit: () => action(editable)},
+                    on: { submit: () => action(editable) },
                 }),
             ]),
         ]);

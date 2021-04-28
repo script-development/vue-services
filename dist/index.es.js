@@ -1,8 +1,8 @@
 import axios from 'axios';
-import { ToastPlugin, ModalPlugin, BTable } from 'bootstrap-vue';
 import Vue from 'vue';
 import VueRouter from 'vue-router';
 import Vuex from 'vuex';
+import { BTable } from 'bootstrap-vue';
 
 const keepALiveKey = 'keepALive';
 /** setting keepALive here so we don't have to Parse it each time we get it */
@@ -248,25 +248,25 @@ class EventService {
 
     set app(app) {
         if (!app.$bvToast) {
-            Vue.use(ToastPlugin);
+            console.warn('vue toast plugin missing, make sure to import it');
         }
 
         if (!app.$bvModal) {
-            Vue.user(ModalPlugin);
+            console.warn('vue modal plugin missing, make sure to import it');
         }
         this._app = app;
     }
 
     /** @returns {ResponseMiddleware} */
     get responseMiddleware() {
-        return ({data}) => {
+        return ({ data }) => {
             if (data && data.message) this.successToast(data.message);
         };
     }
 
     /** @returns {ResponseErrorMiddleware} */
     get responseErrorMiddleware() {
-        return ({response}) => {
+        return ({ response }) => {
             if (response && response.data.message) this.dangerToast(response.data.message);
         };
     }
@@ -1230,7 +1230,9 @@ class StoreModuleFactory {
                         const newData = allData.splice(newDataIndex, 1)[0];
 
                         // if the entry for this id is larger then the current entry, do nothing
-                        if (Object.values(state[stateName][id]).length > Object.values(newData).length) continue;
+                        
+                        if ((state[stateName][id] != null) && 
+                            (Object.values(state[stateName][id]).length > Object.values(newData).length)) continue;
 
                         Vue.set(state[stateName], newData.id, newData);
                     }
@@ -2647,7 +2649,7 @@ class EditPageCreator {
                 },
             },
             data() {
-                return {editable: {}};
+                return { editable: {} };
             },
             render(h) {
                 // TODO :: notFoundMessage should be clear
@@ -2659,14 +2661,12 @@ class EditPageCreator {
                 ];
 
                 if (destroyAction) {
-                    // TODO :: move to method, when there are more b-links
-                    // TODO :: uses Bootstrap-Vue element
                     containerChildren.push(
                         h(
-                            'b-link',
+                            'a',
                             {
-                                class: 'text-danger',
-                                on: {click: destroyAction},
+                                class: 'btn btn-outline-danger mt-2',
+                                on: { click: destroyAction },
                             },
                             [`${pageCreator._translatorService.getCapitalizedSingular(subject)} verwijderen`]
                         )
@@ -2721,14 +2721,14 @@ class EditPageCreator {
      * @param {(item:Object<string,any) => void} action
      */
     createForm(form, editable, action) {
-        return this._h('div', {class: 'row mt-3'}, [
+        return this._h('div', { class: 'row mt-3' }, [
             this._baseCreator.col([
                 this._h(form, {
                     props: {
                         editable,
                         errors: this._errorService.getErrors(),
                     },
-                    on: {submit: () => action(editable)},
+                    on: { submit: () => action(editable) },
                 }),
             ]),
         ]);
