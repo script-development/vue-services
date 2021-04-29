@@ -5,9 +5,6 @@
  * @typedef {import('../http').ResponseErrorMiddleware} ResponseErrorMiddleware
  */
 
-import {ToastPlugin, ModalPlugin} from 'bootstrap-vue';
-import Vue from 'vue';
-
 export class EventService {
     /**
      *
@@ -27,25 +24,25 @@ export class EventService {
 
     set app(app) {
         if (!app.$bvToast) {
-            Vue.use(ToastPlugin);
+            console.warn('vue toast plugin missing, make sure to import it');
         }
 
         if (!app.$bvModal) {
-            Vue.user(ModalPlugin);
+            console.warn('vue modal plugin missing, make sure to import it');
         }
         this._app = app;
     }
 
     /** @returns {ResponseMiddleware} */
     get responseMiddleware() {
-        return ({data}) => {
+        return ({ data }) => {
             if (data && data.message) this.successToast(data.message);
         };
     }
 
     /** @returns {ResponseErrorMiddleware} */
     get responseErrorMiddleware() {
-        return ({response}) => {
+        return ({ response }) => {
             if (response && response.data.message) this.dangerToast(response.data.message);
         };
     }
