@@ -35,9 +35,9 @@
         "@babel/preset-env": "^7.11.5",
         "@babel/register": "^7.11.5",
         "@rollup/plugin-node-resolve": "^9.0.0",
-        "@stryker-mutator/core": "^3.3.1",
-        "@stryker-mutator/javascript-mutator": "^3.3.1",
-        "@stryker-mutator/mocha-runner": "^3.3.1",
+        "@stryker-mutator/core": "^5.0.0",
+        "@stryker-mutator/javascript-mutator": "^4.0.0",
+        "@stryker-mutator/mocha-runner": "^5.0.0",
         "@vitejs/plugin-vue": "^1.1.5",
         "@vue/compiler-sfc": "^3.0.2",
         "axios-mock-adapter": "^1.18.2",
@@ -61,8 +61,8 @@
     },
     "dependencies": {
         "axios": "^0.21.1",
-        "vue": "^3.0.4",
-        "vue-router": "^4.0.4"
+        "vue": "^3.0.11",
+        "vue-router": "^4.0.8"
     },
     "peerDependencies": {
         "@msgpack/msgpack": "^1.12.2"
