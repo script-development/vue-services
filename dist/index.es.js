@@ -2310,11 +2310,12 @@ class AuthService {
     /** @returns {ResponseErrorMiddleware} */
     get responseErrorMiddleware() {
         return ({response}) => {
+            if (this._routerService.currentRouteName === '/inloggen') return;
             if (!response) return;
             const {status} = response;
-            if (status == 403) {
+            if (status === 403) {
                 this.goToStandardLoggedInPage();
-            } else if (status == 401) {
+            } else if (status === 401) {
                 this._storeService.dispatch(STORE_MODULE_NAME, 'logoutApp');
             }
         };
