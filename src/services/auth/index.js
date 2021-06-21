@@ -209,7 +209,7 @@ export class AuthService {
      * Sends a request to the server to get the logged in user
      */
     getLoggedInUser() {
-        this._storeService.dispatch(STORE_MODULE_NAME, 'me');
+        return this._storeService.dispatch(STORE_MODULE_NAME, 'me');
     }
 
     /** @returns {ResponseErrorMiddleware} */

@@ -41,14 +41,12 @@ export class AppStarter {
 
         for (const controller in controllers) controllers[controller].init();
 
-        this._eventService.app = new Vue({
-            el: '#app',
-            router: this._routerService.router,
-            render: h => h(mainComponent),
+        this._authService.getLoggedInUser().finally(() => {
+            this._eventService.app = new Vue({
+                el: '#app',
+                router: this._routerService.router,
+                render: h => h(mainComponent),
+            });
         });
-
-        // TODO :: could even do this first and .then(()=>this._authService.getLoggedInUser())
-        // or make it a setting
-        if (this._authService.isLoggedin) this._authService.getLoggedInUser();
     }
 }
