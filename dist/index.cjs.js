@@ -173,14 +173,11 @@ class HTTPService {
             if (currentTimeStamp - this._cache[endpoint] < this.cacheDuration) return;
         }
 
-        return this._http
-            .get(endpoint, options)
-            .then(response => {
-                this._cache[endpoint] = currentTimeStamp;
-                this._storageService.setItem(CACHE_KEY, this._cache);
-                return response;
-            })
-            .catch(response => response);
+        return this._http.get(endpoint, options).then(response => {
+            this._cache[endpoint] = currentTimeStamp;
+            this._storageService.setItem(CACHE_KEY, this._cache);
+            return response;
+        });
     }
 
     /**
@@ -190,7 +187,7 @@ class HTTPService {
      * @param {AxiosRequestConfig} [options] the optional request options
      */
     post(endpoint, data, options) {
-        return this._http.post(endpoint, data, options).catch(response => response);
+        return this._http.post(endpoint, data, options);
     }
 
     /**
@@ -198,7 +195,7 @@ class HTTPService {
      * @param {String} endpoint the endpoint for the get
      */
     delete(endpoint) {
-        return this._http.delete(endpoint).catch(response => response);
+        return this._http.delete(endpoint);
     }
 
     /**
@@ -209,18 +206,15 @@ class HTTPService {
      * @param {String} [type] the downloaded document type
      */
     download(endpoint, documentName, type) {
-        return this._http
-            .get(endpoint, {responseType: 'blob'})
-            .then(response => {
-                if (!type) type = HEADERS_TO_TYPE[response.headers['content-type']];
-                const blob = new Blob([response.data], {type});
-                const link = document.createElement('a');
-                link.href = window.URL.createObjectURL(blob);
-                link.download = documentName;
-                link.click();
-                return response;
-            })
-            .catch(response => response);
+        return this._http.get(endpoint, {responseType: 'blob'}).then(response => {
+            if (!type) type = HEADERS_TO_TYPE[response.headers['content-type']];
+            const blob = new Blob([response.data], {type});
+            const link = document.createElement('a');
+            link.href = window.URL.createObjectURL(blob);
+            link.download = documentName;
+            link.click();
+            return response;
+        });
     }
 
     /** @param {RequestMiddleware} middlewareFunc */
@@ -2041,7 +2035,7 @@ var storeModule = (storageService, httpService, authService) => {
             // SET_USER_TO_REGISTER: (state, payload) => (state.userToRegister = payload),// move to register service
         },
         actions: {
-            login: ({ commit }, payload) => {
+            login: ({commit}, payload) => {
                 storageService.keepALive = payload.rememberMe;
                 commit('LOGIN');
                 return httpService.post(authService.apiLoginRoute, payload).then(response => {
@@ -2054,17 +2048,17 @@ var storeModule = (storageService, httpService, authService) => {
                     return response;
                 });
             },
-            logout: ({ commit }) => {
+            logout: ({commit}) => {
                 return httpService.post(authService.apiLogoutRoute).then(response => {
                     commit('LOGOUT');
                     return response;
                 });
             },
 
-            logoutApp: ({ commit }) => commit('LOGOUT'),
+            logoutApp: ({commit}) => commit('LOGOUT'),
 
             sendEmailResetPassword: (_, email) => {
-                return httpService.post(authService.apiSendEmailResetPasswordRoute, { email }).then(response => {
+                return httpService.post(authService.apiSendEmailResetPasswordRoute, {email}).then(response => {
                     if (response.status == 200) authService.goToLoginPage();
                 });
             },
@@ -2075,7 +2069,7 @@ var storeModule = (storageService, httpService, authService) => {
                     .then(() => authService.goToLoginPage());
             },
 
-            me: ({ commit }) => {
+            me: ({commit}) => {
                 return httpService.get(authService.apiLoggedInCheckRoute).then(response => {
                     const user = response.data.user;
                     if (user) commit('SET_LOGGED_IN_USER', user);
@@ -3648,13 +3642,16 @@ class AppStarter {
 
         for (const controller in controllers) controllers[controller].init();
 
-        this._authService.getLoggedInUser().finally(() => {
-            this._eventService.app = new Vue__default['default']({
-                el: '#app',
-                router: this._routerService.router,
-                render: h => h(mainComponent),
+        this._authService
+            .getLoggedInUser()
+            .catch()
+            .finally(() => {
+                this._eventService.app = new Vue__default['default']({
+                    el: '#app',
+                    router: this._routerService.router,
+                    render: h => h(mainComponent),
+                });
             });
-        });
     }
 }
 
