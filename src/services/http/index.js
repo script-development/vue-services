@@ -93,14 +93,11 @@ export class HTTPService {
             if (currentTimeStamp - this._cache[endpoint] < this.cacheDuration) return;
         }
 
-        return this._http
-            .get(endpoint, options)
-            .then(response => {
-                this._cache[endpoint] = currentTimeStamp;
-                this._storageService.setItem(CACHE_KEY, this._cache);
-                return response;
-            })
-            .catch(response => response);
+        return this._http.get(endpoint, options).then(response => {
+            this._cache[endpoint] = currentTimeStamp;
+            this._storageService.setItem(CACHE_KEY, this._cache);
+            return response;
+        });
     }
 
     /**
@@ -110,7 +107,7 @@ export class HTTPService {
      * @param {AxiosRequestConfig} [options] the optional request options
      */
     post(endpoint, data, options) {
-        return this._http.post(endpoint, data, options).catch(response => response);
+        return this._http.post(endpoint, data, options);
     }
 
     /**
@@ -118,7 +115,7 @@ export class HTTPService {
      * @param {String} endpoint the endpoint for the get
      */
     delete(endpoint) {
-        return this._http.delete(endpoint).catch(response => response);
+        return this._http.delete(endpoint);
     }
 
     /**
@@ -129,18 +126,15 @@ export class HTTPService {
      * @param {String} [type] the downloaded document type
      */
     download(endpoint, documentName, type) {
-        return this._http
-            .get(endpoint, {responseType: 'blob'})
-            .then(response => {
-                if (!type) type = HEADERS_TO_TYPE[response.headers['content-type']];
-                const blob = new Blob([response.data], {type});
-                const link = document.createElement('a');
-                link.href = window.URL.createObjectURL(blob);
-                link.download = documentName;
-                link.click();
-                return response;
-            })
-            .catch(response => response);
+        return this._http.get(endpoint, {responseType: 'blob'}).then(response => {
+            if (!type) type = HEADERS_TO_TYPE[response.headers['content-type']];
+            const blob = new Blob([response.data], {type});
+            const link = document.createElement('a');
+            link.href = window.URL.createObjectURL(blob);
+            link.download = documentName;
+            link.click();
+            return response;
+        });
     }
 
     /** @param {RequestMiddleware} middlewareFunc */

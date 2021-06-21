@@ -41,12 +41,15 @@ export class AppStarter {
 
         for (const controller in controllers) controllers[controller].init();
 
-        this._authService.getLoggedInUser().finally(() => {
-            this._eventService.app = new Vue({
-                el: '#app',
-                router: this._routerService.router,
-                render: h => h(mainComponent),
+        this._authService
+            .getLoggedInUser()
+            .catch()
+            .finally(() => {
+                this._eventService.app = new Vue({
+                    el: '#app',
+                    router: this._routerService.router,
+                    render: h => h(mainComponent),
+                });
             });
-        });
     }
 }

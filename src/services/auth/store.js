@@ -44,7 +44,7 @@ export default (storageService, httpService, authService) => {
             // SET_USER_TO_REGISTER: (state, payload) => (state.userToRegister = payload),// move to register service
         },
         actions: {
-            login: ({ commit }, payload) => {
+            login: ({commit}, payload) => {
                 storageService.keepALive = payload.rememberMe;
                 commit('LOGIN');
                 return httpService.post(authService.apiLoginRoute, payload).then(response => {
@@ -57,17 +57,17 @@ export default (storageService, httpService, authService) => {
                     return response;
                 });
             },
-            logout: ({ commit }) => {
+            logout: ({commit}) => {
                 return httpService.post(authService.apiLogoutRoute).then(response => {
                     commit('LOGOUT');
                     return response;
                 });
             },
 
-            logoutApp: ({ commit }) => commit('LOGOUT'),
+            logoutApp: ({commit}) => commit('LOGOUT'),
 
             sendEmailResetPassword: (_, email) => {
-                return httpService.post(authService.apiSendEmailResetPasswordRoute, { email }).then(response => {
+                return httpService.post(authService.apiSendEmailResetPasswordRoute, {email}).then(response => {
                     if (response.status == 200) authService.goToLoginPage();
                 });
             },
@@ -78,7 +78,7 @@ export default (storageService, httpService, authService) => {
                     .then(() => authService.goToLoginPage());
             },
 
-            me: ({ commit }) => {
+            me: ({commit}) => {
                 return httpService.get(authService.apiLoggedInCheckRoute).then(response => {
                     const user = response.data.user;
                     if (user) commit('SET_LOGGED_IN_USER', user);
