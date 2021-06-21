@@ -259,14 +259,14 @@ class EventService {
 
     /** @returns {ResponseMiddleware} */
     get responseMiddleware() {
-        return ({ data }) => {
+        return ({data}) => {
             if (data && data.message) this.successToast(data.message);
         };
     }
 
     /** @returns {ResponseErrorMiddleware} */
     get responseErrorMiddleware() {
-        return ({ response }) => {
+        return ({response}) => {
             if (response && response.data.message) this.dangerToast(response.data.message);
         };
     }
@@ -277,6 +277,8 @@ class EventService {
      * @param {String} variant the toast variant
      */
     toast(message, variant) {
+        if (!this._app) return;
+
         this._app.$bvToast.toast(`${message}`, {
             variant,
             solid: true,
