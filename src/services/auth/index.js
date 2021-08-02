@@ -149,43 +149,44 @@ const logoutOfApp = () => {
  */
 export const login = async credentials => {
     setKeepALive(credentials.rememberMe);
-    return postRequest(apiLoginRoute, credentials).then(response => {
-        setLoggedInAndUser(response.data.user);
-        goToDefaultLoggedInPage();
-        return response;
-    });
+    const response = await postRequest(apiLoginRoute, credentials);
+
+    setLoggedInAndUser(response.data.user);
+    goToDefaultLoggedInPage();
+    return response;
 };
 
 export const logout = async () => {
-    return postRequest(apiLogoutRoute, {}).then(response => {
-        logoutOfApp();
-        return response;
-    });
+    const response = await postRequest(apiLogoutRoute, {});
+
+    logoutOfApp();
+    return response;
 };
 
 export const checkIfLoggedIn = async () => {
-    return getRequestWithoutCache(apiLoggedInCheckRoute).then(response => {
-        setLoggedInAndUser(response.data.user);
-        return response;
-    });
+    const response = await getRequestWithoutCache(apiLoggedInCheckRoute);
+
+    setLoggedInAndUser(response.data.user);
+    return response;
 };
 
 /** @param {string} email */
 export const sendResetPasswordEmail = async email => {
-    return postRequest(apiSendResetPasswordEmailRoute, {email}).then(response => {
-        goToLoginPage();
-        return response;
-    });
+    const response = await postRequest(apiSendResetPasswordEmailRoute, {email});
+
+    goToLoginPage();
+    return response;
 };
 
 /** @param {ResetPasswordData} data */
 export const resetPassword = async data => {
-    return postRequest(apiResetpasswordRoute, data).then(response => {
-        goToLoginPage();
-        return response;
-    });
+    const response = await postRequest(apiResetpasswordRoute, data);
+
+    goToLoginPage();
+    return response;
 };
 
+// TODO :: AuthRoutes really needed? Probably better that the user set's the routes
 export const setAuthRoutes = () => {
     addRoute({
         path: '/inloggen',

@@ -8,7 +8,9 @@ import {registerRequestMiddleware, registerResponseMiddleware, registerResponseE
 let spinnerTimeout = 500;
 let minTimeSpinner = 1000;
 
+/** @type {NodeJS.Timeout} */
 let loadingTimeoutId;
+/** @type {number|undefined} */
 let loadingTimeStart;
 
 registerRequestMiddleware(() => setLoading(true));
