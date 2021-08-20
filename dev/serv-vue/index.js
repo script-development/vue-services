@@ -719,20 +719,21 @@ const logoutOfApp = () => {
  */
 const login = async credentials => {
     setKeepALive(credentials.rememberMe);
-    return postRequest(apiLoginRoute, credentials).then(response => {
-        setLoggedInAndUser(response.data.user);
-        goToDefaultLoggedInPage();
-        return response;
-    });
+    const response = await postRequest(apiLoginRoute, credentials);
+
+    setLoggedInAndUser(response.data.user);
+    goToDefaultLoggedInPage();
+    return response;
 };
 
 const logout = async () => {
-    return postRequest(apiLogoutRoute, {}).then(response => {
-        logoutOfApp();
-        return response;
-    });
+    const response = await postRequest(apiLogoutRoute, {});
+
+    logoutOfApp();
+    return response;
 };
 
+// TODO :: AuthRoutes really needed? Probably better that the user set's the routes
 const setAuthRoutes = () => {
     addRoute({
         path: '/inloggen',
@@ -750,7 +751,7 @@ const setAuthRoutes = () => {
 
     if (forgotPasswordPage) {
         addRoute({
-            path: '/wachtwoord-resetten',
+            path: '/wachtwoord-vergeten',
             name: FORGOT_PASSWORD_ROUTE_NAME,
             component: forgotPasswordPage,
             meta: {auth: false, cantSeeWhenLoggedIn: true, title: 'Wachtwoord vergeten'},
@@ -1378,7 +1379,9 @@ const moduleFactory = (moduleName, components, translation) => {
 let spinnerTimeout = 500;
 let minTimeSpinner = 1000;
 
+/** @type {NodeJS.Timeout} */
 let loadingTimeoutId;
+/** @type {number|undefined} */
 let loadingTimeStart;
 
 registerRequestMiddleware(() => setLoading(true));
@@ -1660,6 +1663,7 @@ const eventApp = defineComponent({
         });
 
         return [
+            // TODO :: make position of the toast container an option
             h('div', {class: 'toast-container position-absolute bottom-0 start-0', style: 'z-index:9999;'}, toasts),
             modals.value.map((modal, index) => {
                 return h(ModalComponent, {

@@ -204,7 +204,7 @@ export const setAuthRoutes = () => {
 
     if (forgotPasswordPage) {
         addRoute({
-            path: '/wachtwoord-resetten',
+            path: '/wachtwoord-vergeten',
             name: FORGOT_PASSWORD_ROUTE_NAME,
             component: forgotPasswordPage,
             meta: {auth: false, cantSeeWhenLoggedIn: true, title: 'Wachtwoord vergeten'},
