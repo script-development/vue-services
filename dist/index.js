@@ -5,10 +5,12 @@ Object.defineProperty(exports, '__esModule', { value: true });
 var vue = require('vue');
 var vueRouter = require('vue-router');
 var axios = require('axios');
+var msgpack = require('@msgpack/msgpack');
 
 function _interopDefaultLegacy (e) { return e && typeof e === 'object' && 'default' in e ? e : { 'default': e }; }
 
 var axios__default = /*#__PURE__*/_interopDefaultLegacy(axios);
+var msgpack__default = /*#__PURE__*/_interopDefaultLegacy(msgpack);
 
 class MissingTranslationError extends Error {
     constructor(...params) {
@@ -887,27 +889,6 @@ var StoreModuleFactory = moduleName => {
  * @typedef {import('../../../types/types').StaticDataTypes} StaticDataTypes
  */
 
-/**
- * Define msgpack for later use
- * @type {{decode:Function} | undefined}
- */
-let msgpack;
-/**
- * Gives a warning in webpack, check this issue: https://github.com/webpack/webpack/issues/7713
- * this is the way to go for now
- *
- * to ignore this error, add the following webpack config in webpack.config.js:
- * {externals: {'@msgpack/msgpack': true}}
- *
- * or when using 'laravel-mix', the following to webpack.mix.js:
- * mix.webpackConfig({externals: {'@msgpack/msgpack': 'msgpack'}});
- */
-try {
-    // eslint-disable-next-line
-    msgpack = require('@msgpack/msgpack');
-    // eslint-disable-next-line
-} catch (error) {}
-
 const MSG_PACK_DATA_TYPE = 'msg-pack';
 
 const apiStaticDataEndpoint = 'staticdata';
@@ -954,10 +935,6 @@ const createStaticDataStoreModules = data => {
  * @param {string} staticDataName
  */
 const createStoreModuleMsgPack = staticDataName => {
-    if (!msgpack) {
-        console.error('MESSAGE PACK NOT INSTALLED');
-        return console.warn('run the following command to install messagepack: npm --save @msgpack/msgpack');
-    }
     store$1[staticDataName] = StoreModuleFactory(staticDataName);
     DATA.msgpack.push(staticDataName);
 };
@@ -975,13 +952,13 @@ const getStaticDataFromServer = async () => {
     for (const staticDataName of DATA.msgpack) {
         const response = await getRequestWithoutCache(staticDataName, {responseType: 'arraybuffer'});
 
-        if (!msgpack) {
+        if (!msgpack__default['default']) {
             console.error('MESSAGE PACK NOT INSTALLED');
             console.warn('run the following command to install messagepack: npm --save @msgpack/msgpack');
             return response;
         }
 
-        store$1[staticDataName].setAll(msgpack.decode(new Uint8Array(response.data)));
+        store$1[staticDataName].setAll(msgpack__default['default'].decode(new Uint8Array(response.data)));
     }
 
     return response;

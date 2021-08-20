@@ -5,27 +5,7 @@
  */
 import {getRequestWithoutCache} from '../http';
 import StoreModuleFactory from '../store/factory';
-
-/**
- * Define msgpack for later use
- * @type {{decode:Function} | undefined}
- */
-let msgpack;
-/**
- * Gives a warning in webpack, check this issue: https://github.com/webpack/webpack/issues/7713
- * this is the way to go for now
- *
- * to ignore this error, add the following webpack config in webpack.config.js:
- * {externals: {'@msgpack/msgpack': true}}
- *
- * or when using 'laravel-mix', the following to webpack.mix.js:
- * mix.webpackConfig({externals: {'@msgpack/msgpack': 'msgpack'}});
- */
-try {
-    // eslint-disable-next-line
-    msgpack = require('@msgpack/msgpack');
-    // eslint-disable-next-line
-} catch (error) {}
+import msgpack from '@msgpack/msgpack';
 
 const MSG_PACK_DATA_TYPE = 'msg-pack';
 
@@ -73,10 +53,6 @@ export const createStaticDataStoreModules = data => {
  * @param {string} staticDataName
  */
 export const createStoreModuleMsgPack = staticDataName => {
-    if (!msgpack) {
-        console.error('MESSAGE PACK NOT INSTALLED');
-        return console.warn('run the following command to install messagepack: npm --save @msgpack/msgpack');
-    }
     store[staticDataName] = StoreModuleFactory(staticDataName);
     DATA.msgpack.push(staticDataName);
 };

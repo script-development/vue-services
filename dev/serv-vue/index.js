@@ -1,6 +1,7 @@
 import {computed, ref, createApp, defineComponent, h, watch} from 'vue';
 import {createRouter, createWebHistory} from 'vue-router';
 import axios from 'axios';
+import msgpack from '@msgpack/msgpack';
 
 class MissingTranslationError extends Error {
     constructor(...params) {
@@ -886,27 +887,6 @@ var StoreModuleFactory = moduleName => {
  * @typedef {import('../../../types/types').StaticDataTypes} StaticDataTypes
  */
 
-/**
- * Define msgpack for later use
- * @type {{decode:Function} | undefined}
- */
-let msgpack;
-/**
- * Gives a warning in webpack, check this issue: https://github.com/webpack/webpack/issues/7713
- * this is the way to go for now
- *
- * to ignore this error, add the following webpack config in webpack.config.js:
- * {externals: {'@msgpack/msgpack': true}}
- *
- * or when using 'laravel-mix', the following to webpack.mix.js:
- * mix.webpackConfig({externals: {'@msgpack/msgpack': 'msgpack'}});
- */
-try {
-    // eslint-disable-next-line
-    msgpack = require('@msgpack/msgpack');
-    // eslint-disable-next-line
-} catch (error) {}
-
 const MSG_PACK_DATA_TYPE = 'msg-pack';
 
 const apiStaticDataEndpoint = 'staticdata';
@@ -953,10 +933,6 @@ const createStaticDataStoreModules = data => {
  * @param {string} staticDataName
  */
 const createStoreModuleMsgPack = staticDataName => {
-    if (!msgpack) {
-        console.error('MESSAGE PACK NOT INSTALLED');
-        return console.warn('run the following command to install messagepack: npm --save @msgpack/msgpack');
-    }
     store$1[staticDataName] = StoreModuleFactory(staticDataName);
     DATA.msgpack.push(staticDataName);
 };
