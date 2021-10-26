@@ -46,6 +46,7 @@ export class AppStarter {
             .catch( (/** @type {import(axios).AxiosError} */ error) => {
                 if (error.response.status == 401) {
                     console.log(error.response.message)
+                    // TODO propagate the response message
                     window.location.href = "/login";
                 }
             }
