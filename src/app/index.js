@@ -43,7 +43,13 @@ export class AppStarter {
 
         this._authService
             .getLoggedInUser()
-            .catch()
+            .catch( (/** @type {import(axios).AxiosError} */ error) => {
+                if (error.response.status == 401) {
+                    console.log(error.response.message)
+                    window.location.href = "/login";
+                }
+            }
+            )
             .finally(() => {
                 this._eventService.app = new Vue({
                     el: '#app',
