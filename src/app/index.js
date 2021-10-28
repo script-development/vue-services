@@ -44,9 +44,8 @@ export class AppStarter {
         this._authService
             .getLoggedInUser()
             .catch( (/** @type {import(axios).AxiosError} */ error) => {
-                if (error.response.status == 401) {
-                    console.log(error.response.message)
-                    // TODO propagate the response message
+                if (error.response.status === 401) {
+                    // TODO propagate the error.response.message for better user feedback
                     window.location.href = "/login";
                 }
             }
