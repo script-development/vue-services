@@ -21,6 +21,8 @@ export class AppStarter {
         this._eventService = eventService;
         this._authService = authService;
         this._staticDataService = staticDataService;
+        this._LoginRoute= "/inloggen";
+        
     }
 
     /**
@@ -43,7 +45,13 @@ export class AppStarter {
 
         this._authService
             .getLoggedInUser()
-            .catch()
+            .catch( (/** @type {import(axios).AxiosError} */ error) => {
+                if (error.response.status === 401) {
+                    // TODO propagate the error.response.message for better user feedback
+                    window.location.href = this._LoginRoute;
+                }
+            }
+            )
             .finally(() => {
                 this._eventService.app = new Vue({
                     el: '#app',
