@@ -46,7 +46,7 @@ export class AppStarter {
             .catch( (/** @type {import(axios).AxiosError} */ error) => {
                 if (error.response.status === 401) {
                     // TODO propagate the error.response.message for better user feedback
-                    window.location.href = "/login";
+                    window.location.href = this._authService._apiLoginRoute;
                 }
             }
             )
