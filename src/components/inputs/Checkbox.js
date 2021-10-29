@@ -10,10 +10,9 @@ export default description => ({
     functional: true,
     props: {value: {required: true, type: Boolean}},
     render(h, {props, listeners}) {
-        // TODO :: create normal element instead of Bootstrap Vue element
         return h(
-            'b-checkbox',
-            {props: {checked: props.value, required: true, switch: true}, on: {input: e => listeners.update(e)}},
+            'input',
+            {attrs: {type:"checkbox"}, props: {checked: props.value, required: true, value: true}, on: {input: e => listeners.update(e.srcElement.checked)}},
             [description[props.value ? 1 : 0]]
         );
     },
